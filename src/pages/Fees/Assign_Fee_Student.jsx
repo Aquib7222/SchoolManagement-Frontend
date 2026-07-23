@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -248,58 +247,84 @@ const AssignFeeToStudents = () => {
   // Assign Fee
   // ==========================
   const handleAssign = async () => {
-  if (selectedFees.length === 0) {
-    alert("Please select at least one Fee.");
-    return;
-  }
+    if (selectedFees.length === 0) {
+      alert("Please select at least one Fee.");
+      return;
+    }
 
-  if (selectedStudents.length === 0) {
-    alert("Please select at least one Student.");
-    return;
-  }
+    if (selectedStudents.length === 0) {
+      alert("Please select at least one Student.");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const payload = {
-      feeStructureIds: selectedFees,
-      studentIds: selectedStudents,
-    };
+      const payload = {
+        feeStructureIds: selectedFees,
+        studentIds: selectedStudents,
+      };
 
-    console.log(payload);
+      console.log(payload);
 
-    const res = await axios.post(
-      "http://localhost:8080/api/student-fee/assign",
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.post(
+        "http://localhost:8080/api/student-fee/assign",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    alert(res.data);
+      alert(res.data);
 
-    setSelectedFees([]);
-    setSelectedStudents([]);
+      setSelectedFees([]);
+      setSelectedStudents([]);
+    } catch (error) {
+      console.log(error);
 
-  } catch (error) {
-    console.log(error);
-
-    alert(
-      error.response?.data?.message ||
-      error.response?.data ||
-      "Fee Assignment Failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      alert(
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Fee Assignment Failed",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
+    {/* ==========================================
+        Header
+    ========================================== */}
+
+      <div
+        className="shadow rounded p-3"
+       
+      >
+       <div className="row">
+         <div className="col-md-8">
+          <h4 className="mb-1">
+            <strong>Assign Fee To Student</strong>
+          </h4>
+
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb mb-0">
+              <li className="breadcrumb-item">Home</li>
+              <li className="breadcrumb-item">Fee</li>
+              <li className="breadcrumb-item active">Assign Fee</li>
+            </ol>
+          </nav>
+        </div>
+
+        
+       </div>
+      </div>
+
       <div className="container mt-3 bg-white shadow rounded p-3">
         <h5>Assign Fee To Students</h5>
 

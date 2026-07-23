@@ -42,6 +42,8 @@ const StudentFeeAssignment = () => {
     loadSections();
   }, []);
 
+  console.log("students",students);
+  console.log("student fee",studentFees);
   //===========================
   // Sessions
   //===========================
@@ -370,9 +372,9 @@ const StudentFeeAssignment = () => {
 
                 <th>Mobile</th>
 
-                <th>Total Fee</th>
+                {/* <th>Total Fee</th> */}
 
-                <th>Due Fee</th>
+                {/* <th>Due Fee</th> */}
 
                 <th>Status</th>
 
@@ -415,9 +417,9 @@ const StudentFeeAssignment = () => {
 
                     <td>{student.mobileNumber}</td>
 
-                    <td>₹ {student.totalAmount}</td>
+                    {/* <td>₹ {student.totalAmount}</td> */}
 
-                    <td>₹ {student.totalDue}</td>
+                    {/* <td>₹ {student.totalDue}</td> */}
 
                     <td>
 

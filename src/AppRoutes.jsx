@@ -1,25 +1,4 @@
-// import React from "react";
-// import { Route, Routes } from "react-router-dom";
-// import Login from "./pages/Login";
-// import Dashboard from "./pages/AdminDashboard/Dashboard";
 
-// import SchoolAddForm from "./pages/AdminDashboard/SchoolAddForm";
-// import SuperDashboard from "./pages/Dashboard/SuperDashboard";
-
-// const AppRoutes = () => {
-//   return (
-//     <Routes>
-//       <Route path="/login" element={<Login />} />
-
-//       {/* admin dashboard  */}
-//       <Route path="/dashboard" element={<Dashboard />} />
-//       <Route path="/" element={<SuperDashboard/>} ></Route>
-//       <Route path="/dashboard/create-school" element={<SchoolAddForm />} />
-//     </Routes>
-//   );
-// };
-
-// export default AppRoutes;
 
 import React from "react";
 import { Route, Routes } from "react-router-dom";
@@ -69,6 +48,9 @@ import Fee_LedgerDetails from "./pages/Fees/Fee_LedgerDetails";
 import FeeLedger from "./pages/Fees/FeeLedger";
 import FeeCollection from "./pages/Fees/FeeCollection";
 import FeeReceipt from "./pages/Fees/FeeReceipt";
+import DailyFeeCollection from "./pages/Fees/Reports/DailyFeeCollection";
+import MonthlyFeeCollection from "./pages/Fees/Reports/MonthlyFeeCollection";
+import FeeCollectionSearch from "./pages/Fees/FeeCollectionSearch";
 
 const AppRoutes = () => {
   return (
@@ -116,45 +98,52 @@ const AppRoutes = () => {
           path="/fee/setup/fee_structure"
           element={<Create_Fee_Structure />}
         />
-        <Route path="/fee/setup/fee_structure/fee-types" element={<Create_Fee_Master />} />
-         <Route
+        <Route
+          path="/fee/setup/fee_structure/fee-types"
+          element={<Create_Fee_Master />}
+        />
+        <Route
           path="/fee/generate_fee/:admissionNumber"
           element={<Generate_Fee_Studentwise />}
         />
 
-        <Route
-          path="/fee/generate_fee"
-          element={<Generate_Fee />}
-        />
+        <Route path="/fee/generate_fee" element={<Generate_Fee />} />
 
-         <Route
+        <Route
           path="/fee/assignment/students"
           element={<Assign_Fee_Student />}
         />
-        <Route
-          path="/fee-assignment"
-          element={<StudentFeeAssignment />}
-        />
-        <Route
-          path="/fee/feeledger"
-          element={<FeeLedger />}
-        />
-       
+        <Route path="/fee-assignment" element={<StudentFeeAssignment />} />
+        <Route path="/fee/feeledger" element={<FeeLedger />} />
+
         <Route
           path="/fee/feeledger/:admissionNumber"
           element={<Fee_LedgerDetails />}
         />
-        
+
          <Route
+          path="/fee/feeCollection"
+          element={<FeeCollectionSearch />}
+        />
+
+        <Route
           path="/fee/feeCollection/:admissionNumber"
           element={<FeeCollection />}
         />
 
-        <Route
-    path="/fee/receipt/:receiptNo"
-    element={<FeeReceipt />}
-/>
+       
 
+        <Route path="/fee/receipt/:receiptNo" element={<FeeReceipt />} />
+        
+         <Route
+          path="/fee/reports/daily_collection"
+          element={<DailyFeeCollection />}
+        />
+
+         <Route
+          path="/fee/reports/monthly_collection"
+          element={<MonthlyFeeCollection />}
+        />
 
         {/* Student routes */}
         <Route path="/student/list" element={<Students />} />

@@ -323,15 +323,11 @@ const FeeCollection = () => {
     ========================================== */}
 
       <div
-        className="row shadow"
-        style={{
-          background: "#fff",
-          margin: "10px",
-          borderRadius: "6px",
-          padding: "15px",
-        }}
+        className="shadow rounded p-3"
+       
       >
-        <div className="col-md-8">
+       <div className="row">
+         <div className="col-md-8">
           <h4 className="mb-1">
             <strong>Fee Collection</strong>
           </h4>
@@ -350,6 +346,7 @@ const FeeCollection = () => {
             Back
           </button>
         </div>
+       </div>
       </div>
 
       {/* ==========================================
