@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const Create_Fee_Structure = () => {
   const token = localStorage.getItem("token");
@@ -60,7 +61,7 @@ const Create_Fee_Structure = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:8080/api/fee-structure", {
+      const res = await axiosInstance.get("/api/fee-structure", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,7 +77,7 @@ const Create_Fee_Structure = () => {
 
   const loadFeeMaster = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/fee-master", {
+      const res = await axios.get("/api/fee-master", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -90,7 +91,7 @@ const Create_Fee_Structure = () => {
 
   const loadStandard = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/standard", {
+      const res = await axiosInstance.get("/api/master/standard", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,8 +105,8 @@ const Create_Fee_Structure = () => {
 
   const loadFeeCategories = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/master/fee-category",
+      const res = await axiosInstance.get(
+        "/api/master/fee-category",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -121,8 +122,8 @@ const Create_Fee_Structure = () => {
 
   const loadFeeBatches = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/master/fee-batch",
+      const res = await axiosInstance.get(
+        "/api/master/fee-batch",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -187,8 +188,8 @@ const Create_Fee_Structure = () => {
     if (!window.confirm("Are you sure to delete this Fee Structure?")) return;
 
     try {
-      const res = await axios.delete(
-        `http://localhost:8080/api/fee-structure/${id}`,
+      const res = await axiosInstance.delete(
+        `/api/fee-structure/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -274,8 +275,8 @@ const Create_Fee_Structure = () => {
 
       if (editingId) {
         console.log("PUT API Call");
-        res = await axios.put(
-          `http://localhost:8080/api/fee-structure/${editingId}`,
+        res = await axiosInstance.put(
+          `/api/fee-structure/${editingId}`,
           payload,
           {
             headers: {
@@ -286,8 +287,8 @@ const Create_Fee_Structure = () => {
         );
       } else {
         console.log("POST API Call");
-        res = await axios.post(
-          "http://localhost:8080/api/fee-structure",
+        res = await axiosInstance.post(
+          "/api/fee-structure",
           payload,
           {
             headers: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 
 const TeacherAttendance = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -20,7 +21,7 @@ const TeacherAttendance = () => {
   useEffect(() => {
   if (!schoolId) return;
 
-  axios.get("http://localhost:8080/api/teachers", {
+  axiosInstance.get("/api/teachers", {
     params: {
       schoolId: schoolId,
       status: "Working"
@@ -39,9 +40,9 @@ console.log("Teachers",teachers);
   useEffect(() => {
     if (!teachers.length) return;
 
-    axios
+    axiosInstance
       .get(
-        `http://localhost:8080/api/teacher-attendance?schoolId=${schoolId}&date=${selectedDate}`,
+        `/api/teacher-attendance?schoolId=${schoolId}&date=${selectedDate}`,
       )
       .then((res) => {
         if (res.data.length > 0) {
@@ -97,8 +98,8 @@ console.log("Teachers",teachers);
       return;
     }
 
-    await axios.post(
-      `http://localhost:8080/api/teacher-attendance?schoolId=${schoolId}&date=${selectedDate}`,
+    await axiosInstance.post(
+      `/api/teacher-attendance?schoolId=${schoolId}&date=${selectedDate}`,
       payload,
     );
 
@@ -114,9 +115,9 @@ console.log("Teachers",teachers);
       return;
     }
 
-    axios
+    axiosInstance
       .get(
-        `http://localhost:8080/api/teacher-attendance/teacher/${selectedTeacherId}`,
+        `/api/teacher-attendance/teacher/${selectedTeacherId}`,
       )
       .then((res) => setTeacherHistory(res.data))
       .catch((err) => console.error(err));

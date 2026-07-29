@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const FeeLedger = () => {
   const [sessions, setSessions] = useState([]);
@@ -23,7 +24,7 @@ const FeeLedger = () => {
   // ==========================
   const loadSessions = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/sessions", {
+      const res = await axiosInstance.get("/api/master/sessions", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -49,7 +50,7 @@ const FeeLedger = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:8080/api/students/search", {
+      const res = await axiosInstance.get("/api/students/search", {
         params: {
           session: selectedSession,
           admissionNumber: admissionNo,

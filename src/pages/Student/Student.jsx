@@ -1,17 +1,66 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+
+import useMasters from "../../hooks/useMasters";
+import axios from "../../api/axiosInstance";
 
 const Students = () => {
+  const { loading: masterLoading, sessions, standards, sections } = useMasters();
   const navigate = useNavigate();
+  const [sessionList, setSessionList] = useState([]);
+  const [standardList, setStandardList] = useState([]);
 
-  const [academicYear, setAcademicYear] = useState("");
-  const [standard, setStandard] = useState("");
-  const [section, setSection] = useState("");
+  const [selectedSession, setSelectedSession] = useState("");
+  const [selectedStandard, setSelectedStandard] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
+
   const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
+
+  // ==========================
+  // Load Masters
+  // ==========================
+  // useEffect(() => {
+  //   // loadSessions();
+  //   loadStandards();
+  // }, []);
+
+  // // ==========================
+  // // Sessions
+  // // ==========================
+  // const loadSessions = async () => {
+  //   try {
+  //     const res = await axios.get("/api/master/sessions", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     setSessionList(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  // // ==========================
+  // // Standards
+  // // ==========================
+  // const loadStandards = async () => {
+  //   try {
+  //     const res = await axios.get("/api/master/standard", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     setStandardList(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handleAdd = () => {
     navigate("/student/add_students");
@@ -24,13 +73,13 @@ const Students = () => {
   // ✅ BACKEND SEARCH
   const handleFilter = async () => {
     try {
-      setLoading(true);
+      setSearchLoading(true);
 
-      const res = await axios.get("http://localhost:8080/api/students/search", {
+      const res = await axios.get("/api/students/search", {
         params: {
-          academicYear: academicYear || null,
-          studentClass: standard ? standard.toLowerCase() : null,
-          section: section || null,
+          academicYear: selectedSession || null,
+          studentClass: selectedStandard || null,
+          section: selectedSection || null,
         },
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,7 +91,7 @@ const Students = () => {
       console.error(error);
       alert("Failed to fetch students");
     } finally {
-      setLoading(false);
+      setSearchLoading(false);
     }
   };
 
@@ -50,19 +99,12 @@ const Students = () => {
 
   return (
     <>
-       {/* Header */}
+      {/* Header */}
       <div
-        className="row shadow-lg"
-        style={{
-          backgroundColor: "white",
-          margin: "10px",
-          height: "70px",
-          borderRadius: "5px",
-          padding: "10px",
-          color: "black",
-        }}
+        className="rounded mt-3 p-2 bg-white shadow-lg"
+       
       >
-        <h6>
+        <div className="row"><h6>
           <strong>Students Standard Section wise</strong>
         </h6>
         <nav aria-label="breadcrumb py-2">
@@ -78,11 +120,11 @@ const Students = () => {
               </a>
             </li>
           </ol>
-        </nav>
+        </nav></div>
       </div>
 
       {/* Filters */}
-      <div className="mt-3 ms-2 me-2 bg-white rounded p-3 shadow">
+      <div className=" bg-white rounded p-3 shadow mt-3">
         <div className="row">
           <div className="col-md-3">
             <h6>
@@ -90,14 +132,16 @@ const Students = () => {
             </h6>
             <select
               className="form-select"
-              value={academicYear}
-              onChange={(e) => setAcademicYear(e.target.value)}
+              value={selectedSession}
+              onChange={(e) => setSelectedSession(e.target.value)}
             >
               <option value="">All</option>
-              <option value="2026-27">2026-27</option>
-              <option value="2025-26">2025-26</option>
-              <option value="2024-25">2024-25</option>
-              <option value="2023-24">2023-24</option>
+
+              {sessions.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -107,25 +151,16 @@ const Students = () => {
             </h6>
             <select
               className="form-select"
-              value={standard}
-              onChange={(e) => setStandard(e.target.value)}
+              value={selectedStandard}
+              onChange={(e) => setSelectedStandard(e.target.value)}
             >
               <option value="">All</option>
-              <option value="NURSERY">Nursery</option>
-              <option value="LKG">LKG</option>
-              <option value="UKG">UKG</option>
-              <option value="I">I</option>
-              <option value="II">II</option>
-              <option value="III">III</option>
-              <option value="IV">IV</option>
-              <option value="V">V</option>
-              <option value="VI">VI</option>
-              <option value="VII">VII</option>
-              <option value="VIII">VIII</option>
-              <option value="IX">IX</option>
-              <option value="X">X</option>
-              <option value="XI">XI</option>
-              <option value="XII">XII</option>
+
+              {standards.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -135,8 +170,8 @@ const Students = () => {
             </h6>
             <select
               className="form-select"
-              value={section}
-              onChange={(e) => setSection(e.target.value)}
+              value={selectedSection}
+              onChange={(e) => setSelectedSection(e.target.value)}
             >
               <option value="">All</option>
               <option value="A">A</option>
@@ -157,7 +192,7 @@ const Students = () => {
       </div>
 
       {/* Table */}
-      <div className="mt-3 p-3 ms-2 me-2 bg-white rounded shadow">
+      <div className="mt-3 p-2 bg-white rounded shadow table-responsive">
         <table className="table table-bordered table-hover">
           <thead className="table-primary">
             <tr>
@@ -172,7 +207,7 @@ const Students = () => {
           </thead>
 
           <tbody>
-            {loading ? (
+            {searchLoading  ? (
               <tr>
                 <td colSpan="6" className="text-center">
                   Loading...
@@ -186,10 +221,13 @@ const Students = () => {
                     {s.firstName} {s.lastName}
                   </td>
                   <td>{s.admissionNumber}</td>
-                  <td>{s.studentClass}/{s.section}</td>
-                  <td> {s.houseNo},{" "}
-                        {s.street}, {s.town}, {s.state} -{" "}
-                        {s.zip}</td>
+                  <td>
+                    {s.studentClass}/{s.section}
+                  </td>
+                  <td>
+                    {" "}
+                    {s.houseNo}, {s.street}, {s.town}, {s.state} - {s.zip}
+                  </td>
                   <td>{s.gender}</td>
                   <td>
                     <button

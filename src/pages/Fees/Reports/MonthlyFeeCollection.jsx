@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import axiosInstance from "../../../api/axiosInstance";
 
 const MonthlyFeeCollection = () => {
   const token = localStorage.getItem("token");
@@ -59,7 +60,7 @@ const MonthlyFeeCollection = () => {
   // ==========================
   const loadStandards = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/standard", {
+      const res = await axiosInstance.get("/api/master/standard", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -76,7 +77,7 @@ const MonthlyFeeCollection = () => {
   // ==========================
   const loadSection = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/section", {
+      const res = await axiosInstance.get("/api/master/section", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -93,8 +94,8 @@ const MonthlyFeeCollection = () => {
   // ==========================
   const loadmonthlyCollection = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/student-fee/payment/report/monthly",
+      const res = await axiosInstance.get(
+        "/api/student-fee/payment/report/monthly",
         {
           params: {
             month: selectedMonth.split("-")[1],
@@ -221,7 +222,7 @@ const MonthlyFeeCollection = () => {
       {/* ===========================
         Header
       =========================== */}
-      <div className=" shadow p-3 mb-3">
+      <div className="bg-white shadow p-3 mb-3">
         <div className="col-md-8">
           <h4 className="mb-1">
             <strong>Monthly Fee Collection Report</strong>

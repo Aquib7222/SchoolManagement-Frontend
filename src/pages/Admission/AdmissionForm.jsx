@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+// import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "../../api/axiosInstance";
 
 const AdmissionForm = () => {
   const currentYear = new Date().getFullYear();
@@ -247,7 +248,7 @@ const AdmissionForm = () => {
       const token = localStorage.getItem("token"); // ✅ must exist
 
       const response = await axios.post(
-        "http://localhost:8080/api/admissions",
+        "/api/admissions",
         payload,
         {
           headers: {

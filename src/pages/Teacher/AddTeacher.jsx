@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const AddTeacher = () => {
-  
+  const { employeeId } = useParams();
+
+  const isEditMode = Boolean(employeeId);
+
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
+    employeeId: "",
     id: "",
-    
+
     firstName: "",
     middleName: "",
     lastName: "",
@@ -41,8 +46,14 @@ const AddTeacher = () => {
     aadharNumber: "",
     pfNumber: "",
     photo: "",
-    active:true
-   
+    maritalStatus:"",
+    religion:"",
+    caste:"",
+    qualification:"",
+    degreeBoard:"",
+    passingYear:"",
+    percentage:"",
+    active: true,
   });
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -57,10 +68,45 @@ const AddTeacher = () => {
       reader.readAsDataURL(file);
     }
   };
-  
- 
 
-  // const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchTeacher = async () => {
+      if (!employeeId) return;
+
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const token = localStorage.getItem("token");
+
+        const schoolId = user?.school?.id;
+
+        const res = await axiosInstance.get("/api/teachers/search", {
+          params: {
+            employeeId: employeeId,
+            schoolId: schoolId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("Teacher Data:", res.data);
+
+        setFormData(res.data);
+
+        console.log("Set Form Data:", res.data);
+      } catch (error) {
+        console.log(
+          "Teacher fetch error:",
+          error.response?.data || error.message,
+        );
+
+        alert("Teacher not found");
+      }
+    };
+
+    fetchTeacher();
+  }, [employeeId]);
+
   //   e.preventDefault();
   //   const savedData = JSON.parse(localStorage.getItem("TeacherFormData")) || [];
   //   const teacherAccounts =
@@ -120,59 +166,67 @@ const AddTeacher = () => {
   //   navigate(-1);
   // };
   const handleChange = (e) => {
-  const { name, value, type, files } = e.target;
+    const { name, value, type, files } = e.target;
 
-  // 📸 Photo (Base64)
-  if (type === "file") {
-    const file = files[0];
-    if (!file) return;
+    // 📸 Photo (Base64)
+    if (type === "file") {
+      const file = files[0];
+      if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData(prev => ({
-        ...prev,
-        [name]: reader.result
-      }));
-    };
-    reader.readAsDataURL(file);
-    return;
-  }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
 
-  setFormData(prev => ({
-    ...prev,
-    [name]: value
-  }));
-};
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    try {
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+      console.log("school user", loggedInUser);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+      const schoolId = loggedInUser.school.id;
 
-  const loggedInUser = JSON.parse(localStorage.getItem("user"));
-  console.log("school user",loggedInUser);
+      if (!schoolId) {
+        alert("School not found");
+        return;
+      }
+      if (isEditMode) {
+        await axiosInstance.put(`/api/teachers/${employeeId}`, formData, {
+          params: {
+            schoolId,
+          },
+        });
 
-  const schoolId = loggedInUser.school.id;
+        alert("Teacher updated successfully");
+      } else {
+        await axiosInstance.post(
+          `/api/teachers?schoolId=${schoolId}`,
+          formData,
+        );
 
-  if (!schoolId) {
-    alert("School not found");
-    return;
-  }
+        alert("Teacher added successfully");
+      }
 
-  await fetch(`http://localhost:8080/api/teachers?schoolId=${schoolId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
-
-  alert("Teacher added successfully");
-  navigate(-1);
-};
-
-
-
+      navigate(-1);
+      navigate(-1);
+    } catch (error) {
+      console.error("Error adding teacher:", error);
+      alert("Failed to add teacher");
+    }
+  };
 
   return (
     <>
@@ -188,7 +242,7 @@ const AddTeacher = () => {
         }}
       >
         <h6>
-          <strong>Add Teacher</strong>
+          <strong>{isEditMode ? "Edit Teacher" : "Add Teacher"}</strong>
         </h6>
         <nav aria-label="breadcrumb py-2">
           <ol className="breadcrumb">
@@ -199,7 +253,7 @@ const AddTeacher = () => {
             </li>
             <li className="breadcrumb-item">
               <a href="#" style={{ textDecoration: "none", color: "black" }}>
-                Add Teacher
+                {isEditMode ? "Edit Teacher" : "Add Teacher"}
               </a>
             </li>
           </ol>
@@ -211,7 +265,7 @@ const AddTeacher = () => {
           <div className="row bg-primary p-1 d-flex text-center text-white ms-2 me-2">
             <strong>EduMatric Login Details</strong>
           </div>
-         
+
           <div className="row bg-primary p-1 d-flex text-center text-white ms-2 me-2">
             <strong>Basic Details</strong>
           </div>
@@ -402,7 +456,7 @@ const AddTeacher = () => {
                     <option key={group} value={group}>
                       {group}
                     </option>
-                  )
+                  ),
                 )}
               </select>
             </div>
@@ -724,9 +778,7 @@ const AddTeacher = () => {
           </div>
 
           <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              
-            </div>
+            <div className="col-md-3"></div>
 
             <div className="col-md-3">
               <label>
@@ -897,12 +949,13 @@ const AddTeacher = () => {
                   Marital Status::<span className="text-danger">*</span>
                 </strong>
               </label>
-              <select name="maritalStatus" className="w-100 rounded p-2">
+              <select name="maritalStatus" className="w-100 rounded p-2"  value={formData.maritalStatus}
+                onChange={handleChange}>
                 <option>Select</option>
-                <option>Married</option>
-                <option>Unmarried</option>
-                <option>Divorced</option>
-                <option>Widowed</option>
+                <option value="Married">Married</option>
+                <option value="UnMarried">UnMarried</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
               </select>
             </div>
             <div className="col-md-3">
@@ -1016,25 +1069,25 @@ const AddTeacher = () => {
               <label>
                 <strong>Religion:</strong>
               </label>
-              <select name="religion" className="w-100 rounded p-2">
+              <select name="religion" className="w-100 rounded p-2" value={formData.religion} onChange={handleChange}>
                 <option>--Select--</option>
-                <option>Hindu</option>
-                <option>Muslim</option>
-                <option>Christian</option>
-                <option>Sikh</option>
-                <option>Other</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Muslim">Muslim</option>
+                <option value="Christian">Christian</option>
+                <option value="Sikh">Sikh</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div className="col-md-3">
               <label>
                 <strong>Caste:</strong>
               </label>
-              <select name="caste" className="w-100 rounded p-2">
+              <select name="caste" className="w-100 rounded p-2" value={formData.caste} onChange={handleChange}>
                 <option>--Select--</option>
-                <option>General</option>
-                <option>OBC</option>
-                <option>SC</option>
-                <option>ST</option>
+                <option value="General">General</option>
+                <option value="OBC">OBC</option>
+                <option value="SC">SC</option>
+                <option value="ST">ST</option>
               </select>
             </div>
             <div className="col-md-3">
@@ -1222,7 +1275,7 @@ const AddTeacher = () => {
           {/* Submit Button */}
           <div className=" my-4">
             <button className="btn btn-success px-4 py-2" type="submit">
-              <strong>Add Teacher</strong>
+              <strong>{isEditMode ? "Update Teacher" : "Add Teacher"}</strong>
             </button>
           </div>
         </div>

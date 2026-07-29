@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const Create_Fee_Master = () => {
   const [loading, setLoading] = useState(false);
@@ -27,8 +28,8 @@ const Create_Fee_Master = () => {
 
   const loadFeeCategories = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/master/fee-category",
+      const res = await axiosInstance.get(
+        "/api/master/fee-category",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -58,8 +59,8 @@ const Create_Fee_Master = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        "http://localhost:8080/api/fee-master",
+      const res = await axiosInstance.post(
+        "/api/fee-master",
         formData,
         {
           headers: {
@@ -97,7 +98,7 @@ const Create_Fee_Master = () => {
   const loadFeeMaster = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8080/api/fee-master", {
+      const res = await axiosInstance.get("/api/fee-master", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

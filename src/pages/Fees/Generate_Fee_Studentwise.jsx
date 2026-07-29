@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { TbArrowBackUp } from "react-icons/tb";
 import { TiTick } from "react-icons/ti";
 import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const months = [
   "April",
@@ -99,8 +100,8 @@ const loadStudent = async () => {
   try {
     setLoading(true);
 
-    const res = await axios.get(
-      `http://localhost:8080/api/students/${admissionNumber}`,
+    const res = await axiosInstance.get(
+      `/api/students/${admissionNumber}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -132,8 +133,8 @@ const loadStudent = async () => {
 
 const loadFeeCategories = async () => {
   try {
-    const res = await axios.get(
-      "http://localhost:8080/api/master/fee-category",
+    const res = await axiosInstance.get(
+      "/api/master/fee-category",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -153,8 +154,8 @@ const loadFeeCategories = async () => {
 
 const loadFeeBatches = async () => {
   try {
-    const res = await axios.get(
-      "http://localhost:8080/api/master/fee-batch",
+    const res = await axiosInstance.get(
+      "/api/master/fee-batch",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -174,8 +175,8 @@ const loadFeeBatches = async () => {
 
 const loadAssignedFees = async (admissionNo) => {
   try {
-    const res = await axios.get(
-      `http://localhost:8080/api/student-fee/${admissionNo}`,
+    const res = await axiosInstance.get(
+      `/api/student-fee/${admissionNo}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -197,8 +198,8 @@ const loadAssignedFees = async (admissionNo) => {
 
 const loadCurrentSchedule = async (admissionNo) => {
   try {
-    const res = await axios.get(
-      `http://localhost:8080/api/student-fee/schedule/${admissionNo}`,
+    const res = await axiosInstance.get(
+      `/api/student-fee/schedule/${admissionNo}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -314,7 +315,7 @@ const handleGenerateFee = async () => {
 
   try {
     await axios.post(
-      "http://localhost:8080/api/student-fee/generate",
+      "/api/student-fee/generate",
       {
         admissionNumber: student.admissionNumber,
         schedules: selectedSchedule,
@@ -349,7 +350,7 @@ const handleUndoFee = async () => {
 
   try {
     await axios.delete(
-      "http://localhost:8080/api/student-fee/undo",
+      "/api/student-fee/undo",
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,7 +1,8 @@
-import axios from "axios";
+
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
+import axios from "../../api/axiosInstance";
 
 const AdmissionFeePayment = () => {
 
@@ -54,7 +55,7 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
 
     axios
       .get(
-        `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
+        `/api/admissions/school?schoolId=${user.schoolId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => {

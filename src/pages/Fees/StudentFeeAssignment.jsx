@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axiosInstance from "../../api/axiosInstance";
 
 const StudentFeeAssignment = () => {
 
@@ -52,8 +53,8 @@ const StudentFeeAssignment = () => {
 
     try {
 
-      const res = await axios.get(
-        "http://localhost:8080/api/master/sessions",
+      const res = await axiosInstance.get(
+        "/api/master/sessions",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,8 +78,8 @@ const StudentFeeAssignment = () => {
 
     try {
 
-      const res = await axios.get(
-        "http://localhost:8080/api/master/standard",
+      const res = await axiosInstance.get(
+        "/api/master/standard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,8 +103,8 @@ const StudentFeeAssignment = () => {
 
     try {
 
-      const res = await axios.get(
-        "http://localhost:8080/api/master/section",
+      const res = await axiosInstance.get(
+        "/api/master/section",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -126,8 +127,8 @@ const StudentFeeAssignment = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        "http://localhost:8080/api/student-fee",
+      const res = await axiosInstance.get(
+        "/api/student-fee",
         {
           params: {
             session,
@@ -163,8 +164,8 @@ const StudentFeeAssignment = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(
-        `http://localhost:8080/api/student-fee/${admissionNo}`,
+      const res = await axiosInstance.get(
+        `/api/student-fee/${admissionNo}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

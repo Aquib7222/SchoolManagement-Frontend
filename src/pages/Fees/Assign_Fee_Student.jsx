@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 
 const AssignFeeToStudents = () => {
   const token = localStorage.getItem("token");
@@ -51,7 +52,7 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadSessions = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/sessions", {
+      const res = await axiosInstance.get("/api/master/sessions", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +69,7 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadStandards = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/master/standard", {
+      const res = await axiosInstance.get("/api/master/standard", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -85,8 +86,8 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadFeeCategories = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/master/fee-category",
+      const res = await axiosInstance.get(
+        "/api/master/fee-category",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,8 +106,8 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadFeeBatches = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/master/fee-batch",
+      const res = await axiosInstance.get(
+        "/api/master/fee-batch",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -148,7 +149,7 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadFeeStructures = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/fee-structure", {
+      const res = await axiosInstance.get("/api/fee-structure", {
         params: {
           session: selected.session,
           standard: selected.standard,
@@ -172,7 +173,7 @@ const AssignFeeToStudents = () => {
   // ==========================
   const loadStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/students/search", {
+      const res = await axiosInstance.get("/api/students/search", {
         params: {
           academicYear: selected.session,
           studentClass: selected.standard,
@@ -269,8 +270,8 @@ const AssignFeeToStudents = () => {
 
       console.log(payload);
 
-      const res = await axios.post(
-        "http://localhost:8080/api/student-fee/assign",
+      const res = await axiosInstance.post(
+        "/api/student-fee/assign",
         payload,
         {
           headers: {
@@ -303,7 +304,7 @@ const AssignFeeToStudents = () => {
     ========================================== */}
 
       <div
-        className="shadow rounded p-3"
+        className=" bg-white shadow rounded p-3"
        
       >
        <div className="row">
@@ -434,7 +435,7 @@ const AssignFeeToStudents = () => {
         </div>
       ) : (
         <>
-          <div className="container mt-4 bg-white shadow rounded p-3">
+          <div className="container mt-4 bg-white shadow rounded p-3 table-responsive">
             <h5 className="mb-3">Fee Structure</h5>
 
             <table className="table table-bordered table-striped">
@@ -490,7 +491,7 @@ const AssignFeeToStudents = () => {
             </table>
           </div>
 
-          <div className="container mt-4 bg-white shadow rounded p-3">
+          <div className="container mt-4 bg-white shadow rounded p-3 table-responsive">
             <h5 className="mb-3">Students</h5>
 
             <table className="table table-bordered table-striped">

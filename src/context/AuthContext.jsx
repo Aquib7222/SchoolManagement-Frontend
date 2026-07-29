@@ -96,24 +96,34 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // ✅ Login
-  const login = ({ token, user }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", user.role);
-    localStorage.setItem("user", JSON.stringify(user));
+  // login 
 
-    setAuth({
-      token,
-      role: user.role,
-      user,
-      loading: false,
-    });
+ const login = ({ token, user }) => {
 
-    // 🎯 Role-based redirect
-    if (user.role === "ADMIN") navigate("/");
-    else if (user.role === "SUPERADMIN") navigate("/");
-    else navigate("/userInterface");
-  };
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", user.role);
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("email", user.email);
+  localStorage.setItem("schoolId", user.schoolId);
+  localStorage.setItem("userGroupId", user.userGroupId ?? "");
+
+  if (user.school) {
+    localStorage.setItem("school", JSON.stringify(user.school));
+  }
+
+  setAuth({
+    token,
+    role: user.role,
+    user,
+    loading: false,
+  });
+
+  if (user.role === "ADMIN" || user.role === "SUPERADMIN") {
+    navigate("/");
+  } else {
+    navigate("/userInterface");
+  }
+};
 
   // ✅ Logout
   const logout = () => {

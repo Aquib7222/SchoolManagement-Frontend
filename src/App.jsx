@@ -1,4 +1,3 @@
-
 // import { useState, useEffect } from "react";
 
 // import AppRoutes from './AppRoutes'
@@ -27,7 +26,6 @@
 //    // Get user role from localStorage
 //   const userRole = JSON.parse(localStorage.getItem("userLogin"));
 // console.log(userRole.role);  // 👉 superadmin
-
 
 //   return (
 //     <>
@@ -105,13 +103,12 @@
 //           <AppRoutes />
 //         </div>
 //       </div>
-    
+
 //     </>
 //   )
 // }
 
 // export default App
-
 
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -121,6 +118,7 @@ import AdminSidebar from "./components/AdminSidebar";
 import Header from "./components/Header";
 import Sidebar_menu from "./components/Admin/Sidebar_Menu";
 import { useAuth } from "./context/AuthContext";
+import "./app.css";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -137,9 +135,9 @@ function App() {
 
   if (token) {
     try {
-      const role =localStorage.getItem("role");
-      userRole=role;
-      console.log("userrole:",role);
+      const role = localStorage.getItem("role");
+      userRole = role;
+      console.log("userrole:", role);
     } catch (err) {
       localStorage.removeItem("token");
     }
@@ -161,28 +159,25 @@ function App() {
 
   return (
     <>
-      <div className="top-header" style={{ position: "fixed", width: "100%", height: "60px", zIndex: 2000 }}>
+      <div
+        className="top-header"
+        style={{
+          position: "fixed",
+          width: "100%",
+          height: "60px",
+          zIndex: 2000,
+        }}
+      >
         <Header toggleSidebar={toggleSidebar} />
       </div>
 
-      <div className="content" style={{ display: "flex", paddingTop: "60px", minHeight: "100vh" }}>
-        <div
-          className="sidebar"
-          style={{
-            width: sidebarOpen ? "20%" : "0",
-            overflowX: "hidden",
-            transition: "width 0.3s ease",
-            backgroundColor: "#fff",
-            height: "calc(100vh - 60px)",
-            position: "fixed",
-            top: "60px",
-            left: 0,
-          }}
-        >
+      <div
+        className="content"
+        style={{ display: "flex", paddingTop: "60px", minHeight: "100vh" }}
+      >
+        <div className={`sidebar ${sidebarOpen ? "open" : "close"}`}>
           {sidebarOpen && (
-            <>
-              {userRole === "ADMIN" ? <AdminSidebar /> : <Sidebar_menu />}
-            </>
+            <>{userRole === "ADMIN" ? <AdminSidebar /> : <Sidebar_menu />}</>
           )}
         </div>
 
@@ -192,6 +187,8 @@ function App() {
             marginLeft: sidebarOpen && window.innerWidth > 768 ? "20%" : "0",
             width: sidebarOpen && window.innerWidth > 768 ? "80%" : "100%",
             padding: "1rem",
+            backgroundColor: "#f2fcfb",
+            zIndex:"1",
           }}
         >
           <AppRoutes />

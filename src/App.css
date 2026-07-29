@@ -1,0 +1,30 @@
+.sidebar{
+    overflow-x:hidden;
+    transition: width 0.3s ease;
+    background-color:#fff;
+    height:calc(100vh - 60px);
+    position:fixed;
+    top:60px;
+    left:0;
+    z-index: 1000;
+}
+
+
+.sidebar.open{
+    width:20%;
+}
+
+
+.sidebar.close{
+    width:0;
+}
+
+
+/* Tablet / Mobile */
+@media(max-width:768px){
+
+    .sidebar.open{
+        width:50%;
+    }
+
+}

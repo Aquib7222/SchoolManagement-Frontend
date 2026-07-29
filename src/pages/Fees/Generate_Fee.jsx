@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 const Generate_Fee = () => {
   const [showInput, setShowInput] = useState(false);
@@ -18,7 +19,7 @@ const Generate_Fee = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:8080/api/students", {
+      const res = await axiosInstance.get("/api/students", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,7 +38,7 @@ const Generate_Fee = () => {
     try {
       setLoading(true);
 
-      const res = await axios.get("http://localhost:8080/api/students/search", {
+      const res = await axiosInstance.get("/api/students/search", {
         params: {
           academicYear: filters.session || null,
           studentClass: filters.standard || null,

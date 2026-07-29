@@ -208,11 +208,12 @@
 
 // export default AdmissionList;
 
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import axios from "../../api/axiosInstance";
 
 const AdmissionList = () => {
   const [admissionList, setAdmissionList] = useState([]);
@@ -233,7 +234,7 @@ const AdmissionList = () => {
 
     axios
       .get(
-        `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
+        `/api/admissions/school?schoolId=${user.schoolId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => {

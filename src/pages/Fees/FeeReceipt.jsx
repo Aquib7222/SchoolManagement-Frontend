@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 
 const FeeReceipt = () => {
   const { receiptNo } = useParams();
@@ -21,8 +22,8 @@ const FeeReceipt = () => {
   const loadReceipt = async () => {
     const token = localStorage.getItem("token");
 
-    const res = await fetch(
-      `http://localhost:8080/api/student-fee/payment/receipt/${receiptNo}`,
+    const res = await axiosInstance.get(
+      `/api/student-fee/payment/receipt/${receiptNo}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -40,8 +41,8 @@ const FeeReceipt = () => {
     }
 
     try {
-      await axios.delete(
-        `http://localhost:8080/api/student-fee/payment/receipt/${receiptNo}`,
+      await axiosInstance.delete(
+        `/api/student-fee/payment/receipt/${receiptNo}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

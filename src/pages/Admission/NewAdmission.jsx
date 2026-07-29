@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+
+import axios from "../../api/axiosInstance";
 
 const NewAdmission = () => {
   const [admissions, setAdmissions] = useState([]);
@@ -13,7 +14,7 @@ const NewAdmission = () => {
 
     axios
       .get(
-        `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
+        `/api/admissions/school?schoolId=${user.schoolId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       )
       .then((res) => setAdmissions(res.data))
@@ -22,14 +23,14 @@ const NewAdmission = () => {
 
   const updateStatus = async (id, status) => {
     await axios.put(
-      `http://localhost:8080/api/admissions/${id}/status`,
+      `/api/admissions/${id}/status`,
       { status }, // send as JSON body
       { headers: { Authorization: `Bearer ${token}` } },
     );
 
     // reload admissions
     const res = await axios.get(
-      `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
+      `/api/admissions/school?schoolId=${user.schoolId}`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
     setAdmissions(res.data);

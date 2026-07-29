@@ -15,6 +15,9 @@ body {
   .login-bg {
     background-position: center top;
   }
+  .sidebar{
+    width: 30%;
+  }
 }
 
 .green-btn {
@@ -332,3 +335,96 @@ body {
   max-width: 100%;
   object-fit: contain;
 }
+
+
+/* super dashboard admission details show  */
+/* 
+.erp-table-container{
+
+    overflow:hidden;
+
+}
+
+.erp-scroll{
+
+    height:165px;
+
+    overflow:hidden;
+
+    position:relative;
+
+}
+
+.erp-scroll table{
+
+    animation:erpTicker 20s linear infinite;
+
+}
+
+.erp-scroll:hover table{
+
+    animation-play-state:paused;
+
+}
+
+.erp-scroll tbody{
+
+    display:block;
+
+}
+
+.erp-scroll tr{
+
+    display:table;
+
+    width:100%;
+
+    table-layout:fixed;
+
+}
+
+.erp-scroll table{
+
+    width:100%;
+
+}
+
+thead{
+
+    display:table;
+
+    width:100%;
+
+    table-layout:fixed;
+
+}
+
+@keyframes erpTicker{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    100%{
+
+        transform:translateY(-50%);
+
+    }
+
+}
+
+.slick-slide{
+    padding:4px 0;
+}
+
+.slick-track{
+    display:flex !important;
+    flex-direction:column;
+}
+
+.card:hover{
+    transform:translateY(-2px);
+    transition:.3s;
+} */

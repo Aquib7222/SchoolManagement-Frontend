@@ -1,0 +1,236 @@
+/* .header-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex:1;
+}
+
+.school-logo{
+    width:150px;
+    height:55px;
+    object-fit:contain;
+    cursor:pointer;
+}
+
+.school-name h5{
+    margin:0;
+    font-size:20px;
+    font-weight:600;
+}
+
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    
+}
+
+.menu-icon{
+    font-size:24px;
+    cursor:pointer;
+}
+
+.profile-box{
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+}
+
+.profile-img{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.profile-user{
+    margin-left:8px;
+    font-weight:500;
+}
+.bar-school{
+    display: flex;
+    gap: 10px;
+    justify-content:start;
+}
+
+@media (max-width:992px){
+
+.school-logo{
+    width:110px;
+    height:42px;
+}
+
+.school-name h5{
+    font-size:17px;
+}
+
+.profile-user{
+    display:none;
+}
+
+.menu-icon{
+    font-size:22px;
+}
+
+}
+
+@media (max-width:768px){
+
+.school-logo{
+    width:85px;
+    height:35px;
+}
+
+.school-name{
+    flex:1;
+}
+
+.school-name h5{
+    font-size:15px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.profile-img{
+    width:30px;
+    height:30px;
+}
+
+.menu-icon{
+    font-size:20px;
+}
+
+.header-right{
+    gap:10px;
+}
+
+} */
+
+.header-left{
+    width: 20%;
+    display:flex;
+    align-items:center;
+}
+
+
+.school-logo{
+    width:150px;
+    height:55px;
+    object-fit:contain;
+    cursor:pointer;
+}
+
+
+.header-right{
+    width: 80%;
+    display:flex;
+    align-items:center;
+    gap:15px;
+    /* flex:1; */
+}
+
+
+
+.bar-school{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap:10px;
+}
+
+
+
+.menu-icon{
+    font-size:24px;
+    cursor:pointer;
+}
+
+
+
+.profile-box{
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    margin-left:auto;
+}
+
+
+.profile-img{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+
+.profile-user{
+    margin-left:8px;
+    font-weight:500;
+}
+
+
+.school-name{
+    margin:0;
+    font-size:20px;
+    font-weight:600;
+}
+
+
+@media (max-width:992px){
+
+.school-logo{
+    width:150px;
+    height:42px;
+}
+
+.school-name h5{
+    font-size:10px;
+}
+
+.profile-user{
+    display:none;
+}
+
+.menu-icon{
+    font-size:22px;
+}
+
+}
+
+@media (max-width:768px){
+
+.school-logo{
+    width:80px;
+    height:35px;
+}
+
+.school-name{
+    flex:1;
+    font-size: 15px;
+    margin-left: 20px;
+    
+}
+
+.school-name h5{
+    font-size:15px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.profile-img{
+    width:30px;
+    height:30px;
+}
+
+.menu-icon{
+    margin-left: 20px;
+    font-size:15px;
+}
+
+.header-right{
+    gap:10px;
+}
+
+} 

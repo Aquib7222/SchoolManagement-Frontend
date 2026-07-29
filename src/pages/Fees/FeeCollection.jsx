@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import { MdCurrencyRupee } from "react-icons/md";
+import axiosInstance from "../../api/axiosInstance";
 
 const FeeCollection = () => {
   const { admissionNumber } = useParams();
@@ -92,8 +93,8 @@ const FeeCollection = () => {
 
   const loadStudent = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/students/${admissionNumber}`,
+      const res = await axiosInstance.get(
+        `/api/students/${admissionNumber}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -113,8 +114,8 @@ const FeeCollection = () => {
 
   const loadSchedules = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/student-fee/schedule/${admissionNumber}`,
+      const res = await axiosInstance.get(
+        `/api/student-fee/schedule/${admissionNumber}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -153,6 +154,9 @@ const FeeCollection = () => {
   const totalAmount = schedules
     .filter((item) => selectedIds.includes(item.id))
     .reduce((sum, item) => sum + Number(item.dueAmount || 0), 0);
+
+    console.log("schedule",schedules);
+    console.log("total amount",totalAmount);
 
   // ==========================================
   // Collect Fee
@@ -222,8 +226,8 @@ const FeeCollection = () => {
         discountAmount: Number(discountAmount),
       };
 
-      const res = await axios.post(
-        "http://localhost:8080/api/student-fee/payment",
+      const res = await axiosInstance.post(
+        "/api/student-fee/payment",
         payload,
         {
           headers: {

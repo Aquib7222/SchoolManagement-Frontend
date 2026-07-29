@@ -4,12 +4,55 @@ import { TbLogout2 } from "react-icons/tb";
 import { VscThreeBars } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/icon/web_logo.png";
+import "./Header.css";
+import {
+  FaBell,
+  FaSearch,
+  FaMoon,
+  FaCog,
+  FaUserCircle,
+  FaEnvelope,
+} from "react-icons/fa";
 
 const Header = ({ toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [time, setTime] = useState("");
+  const [greeting, setGreeting] = useState("");
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const role = localStorage.getItem("role");
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+
+      setTime(
+        now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      );
+
+      const hour = now.getHours();
+
+      if (hour < 12) {
+        setGreeting("🌞 Good Morning");
+      } else if (hour < 17) {
+        setGreeting("☀ Good Afternoon");
+      } else if (hour < 21) {
+        setGreeting("🌇 Good Evening");
+      } else {
+        setGreeting("🌙 Good Night");
+      }
+    };
+
+    updateClock();
+
+    const interval = setInterval(updateClock, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));
   console.log("user", user);
@@ -44,11 +87,20 @@ const Header = ({ toggleSidebar }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // date
+  const today = new Date();
+
+  const formattedDate = today.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div style={{ position: "relative", width: "100%" }}>
       {/* Header Main Content */}
       <div
-        className="d-flex flex-wrap align-items-center px-4"
+        className="d-flex  align-items-center px-4"
         style={{
           width: "100%",
           height: "60px",
@@ -59,56 +111,34 @@ const Header = ({ toggleSidebar }) => {
         }}
       >
         {/* Left: Logo & Sidebar Toggle */}
-        <div
-          className="flex-grow-1 d-flex align-items-center justify-content-between"
-          style={{ flexBasis: "20%" }}
-        >
-          {/* <h4
-            className="m-2 m-md-0"
-            style={{ cursor: "pointer" }}
-            onClick={handleDashboard}
-          >
-            EduMatrix
-          </h4> */}
+        <div className="header-left">
+          
+
           <img
             src={logo}
-            alt=""
-            style={{ height: "60px", width: "150px", marginTop: "2px",cursor: "pointer" }}
+            alt="Logo"
+            className="school-logo"
             onClick={() => navigate("/")}
+          />
 
-          />
-          <VscThreeBars
-            size={22}
-            style={{ marginRight: "10px", cursor: "pointer" }}
-            onClick={toggleSidebar}
-          />
+          
         </div>
 
         {/* Right: School Name & Profile Dropdown */}
-        <div
-          className="d-flex align-items-center justify-content-between gap-3"
-          style={{ flexBasis: "80%" }}
-        >
-          <h5 className="m-0">{user?.school?.schoolName || "School Name"}</h5>
+        <div className="header-right">
 
-          <div style={{ cursor: "pointer" }} onClick={toggleDropdown}>
-            <div
-              className="d-flex align-items-center"
-              style={{ padding: "6px 12px" }}
-            >
-              <img
-                src={profilePic}
-                alt="Profile"
-                style={{
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "50%",
-                  objectFit: "cover",
-                  marginRight: "10px",
-                }}
-              />
-              <span style={{ fontWeight: "500" }}>{user?.name || "User"}</span>
-            </div>
+          <div className="bar-school">
+            <VscThreeBars className="menu-icon" onClick={toggleSidebar} />
+
+          <h5 className="school-name ">
+            {user?.school?.schoolName || "School Name"}
+          </h5>
+          </div>
+
+          <div className="profile-box" onClick={toggleDropdown}>
+            <img src={profilePic} alt="Profile" className="profile-img" />
+
+            <span className="profile-user">{user?.name || "User"}</span>
           </div>
 
           {/* Dropdown Menu */}
@@ -205,12 +235,14 @@ const Header = ({ toggleSidebar }) => {
           left: "20%",
           width: "80%",
           height: "8px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
+          // boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
           borderRadius: "4px",
           zIndex: 0,
         }}
       ></div>
     </div>
+
+
   );
 };
 

@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
@@ -51,6 +49,10 @@ import FeeReceipt from "./pages/Fees/FeeReceipt";
 import DailyFeeCollection from "./pages/Fees/Reports/DailyFeeCollection";
 import MonthlyFeeCollection from "./pages/Fees/Reports/MonthlyFeeCollection";
 import FeeCollectionSearch from "./pages/Fees/FeeCollectionSearch";
+import DeleteFeeReceipt from "./pages/Fees/DeleteFeeReceipt";
+import StudentSearch from "./pages/Search/StudentSearch";
+import TeacherSearch from "./pages/Search/TeacherSearch";
+import TeacherDetails from "./pages/Teacher/TeacherDetails";
 
 const AppRoutes = () => {
   return (
@@ -121,26 +123,23 @@ const AppRoutes = () => {
           element={<Fee_LedgerDetails />}
         />
 
-         <Route
-          path="/fee/feeCollection"
-          element={<FeeCollectionSearch />}
-        />
+        <Route path="/fee/feeCollection" element={<FeeCollectionSearch />} />
 
         <Route
           path="/fee/feeCollection/:admissionNumber"
           element={<FeeCollection />}
         />
 
-       
+        <Route path="/fee/delete_fee_receipt" element={<DeleteFeeReceipt />} />
 
         <Route path="/fee/receipt/:receiptNo" element={<FeeReceipt />} />
-        
-         <Route
+
+        <Route
           path="/fee/reports/daily_collection"
           element={<DailyFeeCollection />}
         />
 
-         <Route
+        <Route
           path="/fee/reports/monthly_collection"
           element={<MonthlyFeeCollection />}
         />
@@ -154,8 +153,16 @@ const AppRoutes = () => {
 
         {/* Teacher Route  */}
         <Route path="/teacher/list" element={<Teacher />} />
+        <Route
+          path="/teacher/profile/:employeeId"
+          element={<TeacherDetails />}
+        />
         <Route path="/teacher/add" element={<AddTeacher />} />
-        <Route path="/teacher/edit/:employeeId" element={<EditTeacher />} />
+        <Route
+          path="/teacher/edit-teacher/:employeeId"
+          element={<AddTeacher />}
+        />
+        {/* <Route path="/teacher/edit/:employeeId" element={<EditTeacher />} /> */}
         <Route path="/teacher/attendance" element={<TeacherAttendance />} />
         <Route
           path="/teacher/attendance_report"
@@ -163,6 +170,10 @@ const AppRoutes = () => {
         />
 
         {/* Teacher Route End here  */}
+
+        {/* Search Routes  */}
+        <Route path="/search/students" element={<StudentSearch />} />
+        <Route path="/search/teachers" element={<TeacherSearch />} />
       </Route>
 
       {/* Admin Dashboard */}

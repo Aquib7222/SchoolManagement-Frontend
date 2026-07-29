@@ -3,21 +3,6 @@ import { Link } from "react-router-dom";
 import { FaAngleDown } from "react-icons/fa";
 import { GoArrowRight, GoDot } from "react-icons/go";
 import { allMenuItems } from "./MenusData";
-// import banner from "../.././assets/icon/Login_banner.png";
-// import cogwheel from "../../assets/icon/cogwheel.png";
-// import school from "../../assets/icon/school.png";
-// import fee from "../../assets/icon/money.png";
-// import student from "../../assets/icon/man.png";
-// import teacher from "../../assets/icon/teacher.png";
-// import attendance from "../../assets/icon/attendance.png";
-// import search from "../../assets/icon/search.png";
-// import report from "../../assets/icon/health-check.png";
-// import library from "../../assets/icon/library.png";
-// import checklist from "../../assets/icon/checklist.png";
-// import bus from "../../assets/icon/bus-school.png";
-// import settings from "../../assets/icon/settings.png";
-// import sports from "../../assets/icon/Sports.png";
-// import tc from "../../assets/icon/TC.png";
 
 const images = import.meta.glob("../../assets/icon/*", {
   eager: true,
@@ -46,12 +31,11 @@ const iconMap = {
   FaSchool,
   FaMoneyBill,
   FaBook,
-  // FaMoneyBillWave,
-  // PiStudentFill,
-  // GiTeacher
+ 
 };
 
-import axios from "axios";
+
+import axios from "../../api/axiosInstance";
 
 const Sidebar_menu = () => {
   const storedUser = localStorage.getItem("role");
@@ -68,7 +52,7 @@ const Sidebar_menu = () => {
   const loadSidebar = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8080/api/school-mapping/sidebar",
+        "api/school-mapping/sidebar",
         {
           params: {
             schoolId,
@@ -86,6 +70,7 @@ const Sidebar_menu = () => {
       console.log(err);
     }
   };
+  
 
   // const allmenus = allMenuItems || {};
   const [allmenus, setAllMenus] = useState([]);
@@ -105,11 +90,10 @@ const Sidebar_menu = () => {
     }));
   };
 
-  // // Filter top-level menus by userRole
-  // const allowedItems = Object.entries(allmenus).filter(([_, menu]) =>
-  //   menu.userType?.includes(storedUser),
-  // );
-  const allowedItems = allmenus;
+
+  const allowedItems = [...allmenus].sort(
+  (a, b) => Number(a.sequenceNumber) - Number(b.sequenceNumber)
+);
 
   return (
     <div
@@ -120,11 +104,7 @@ const Sidebar_menu = () => {
         height: "100vh",
         width: "100%",
         fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
-        // backgroundImage:{banner},
-
-        //  backgroundImage: `url(${banner})`,
-        //  backgroundSize: "cover",
-        //  backgroundPosition: "top",
+       
         backgroundRepeat: "no-repeat",
         // backgroundColor: "#ecf1f7",
       }}
@@ -135,13 +115,7 @@ const Sidebar_menu = () => {
           padding: 0,
           margin: 0,
           marginBottom: "20px",
-          // flexGrow: 1,
-          // overflowY: "auto",
-          // // paddingLeft: "10px",
-          // // paddingRight: "10px",
-          // borderTop: "1px solid #ccc",
-          // borderBottom: "1px solid #ccc",
-          // backgroundColor: "#f9f9f9",
+          
         }}
       >
         {allowedItems.map((item, index) => {
@@ -249,111 +223,7 @@ const Sidebar_menu = () => {
                     borderRadius: "0 0 8px 8px",
                   }}
                 >
-                  {/* {item.subMenus.map((subItem) => {
-                      const isSubHovered = hoveredSubmenu === subItem.path;
-                     const hasSubSub =
-  Array.isArray(subItem.subSubMenu) &&
-  subItem.subSubMenu.length > 0;
-
-                      return (
-                        <li key={subItem.label} style={{ marginBottom: "6px" }}>
-                          {hasSubSub ? (
-                            <>
-                              <div
-                                onClick={() => toggleSubSubMenu(subItem.label)}
-                                // style={{
-                                //   borderRadius: "6px",
-                                //   cursor: "pointer",
-                                //   fontWeight: 400,
-                                //   display: "flex",
-                                //   justifyContent: "space-between",
-                                //   alignItems: "center",
-                                //   padding: "8px 40px",
-                                // }}
-                                style={{
-                                  display: "block",
-                                  padding: "10px 0px 0px 30px",
-                                  borderRadius: "6px",
-                                  color: isSubHovered ? "#0b57d0" : "#555",
-                                  textDecoration: "none",
-                                  fontWeight: 300,
-                                }}
-                              >
-                                <span>
-                                  <GoArrowRight />
-                                  {subItem.label}
-                                </span>
-                                <FaAngleDown
-                                  style={{
-                                    transform: expandedSubSubMenu[subItem.label]
-                                      ? "rotate(180deg)"
-                                      : "rotate(0deg)",
-                                    transition: "transform 0.3s",
-                                  }}
-                                />
-                              </div>
-                              <ul
-                                style={{
-                                  listStyle: "none",
-                                  paddingLeft: "45px",
-                                  marginTop: "5px",
-                                  display: expandedSubSubMenu[subItem.label]
-                                    ? "block"
-                                    : "none",
-                                }}
-                              >
-                                {subItem.subSubMenu.map((subSub) => (
-                                    <li key={subSub.path}>
-                                      <Link
-                                        to={subSub.path}
-                                        style={{
-                                          display: "block",
-                                          padding: "8px 0px",
-                                          borderRadius: "5px",
-                                          fontSize: "14px",
-                                          color:
-                                            hoveredSubmenu === subSub.path
-                                              ? "#0b57d0"
-                                              : "#555",
-                                          textDecoration: "none",
-                                        }}
-                                        onMouseEnter={() =>
-                                          setHoveredSubmenu(subSub.path)
-                                        }
-                                        onMouseLeave={() =>
-                                          setHoveredSubmenu(null)
-                                        }
-                                      >
-                                        <GoDot />
-                                        {subSub.label}
-                                      </Link>
-                                    </li>
-                                  ))}
-                              </ul>
-                            </>
-                          ) : (
-                            <Link
-                              to={subItem.path}
-                              style={{
-                                display: "block",
-                                padding: "10px 0px 0px 30px",
-                                borderRadius: "6px",
-                                color: isSubHovered ? "#0b57d0" : "#555",
-                                textDecoration: "none",
-                                fontWeight: 300,
-                              }}
-                              onMouseEnter={() =>
-                                setHoveredSubmenu(subItem.path)
-                              }
-                              onMouseLeave={() => setHoveredSubmenu(null)}
-                            >
-                              <GoArrowRight /> {subItem.label}
-                            </Link>
-                          )}
-                        </li>
-                      );
-                    })} */}
-
+ 
                   {item.subMenus.map((subItem) => {
                     const isSubHovered = hoveredSubmenu === subItem.path;
 

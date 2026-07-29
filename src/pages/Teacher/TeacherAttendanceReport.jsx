@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import axiosInstance from "../../api/axiosInstance";
 
 const TeacherAttendanceReport = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -20,9 +21,9 @@ const TeacherAttendanceReport = () => {
   useEffect(() => {
     if (!schoolId) return;
 
-    axios
+    axiosInstance
       .get(
-        `http://localhost:8080/api/teacher-attendance/monthly?schoolId=${schoolId}&month=${month}`
+        `/api/teacher-attendance/monthly?schoolId=${schoolId}&month=${month}`
       )
       .then(res => setReportData(res.data))
       .catch(err => console.error(err));

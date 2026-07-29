@@ -1508,8 +1508,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
+import axios from "../../api/axiosInstance";
 
 const MONTHS = [
   "April",
@@ -1573,7 +1574,7 @@ console.log("student",student);
     if (!schoolId || !token) return;
 
     axios
-      .get(`http://localhost:8080/api/admissions/school?schoolId=${schoolId}`, {
+      .get(`/api/admissions/school?schoolId=${schoolId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -1602,7 +1603,7 @@ console.log("student",student);
 
     try {
       const res = await axios.get(
-        "http://localhost:8080/api/admission-fee/get",
+        "/api/admission-fee/get",
         {
           params: {
             schoolId,
@@ -1691,7 +1692,7 @@ transportFee: { amount: 0, discount: 0 },
     if (!student || !formData.session || !formData.standard) return;
 
     axios
-      .get("http://localhost:8080/api/admission-fee/check", {
+      .get("/api/admission-fee/check", {
         params: {
           admissionNumber: student.admissionNumber,
           session: formData.session,
@@ -1732,7 +1733,7 @@ transportFee: { amount: 0, discount: 0 },
 
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/admission-fee/pay",
+        "/api/admission-fee/pay",
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },

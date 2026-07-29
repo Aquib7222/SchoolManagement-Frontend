@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft, FaPrint } from "react-icons/fa";
 import { MdCurrencyRupee } from "react-icons/md";
+import axiosInstance from "../../api/axiosInstance";
 
 const Fee_LedgerDetails = () => {
   const { admissionNumber } = useParams();
@@ -81,8 +82,8 @@ const Fee_LedgerDetails = () => {
 
   const loadStudent = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/students/${admissionNumber}`,
+      const res = await axiosInstance.get(
+        `/api/students/${admissionNumber}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,8 +106,8 @@ const Fee_LedgerDetails = () => {
 
   const loadLedger = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/student-fee/schedule/${admissionNumber}`,
+      const res = await axiosInstance.get(
+        `/api/student-fee/schedule/${admissionNumber}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -131,8 +132,8 @@ const Fee_LedgerDetails = () => {
 
   const loadReceipts = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/student-fee/payment/history/${admissionNumber}`,
+      const res = await axiosInstance.get(
+        `/api/student-fee/payment/history/${admissionNumber}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
