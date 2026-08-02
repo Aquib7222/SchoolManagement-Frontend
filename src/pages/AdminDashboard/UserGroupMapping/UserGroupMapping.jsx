@@ -39,11 +39,14 @@ const UserGroupMapping = () => {
     try {
       const res = await axios.get("http://localhost:8080/api/module/all");
 
-      setModules(res.data.filter((m) => m.hasMenu === true));
+      // setModules(res.data.filter((m) => m.hasMenu === true));
+      setModules(res.data);
     } catch (err) {
       console.log(err);
     }
   };
+  console.log("Modules in usergroup",modules);
+  console.log("mappings",mappings);
 
   const loadUserGroups = async () => {
     try {

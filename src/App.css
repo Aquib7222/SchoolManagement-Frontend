@@ -28,3 +28,38 @@
     }
 
 }
+
+/* //new account creates  */
+.account-slip{
+    font-size:13px;
+    line-height:1.25;
+}
+
+.account-slip p{
+    margin-bottom:4px;
+}
+
+.account-slip .card{
+    margin-bottom:8px !important;
+}
+
+.account-slip .card-header{
+    padding:8px 12px;
+}
+
+.account-slip .card-body{
+    padding:10px 12px !important;
+}
+
+.account-slip h1{
+    font-size:26px;
+}
+
+.account-slip h3{
+    font-size:20px;
+}
+
+.account-slip h5,
+.account-slip h6{
+    margin-bottom:4px;
+}

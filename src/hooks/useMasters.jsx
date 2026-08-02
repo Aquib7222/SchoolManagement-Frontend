@@ -13,6 +13,8 @@ const useMasters = () => {
   const [teacherDesignation,setTeacherDesignation] =useState([]);
   const [teacherDepartment,setTeacherDepartment] = useState([]);
   const [teacherCategory,setTeacherCategory] = useState([]);
+  const [attendanceStatus,setAttendanceStatus] = useState([]);
+  const [month,setMonth] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -37,6 +39,8 @@ const useMasters = () => {
         teacherDesignationRes,
         teacherDepartmentRes,
         teacherCategoryRes,
+        attendanceStatusRes,
+        monthRes,
       ] = await Promise.all([
         axios.get("api/master/sessions", { headers }),
         axios.get("api/master/standard", { headers }),
@@ -46,6 +50,8 @@ const useMasters = () => {
         axios.get("api/master/teacherDesignation", { headers }),
         axios.get("api/master/teacherDepartment", { headers }),
         axios.get("api/master/teacherCategory", { headers }),
+        axios.get("api/master/attendanceStatus", { headers }),
+        axios.get("api/master/month", { headers }),
       ]);
 
       setSessions(sessionRes.data);
@@ -56,6 +62,8 @@ const useMasters = () => {
       setTeacherDesignation(teacherDesignationRes.data);
       setTeacherDepartment(teacherDepartmentRes.data);
       setTeacherCategory(teacherCategoryRes.data);
+      setAttendanceStatus(attendanceStatusRes.data);
+      setMonth(monthRes.data);
 
     } catch (error) {
       console.log(error);
@@ -75,6 +83,8 @@ const useMasters = () => {
     teacherCategory,
     teacherDepartment,
     teacherDesignation,
+    attendanceStatus,
+    month,
   };
 };
 

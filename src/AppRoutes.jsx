@@ -53,6 +53,13 @@ import DeleteFeeReceipt from "./pages/Fees/DeleteFeeReceipt";
 import StudentSearch from "./pages/Search/StudentSearch";
 import TeacherSearch from "./pages/Search/TeacherSearch";
 import TeacherDetails from "./pages/Teacher/TeacherDetails";
+import MarkAttendance from "./pages/Attendance/Student/MarkAttendance";
+import AttendanceView from "./pages/Attendance/Student/AttendanceView";
+import DailyAttendanceReport from "./pages/Attendance/Student/DailyAttendanceReport";
+import MonthlyAttendanceReport from "./pages/Attendance/Student/MonthlyAttendanceReport";
+import AdmissionNewAccounts from "./pages/Admission/AdmissionNewAccounts";
+import ConfirmAdmissionReport from "./pages/Admission/ConfirmAdmissionReport";
+import SectionShuffling from "./pages/Setup/SectionShuffling";
 
 const AppRoutes = () => {
   return (
@@ -69,6 +76,7 @@ const AppRoutes = () => {
         {/* setup  */}
         <Route path="/setup/admission_fee" element={<Admission_Fee_Setup />} />
         <Route path="/setup/section_assign" element={<SectionAssign />} />
+        <Route path="/setup/section_shuffling" element={<SectionShuffling />} />
 
         {/* setup  */}
 
@@ -94,6 +102,8 @@ const AppRoutes = () => {
           element={<AdmissionFeeReceipt />}
         />
         <Route path="/admission/create_accounts" element={<CreateAccounts />} />
+         <Route path="/admission/new_accounts" element={<AdmissionNewAccounts />} />
+          <Route path="/admission/confirm_admission_report" element={<ConfirmAdmissionReport />} />
 
         {/* Fee Structure Route */}
         <Route
@@ -174,6 +184,14 @@ const AppRoutes = () => {
         {/* Search Routes  */}
         <Route path="/search/students" element={<StudentSearch />} />
         <Route path="/search/teachers" element={<TeacherSearch />} />
+
+        {/* Attendance  */}
+
+        {/* student  */}
+        <Route path="/attendance/student/mark" element={<MarkAttendance/>}/>
+        <Route path="/attendance/student/view" element={<AttendanceView/>}/>
+        <Route path="/attendance/student/daily_attendance" element={<DailyAttendanceReport/>}/>
+        <Route path="/attendance/student/monthly_report" element={<MonthlyAttendanceReport/>}/>
       </Route>
 
       {/* Admin Dashboard */}

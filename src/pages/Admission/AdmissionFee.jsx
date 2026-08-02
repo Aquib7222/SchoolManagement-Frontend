@@ -1511,6 +1511,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
 import axios from "../../api/axiosInstance";
+import useMasters from "../../hooks/useMasters";
 
 const MONTHS = [
   "April",
@@ -1538,6 +1539,7 @@ const Admission_Fee = () => {
   const [visibleMonths, setVisibleMonths] = useState(["April"]);
   const [student, setStudent] = useState(null);
   const [admissionStudent, setAdmissionStudent] = useState([]);
+  const { sessions, standards } = useMasters();
 
   useEffect(() => {
   if (!student) return;
@@ -1568,6 +1570,9 @@ console.log("student",student);
   const [showPaymentMode, setShowPaymentMode] = useState(false);
   const [paymentMode, setPaymentMode] = useState("");
   const [feeAlreadyPaid, setFeeAlreadyPaid] = useState(false); // top-level hook
+  const [admissionFees,setAdmissionFee] = useState([]);
+
+  
 
   /* ---------------- LOAD ADMISSION STUDENTS ---------------- */
   useEffect(() => {
@@ -1838,9 +1843,11 @@ transportFee: { amount: 0, discount: 0 },
               // disabled
             >
               <option value="">Select</option>
-              <option value="2026-27">2026-27</option>
-              <option value="2025-26">2025-26</option>
-              <option value="2024-25">2024-25</option>
+             {sessions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
           </div>
           <div className="col-md-4">
@@ -1853,24 +1860,10 @@ transportFee: { amount: 0, discount: 0 },
               // disabled
             >
               <option value="">Select</option>
-              {[
-                "NURSERY",
-                "LKG",
-                "UKG",
-                "I",
-                "II",
-                "III",
-                "IV",
-                "V",
-                "VI",
-                "VII",
-                "VIII",
-                "IX",
-                "X",
-                "XI",
-                "XII",
-              ].map((c) => (
-                <option key={c}>{c}</option>
+             {standards.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
           </div>

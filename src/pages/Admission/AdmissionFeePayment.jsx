@@ -1,21 +1,21 @@
-
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import axios from "../../api/axiosInstance";
 
 const AdmissionFeePayment = () => {
+  const navigate = useNavigate();
+  const {standards, sessions} = useMasters();
 
-const navigate = useNavigate();
-
-const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
+  const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
   const [payments, setPayments] = useState({});
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const receiptRef = useRef(null);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("AdmissionFeePayments")) || {};
+    const stored =
+      JSON.parse(localStorage.getItem("AdmissionFeePayments")) || {};
     setPayments(stored);
   }, []);
 
@@ -40,10 +40,8 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
   };
 
   const [StudentData, setStudentData] = useState([]);
-//   const [search, setSearch] = useState("");
+  //   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-
-  
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
@@ -54,14 +52,13 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
     setLoading(true);
 
     axios
-      .get(
-        `/api/admissions/school?schoolId=${user.schoolId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      .get(`/api/admissions/school?schoolId=${user.schoolId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
-        console.log("approved admission",res);
+        console.log("approved admission", res);
         const approved = (res.data || []).filter(
-          (item) => item.status === "APPROVED"
+          (item) => item.status === "APPROVED",
         );
         setStudentData(approved);
       })
@@ -69,7 +66,7 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
       .finally(() => setLoading(false));
   }, [user?.schoolId, token]);
 
-  console.log("setStudentData",StudentData);
+  console.log("setStudentData", StudentData);
 
   const handlePrintReceipt = () => {
     if (receiptRef.current) {
@@ -98,7 +95,8 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
 
   const handleExportToExcel = () => {
     const exportData = Object.entries(payments).map(([admNo, payment]) => {
-      const student = StudentData.find((s) => s.admissionNumber === admNo) || {};
+      const student =
+        StudentData.find((s) => s.admissionNumber === admNo) || {};
       return {
         "Admission No": admNo,
         "Student Name": `${student.firstName || ""} ${student.middleName || ""} ${student.lastName || ""}`,
@@ -129,19 +127,20 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
       }
       return acc;
     },
-    { paidCount: 0, unpaidCount: 0, totalPaid: 0 }
+    { paidCount: 0, unpaidCount: 0, totalPaid: 0 },
   );
 
   const filteredStudents = StudentData.filter((student) => {
-    const fullName = `${student.firstName} ${student.middleName || ""} ${student.lastName}`.toLowerCase();
+    const fullName =
+      `${student.firstName} ${student.middleName || ""} ${student.lastName}`.toLowerCase();
     const admissionNo = student.admissionNumber?.toLowerCase() || "";
     return fullName.includes(searchTerm) || admissionNo.includes(searchTerm);
   });
 
   return (
     <>
-    <div
-              className="row shadow"
+      <div
+        className="row shadow"
         style={{
           backgroundColor: "white",
           margin: "10px",
@@ -185,7 +184,10 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
               />
             </div>
             <div className="col-md-6 text-end">
-              <button className="btn btn-outline-success" onClick={handleExportToExcel}>
+              <button
+                className="btn btn-outline-success"
+                onClick={handleExportToExcel}
+              >
                 Export to Excel
               </button>
             </div>
@@ -222,7 +224,7 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
                   <th>Class</th>
                   <th>Father Name</th>
                   <th>Mobile No</th>
-                  
+
                   <th>Action</th>
                 </tr>
               </thead>
@@ -236,14 +238,9 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
                       <td>{`${student.firstName} ${student.middleName || ""} ${student.lastName}`}</td>
                       <td>{admNo}</td>
                       <td>{student.studentClass || "-"}</td>
-                      <td>
-                       {student.fatherName}
-                      </td>
-                      <td>
-                       {student.preferredNo
-}
-                      </td>
-                   
+                      <td>{student.fatherName}</td>
+                      <td>{student.preferredNo}</td>
+
                       <td>
                         {/* <button className="btn btn-sm btn-success me-1" onClick={() => handleSave(admNo)}>Save</button>
                         {feeData.status === "Paid" && (
@@ -254,8 +251,12 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
                             Print
                           </button>
                         )} */}
-                      <button className="btn btn-success" onClick={()=>handleNavigate(student.id)}>Pay Admission Fee</button>
-                      
+                        <button
+                          className="btn btn-success"
+                          onClick={() => handleNavigate(student.id)}
+                        >
+                          Pay Admission Fee
+                        </button>
                       </td>
                     </tr>
                   );
@@ -279,13 +280,28 @@ const handleNavigate = (id) => navigate(`/admission/fee/${id}`);
             <h2>Jamia Public School</h2>
             <div className="line" />
             <h4>Fee Payment Receipt</h4>
-            <p><strong>Receipt No:</strong> {selectedReceipt.receiptNo}</p>
-            <p><strong>Name:</strong> {selectedReceipt.firstName} {selectedReceipt.middleName} {selectedReceipt.lastName}</p>
-            <p><strong>Admission No:</strong> {selectedReceipt.admissionNumber}</p>
-            <p><strong>Class:</strong> {selectedReceipt.class}</p>
-            <p><strong>Amount Paid:</strong> ₹ {selectedReceipt.amount}</p>
-            <p><strong>Payment Date:</strong> {selectedReceipt.date}</p>
-            <p><strong>Mode:</strong> {selectedReceipt.mode}</p>
+            <p>
+              <strong>Receipt No:</strong> {selectedReceipt.receiptNo}
+            </p>
+            <p>
+              <strong>Name:</strong> {selectedReceipt.firstName}{" "}
+              {selectedReceipt.middleName} {selectedReceipt.lastName}
+            </p>
+            <p>
+              <strong>Admission No:</strong> {selectedReceipt.admissionNumber}
+            </p>
+            <p>
+              <strong>Class:</strong> {selectedReceipt.class}
+            </p>
+            <p>
+              <strong>Amount Paid:</strong> ₹ {selectedReceipt.amount}
+            </p>
+            <p>
+              <strong>Payment Date:</strong> {selectedReceipt.date}
+            </p>
+            <p>
+              <strong>Mode:</strong> {selectedReceipt.mode}
+            </p>
             <div className="line" />
             <p>Signature: ___________________</p>
           </div>

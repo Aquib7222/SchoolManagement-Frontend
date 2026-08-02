@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import useMasters from "../../hooks/useMasters";
 
 const Admission_Fee_Setup = () => {
+  const {sessions,standards} = useMasters();
 
   const user = JSON.parse(localStorage.getItem("user")); 
   // user must contain schoolId
@@ -118,8 +120,9 @@ const Admission_Fee_Setup = () => {
                 required
               >
                 <option value="">Select</option>
-                <option value="2025-26">2025-26</option>
-                <option value="2024-25">2024-25</option>
+                {sessions.map((item)=>(
+                  <option key={item} value={item}>{item}</option>
+                ))}
               </select>
             </div>
 
@@ -133,15 +136,15 @@ const Admission_Fee_Setup = () => {
                 required
               >
                 <option value="">Select</option>
-                {["NURSERY","LKG","UKG","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"]
-                  .map(std => (
-                    <option key={std} value={std}>{std}</option>
-                  ))}
+                {standards.map((item)=>(
+                  <option key={item} value={item}>{item}</option>
+                ))}
               </select>
             </div>
           </div>
 
           {/* Fee Fields */}
+           <div className="row mt-2" key={name}>
           {[
             ["annualCharges","Annual Charges"],
             ["examCharges","Examination Charges"],
@@ -154,8 +157,8 @@ const Admission_Fee_Setup = () => {
             ["registrationFee","Registration Fee"],
             ["securityMoney","Security Money"],
           ].map(([name,label]) => (
-            <div className="row mt-2" key={name}>
-              <div className="col-md-4">
+           
+              <div className="col-md-4" key={name}>
                 <label>{label}</label>
                 <input
                   name={name}
@@ -165,9 +168,9 @@ const Admission_Fee_Setup = () => {
                   required
                 />
               </div>
-            </div>
+            
           ))}
-
+</div>
           <button className="btn btn-success mt-4">Save Fee</button>
         </form>
       </div>

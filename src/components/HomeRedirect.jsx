@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Dashboard from "../pages/AdminDashboard/Dashboard";
 import SuperDashboard from "../pages/Dashboard/SuperDashboard";
+import TeacherDashboard from "../pages/Dashboard/TeacherDashboard";
 
 const HomeRedirect = () => {
   const { auth } = useAuth();
@@ -16,6 +17,10 @@ const HomeRedirect = () => {
 
   if (auth.role === "SUPERADMIN") {
     return <SuperDashboard />;
+  }
+
+  if(auth.role === "TEACHER"){
+    return <TeacherDashboard />;
   }
 
   return <Navigate to="/login" replace />;
