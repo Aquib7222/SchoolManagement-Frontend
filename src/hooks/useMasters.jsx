@@ -15,7 +15,10 @@ const useMasters = () => {
   const [teacherCategory,setTeacherCategory] = useState([]);
   const [attendanceStatus,setAttendanceStatus] = useState([]);
   const [month,setMonth] = useState([]);
-
+  const [assessmentNature,setAssessmentNature] = useState([]);
+  const [examTermType,setExamTermType] = useState([]);
+  const [subjectType,setSubjectType] = useState([]);
+  const [subjectCategory,setSubjectCategory] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -41,6 +44,10 @@ const useMasters = () => {
         teacherCategoryRes,
         attendanceStatusRes,
         monthRes,
+        assessmentNatureRes,
+        examTermTypeRes,
+        subjectTypeRes,
+        subjectCategoryRes,
       ] = await Promise.all([
         axios.get("api/master/sessions", { headers }),
         axios.get("api/master/standard", { headers }),
@@ -52,6 +59,10 @@ const useMasters = () => {
         axios.get("api/master/teacherCategory", { headers }),
         axios.get("api/master/attendanceStatus", { headers }),
         axios.get("api/master/month", { headers }),
+        axios.get("api/master/assessment/nature", { headers }),
+        axios.get("api/master/exam-type", { headers }),
+         axios.get("api/master/subject-type", { headers }),
+         axios.get("api/master/subject-category", { headers }),
       ]);
 
       setSessions(sessionRes.data);
@@ -64,7 +75,10 @@ const useMasters = () => {
       setTeacherCategory(teacherCategoryRes.data);
       setAttendanceStatus(attendanceStatusRes.data);
       setMonth(monthRes.data);
-
+      setAssessmentNature(assessmentNatureRes.data);
+      setExamTermType(examTermTypeRes.data);
+      setSubjectType(subjectTypeRes.data);
+      setSubjectCategory(subjectCategoryRes.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -85,6 +99,10 @@ const useMasters = () => {
     teacherDesignation,
     attendanceStatus,
     month,
+    assessmentNature,
+    examTermType,
+    subjectType,
+    subjectCategory,
   };
 };
 

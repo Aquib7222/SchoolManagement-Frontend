@@ -60,6 +60,17 @@ import MonthlyAttendanceReport from "./pages/Attendance/Student/MonthlyAttendanc
 import AdmissionNewAccounts from "./pages/Admission/AdmissionNewAccounts";
 import ConfirmAdmissionReport from "./pages/Admission/ConfirmAdmissionReport";
 import SectionShuffling from "./pages/Setup/SectionShuffling";
+import AssessmentSetup from "./pages/Assessment/AssessmentSetup";
+
+import AddAssessmentType from "./pages/Assessment/AddAssessmentType";
+import AssessmentType from "./pages/Assessment/AssessmentType";
+import AssessmentNature from "./pages/Assessment/AssessmentNature";
+import AssessmentCategory from "./pages/Assessment/AssessmentCategory";
+import AddAssessmentCategory from "./pages/Assessment/AddAssessmentCategory";
+import AddAssessmentExam from "./pages/Assessment/AddAssessmentExam";
+import ExamTermManagement from "./pages/Assessment/ExamTermManagement";
+import SubjectMaster from "./pages/Assessment/SubjectManagement/SubjectMaster";
+import ClassSubjectMapping from "./pages/Assessment/SubjectManagement/ClassSubjectMapping";
 
 const AppRoutes = () => {
   return (
@@ -192,6 +203,19 @@ const AppRoutes = () => {
         <Route path="/attendance/student/view" element={<AttendanceView/>}/>
         <Route path="/attendance/student/daily_attendance" element={<DailyAttendanceReport/>}/>
         <Route path="/attendance/student/monthly_report" element={<MonthlyAttendanceReport/>}/>
+
+        {/* Assessment module  */}
+        <Route path="/assessment/setup" element={<AssessmentSetup/>}/>
+        <Route path="/assessment/type" element={<AssessmentType/>}/>
+        <Route path="/assessment/add/type" element={<AddAssessmentType/>}/>
+        <Route path="/assessment/nature" element={<AssessmentNature/>}/>
+        <Route path="/assessment/category" element={<AssessmentCategory/>}/>
+        <Route path="/assessment/add/category" element={<AddAssessmentCategory/>}/>
+        <Route path="/assessment/exam-term" element={<ExamTermManagement/>}/>
+        <Route path="/assessment/add/exam" element={<AddAssessmentExam/>}/>
+
+        <Route path="/assessment/subject-management/master" element={<SubjectMaster/>}/>
+        <Route path="/assessment/subject-management/class-subject/mapping" element={<ClassSubjectMapping/>}/>
       </Route>
 
       {/* Admin Dashboard */}

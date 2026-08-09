@@ -519,7 +519,7 @@ const AdmissionNewAccounts = () => {
                         }}
                         src={selectedStudent.photo}
                         alt="Student Photo"
-                        className="img-fluid"
+                        
                       />
                     </div>
                   </div>

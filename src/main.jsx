@@ -8,14 +8,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import { StudentProvider } from "./context/StudentContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <StudentProvider>
         <Routes>
           <Route path="/*" element={<App />}></Route>
         </Routes>
+        </StudentProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
