@@ -354,7 +354,7 @@ import {
 } from "react-icons/fa";
 
 import banner from "../assets/icon/Login_banner.png";
-import logo from "../assets/icon/web_logo.png";
+import logo from "../assets/icon/zyntaks.png";
 import { useAuth } from "../context/AuthContext";
 import axios from "../api/axiosInstance";
 
@@ -430,7 +430,7 @@ const Login = () => {
 
             <h1>
               Welcome to
-              <span> SkoolMint ERP</span>
+              <span> ZYNTaks Education</span>
             </h1>
 
             <p>

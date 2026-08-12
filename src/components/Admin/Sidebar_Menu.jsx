@@ -42,6 +42,12 @@ const Sidebar_menu = () => {
   const token = localStorage.getItem("token");
   const schoolId = localStorage.getItem("schoolId");
   const groupId = localStorage.getItem("userGroupId");
+  const [allmenus, setAllMenus] = useState([]);
+  const [expandedMenu, setExpandedMenu] = useState(null);
+  const [expandedSubSubMenu, setExpandedSubSubMenu] = useState({});
+  const [hoveredMenu, setHoveredMenu] = useState(null);
+  const [hoveredSubmenu, setHoveredSubmenu] = useState(null);
+
   console.log("role", storedUser);
 
   useEffect(() => {
@@ -70,15 +76,12 @@ const Sidebar_menu = () => {
       console.log(err);
     }
   };
+
+  console.log("update sidebar",allmenus);
   
 
   // const allmenus = allMenuItems || {};
-  const [allmenus, setAllMenus] = useState([]);
-  const [expandedMenu, setExpandedMenu] = useState(null);
-  const [expandedSubSubMenu, setExpandedSubSubMenu] = useState({});
-  const [hoveredMenu, setHoveredMenu] = useState(null);
-  const [hoveredSubmenu, setHoveredSubmenu] = useState(null);
-
+  
   const toggleMenu = (menuKey) => {
     setExpandedMenu((prev) => (prev === menuKey ? null : menuKey));
   };

@@ -33,12 +33,16 @@ const Greetings = () => {
     <>
       <div className="container-fluid mb-1">
         <h6>{greeting}</h6>
-        <div className="d-flex justify-content-between">
-          <small>
-            Welcome Back , <strong>{user.name}</strong>
-          </small>
+        <div className="">
+          
+            <h5>
+            Welcome Back , <strong>{user.name}!</strong>
+          </h5>
+          <small>Here's what happening with your system Today</small>
 
-          <h6 className="text-end">{time}</h6>
+          
+
+          {/* <h6 className="text-end">{time}</h6> */}
         </div>
       </div>
     </>

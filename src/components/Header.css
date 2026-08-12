@@ -111,14 +111,18 @@
     width: 20%;
     display:flex;
     align-items:center;
+    justify-content: left;
 }
 
 
 .school-logo{
-    width:150px;
-    height:55px;
+    width:400px;
+    height:100px;
     object-fit:contain;
     cursor:pointer;
+    margin-top: 10px;
+    margin-left: 0px;
+    
 }
 
 

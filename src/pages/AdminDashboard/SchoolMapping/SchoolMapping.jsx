@@ -188,29 +188,41 @@ const SchoolMapping = () => {
   const handleSave = async () => {
     try {
       const payload = createPermissionPayload(
-        selectedSchool,
-        selectedGroup,
+        Number(selectedSchool),
+        Number(selectedGroup),
         checkedModules,
         checkedMenus,
         checkedSubMenus,
       );
-      console.log("Selected Group =", selectedGroup);
-console.log("Payload =", payload);
 
-      await axios.post(
+      console.log("Selected School =", selectedSchool);
+      console.log("Selected Group =", selectedGroup);
+      console.log("Payload =", JSON.stringify(payload, null, 2));
+
+      const response = await axios.post(
         "http://localhost:8080/api/school-mapping/save",
         payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         },
       );
 
+      console.log("Save Response =", response.data);
+
       alert("School Mapping Saved Successfully");
     } catch (err) {
-      console.log(err);
-      alert("Unable to save mapping");
+      console.error("SAVE ERROR =", err);
+      console.error("STATUS =", err.response?.status);
+      console.error("DATA =", err.response?.data);
+
+      alert(
+        err.response?.data ||
+          err.response?.data?.message ||
+          "Unable to save mapping",
+      );
     }
   };
 
@@ -248,10 +260,12 @@ console.log("Payload =", payload);
             <div className="row ">
               <div className="col-md-3">
                 <select
+                  value={selectedSchool || ""}
                   onChange={(e) => setSelectedSchool(e.target.value)}
                   className="form-select"
                 >
-                  <option>Select School</option>
+                  <option value="">Select School</option>
+
                   {schools.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.schoolName}
@@ -261,11 +275,13 @@ console.log("Payload =", payload);
               </div>
               <div className="col-md-3">
                 <select
+                  value={selectedGroup || ""}
                   disabled={!selectedSchool}
                   onChange={(e) => setSelectedGroup(e.target.value)}
                   className="form-select"
                 >
-                  <option>Select User Group</option>
+                  <option value="">Select User Group</option>
+
                   {userGroups.map((g) => (
                     <option key={g.id} value={g.id}>
                       {g.groupName}

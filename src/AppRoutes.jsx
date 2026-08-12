@@ -71,6 +71,9 @@ import AddAssessmentExam from "./pages/Assessment/AddAssessmentExam";
 import ExamTermManagement from "./pages/Assessment/ExamTermManagement";
 import SubjectMaster from "./pages/Assessment/SubjectManagement/SubjectMaster";
 import ClassSubjectMapping from "./pages/Assessment/SubjectManagement/ClassSubjectMapping";
+import AddAssessmentStructure from "./pages/Assessment/AssessmentStructure/AddAssessmentStructure";
+import ViewAssessmentStructure from "./pages/Assessment/AssessmentStructure/ViewAssessmentStructure";
+import GradeManagement from "./pages/Assessment/GradeManagement";
 
 const AppRoutes = () => {
   return (
@@ -216,6 +219,11 @@ const AppRoutes = () => {
 
         <Route path="/assessment/subject-management/master" element={<SubjectMaster/>}/>
         <Route path="/assessment/subject-management/class-subject/mapping" element={<ClassSubjectMapping/>}/>
+
+        <Route path="/assessment/add/structure" element={<AddAssessmentStructure/>}/>
+         <Route path="/assessment/view/structure" element={<ViewAssessmentStructure/>}/>
+
+         <Route path="/assessment/grade-management" element={<GradeManagement/>}/>
       </Route>
 
       {/* Admin Dashboard */}

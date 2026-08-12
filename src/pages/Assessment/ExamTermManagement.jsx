@@ -8,7 +8,7 @@ import { MdAssessment, MdErrorOutline, MdModeEdit } from "react-icons/md";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { VscThreeBars } from "react-icons/vsc";
-import UX from "../../assets/icon/schedule.png";
+import UX from "../../assets/icon/ux.png";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";

@@ -45,8 +45,8 @@ const UserGroupMapping = () => {
       console.log(err);
     }
   };
-  console.log("Modules in usergroup",modules);
-  console.log("mappings",mappings);
+  console.log("Modules in usergroup", modules);
+  console.log("mappings", mappings);
 
   const loadUserGroups = async () => {
     try {
@@ -275,118 +275,110 @@ const UserGroupMapping = () => {
               </div>
             </div>
 
-            
-
             {/* Permission Tree */}
 
-            
-              <div className="mt-3">
-                <h5 className="text-primary mb-3">Module Permissions</h5>
+            <div className="mt-3">
+              <h5 className="text-primary mb-3">Module Permissions</h5>
 
-                {menus.map((menu) => (
-                  <div
-                    key={menu.id}
-                    className="card mb-3 border-primary shadow-sm"
-                  >
-                    <div className="card-header bg-light">
-                      <div className="form-check">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          id={`menu_${menu.id}`}
-                          checked={selectedMenus.includes(menu.id)}
-                          onChange={(e) => {
-                            let selected = [...selectedMenus];
+              {menus.map((menu) => (
+                <div
+                  key={menu.id}
+                  className="card mb-3 border-primary shadow-sm"
+                >
+                  <div className="card-header bg-light">
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id={`menu_${menu.id}`}
+                        checked={selectedMenus.includes(menu.id)}
+                        onChange={(e) => {
+                          let selected = [...selectedMenus];
 
-                            let subSelected = [...selectedSubMenus];
+                          let subSelected = [...selectedSubMenus];
 
-                            if (e.target.checked) {
-                              if (!selected.includes(menu.id)) {
-                                selected.push(menu.id);
-                              }
-
-                              if (menu.subMenus) {
-                                menu.subMenus.forEach((sub) => {
-                                  if (!subSelected.includes(sub.id)) {
-                                    subSelected.push(sub.id);
-                                  }
-                                });
-                              }
-                            } else {
-                              selected = selected.filter(
-                                (id) => id !== menu.id,
-                              );
-
-                              if (menu.subMenus) {
-                                menu.subMenus.forEach((sub) => {
-                                  subSelected = subSelected.filter(
-                                    (id) => id !== sub.id,
-                                  );
-                                });
-                              }
+                          if (e.target.checked) {
+                            if (!selected.includes(menu.id)) {
+                              selected.push(menu.id);
                             }
 
-                            setSelectedMenus(selected);
+                            if (menu.subMenus) {
+                              menu.subMenus.forEach((sub) => {
+                                if (!subSelected.includes(sub.id)) {
+                                  subSelected.push(sub.id);
+                                }
+                              });
+                            }
+                          } else {
+                            selected = selected.filter((id) => id !== menu.id);
 
-                            setSelectedSubMenus(subSelected);
-                          }}
-                        />
+                            if (menu.subMenus) {
+                              menu.subMenus.forEach((sub) => {
+                                subSelected = subSelected.filter(
+                                  (id) => id !== sub.id,
+                                );
+                              });
+                            }
+                          }
 
-                        <label
-                          className="form-check-label fw-bold"
-                          htmlFor={`menu_${menu.id}`}
-                        >
-                          {menu.menuName}
-                        </label>
-                      </div>
-                    </div>
+                          setSelectedMenus(selected);
 
-                    <div className="card-body">
-                      {menu.subMenus && menu.subMenus.length > 0 ? (
-                        <div className="row">
-                          {menu.subMenus.map((sub) => (
-                            <div className="col-md-4 mb-2" key={sub.id}>
-                              <div className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id={`sub_${sub.id}`}
-                                  checked={selectedSubMenus.includes(sub.id)}
-                                  onChange={(e) => {
-                                    let selected = [...selectedSubMenus];
+                          setSelectedSubMenus(subSelected);
+                        }}
+                      />
 
-                                    if (e.target.checked) {
-                                      selected.push(sub.id);
-                                    } else {
-                                      selected = selected.filter(
-                                        (id) => id !== sub.id,
-                                      );
-                                    }
-
-                                    setSelectedSubMenus(selected);
-                                  }}
-                                />
-
-                                <label
-                                  className="form-check-label"
-                                  htmlFor={`sub_${sub.id}`}
-                                >
-                                  {sub.subMenuName}
-                                </label>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted">
-                          No Sub Menu Available
-                        </span>
-                      )}
+                      <label
+                        className="form-check-label fw-bold"
+                        htmlFor={`menu_${menu.id}`}
+                      >
+                        {menu.menuName}
+                      </label>
                     </div>
                   </div>
-                ))}
-              </div>
-            
+
+                  <div className="card-body">
+                    {menu.subMenus && menu.subMenus.length > 0 ? (
+                      <div className="row">
+                        {menu.subMenus.map((sub) => (
+                          <div className="col-md-4 mb-2" key={sub.id}>
+                            <div className="form-check">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id={`sub_${sub.id}`}
+                                checked={selectedSubMenus.includes(sub.id)}
+                                onChange={(e) => {
+                                  let selected = [...selectedSubMenus];
+
+                                  if (e.target.checked) {
+                                    selected.push(sub.id);
+                                  } else {
+                                    selected = selected.filter(
+                                      (id) => id !== sub.id,
+                                    );
+                                  }
+
+                                  setSelectedSubMenus(selected);
+                                }}
+                              />
+
+                              <label
+                                className="form-check-label"
+                                htmlFor={`sub_${sub.id}`}
+                              >
+                                {sub.subMenuName}
+                              </label>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted">No Sub Menu Available</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {menus.length === 0 && form.moduleId && (
               <div className="alert alert-warning mt-3">
@@ -425,7 +417,10 @@ const UserGroupMapping = () => {
         </div>
       </div>
       {/* search bar  */}
-      <div className="mt-5 container-fluid rounded shadow p-2 mx-2" style={{ backgroundColor: "#f8f9fa" }}>
+      <div
+        className="mt-5 container-fluid rounded shadow p-2 mx-2"
+        style={{ backgroundColor: "#f8f9fa" }}
+      >
         <div className="d-flex justify-content-between mb-3">
           <h4>User Group Mapping List</h4>
 
@@ -439,78 +434,83 @@ const UserGroupMapping = () => {
         </div>
       </div>
 
-    {/* usergroup mapping table  */}
+      {/* usergroup mapping table  */}
       <div className="card mt-4 shadow mx-2">
-        <div className="card-header bg-primary text-white">
-          User Group Mapping List
+        <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>User Group Mapping List</span>
+
+          <span className="badge bg-light text-primary">
+            {filteredMappings.length} Mapping
+          </span>
         </div>
 
-        <div className="card-body table-responsive">
-          <table className="table table-bordered table-hover align-middle">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-bordered table-hover align-middle mb-0">
+              <thead className="table-primary">
+                <tr>
+                  <th style={{ width: "50px" }}>#</th>
 
-                <th>User Group</th>
+                  <th style={{ width: "180px" }}>User Group</th>
 
-                <th>Module</th>
+                  <th style={{ width: "180px" }}>Module</th>
 
-                <th>Menus</th>
+                  <th style={{ width: "220px" }}>Menu</th>
 
-                <th>Sub Menus</th>
+                  <th>Sub Menu</th>
 
-                <th width="170">Action</th>
-              </tr>
-            </thead>
+                  <th style={{ width: "160px" }}>Action</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {filteredMappings.map((item, index) => {
-                const menus = item.menuMappings || [];
-                const subMenus = item.subMenuMappings || [];
+              <tbody>
+                {filteredMappings.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center text-muted py-4">
+                      No mapping found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredMappings.map((item, index) => {
+                    const menuMappings = item.menuMappings || [];
+                    const subMenuMappings = item.subMenuMappings || [];
 
-                const groupedMenus = menus.map((menuMap) => ({
-                  menu: menuMap.menu,
-                  subMenus: subMenus.filter(
-                    (s) => s.subMenu.menu.id === menuMap.menu.id,
-                  ),
-                }));
+                    // Group submenus according to menu
+                    const groupedMenus = menuMappings.map((menuMap) => {
+                      const menuSubMenus = subMenuMappings.filter(
+                        (subMap) =>
+                          subMap.subMenu?.menu?.id === menuMap.menu?.id,
+                      );
 
-                const totalRows = groupedMenus.reduce(
-                  (sum, g) => sum + Math.max(g.subMenus.length, 1),
-                  0,
-                );
+                      return {
+                        menu: menuMap.menu,
+                        subMenus: menuSubMenus,
+                      };
+                    });
 
-                let firstRow = true;
+                    // If no menu exists
+                    if (groupedMenus.length === 0) {
+                      return (
+                        <tr key={item.id}>
+                          <td>{index + 1}</td>
 
-                return groupedMenus.flatMap((group) => {
-                  const rows =
-                    group.subMenus.length > 0 ? group.subMenus : [null];
+                          <td>
+                            <span className="fw-medium">
+                              {item.userGroup?.groupName || "-"}
+                            </span>
+                          </td>
 
-                  return rows
-                    .map((sub, i) => (
-                      <tr key={`${item.id}-${group.menu.id}-${i}`}>
-                        {firstRow && (
-                          <>
-                            <td rowSpan={totalRows}>{index + 1}</td>
+                          <td>
+                            <span className="fw-medium">
+                              {item.module?.moduleName || "-"}
+                            </span>
+                          </td>
 
-                            <td rowSpan={totalRows}>
-                              {item.userGroup.groupName}
-                            </td>
+                          <td>-</td>
 
-                            <td rowSpan={totalRows}>
-                              {item.module.moduleName}
-                            </td>
-                          </>
-                        )}
+                          <td>-</td>
 
-                        {i === 0 && (
-                          <td rowSpan={rows.length}>{group.menu.menuName}</td>
-                        )}
-
-                        <td>{sub ? sub.subMenu.subMenuName : "-"}</td>
-
-                        {firstRow && (
-                          <td rowSpan={totalRows}>
+                          <td>
                             <button
                               className="btn btn-warning btn-sm me-2"
                               onClick={() => editMapping(item.id)}
@@ -525,17 +525,125 @@ const UserGroupMapping = () => {
                               Delete
                             </button>
                           </td>
-                        )}
-                      </tr>
-                    ))
-                    .map((row, idx) => {
-                      if (firstRow && idx === rows.length - 1) firstRow = false;
-                      return row;
+                        </tr>
+                      );
+                    }
+
+                    const totalRows = groupedMenus.reduce(
+                      (total, group) =>
+                        total + Math.max(group.subMenus.length, 1),
+                      0,
+                    );
+
+                    let currentRow = 0;
+
+                    return groupedMenus.flatMap((group) => {
+                      const rows =
+                        group.subMenus.length > 0 ? group.subMenus : [null];
+
+                      return rows.map((subMenu, subIndex) => {
+                        const isFirstOverallRow = currentRow === 0;
+
+                        const isFirstMenuRow = subIndex === 0;
+
+                        const row = (
+                          <tr
+                            key={`${item.id}-${group.menu.id}-${subMenu?.subMenu?.id || "no-sub"}`}
+                          >
+                            {/* ========================= */}
+                            {/* SERIAL NUMBER */}
+                            {/* ========================= */}
+
+                            {isFirstOverallRow && (
+                              <td rowSpan={totalRows}>{index + 1}</td>
+                            )}
+
+                            {/* ========================= */}
+                            {/* USER GROUP */}
+                            {/* ========================= */}
+
+                            {isFirstOverallRow && (
+                              <td rowSpan={totalRows}>
+                                <span className="fw-medium">
+                                  {item.userGroup?.groupName || "-"}
+                                </span>
+                              </td>
+                            )}
+
+                            {/* ========================= */}
+                            {/* MODULE */}
+                            {/* ========================= */}
+
+                            {isFirstOverallRow && (
+                              <td rowSpan={totalRows}>
+                                <span className="badge bg-primary-subtle text-primary">
+                                  {item.module?.moduleName || "-"}
+                                </span>
+                              </td>
+                            )}
+
+                            {/* ========================= */}
+                            {/* MENU */}
+                            {/* ========================= */}
+
+                            {isFirstMenuRow && (
+                              <td rowSpan={rows.length}>
+                                <span className="fw-medium">
+                                  {group.menu?.menuName || "-"}
+                                </span>
+                              </td>
+                            )}
+
+                            {/* ========================= */}
+                            {/* SUB MENU */}
+                            {/* ========================= */}
+
+                            <td>
+                              {subMenu ? (
+                                <span className="text-secondary">
+                                  {subMenu.subMenu?.subMenuName || "-"}
+                                </span>
+                              ) : (
+                                <span className="text-muted">No Sub Menu</span>
+                              )}
+                            </td>
+
+                            {/* ========================= */}
+                            {/* ACTION */}
+                            {/* ========================= */}
+
+                            {isFirstOverallRow && (
+                              <td rowSpan={totalRows}>
+                                <div className="d-flex gap-2">
+                                  <button
+                                    className="btn btn-warning btn-sm"
+                                    onClick={() => editMapping(item.id)}
+                                  >
+                                    Edit
+                                  </button>
+
+                                  <button
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => deleteMapping(item.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            )}
+                          </tr>
+                        );
+
+                        currentRow++;
+
+                        return row;
+                      });
                     });
-                });
-              })}
-            </tbody>
-          </table>
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

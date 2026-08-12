@@ -3,7 +3,7 @@ import { RiAccountBoxLine } from "react-icons/ri";
 import { TbLogout2 } from "react-icons/tb";
 import { VscThreeBars } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/icon/web_logo.png";
+import logo from "../assets/icon/zyntaks.png";
 import "./Header.css";
 import {
   FaBell,
