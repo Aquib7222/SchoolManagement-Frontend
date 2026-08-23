@@ -74,6 +74,13 @@ import ClassSubjectMapping from "./pages/Assessment/SubjectManagement/ClassSubje
 import AddAssessmentStructure from "./pages/Assessment/AssessmentStructure/AddAssessmentStructure";
 import ViewAssessmentStructure from "./pages/Assessment/AssessmentStructure/ViewAssessmentStructure";
 import GradeManagement from "./pages/Assessment/GradeManagement";
+import MarksEntry from "./pages/Assessment/MarksEntry";
+import RollNoGeneration from "./pages/Setup/RollNoGeneration";
+import MarksVerification from "./pages/Assessment/MarksVerification";
+import ReportCardVerification from "./pages/Assessment/ReportCardVerification";
+import ResultPublish from "./pages/Assessment/ResultPublish";
+import Results from "./pages/Results/Results";
+import StudentResult from "./pages/Results/StudentResult";
 
 const AppRoutes = () => {
   return (
@@ -91,6 +98,7 @@ const AppRoutes = () => {
         <Route path="/setup/admission_fee" element={<Admission_Fee_Setup />} />
         <Route path="/setup/section_assign" element={<SectionAssign />} />
         <Route path="/setup/section_shuffling" element={<SectionShuffling />} />
+        <Route path="/setup/roll-no" element={<RollNoGeneration />} />
 
         {/* setup  */}
 
@@ -116,8 +124,14 @@ const AppRoutes = () => {
           element={<AdmissionFeeReceipt />}
         />
         <Route path="/admission/create_accounts" element={<CreateAccounts />} />
-         <Route path="/admission/new_accounts" element={<AdmissionNewAccounts />} />
-          <Route path="/admission/confirm_admission_report" element={<ConfirmAdmissionReport />} />
+        <Route
+          path="/admission/new_accounts"
+          element={<AdmissionNewAccounts />}
+        />
+        <Route
+          path="/admission/confirm_admission_report"
+          element={<ConfirmAdmissionReport />}
+        />
 
         {/* Fee Structure Route */}
         <Route
@@ -202,28 +216,65 @@ const AppRoutes = () => {
         {/* Attendance  */}
 
         {/* student  */}
-        <Route path="/attendance/student/mark" element={<MarkAttendance/>}/>
-        <Route path="/attendance/student/view" element={<AttendanceView/>}/>
-        <Route path="/attendance/student/daily_attendance" element={<DailyAttendanceReport/>}/>
-        <Route path="/attendance/student/monthly_report" element={<MonthlyAttendanceReport/>}/>
+        <Route path="/attendance/student/mark" element={<MarkAttendance />} />
+        <Route path="/attendance/student/view" element={<AttendanceView />} />
+        <Route
+          path="/attendance/student/daily_attendance"
+          element={<DailyAttendanceReport />}
+        />
+        <Route
+          path="/attendance/student/monthly_report"
+          element={<MonthlyAttendanceReport />}
+        />
 
         {/* Assessment module  */}
-        <Route path="/assessment/setup" element={<AssessmentSetup/>}/>
-        <Route path="/assessment/type" element={<AssessmentType/>}/>
-        <Route path="/assessment/add/type" element={<AddAssessmentType/>}/>
-        <Route path="/assessment/nature" element={<AssessmentNature/>}/>
-        <Route path="/assessment/category" element={<AssessmentCategory/>}/>
-        <Route path="/assessment/add/category" element={<AddAssessmentCategory/>}/>
-        <Route path="/assessment/exam-term" element={<ExamTermManagement/>}/>
-        <Route path="/assessment/add/exam" element={<AddAssessmentExam/>}/>
+        <Route path="/assessment/setup" element={<AssessmentSetup />} />
+        <Route path="/assessment/type" element={<AssessmentType />} />
+        <Route path="/assessment/add/type" element={<AddAssessmentType />} />
+        <Route path="/assessment/nature" element={<AssessmentNature />} />
+        <Route path="/assessment/category" element={<AssessmentCategory />} />
+        <Route
+          path="/assessment/add/category"
+          element={<AddAssessmentCategory />}
+        />
+        <Route path="/assessment/exam-term" element={<ExamTermManagement />} />
+        <Route path="/assessment/add/exam" element={<AddAssessmentExam />} />
 
-        <Route path="/assessment/subject-management/master" element={<SubjectMaster/>}/>
-        <Route path="/assessment/subject-management/class-subject/mapping" element={<ClassSubjectMapping/>}/>
+        <Route
+          path="/assessment/subject-management/master"
+          element={<SubjectMaster />}
+        />
+        <Route
+          path="/assessment/subject-management/class-subject/mapping"
+          element={<ClassSubjectMapping />}
+        />
 
-        <Route path="/assessment/add/structure" element={<AddAssessmentStructure/>}/>
-         <Route path="/assessment/view/structure" element={<ViewAssessmentStructure/>}/>
+        <Route
+          path="/assessment/add/structure"
+          element={<AddAssessmentStructure />}
+        />
+        <Route
+          path="/assessment/view/structure"
+          element={<ViewAssessmentStructure />}
+        />
+        <Route path="/assessment/marks-entry" element={<MarksEntry />} />
+        <Route path="/assessment/marks/verification" element={<MarksVerification />} />
+        <Route path="/assessment/report-card" element={<ReportCardVerification />} />
+        <Route path="/assessment/result-publish" element={<ResultPublish />} />
+        <Route
+          path="/assessment/grade-management"
+          element={<GradeManagement />}
+        />
 
-         <Route path="/assessment/grade-management" element={<GradeManagement/>}/>
+        <Route
+          path="/results"
+          element={<Results />}
+        />
+
+        <Route
+          path="/result"
+          element={<StudentResult />}
+        />
       </Route>
 
       {/* Admin Dashboard */}

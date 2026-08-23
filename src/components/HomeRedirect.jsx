@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import Dashboard from "../pages/AdminDashboard/Dashboard";
 import SuperDashboard from "../pages/Dashboard/SuperDashboard";
 import TeacherDashboard from "../pages/Dashboard/TeacherDashboard";
+import StudentDashboard from "../pages/Dashboard/StudentDashboard";
 
 const HomeRedirect = () => {
   const { auth } = useAuth();
@@ -21,6 +22,10 @@ const HomeRedirect = () => {
 
   if(auth.role === "TEACHER"){
     return <TeacherDashboard />;
+  }
+
+  if(auth.role === "STUDENT"){
+    return <StudentDashboard />;
   }
 
   return <Navigate to="/login" replace />;

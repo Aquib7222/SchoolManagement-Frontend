@@ -846,6 +846,7 @@ const GradeManagement = () => {
     schoolId: schoolId,
     session: "",
     grade: "",
+    remarks:"",
     description: "",
     minPercentage: "",
     maxPercentage: "",
@@ -902,6 +903,7 @@ const GradeManagement = () => {
       schoolId: schoolId,
       session: "",
       grade: "",
+      remarks:"",
       description: "",
       minPercentage: "",
       maxPercentage: "",
@@ -976,6 +978,7 @@ const GradeManagement = () => {
       schoolId: schoolId,
       session: grade.session || "",
       grade: grade.grade || "",
+      remarks:grade.remarks || "",
       description: grade.description || "",
       minPercentage:
         grade.minPercentage ?? "",
@@ -1120,6 +1123,7 @@ const GradeManagement = () => {
         schoolId: schoolId,
         session: formData.session,
         grade: formData.grade.trim(),
+        remarks:formData.remarks,
         description:
           formData.description.trim(),
         minPercentage: min,
@@ -1576,6 +1580,8 @@ const GradeManagement = () => {
                       Grade Point
                     </th>
 
+                    <th>Remarks</th>
+
                     <th>
                       Status
                     </th>
@@ -1586,7 +1592,7 @@ const GradeManagement = () => {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="text-center">
 
                   {loading ? (
                     <tr>
@@ -1658,6 +1664,10 @@ const GradeManagement = () => {
                               grade.gradePoint ??
                               "-"
                             }
+                          </td>
+
+                          <td>
+                            {grade.remarks ?? "-"}
                           </td>
 
                           {/* STATUS */}
@@ -1850,6 +1860,8 @@ const GradeManagement = () => {
 
                 </div>
 
+             
+
                 {/* =================================================
                     DESCRIPTION
                 ================================================= */}
@@ -1956,6 +1968,30 @@ const GradeManagement = () => {
                     name="gradePoint"
                     value={
                       formData.gradePoint
+                    }
+                    onChange={
+                      handleChange
+                    }
+                  />
+
+                </div>
+
+                   <div className="mb-3">
+
+                  <label className="form-label">
+                    Remarks{" "}
+                    <span className="text-danger">
+                      *
+                    </span>
+                  </label>
+
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Outstanding"
+                    name="remarks"
+                    value={
+                      formData.remarks
                     }
                     onChange={
                       handleChange

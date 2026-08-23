@@ -106,6 +106,7 @@ const Viewstructures = () => {
       loadExamTerms(value);
     }
   };
+  console.log("subject id in assessment structure view",selectedSubjectId);
   const handleStandardChange = async (e) => {
     const value = e.target.value;
 
@@ -211,8 +212,8 @@ const Viewstructures = () => {
   const structure = structures?.[0];
 
   const selectedSubject = subjects.find(
-    (subject) => String(subject.id) === String(selectedSubjectId),
-  );
+  (subject) => String(subject.subjectId) === String(selectedSubjectId),
+);
 
   const handleAddStructure = ()=>{
         navigate("/assessment/add/structure");
@@ -338,7 +339,7 @@ const Viewstructures = () => {
               <option value="">All</option>
 
               {subjects.map((item) => (
-                <option key={item.id} value={item.id}>
+                <option key={item.id} value={item.subjectId}>
                   {item.subjectName}
                 </option>
               ))}

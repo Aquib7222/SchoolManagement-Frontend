@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }) => {
     loading: false,
   });
 
-  if (user.role === "ADMIN" || user.role === "SUPERADMIN" || user.role === "TEACHER") {
+  if (user.role === "ADMIN" || user.role === "SUPERADMIN" || user.role === "TEACHER" || user.role === "STUDENT") {
     navigate("/");
   } else {
     navigate("/userInterface");

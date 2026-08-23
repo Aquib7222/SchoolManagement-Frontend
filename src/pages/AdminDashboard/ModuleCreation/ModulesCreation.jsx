@@ -1,6 +1,6 @@
 
 // import React, { useState } from "react";
-// import axios from "axios";
+// import axiosInstance from "axiosInstance";
 
 // const ModuleCreation = () => {
 //   const [form, setForm] = useState({
@@ -21,7 +21,7 @@
 //   };
 
 //   const saveModule = async () => {
-//     await axios.post(
+//     await axiosInstance.post(
 //       "http://localhost:8080/api/module/create",
 //       form
 //     );
@@ -127,7 +127,8 @@
 // export default ModuleCreation;
 
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from "../../../api/axiosInstance";
+
 
 const ModuleCreation = () => {
   const initialState = {
@@ -182,8 +183,8 @@ const ModuleCreation = () => {
         formData.append("image", image);
       }
 
-      await axios.post(
-        "http://localhost:8080/api/module/create",
+      await axiosInstance.post(
+        "/api/module/create",
         formData,
         {
           headers: {

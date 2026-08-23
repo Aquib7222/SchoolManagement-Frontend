@@ -160,6 +160,18 @@ const AdminSidebar = () => {
                 </li>
               )}
             </NavLink>
+
+             <NavLink to="/admin/menus" className="text-decoration-none">
+              {({ isActive }) => (
+                <li
+                  className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
+                >
+                  <small>
+                    <PiListBulletsFill size={20} /> Menu Creation
+                  </small>
+                </li>
+              )}
+            </NavLink>
           </ul>
         </li>
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../api/axiosInstance";
 
 const UserGroupMapping = () => {
   const [modules, setModules] = useState([]);
@@ -25,8 +26,8 @@ const UserGroupMapping = () => {
 
   const loadMappings = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/user-group-mapping/all",
+      const res = await axiosInstance.get(
+        "/api/user-group-mapping/all",
       );
 
       setMappings(res.data);
@@ -37,7 +38,7 @@ const UserGroupMapping = () => {
 
   const loadModules = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/module/all");
+      const res = await axiosInstance.get("/api/module/all");
 
       // setModules(res.data.filter((m) => m.hasMenu === true));
       setModules(res.data);
@@ -50,7 +51,7 @@ const UserGroupMapping = () => {
 
   const loadUserGroups = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/user-group/all");
+      const res = await axiosInstance.get("/api/user-group/all");
 
       setUserGroups(res.data);
     } catch (err) {
@@ -73,8 +74,8 @@ const UserGroupMapping = () => {
       }
 
       try {
-        const res = await axios.get(
-          `http://localhost:8080/api/menu/module/${value}`,
+        const res = await axiosInstance.get(
+          `/api/menu/module/${value}`,
         );
 
         setMenus(res.data);
@@ -117,13 +118,13 @@ const UserGroupMapping = () => {
       let res;
 
       if (editingId) {
-        res = await axios.put(
-          `http://localhost:8080/api/user-group-mapping/update/${editingId}`,
+        res = await axiosInstance.put(
+          `/api/user-group-mapping/update/${editingId}`,
           payload,
         );
       } else {
-        res = await axios.post(
-          "http://localhost:8080/api/user-group-mapping/save",
+        res = await axiosInstance.post(
+          "/api/user-group-mapping/save",
           payload,
         );
       }
@@ -152,7 +153,7 @@ const UserGroupMapping = () => {
     if (!window.confirm("Delete Mapping?")) return;
 
     try {
-      await axios.delete(`http://localhost:8080/api/user-group-mapping/${id}`);
+      await axiosInstance.delete(`/api/user-group-mapping/${id}`);
 
       loadMappings();
     } catch (err) {
@@ -161,8 +162,8 @@ const UserGroupMapping = () => {
   };
   const editMapping = async (id) => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/user-group-mapping/${id}`,
+      const res = await axiosInstance.get(
+        `/api/user-group-mapping/${id}`,
       );
 
       const data = res.data;
@@ -174,8 +175,8 @@ const UserGroupMapping = () => {
         moduleId: data.module.id,
       });
 
-      const menuRes = await axios.get(
-        `http://localhost:8080/api/menu/module/${data.module.id}`,
+      const menuRes = await axiosInstance.get(
+        `/api/menu/module/${data.module.id}`,
       );
 
       setMenus(menuRes.data);

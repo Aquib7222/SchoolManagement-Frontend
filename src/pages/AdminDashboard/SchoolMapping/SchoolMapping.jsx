@@ -9,6 +9,7 @@ import {
   createPermissionPayload,
   loadExistingPermissions,
 } from "./permissionUtils";
+import axiosInstance from "../../../api/axiosInstance";
 
 const SchoolMapping = () => {
   const token = localStorage.getItem("token");
@@ -101,7 +102,7 @@ const SchoolMapping = () => {
   //   school load
   const fetchSchools = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/school/all", {
+      const res = await axiosInstance.get("/api/school/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,8 +116,8 @@ const SchoolMapping = () => {
   //   load modules
   const fetchModules = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/user-group-mapping/all",
+      const res = await axiosInstance.get(
+        "/api/user-group-mapping/all",
       );
 
       //   setModules(res.data.filter((m) => m.hasMenu === true));
@@ -128,7 +129,7 @@ const SchoolMapping = () => {
   //   load user groups
   const fetchUserGroups = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/user-group/all");
+      const res = await axiosInstance.get("/api/user-group/all");
 
       setUserGroups(res.data);
     } catch (err) {
@@ -138,8 +139,8 @@ const SchoolMapping = () => {
   useEffect(() => {
     if (!selectedSchool || !selectedGroup) return;
 
-    axios
-      .get("http://localhost:8080/api/school-mapping/load", {
+    axiosInstance
+      .get("/api/school-mapping/load", {
         params: {
           schoolId: selectedSchool,
           groupId: selectedGroup,
@@ -199,8 +200,8 @@ const SchoolMapping = () => {
       console.log("Selected Group =", selectedGroup);
       console.log("Payload =", JSON.stringify(payload, null, 2));
 
-      const response = await axios.post(
-        "http://localhost:8080/api/school-mapping/save",
+      const response = await axiosInstance.post(
+        "/api/school-mapping/save",
         payload,
         {
           headers: {

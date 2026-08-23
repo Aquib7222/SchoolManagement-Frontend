@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../api/axiosInstance";
 
 const ModuleList = () => {
   const [modules, setModules] = useState([]);
@@ -9,8 +10,8 @@ const ModuleList = () => {
   //   load modules
   const fetchModules = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8080/api/user-group-mapping/all",
+      const res = await axiosInstance.get(
+        "/api/user-group-mapping/all",
       );
 
       //   setModules(res.data.filter((m) => m.hasMenu === true));

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaPlus, FaTrash } from "react-icons/fa";
+import axiosInstance from "../../../api/axiosInstance";
 
 const MenuCreation = () => {
   const [modules, setModules] = useState([]);
@@ -11,8 +12,8 @@ const MenuCreation = () => {
   const loadUserGroups = async () => {
     try{
 
-        const res = await axios.get(
-            "http://localhost:8080/api/user-group/all"
+        const res = await axiosInstance.get(
+            "/api/user-group/all"
         );
 
        
@@ -33,7 +34,7 @@ const MenuCreation = () => {
 
   const loadModules = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/module/all");
+      const res = await axiosInstance.get("/api/module/all");
 
       const filteredModules = res.data.filter(
         (module) => module.hasMenu === true,
@@ -125,8 +126,8 @@ const MenuCreation = () => {
     console.log(payload);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/menu/create",
+      const response = await axiosInstance.post(
+        "/api/menu/create",
         payload,
       );
 

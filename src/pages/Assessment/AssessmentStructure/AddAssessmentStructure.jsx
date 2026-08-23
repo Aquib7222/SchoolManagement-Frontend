@@ -162,6 +162,7 @@ const AddAssessmentStructure = () => {
       });
 
       console.log("Existing Structure:", response.data);
+      
 
       const existingComponents = response.data?.components || [];
 
@@ -377,6 +378,12 @@ const AddAssessmentStructure = () => {
         displayOrder: index + 1,
       })),
     };
+
+    console.log("========== SUBJECT DEBUG ==========");
+console.log("Selected Subject ID:", selectedSubjectId);
+console.log("Selected Subject:", selectedSubject);
+console.log("All Subjects:", subjects);
+console.log("Payload:", payload);
 
     console.log("========== SAVE PAYLOAD ==========");
     console.log(JSON.stringify(payload, null, 2));
