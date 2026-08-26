@@ -1,14 +1,29 @@
-import axios from "axios";
+
+
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../../api/axiosInstance";
+import {
+  LuPencil,
+  LuTrash2,
+  LuSearch,
+  LuRefreshCw,
+  LuSave,
+  LuUsers,
+  LuBox,
+  LuMenu,
+  LuChevronDown,
+} from "react-icons/lu";
 
 const UserGroupMapping = () => {
   const [modules, setModules] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
   const [menus, setMenus] = useState([]);
   const [mappings, setMappings] = useState([]);
+
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
+  const [isMapped, setIsMapped] = useState(false);
+const [mappedId, setMappedId] = useState(null);
 
   const [form, setForm] = useState({
     userGroupId: "",
@@ -18,152 +33,369 @@ const UserGroupMapping = () => {
   const [selectedMenus, setSelectedMenus] = useState([]);
   const [selectedSubMenus, setSelectedSubMenus] = useState([]);
 
+  // =========================================================
+  // LOAD INITIAL DATA
+  // =========================================================
+
   useEffect(() => {
     loadModules();
     loadUserGroups();
     loadMappings();
   }, []);
 
+  // =========================================================
+  // LOAD MAPPINGS
+  // =========================================================
+
   const loadMappings = async () => {
     try {
       const res = await axiosInstance.get(
-        "/api/user-group-mapping/all",
+        "/api/user-group-mapping/all"
       );
 
-      setMappings(res.data);
+      setMappings(res.data || []);
     } catch (err) {
-      console.log(err);
+      console.error("Error loading mappings:", err);
     }
   };
+
+  // =========================================================
+  // LOAD MODULES
+  // =========================================================
 
   const loadModules = async () => {
     try {
       const res = await axiosInstance.get("/api/module/all");
 
-      // setModules(res.data.filter((m) => m.hasMenu === true));
-      setModules(res.data);
+      setModules(res.data || []);
     } catch (err) {
-      console.log(err);
+      console.error("Error loading modules:", err);
     }
   };
-  console.log("Modules in usergroup", modules);
-  console.log("mappings", mappings);
+
+  // =========================================================
+  // LOAD USER GROUPS
+  // =========================================================
 
   const loadUserGroups = async () => {
     try {
       const res = await axiosInstance.get("/api/user-group/all");
 
-      setUserGroups(res.data);
+      setUserGroups(res.data || []);
     } catch (err) {
-      console.log(err);
+      console.error("Error loading user groups:", err);
     }
   };
 
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
+  const checkExistingMapping = (userGroupId, moduleId) => {
+  if (!userGroupId || !moduleId) {
+    setIsMapped(false);
+    setMappedId(null);
+    setEditingId(null);
+    setSelectedMenus([]);
+    setSelectedSubMenus([]);
+    return;
+  }
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const existingMapping = mappings.find(
+    (item) =>
+      Number(item.userGroup?.id) === Number(userGroupId) &&
+      Number(item.module?.id) === Number(moduleId)
+  );
 
-    if (name === "moduleId") {
-      if (!value) {
-        setMenus([]);
-        return;
-      }
+  if (existingMapping) {
+    console.log("Already Mapped =", existingMapping);
 
-      try {
-        const res = await axiosInstance.get(
-          `/api/menu/module/${value}`,
-        );
+    setIsMapped(true);
+    setMappedId(existingMapping.id);
+    setEditingId(existingMapping.id);
 
-        setMenus(res.data);
-        setSelectedMenus([]);
-        setSelectedSubMenus([]);
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    setSelectedMenus(
+      (existingMapping.menuMappings || []).map(
+        (m) => m.menu.id
+      )
+    );
+
+    setSelectedSubMenus(
+      (existingMapping.subMenuMappings || []).map(
+        (s) => s.subMenu.id
+      )
+    );
+  } else {
+    console.log("Mapping Not Found");
+
+    setIsMapped(false);
+    setMappedId(null);
+    setEditingId(null);
+    setSelectedMenus([]);
+    setSelectedSubMenus([]);
+  }
+};
+
+  // =========================================================
+  // FORM CHANGE
+  // =========================================================
+
+ const handleChange = async (e) => {
+  const { name, value } = e.target;
+
+  const updatedForm = {
+    ...form,
+    [name]: value,
   };
-  const handleSave = async () => {
-    if (!form.userGroupId) {
-      alert("Please Select User Group");
-      return;
-    }
 
-    if (!form.moduleId) {
-      alert("Please Select Module");
-      return;
-    }
+  setForm(updatedForm);
 
-    // if (selectedMenus.length === 0 && selectedSubMenus.length === 0) {
-    //   alert("Please Select At Least One Permission");
-    //   return;
-    // }
-
-    const payload = {
-      userGroupId: Number(form.userGroupId),
-
-      moduleId: Number(form.moduleId),
-
-      menuIds: selectedMenus,
-
-      subMenuIds: selectedSubMenus,
-    };
-
-    console.log(payload);
-
-    try {
-      let res;
-
-      if (editingId) {
-        res = await axiosInstance.put(
-          `/api/user-group-mapping/update/${editingId}`,
-          payload,
-        );
-      } else {
-        res = await axiosInstance.post(
-          "/api/user-group-mapping/save",
-          payload,
-        );
-      }
-
-      alert(res.data);
-
-      loadMappings();
-
-      setEditingId(null);
-
-      setForm({
-        userGroupId: "",
-        moduleId: "",
-      });
-
+  if (name === "moduleId") {
+    if (!value) {
       setMenus([]);
       setSelectedMenus([]);
       setSelectedSubMenus([]);
-    } catch (error) {
-      console.log(error);
-
-      alert("Failed To Save Mapping");
+      setIsMapped(false);
+      setMappedId(null);
+      setEditingId(null);
+      return;
     }
-  };
-  const deleteMapping = async (id) => {
-    if (!window.confirm("Delete Mapping?")) return;
 
     try {
-      await axiosInstance.delete(`/api/user-group-mapping/${id}`);
+      const res = await axiosInstance.get(
+        `/api/menu/module/${value}`
+      );
 
-      loadMappings();
+      setMenus(res.data);
+
+      // Check existing mapping
+      checkExistingMapping(
+        form.userGroupId,
+        value
+      );
     } catch (err) {
       console.log(err);
     }
+  }
+
+  if (name === "userGroupId") {
+    if (!value) {
+      setMenus([]);
+      setSelectedMenus([]);
+      setSelectedSubMenus([]);
+      setIsMapped(false);
+      setMappedId(null);
+      setEditingId(null);
+      return;
+    }
+
+    // Agar module already selected hai
+    if (form.moduleId) {
+      checkExistingMapping(
+        value,
+        form.moduleId
+      );
+    }
+  }
+};
+
+useEffect(() => {
+  if (form.userGroupId && form.moduleId && mappings.length > 0) {
+    checkExistingMapping(
+      form.userGroupId,
+      form.moduleId
+    );
+  }
+}, [mappings]);
+
+  // =========================================================
+  // MENU CHECK
+  // =========================================================
+
+  const handleMenuChange = (menu, checked) => {
+    let selected = [...selectedMenus];
+    let subSelected = [...selectedSubMenus];
+
+    if (checked) {
+      if (!selected.includes(menu.id)) {
+        selected.push(menu.id);
+      }
+
+      (menu.subMenus || []).forEach((sub) => {
+        if (!subSelected.includes(sub.id)) {
+          subSelected.push(sub.id);
+        }
+      });
+    } else {
+      selected = selected.filter((id) => id !== menu.id);
+
+      (menu.subMenus || []).forEach((sub) => {
+        subSelected = subSelected.filter(
+          (id) => id !== sub.id
+        );
+      });
+    }
+
+    setSelectedMenus(selected);
+    setSelectedSubMenus(subSelected);
   };
+
+  // =========================================================
+  // SUB MENU CHECK
+  // =========================================================
+
+  const handleSubMenuChange = (menu, sub, checked) => {
+    let selectedSub = [...selectedSubMenus];
+    let selectedMenu = [...selectedMenus];
+
+    if (checked) {
+      if (!selectedSub.includes(sub.id)) {
+        selectedSub.push(sub.id);
+      }
+
+      if (!selectedMenu.includes(menu.id)) {
+        selectedMenu.push(menu.id);
+      }
+    } else {
+      selectedSub = selectedSub.filter(
+        (id) => id !== sub.id
+      );
+
+      const anySubSelected = (menu.subMenus || []).some(
+        (item) => selectedSub.includes(item.id)
+      );
+
+      if (!anySubSelected) {
+        selectedMenu = selectedMenu.filter(
+          (id) => id !== menu.id
+        );
+      }
+    }
+
+    setSelectedMenus(selectedMenu);
+    setSelectedSubMenus(selectedSub);
+  };
+
+  // =========================================================
+  // SELECT ALL MENUS
+  // =========================================================
+
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      const menuIds = menus.map((menu) => menu.id);
+
+      const subMenuIds = menus.flatMap((menu) =>
+        (menu.subMenus || []).map((sub) => sub.id)
+      );
+
+      setSelectedMenus(menuIds);
+      setSelectedSubMenus(subMenuIds);
+    } else {
+      setSelectedMenus([]);
+      setSelectedSubMenus([]);
+    }
+  };
+
+  // =========================================================
+  // SAVE / UPDATE
+  // =========================================================
+
+  const handleSave = async () => {
+  if (!form.userGroupId) {
+    alert("Please Select User Group");
+    return;
+  }
+
+  if (!form.moduleId) {
+    alert("Please Select Module");
+    return;
+  }
+
+  const payload = {
+    userGroupId: Number(form.userGroupId),
+    moduleId: Number(form.moduleId),
+    menuIds: selectedMenus,
+    subMenuIds: selectedSubMenus,
+  };
+
+  console.log("Mapping Payload =", payload);
+
+  try {
+    let res;
+
+    if (isMapped && mappedId) {
+      res = await axiosInstance.put(
+        `/api/user-group-mapping/update/${mappedId}`,
+        payload
+      );
+
+      alert("Mapping Updated Successfully");
+    } else {
+      res = await axiosInstance.post(
+        "/api/user-group-mapping/save",
+        payload
+      );
+
+      alert("Mapping Saved Successfully");
+    }
+
+    await loadMappings();
+
+    setIsMapped(false);
+    setMappedId(null);
+    setEditingId(null);
+
+    setForm({
+      userGroupId: "",
+      moduleId: "",
+    });
+
+    setMenus([]);
+    setSelectedMenus([]);
+    setSelectedSubMenus([]);
+
+  } catch (error) {
+    console.log(error);
+
+    alert(
+      error.response?.data ||
+      "Failed To Save Mapping"
+    );
+  }
+};
+
+  // =========================================================
+  // DELETE
+  // =========================================================
+
+  const deleteMapping = async (id) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this mapping?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await axiosInstance.delete(
+        `/api/user-group-mapping/${id}`
+      );
+
+      alert("Mapping Deleted Successfully");
+
+      loadMappings();
+    } catch (err) {
+      console.error("Delete error:", err);
+
+      alert("Unable to Delete Mapping");
+    }
+  };
+
+  // =========================================================
+  // EDIT
+  // =========================================================
+
   const editMapping = async (id) => {
     try {
       const res = await axiosInstance.get(
-        `/api/user-group-mapping/${id}`,
+        `/api/user-group-mapping/${id}`
       );
 
       const data = res.data;
@@ -171,479 +403,895 @@ const UserGroupMapping = () => {
       setEditingId(id);
 
       setForm({
-        userGroupId: data.userGroup.id,
-        moduleId: data.module.id,
+        userGroupId: data.userGroup?.id || "",
+        moduleId: data.module?.id || "",
       });
 
       const menuRes = await axiosInstance.get(
-        `/api/menu/module/${data.module.id}`,
+        `/api/menu/module/${data.module?.id}`
       );
 
-      setMenus(menuRes.data);
+      setMenus(menuRes.data || []);
 
-      setSelectedMenus(data.menuMappings.map((m) => m.menu.id));
+      setSelectedMenus(
+        (data.menuMappings || []).map(
+          (m) => m.menu.id
+        )
+      );
 
-      setSelectedSubMenus(data.subMenuMappings.map((s) => s.subMenu.id));
+      setSelectedSubMenus(
+        (data.subMenuMappings || []).map(
+          (s) => s.subMenu.id
+        )
+      );
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     } catch (err) {
-      console.log(err);
+      console.error("Edit mapping error:", err);
+
+      alert("Unable to load mapping");
     }
   };
-  console.log("mappings", mappings);
-  const filteredMappings = mappings.filter((item) => {
-    const group = item.userGroup.groupName.toLowerCase();
 
-    const module = item.module.moduleName.toLowerCase();
+  // =========================================================
+  // RESET
+  // =========================================================
+
+  const resetForm = () => {
+    setEditingId(null);
+
+    setForm({
+      userGroupId: "",
+      moduleId: "",
+    });
+
+    setMenus([]);
+    setSelectedMenus([]);
+    setSelectedSubMenus([]);
+  };
+
+  // =========================================================
+  // SEARCH
+  // =========================================================
+
+  const filteredMappings = mappings.filter((item) => {
+    const group =
+      item.userGroup?.groupName?.toLowerCase() || "";
+
+    const module =
+      item.module?.moduleName?.toLowerCase() || "";
 
     return (
       group.includes(search.toLowerCase()) ||
       module.includes(search.toLowerCase())
     );
   });
-  console.log("Filtered Mappings:", filteredMappings);
+
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
     <>
-      {/* Header */}
-      <div
-        className="row shadow"
-        style={{
-          background:
-            "linear-gradient(135deg, rgb(61,87,236) 0%, rgb(97,150,248) 50%, #87ddf7 100%)",
-          margin: "10px",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
-      >
-        <h5 className="fw-bold">UserGroup Mapping</h5>
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
 
-        <nav>
-          <ol className="breadcrumb mb-0">
-            <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
-                Home
-              </a>
-            </li>
+      <div className="container-fluid px-2">
+        <div
+          className="bg-white shadow rounded-2 p-3 mt-2 mb-3"
+          style={{ minHeight: "70px" }}
+        >
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <h4 className="fw-bold mb-1">
+                User Group Mapping
+              </h4>
 
-            <li className="breadcrumb-item active">User Group Mapping</li>
-          </ol>
-        </nav>
+              <p className="text-muted mb-2">
+                Manage modules, menus and submenu permissions
+                for user groups.
+              </p>
+
+              <nav aria-label="breadcrumb">
+                <ol className="breadcrumb mb-0 small">
+                  <li className="breadcrumb-item">
+                    <a
+                      href="/"
+                      className="text-decoration-none text-dark"
+                    >
+                      Dashboard
+                    </a>
+                  </li>
+
+                  <li className="breadcrumb-item">
+                    Module Management
+                  </li>
+
+                  <li className="breadcrumb-item active text-primary">
+                    User Group Mapping
+                  </li>
+                </ol>
+              </nav>
+            </div>
+
+            {editingId && (
+              <span className="badge bg-warning text-dark px-3 py-2">
+                Editing Mapping
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="container-fluid mt-3">
-        <div className="card">
-          <div className="card-header">UserGroup Mapping</div>
-          <div className="card-body border shadow rounded p-4">
-            <div className="row">
-              {/* User Group */}
+      {/* =====================================================
+          MAPPING FORM
+      ===================================================== */}
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label fw-bold">User Group</label>
+      <div className="container-fluid px-2">
+        <div className="bg-white shadow rounded-2 p-3 mb-3">
+          <h5 className="fw-bold mb-4 d-flex align-items-center">
+            <span
+              className="rounded-circle bg-primary me-2 d-inline-flex align-items-center justify-content-center"
+              style={{
+                width: "34px",
+                height: "34px",
+              }}
+            >
+              <LuUsers
+                size={18}
+                className="text-white"
+              />
+            </span>
 
-                <select
-                  className="form-select"
-                  name="userGroupId"
-                  value={form.userGroupId}
-                  onChange={handleChange}
-                >
-                  <option value="">Select User Group</option>
+            {editingId
+              ? "Update User Group Mapping"
+              : "Create User Group Mapping"}
+          </h5>
 
-                  {userGroups.map((group) => (
-                    <option key={group.id} value={group.id}>
-                      {group.groupName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <div className="row">
+            {/* USER GROUP */}
 
-              {/* Module */}
+            <div className="col-md-6 mb-3">
+              <label className="form-label">
+                <h6>
+                  User Group{" "}
+                  <span className="text-danger">
+                    *
+                  </span>
+                </h6>
+              </label>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label fw-bold">Module</label>
+              <select
+                className="form-select"
+                name="userGroupId"
+                value={form.userGroupId}
+                onChange={handleChange}
+              >
+                <option value="">
+                  Select User Group
+                </option>
 
-                <select
-                  className="form-select"
-                  name="moduleId"
-                  value={form.moduleId}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Module</option>
-
-                  {modules.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {module.moduleName}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                {userGroups.map((group) => (
+                  <option
+                    key={group.id}
+                    value={group.id}
+                  >
+                    {group.groupName}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Permission Tree */}
+            {/* MODULE */}
 
+            <div className="col-md-6 mb-3">
+              <label className="form-label">
+                <h6>
+                  Module{" "}
+                  <span className="text-danger">
+                    *
+                  </span>
+                </h6>
+              </label>
+
+              <select
+                className="form-select"
+                name="moduleId"
+                value={form.moduleId}
+                onChange={handleChange}
+              >
+                <option value="">
+                  Select Module
+                </option>
+
+                {modules.map((module) => (
+                  <option
+                    key={module.id}
+                    value={module.id}
+                  >
+                    {module.moduleName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* =================================================
+              PERMISSION TREE
+          ================================================= */}
+
+          {menus.length > 0 && (
             <div className="mt-3">
-              <h5 className="text-primary mb-3">Module Permissions</h5>
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h5 className="fw-bold mb-1">
+                    Module Permissions
+                  </h5>
 
-              {menus.map((menu) => (
-                <div
-                  key={menu.id}
-                  className="card mb-3 border-primary shadow-sm"
-                >
-                  <div className="card-header bg-light">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id={`menu_${menu.id}`}
-                        checked={selectedMenus.includes(menu.id)}
-                        onChange={(e) => {
-                          let selected = [...selectedMenus];
+                  <p className="text-muted small mb-0">
+                    Select menus and submenus for this
+                    user group.
+                  </p>
+                </div>
 
-                          let subSelected = [...selectedSubMenus];
+                <div className="form-check">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="selectAllMenus"
+                    checked={
+                      menus.length > 0 &&
+                      menus.every((menu) =>
+                        selectedMenus.includes(
+                          menu.id
+                        )
+                      )
+                    }
+                    onChange={(e) =>
+                      handleSelectAll(
+                        e.target.checked
+                      )
+                    }
+                  />
 
-                          if (e.target.checked) {
-                            if (!selected.includes(menu.id)) {
-                              selected.push(menu.id);
+                  <label
+                    htmlFor="selectAllMenus"
+                    className="form-check-label fw-bold"
+                  >
+                    Select All
+                  </label>
+                </div>
+              </div>
+
+              {menus.map((menu) => {
+                const subMenus =
+                  menu.subMenus || [];
+
+                const menuChecked =
+                  selectedMenus.includes(
+                    menu.id
+                  );
+
+                const allSubSelected =
+                  subMenus.length > 0 &&
+                  subMenus.every((sub) =>
+                    selectedSubMenus.includes(
+                      sub.id
+                    )
+                  );
+
+                return (
+                  <div
+                    key={menu.id}
+                    className="border rounded-3 mb-3 overflow-hidden"
+                  >
+                    {/* MENU HEADER */}
+
+                    <div
+                      className="p-3"
+                      style={{
+                        background:
+                          "linear-gradient(135deg, rgba(61,87,236,0.08) 0%, rgba(97,150,248,0.08) 50%, rgba(135,221,247,0.08) 100%)",
+                      }}
+                    >
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="form-check">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id={`menu_${menu.id}`}
+                            checked={menuChecked}
+                            onChange={(e) =>
+                              handleMenuChange(
+                                menu,
+                                e.target.checked
+                              )
                             }
+                          />
 
-                            if (menu.subMenus) {
-                              menu.subMenus.forEach((sub) => {
-                                if (!subSelected.includes(sub.id)) {
-                                  subSelected.push(sub.id);
-                                }
-                              });
-                            }
-                          } else {
-                            selected = selected.filter((id) => id !== menu.id);
+                          <label
+                            htmlFor={`menu_${menu.id}`}
+                            className="form-check-label fw-bold"
+                          >
+                            <LuMenu
+                              size={16}
+                              className="me-2 text-primary"
+                            />
 
-                            if (menu.subMenus) {
-                              menu.subMenus.forEach((sub) => {
-                                subSelected = subSelected.filter(
-                                  (id) => id !== sub.id,
-                                );
-                              });
-                            }
-                          }
+                            {menu.menuName}
+                          </label>
+                        </div>
 
-                          setSelectedMenus(selected);
+                        <span className="badge bg-primary-subtle text-primary">
+                          {subMenus.length} Sub Menu
+                          {subMenus.length !== 1
+                            ? "s"
+                            : ""}
+                        </span>
+                      </div>
+                    </div>
 
-                          setSelectedSubMenus(subSelected);
-                        }}
-                      />
+                    {/* SUBMENUS */}
 
-                      <label
-                        className="form-check-label fw-bold"
-                        htmlFor={`menu_${menu.id}`}
-                      >
-                        {menu.menuName}
-                      </label>
+                    <div className="p-3">
+                      {subMenus.length > 0 ? (
+                        <div className="row">
+                          {subMenus.map((sub) => (
+                            <div
+                              className="col-xl-4 col-md-6 mb-3"
+                              key={sub.id}
+                            >
+                              <div
+                                className={`border rounded-3 p-3 h-100 ${
+                                  selectedSubMenus.includes(
+                                    sub.id
+                                  )
+                                    ? "border-primary bg-light"
+                                    : ""
+                                }`}
+                              >
+                                <div className="form-check">
+                                  <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id={`sub_${sub.id}`}
+                                    checked={selectedSubMenus.includes(
+                                      sub.id
+                                    )}
+                                    onChange={(e) =>
+                                      handleSubMenuChange(
+                                        menu,
+                                        sub,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+
+                                  <label
+                                    htmlFor={`sub_${sub.id}`}
+                                    className="form-check-label fw-semibold"
+                                  >
+                                    {
+                                      sub.subMenuName
+                                    }
+                                  </label>
+                                </div>
+
+                                <div className="small text-muted mt-2 ms-4">
+                                  {sub.subMenuUrl ||
+                                    "No Path"}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted small">
+                          No Sub Menu Available
+                        </span>
+                      )}
                     </div>
                   </div>
-
-                  <div className="card-body">
-                    {menu.subMenus && menu.subMenus.length > 0 ? (
-                      <div className="row">
-                        {menu.subMenus.map((sub) => (
-                          <div className="col-md-4 mb-2" key={sub.id}>
-                            <div className="form-check">
-                              <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id={`sub_${sub.id}`}
-                                checked={selectedSubMenus.includes(sub.id)}
-                                onChange={(e) => {
-                                  let selected = [...selectedSubMenus];
-
-                                  if (e.target.checked) {
-                                    selected.push(sub.id);
-                                  } else {
-                                    selected = selected.filter(
-                                      (id) => id !== sub.id,
-                                    );
-                                  }
-
-                                  setSelectedSubMenus(selected);
-                                }}
-                              />
-
-                              <label
-                                className="form-check-label"
-                                htmlFor={`sub_${sub.id}`}
-                              >
-                                {sub.subMenuName}
-                              </label>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted">No Sub Menu Available</span>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+          )}
 
-            {menus.length === 0 && form.moduleId && (
+          {menus.length === 0 &&
+            form.moduleId && (
               <div className="alert alert-warning mt-3">
                 No Menus Found For This Module.
               </div>
             )}
 
-            <div className="text-end mt-4">
+          {/* BUTTONS */}
+
+          <div className="text-end mt-4">
+            {editingId && (
               <button
-                className={`btn ${editingId ? "btn-warning" : "btn-primary"} px-5`}
-                onClick={handleSave}
+                type="button"
+                className="btn btn-outline-secondary me-2 px-4"
+                onClick={resetForm}
               >
-                {editingId ? "Update Mapping" : "Save Mapping"}
+                <LuRefreshCw
+                  size={17}
+                  className="me-2"
+                />
+                Cancel
               </button>
-              {editingId && (
-                <button
-                  className="btn btn-secondary ms-2"
-                  onClick={() => {
-                    setEditingId(null);
+            )}
 
-                    setForm({
-                      userGroupId: "",
-                      moduleId: "",
-                    });
+            <button
+  className={`btn ${
+    isMapped ? "btn-warning" : "btn-primary"
+  } px-5`}
+  onClick={handleSave}
+>
+  {isMapped ? "Update Mapping" : "Save Mapping"}
+</button>
+          </div>
+        </div>
+      </div>
 
-                    setMenus([]);
-                    setSelectedMenus([]);
-                    setSelectedSubMenus([]);
-                  }}
-                >
-                  Cancel
-                </button>
-              )}
+      {/* =====================================================
+          SEARCH HEADER
+      ===================================================== */}
+
+      <div className="container-fluid px-2 mt-4">
+        <div className="bg-white shadow rounded-2 p-3">
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <h5 className="fw-bold mb-1">
+                User Group Mapping List
+              </h5>
+
+              <p className="text-muted small mb-0">
+                View and manage all user group module
+                permissions.
+              </p>
+            </div>
+
+            <div
+              className="position-relative"
+              style={{ width: "300px" }}
+            >
+              <LuSearch
+                size={18}
+                className="position-absolute text-muted"
+                style={{
+                  left: "12px",
+                  top: "50%",
+                  transform:
+                    "translateY(-50%)",
+                }}
+              />
+
+              <input
+                type="text"
+                className="form-control ps-5"
+                placeholder="Search user group or module..."
+                value={search}
+                onChange={(e) =>
+                  setSearch(e.target.value)
+                }
+              />
             </div>
           </div>
         </div>
       </div>
-      {/* search bar  */}
-      <div
-        className="mt-5 container-fluid rounded shadow p-2 mx-2"
-        style={{ backgroundColor: "#f8f9fa" }}
-      >
-        <div className="d-flex justify-content-between mb-3">
-          <h4>User Group Mapping List</h4>
 
-          <input
-            className="form-control"
-            placeholder="Search..."
-            style={{ width: 300 }}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
+      {/* =====================================================
+          MAPPING LIST
+      ===================================================== */}
 
-      {/* usergroup mapping table  */}
-      <div className="card mt-4 shadow mx-2">
-        <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <span>User Group Mapping List</span>
+      <div className="container-fluid px-2 mt-3 mb-4">
+        <div className="card border-0 shadow rounded-3 overflow-hidden">
+          {/* HEADER */}
 
-          <span className="badge bg-light text-primary">
-            {filteredMappings.length} Mapping
-          </span>
-        </div>
+          <div className="card-header bg-white border-0 p-3">
+            <div className="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 className="fw-bold mb-1">
+                  Mapping Details
+                </h5>
 
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover align-middle mb-0">
-              <thead className="table-primary">
-                <tr>
-                  <th style={{ width: "50px" }}>#</th>
+                <p className="text-muted small mb-0">
+                  User Group → Module → Menu → Sub Menu
+                </p>
+              </div>
 
-                  <th style={{ width: "180px" }}>User Group</th>
+              <span className="badge bg-primary px-3 py-2">
+                {filteredMappings.length} Mapping
+                {filteredMappings.length !== 1
+                  ? "s"
+                  : ""}
+              </span>
+            </div>
+          </div>
 
-                  <th style={{ width: "180px" }}>Module</th>
+          {/* TABLE */}
 
-                  <th style={{ width: "220px" }}>Menu</th>
+          <div className="card-body p-0">
+            <div className="table-responsive">
+              <table className="table  table-bordered align-middle mb-0">
+                <thead>
+                  <tr
+                    style={{
+                      background:
+                        "linear-gradient(135deg, rgb(61,87,236) 0%, rgb(97,150,248) 50%, #87ddf7 100%)",
+                      color: "white",
+                    }}
+                  >
+                    <th
+                      className="text-center"
+                      style={{ width: "7%" }}
+                    >
+                      S.No
+                    </th>
 
-                  <th>Sub Menu</th>
+                    <th style={{ width: "18%" }}>
+                      User Group
+                    </th>
 
-                  <th style={{ width: "160px" }}>Action</th>
-                </tr>
-              </thead>
+                    <th style={{ width: "20%" }}>
+                      Module
+                    </th>
 
-              <tbody>
-                {filteredMappings.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="text-center text-muted py-4">
-                      No mapping found
-                    </td>
+                    <th style={{ width: "22%" }}>
+                      Menu
+                    </th>
+
+                    <th style={{ width: "23%" }}>
+                      Sub Menu
+                    </th>
+
+                    <th
+                      className="text-center"
+                      style={{ width: "10%" }}
+                    >
+                      Action
+                    </th>
                   </tr>
-                ) : (
-                  filteredMappings.map((item, index) => {
-                    const menuMappings = item.menuMappings || [];
-                    const subMenuMappings = item.subMenuMappings || [];
+                </thead>
 
-                    // Group submenus according to menu
-                    const groupedMenus = menuMappings.map((menuMap) => {
-                      const menuSubMenus = subMenuMappings.filter(
-                        (subMap) =>
-                          subMap.subMenu?.menu?.id === menuMap.menu?.id,
-                      );
+                <tbody>
+                  {filteredMappings.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="6"
+                        className="text-center py-5 text-muted"
+                      >
+                        <LuBox
+                          size={35}
+                          className="mb-2"
+                        />
 
-                      return {
-                        menu: menuMap.menu,
-                        subMenus: menuSubMenus,
-                      };
-                    });
+                        <div>
+                          No Mapping Found
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredMappings.map(
+                      (item, index) => {
+                        const menuMappings =
+                          item.menuMappings || [];
 
-                    // If no menu exists
-                    if (groupedMenus.length === 0) {
-                      return (
-                        <tr key={item.id}>
-                          <td>{index + 1}</td>
+                        const subMenuMappings =
+                          item.subMenuMappings || [];
 
-                          <td>
-                            <span className="fw-medium">
-                              {item.userGroup?.groupName || "-"}
-                            </span>
-                          </td>
+                        // =====================================
+                        // GROUP MENUS + SUBMENUS
+                        // =====================================
 
-                          <td>
-                            <span className="fw-medium">
-                              {item.module?.moduleName || "-"}
-                            </span>
-                          </td>
+                        const groupedMenus =
+                          menuMappings.map(
+                            (menuMap) => {
+                              const menu =
+                                menuMap.menu;
 
-                          <td>-</td>
+                              const menuSubMenus =
+                                subMenuMappings.filter(
+                                  (subMap) =>
+                                    subMap.subMenu?.menu
+                                      ?.id === menu?.id
+                                );
 
-                          <td>-</td>
+                              return {
+                                menu,
+                                subMenus:
+                                  menuSubMenus,
+                              };
+                            }
+                          );
 
-                          <td>
-                            <button
-                              className="btn btn-warning btn-sm me-2"
-                              onClick={() => editMapping(item.id)}
-                            >
-                              Edit
-                            </button>
+                        // =====================================
+                        // NO MENU
+                        // =====================================
 
-                            <button
-                              className="btn btn-danger btn-sm"
-                              onClick={() => deleteMapping(item.id)}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    }
+                        if (
+                          groupedMenus.length ===
+                          0
+                        ) {
+                          return (
+                            <tr key={item.id}>
+                              <td className="text-center">
+                                {index + 1}
+                              </td>
 
-                    const totalRows = groupedMenus.reduce(
-                      (total, group) =>
-                        total + Math.max(group.subMenus.length, 1),
-                      0,
-                    );
+                              <td className="fw-semibold">
+                                {
+                                  item.userGroup
+                                    ?.groupName
+                                }
+                              </td>
 
-                    let currentRow = 0;
-
-                    return groupedMenus.flatMap((group) => {
-                      const rows =
-                        group.subMenus.length > 0 ? group.subMenus : [null];
-
-                      return rows.map((subMenu, subIndex) => {
-                        const isFirstOverallRow = currentRow === 0;
-
-                        const isFirstMenuRow = subIndex === 0;
-
-                        const row = (
-                          <tr
-                            key={`${item.id}-${group.menu.id}-${subMenu?.subMenu?.id || "no-sub"}`}
-                          >
-                            {/* ========================= */}
-                            {/* SERIAL NUMBER */}
-                            {/* ========================= */}
-
-                            {isFirstOverallRow && (
-                              <td rowSpan={totalRows}>{index + 1}</td>
-                            )}
-
-                            {/* ========================= */}
-                            {/* USER GROUP */}
-                            {/* ========================= */}
-
-                            {isFirstOverallRow && (
-                              <td rowSpan={totalRows}>
-                                <span className="fw-medium">
-                                  {item.userGroup?.groupName || "-"}
+                              <td>
+                                <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                                  {
+                                    item.module
+                                      ?.moduleName
+                                  }
                                 </span>
                               </td>
-                            )}
 
-                            {/* ========================= */}
-                            {/* MODULE */}
-                            {/* ========================= */}
-
-                            {isFirstOverallRow && (
-                              <td rowSpan={totalRows}>
-                                <span className="badge bg-primary-subtle text-primary">
-                                  {item.module?.moduleName || "-"}
+                              <td>
+                                <span className="text-muted">
+                                  No Menu
                                 </span>
                               </td>
-                            )}
 
-                            {/* ========================= */}
-                            {/* MENU */}
-                            {/* ========================= */}
-
-                            {isFirstMenuRow && (
-                              <td rowSpan={rows.length}>
-                                <span className="fw-medium">
-                                  {group.menu?.menuName || "-"}
+                              <td>
+                                <span className="text-muted">
+                                  No Sub Menu
                                 </span>
                               </td>
-                            )}
 
-                            {/* ========================= */}
-                            {/* SUB MENU */}
-                            {/* ========================= */}
-
-                            <td>
-                              {subMenu ? (
-                                <span className="text-secondary">
-                                  {subMenu.subMenu?.subMenuName || "-"}
-                                </span>
-                              ) : (
-                                <span className="text-muted">No Sub Menu</span>
-                              )}
-                            </td>
-
-                            {/* ========================= */}
-                            {/* ACTION */}
-                            {/* ========================= */}
-
-                            {isFirstOverallRow && (
-                              <td rowSpan={totalRows}>
-                                <div className="d-flex gap-2">
+                              <td className="text-center">
+                                <div className="d-flex justify-content-center gap-2">
                                   <button
-                                    className="btn btn-warning btn-sm"
-                                    onClick={() => editMapping(item.id)}
+                                    className="btn btn-outline-primary btn-sm"
+                                    title="Edit"
+                                    onClick={() =>
+                                      editMapping(
+                                        item.id
+                                      )
+                                    }
                                   >
-                                    Edit
+                                    <LuPencil
+                                      size={16}
+                                    />
                                   </button>
 
                                   <button
-                                    className="btn btn-danger btn-sm"
-                                    onClick={() => deleteMapping(item.id)}
+                                    className="btn btn-outline-danger btn-sm"
+                                    title="Delete"
+                                    onClick={() =>
+                                      deleteMapping(
+                                        item.id
+                                      )
+                                    }
                                   >
-                                    Delete
+                                    <LuTrash2
+                                      size={16}
+                                    />
                                   </button>
                                 </div>
                               </td>
-                            )}
-                          </tr>
+                            </tr>
+                          );
+                        }
+
+                        // =====================================
+                        // TOTAL ROWS
+                        // =====================================
+
+                        const totalRows =
+                          groupedMenus.reduce(
+                            (total, group) =>
+                              total +
+                              Math.max(
+                                group.subMenus
+                                  .length,
+                                1
+                              ),
+                            0
+                          );
+
+                        let currentRow = 0;
+
+                        // =====================================
+                        // TABLE ROWS
+                        // =====================================
+
+                        return groupedMenus.flatMap(
+                          (group) => {
+                            const rows =
+                              group.subMenus
+                                .length > 0
+                                ? group.subMenus
+                                : [null];
+
+                            return rows.map(
+                              (
+                                subMenu,
+                                subIndex
+                              ) => {
+                                const firstOverall =
+                                  currentRow ===
+                                  0;
+
+                                const firstMenu =
+                                  subIndex === 0;
+
+                                const row = (
+                                  <tr
+                                    key={`${item.id}-${group.menu?.id}-${subMenu?.subMenu?.id || "no-sub"}`}
+                                  >
+                                    {/* S.NO */}
+
+                                    {firstOverall && (
+                                      <td
+                                        rowSpan={
+                                          totalRows
+                                        }
+                                        className="text-center fw-semibold"
+                                      >
+                                        {index + 1}
+                                      </td>
+                                    )}
+
+                                    {/* USER GROUP */}
+
+                                    {firstOverall && (
+                                      <td
+                                        rowSpan={
+                                          totalRows
+                                        }
+                                        className="fw-semibold"
+                                      >
+                                        {
+                                          item
+                                            .userGroup
+                                            ?.groupName
+                                        }
+                                      </td>
+                                    )}
+
+                                    {/* MODULE */}
+
+                                    {firstOverall && (
+                                      <td
+                                        rowSpan={
+                                          totalRows
+                                        }
+                                      >
+                                        <span className="badge bg-primary-subtle text-primary px-3 py-2">
+                                          {
+                                            item
+                                              .module
+                                              ?.moduleName
+                                          }
+                                        </span>
+                                      </td>
+                                    )}
+
+                                    {/* MENU */}
+
+                                    {firstMenu && (
+                                      <td
+                                        rowSpan={
+                                          rows.length
+                                        }
+                                      >
+                                        <div className="fw-semibold">
+                                          {
+                                            group.menu
+                                              ?.menuName
+                                          }
+                                        </div>
+
+                                        <div className="small text-muted mt-1">
+                                          {
+                                            group.menu
+                                              ?.menuUrl
+                                          }
+                                        </div>
+                                      </td>
+                                    )}
+
+                                    {/* SUB MENU */}
+
+                                    <td>
+                                      {subMenu ? (
+                                        <div>
+                                          <div className="fw-medium">
+                                            {
+                                              subMenu
+                                                .subMenu
+                                                ?.subMenuName
+                                            }
+                                          </div>
+
+                                          <div className="small text-muted mt-1">
+                                            {
+                                              subMenu
+                                                .subMenu
+                                                ?.subMenuUrl
+                                            }
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <span className="text-muted">
+                                          No Sub Menu
+                                        </span>
+                                      )}
+                                    </td>
+
+                                    {/* ACTION */}
+
+                                    {firstOverall && (
+                                      <td
+                                        rowSpan={
+                                          totalRows
+                                        }
+                                        className="text-center"
+                                      >
+                                        <div className="d-flex justify-content-center gap-2">
+                                          <button
+                                            className="btn btn-outline-primary btn-sm"
+                                            title="Edit"
+                                            onClick={() =>
+                                              editMapping(
+                                                item.id
+                                              )
+                                            }
+                                          >
+                                            <LuPencil
+                                              size={
+                                                16
+                                              }
+                                            />
+                                          </button>
+
+                                          <button
+                                            className="btn btn-outline-danger btn-sm"
+                                            title="Delete"
+                                            onClick={() =>
+                                              deleteMapping(
+                                                item.id
+                                              )
+                                            }
+                                          >
+                                            <LuTrash2
+                                              size={
+                                                16
+                                              }
+                                            />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    )}
+                                  </tr>
+                                );
+
+                                currentRow++;
+
+                                return row;
+                              }
+                            );
+                          }
                         );
-
-                        currentRow++;
-
-                        return row;
-                      });
-                    });
-                  })
-                )}
-              </tbody>
-            </table>
+                      }
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

@@ -20,6 +20,9 @@ const useMasters = () => {
   const [subjectType,setSubjectType] = useState([]);
   const [subjectCategory,setSubjectCategory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [schoolType,setSchoolType] = useState([]);
+  const [schoolCategory,setSchoolCategory] = useState([]);
+  const [affiliationBoard,setAffiliationBoard] = useState([]);
 
   useEffect(() => {
     loadMasters();
@@ -48,6 +51,9 @@ const useMasters = () => {
         examTermTypeRes,
         subjectTypeRes,
         subjectCategoryRes,
+        schoolTypeRes,
+        schoolCategoryRes,
+        affiliationBoardRes,
       ] = await Promise.all([
         axios.get("api/master/sessions", { headers }),
         axios.get("api/master/standard", { headers }),
@@ -63,6 +69,9 @@ const useMasters = () => {
         axios.get("api/master/exam-type", { headers }),
          axios.get("api/master/subject-type", { headers }),
          axios.get("api/master/subject-category", { headers }),
+          axios.get("api/master/school-type", { headers }),
+         axios.get("api/master/school-category", { headers }),
+         axios.get("api/master/affiliation-board", { headers }),
       ]);
 
       setSessions(sessionRes.data);
@@ -79,6 +88,9 @@ const useMasters = () => {
       setExamTermType(examTermTypeRes.data);
       setSubjectType(subjectTypeRes.data);
       setSubjectCategory(subjectCategoryRes.data);
+      setSchoolType(schoolTypeRes.data);
+      setSchoolCategory(schoolCategoryRes.data);
+      setAffiliationBoard(affiliationBoardRes.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -103,6 +115,9 @@ const useMasters = () => {
     examTermType,
     subjectType,
     subjectCategory,
+    schoolType,
+    schoolCategory,
+    affiliationBoard,
   };
 };
 

@@ -193,7 +193,7 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.btn-primary {
+/* .btn-primary {
   background: linear-gradient(135deg, #6fcf97, #27ae60);
   border: none;
   color: white;
@@ -201,7 +201,7 @@ body {
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-}
+} */
 
 .btn-outline {
   background: #fff;

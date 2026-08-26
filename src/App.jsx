@@ -187,7 +187,7 @@ function App() {
             marginLeft: sidebarOpen && window.innerWidth > 768 ? "20%" : "0",
             width: sidebarOpen && window.innerWidth > 768 ? "80%" : "100%",
             padding: "1rem",
-            backgroundColor: "#f2fcfb",
+            // backgroundColor: "#f2fcfb",
             zIndex:"1",
           }}
         >

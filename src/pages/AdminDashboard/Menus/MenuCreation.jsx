@@ -1,31 +1,25 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaPlus, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaPlus, FaTrash } from "react-icons/fa";
 import axiosInstance from "../../../api/axiosInstance";
+import { IoIosListBox } from "react-icons/io";
+import { MdGridView } from "react-icons/md";
 
 const MenuCreation = () => {
   const [modules, setModules] = useState([]);
   console.log("Modules:", modules);
-  const [userGroups,setUserGroups]=useState([]);
- console.log("User Groups:",userGroups);
+  const [userGroups, setUserGroups] = useState([]);
+  console.log("User Groups:", userGroups);
 
   const loadUserGroups = async () => {
-    try{
+    try {
+      const res = await axiosInstance.get("/api/user-group/all");
 
-        const res = await axiosInstance.get(
-            "/api/user-group/all"
-        );
-
-       
-        setUserGroups(res.data);
-
-        
-    }catch(error){
-
-        console.log(error);
-
+      setUserGroups(res.data);
+    } catch (error) {
+      console.log(error);
     }
-};
+  };
 
   useEffect(() => {
     loadModules();
@@ -126,10 +120,7 @@ const MenuCreation = () => {
     console.log(payload);
 
     try {
-      const response = await axiosInstance.post(
-        "/api/menu/create",
-        payload,
-      );
+      const response = await axiosInstance.post("/api/menu/create", payload);
 
       alert(response.data);
 
@@ -159,42 +150,73 @@ const MenuCreation = () => {
 
   return (
     <>
-      {/* Header */}
-      <div
-        className="row shadow"
-        style={{
-          background:
-            "linear-gradient(135deg, rgb(61,87,236) 0%, rgb(97,150,248) 50%, #87ddf7 100%)",
-          margin: "10px",
-          borderRadius: "5px",
-          padding: "10px",
-        }}
-      >
-        <h5 className="fw-bold">Menu Creation</h5>
+      <div className="container-fluid px-2">
+        <div
+          className="bg-white shadow rounded-2 p-3 mt-2 mb-3"
+          style={{ minHeight: "70px" }}
+        >
+          <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+              <h4 className="fw-bold mb-1">Menu Creation</h4>
 
-        <nav>
-          <ol className="breadcrumb mb-0">
-            <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
-                Home
-              </a>
-            </li>
+              <p className="text-muted mb-2">
+                Create menus and submenus under modules.
+              </p>
 
-            <li className="breadcrumb-item active">Menu Creation</li>
-          </ol>
-        </nav>
+              <nav aria-label="breadcrumb">
+                <ol className="breadcrumb mb-0 small">
+                  <li className="breadcrumb-item">
+                    <a href="/" className="text-decoration-none text-dark">
+                      Dashboard
+                    </a>
+                  </li>
+
+                  <li className="breadcrumb-item">Menu Management</li>
+
+                  <li className="breadcrumb-item active text-primary">
+                    Menu Creation
+                  </li>
+                </ol>
+              </nav>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => window.history.back()}
+            >
+              <FaArrowLeft className="me-2" />
+              Back to Menu List
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Form */}
-      <div className="container-fluid mt-3">
-        <div className="card shadow">
-          <div className="card-header bg-primary text-white">Create Menu</div>
+      <div className="container-fluid mt-3 px-2">
+        <div className="bg-white shadow rounded-2 p-3 mt-2 mb-3">
+          <h4 className="mb-4 d-flex align-items-center">
+            <span
+              className="rounded-circle bg-primary me-2 d-inline-flex align-items-center justify-content-center"
+              style={{
+                width: "32px",
+                height: "32px",
+              }}
+            >
+              <IoIosListBox size={20} className="text-white" />
+            </span>
+            Create New Menu
+          </h4>
 
           <div className="card-body">
             <div className="row g-3">
               {/* Module */}
               <div className="col-md-4">
-                <label className="form-label">Module</label>
+                <label className="form-label">
+                  <h6>
+                    Module <span className="text-danger">*</span>
+                  </h6>
+                </label>
 
                 <select
                   className="form-select"
@@ -215,20 +237,30 @@ const MenuCreation = () => {
               {/* Menu Name */}
 
               <div className="col-md-4">
-                <label className="form-label">Menu Name</label>
+                <label htmlFor="" className="form-label">
+                  <h6>
+                    Menu Name <span className="text-danger">*</span>
+                  </h6>
+                </label>
 
                 <input
                   className="form-control"
                   name="menuName"
                   value={form.menuName}
                   onChange={handleChange}
+                  placeholder="Enter menu name (e.g.New Admission"
                 />
               </div>
 
               {/* URL */}
-
-              <div className="col-md-4">
-                <label className="form-label">Menu URL</label>
+                  {!form.hasSubMenu && (
+                       <div className="col-md-4">
+                <label className="form-label">
+                  {" "}
+                  <h6>
+                    Route/URL <span className="text-danger">*</span>
+                  </h6>
+                </label>
 
                 <input
                   className="form-control"
@@ -237,7 +269,10 @@ const MenuCreation = () => {
                   value={form.menuUrl}
                   onChange={handleChange}
                 />
+                <small className="text-muted">Frontend route path</small>
               </div>
+                  )}
+             
 
               {/* Order */}
 
@@ -288,88 +323,104 @@ const MenuCreation = () => {
             </div>
 
             {/* SubMenus */}
-
-            {form.hasSubMenu && (
-              <div className="card mt-4">
-                <div className="card-header bg-light">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h6 className="mb-0">Sub Menus</h6>
-
-                    <button
-                      className="btn btn-success btn-sm"
-                      onClick={addSubMenu}
-                      type="button"
-                    >
-                      <FaPlus /> Add More
-                    </button>
-                  </div>
-                </div>
-
-                <div className="card-body">
-                  {subMenus.map((sub, index) => (
-                    <div className="border rounded p-3 mb-3" key={index}>
-                      <div className="d-flex justify-content-between mb-3">
-                        <strong>Sub Menu {index + 1}</strong>
-
-                        {subMenus.length > 1 && (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => removeSubMenu(index)}
-                          >
-                            <FaTrash />
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="row g-3">
-                        <div className="col-md-4">
-                          <label className="form-label">Sub Menu Name</label>
-
-                          <input
-                            className="form-control"
-                            name="subMenuName"
-                            value={sub.subMenuName}
-                            onChange={(e) => handleSubMenuChange(index, e)}
-                          />
-                        </div>
-
-                        <div className="col-md-4">
-                          <label className="form-label">URL</label>
-
-                          <input
-                            className="form-control"
-                            placeholder="/new-admission"
-                            name="subMenuUrl"
-                            value={sub.subMenuUrl}
-                            onChange={(e) => handleSubMenuChange(index, e)}
-                          />
-                        </div>
-
-                        <div className="col-md-2">
-                          <label className="form-label">Order</label>
-
-                          <input
-                            type="number"
-                            className="form-control"
-                            name="displayOrder"
-                            value={sub.displayOrder}
-                            onChange={(e) => handleSubMenuChange(index, e)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="text-end mt-4">
-              <button className="btn btn-primary px-4" onClick={handleSave}>
-                Save Menu
-              </button>
-            </div>
           </div>
         </div>
+      </div>
+
+      <div className="container-fluid px-2 mt-3">
+        {form.hasSubMenu && (
+          <div className="card shadow">
+            <div className="card-header bg-white">
+              <div className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">Sub Menus</h5>
+
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={addSubMenu}
+                  type="button"
+                >
+                  <FaPlus /> Add More
+                </button>
+              </div>
+            </div>
+
+            <div className="card-body">
+              {subMenus.map((sub, index) => (
+                <div className=" rounded p-2 mb-3" key={index}>
+                  <div className="d-flex justify-content-between mb-3">
+                    <h6>Sub Menu {index + 1}</h6>
+
+                    {subMenus.length > 1 && (
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => removeSubMenu(index)}
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="row g-3">
+                    <div className="col-md-4">
+                      <label className="form-label">
+                        <h6>
+                          Sub Menu Name <span className="text-danger">*</span>
+                        </h6>
+                      </label>
+
+                      <input
+                        className="form-control"
+                        name="subMenuName"
+                        value={sub.subMenuName}
+                        onChange={(e) => handleSubMenuChange(index, e)}
+                        placeholder="Enter sub menu name"
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">
+                        <h6>
+                          Route/URL <span className="text-danger">*</span>
+                        </h6>
+                      </label>
+
+                      <input
+                        className="form-control"
+                        placeholder="/new-admission"
+                        name="subMenuUrl"
+                        value={sub.subMenuUrl}
+                        onChange={(e) => handleSubMenuChange(index, e)}
+                      />
+                    </div>
+
+                    <div className="col-md-2">
+                      <label className="form-label"><h6>Sequence Order<span className="text-danger">*</span></h6></label>
+
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="displayOrder"
+                        value={sub.displayOrder}
+                        onChange={(e) => handleSubMenuChange(index, e)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="text-end mt-4">
+        <button
+          type="button"
+          className="btn btn-primary px-4"
+          onClick={handleSave}
+        >
+          <MdGridView size={20} className="me-2" />
+          Create Menu
+        </button>
       </div>
     </>
   );

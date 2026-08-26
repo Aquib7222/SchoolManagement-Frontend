@@ -171,6 +171,7 @@
 // };
 
 // ================= MODULE =================
+
 export const handleModuleChange = (
   moduleData,
   checked,

@@ -10,6 +10,8 @@ const useDashboardData = () => {
   const [mappings, setMappings] = useState([]);
   const [totalStudents, setTotalStudents] = useState(0);
 
+  console.log("all modules",modules);
+
   const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -47,7 +49,7 @@ const useDashboardData = () => {
         (module) => module.hasMenu === true
       );
 
-      setModules(filteredModules);
+      setModules(modulesRes.data || []);
 
       // Mapping
       setMappings(mappingsRes.data || []);

@@ -8,23 +8,37 @@ import { FaRegListAlt, FaUserFriends, FaUserPlus } from "react-icons/fa";
 import { SiFreelancermap } from "react-icons/si";
 import { MdDashboard, MdViewModule } from "react-icons/md";
 import { PiListBulletsFill } from "react-icons/pi";
+import {
+  LuBell,
+  LuFileClock,
+  LuLink,
+  LuLink2,
+  LuList,
+  LuMenu,
+  LuPackage,
+  LuPackagePlus,
+  LuSchool,
+  LuSettings2,
+  LuShieldCheck,
+  LuUsersRound,
+} from "react-icons/lu";
+import { TfiMenuAlt } from "react-icons/tfi";
 
 const AdminSidebar = () => {
   return (
     <div
-      className=" "
-      style={{
-        padding: "15px 15px",
-        display: "flex",
-        flexDirection: "column",
-        height: "95vh",
-        width: "100%",
-        fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
-
-        // backgroundRepeat: "no-repeat",
-        borderRight: "1px solid black",
-      }}
-    >
+  className="admin-sidebar"
+  style={{
+    padding: "15px 15px",
+    display: "flex",
+    flexDirection: "column",
+    height: "90vh",
+    width: "100%",
+    fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
+    overflowY: "auto",
+    overflowX: "hidden",
+  }}
+>
       <ul
         style={{
           listStyle: "none",
@@ -49,7 +63,9 @@ const AdminSidebar = () => {
         {/* Organization Management */}
         <li className="">
           <div className="py-2 d-flex align-items-center">
-            <strong className="ms-3">Organization Management</strong>
+            <strong className="ms-3">
+              <LuSchool size={25} className="me-2" /> Organization Management
+            </strong>
           </div>
 
           <ul className="list-unstyled ms-4">
@@ -60,7 +76,7 @@ const AdminSidebar = () => {
                     className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                   >
                     <small>
-                      <IoSchoolOutline size={20} /> Schools Creation
+                      <LuSchool size={20} /> Schools Creation
                     </small>
                   </li>
                 </>
@@ -78,25 +94,16 @@ const AdminSidebar = () => {
                 </li>
               )}
             </NavLink>
-
-            <NavLink to="/school-mapping" className="text-decoration-none">
-              {({ isActive }) => (
-                <li
-                  className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
-                >
-                  <small>
-                    <SiFreelancermap size={20} /> School Mapping
-                  </small>
-                </li>
-              )}
-            </NavLink>
           </ul>
         </li>
 
         {/* Super Admin Management */}
         <li className="">
           <div className="py-2 d-flex align-items-center">
-            <strong className="ms-3">Super Admin Management</strong>
+            <strong className="ms-3">
+              <FaUserPlus size={26} className="me-2" />
+              Super Admin Management
+            </strong>
           </div>
 
           <ul className="list-unstyled ms-4">
@@ -131,7 +138,9 @@ const AdminSidebar = () => {
         {/* Module Management */}
         <li className=" ">
           <div className="py-2 d-flex align-items-center">
-            <strong className="ms-3">Module Management</strong>
+            <strong className="ms-3">
+              <LuPackage size={25} className="me-2" /> Module Management
+            </strong>
           </div>
 
           <ul className="list-unstyled ms-4">
@@ -142,7 +151,7 @@ const AdminSidebar = () => {
                     className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                   >
                     <small>
-                      <MdViewModule size={20} /> Module Creations
+                      <LuPackagePlus size={20} /> Module Creations
                     </small>
                   </li>
                 </>
@@ -155,19 +164,33 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> Module List
+                    <LuPackage size={20} /> Module List
                   </small>
                 </li>
               )}
             </NavLink>
 
-             <NavLink to="/admin/menus" className="text-decoration-none">
+            <NavLink
+              to="/admin/menus/creation"
+              className="text-decoration-none"
+            >
               {({ isActive }) => (
                 <li
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> Menu Creation
+                    <TfiMenuAlt size={20} /> Menu Creation
+                  </small>
+                </li>
+              )}
+            </NavLink>
+            <NavLink to="/admin/menus/all" className="text-decoration-none">
+              {({ isActive }) => (
+                <li
+                  className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
+                >
+                  <small>
+                    <LuMenu size={20} /> Menu List
                   </small>
                 </li>
               )}
@@ -189,7 +212,7 @@ const AdminSidebar = () => {
                     className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                   >
                     <small>
-                      <MdViewModule size={20} /> User Group Creation
+                      <LuUsersRound size={20} /> User Group Creation
                     </small>
                   </li>
                 </>
@@ -202,7 +225,7 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> User Group List
+                    <LuUsersRound size={20} /> User Group List
                   </small>
                 </li>
               )}
@@ -216,7 +239,7 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> User Group Mapping
+                    <LuLink size={20} /> User Group Mapping
                   </small>
                 </li>
               )}
@@ -231,33 +254,22 @@ const AdminSidebar = () => {
           </div>
 
           <ul className="list-unstyled ms-4">
-            <NavLink to="/admin/modules" className="text-decoration-none">
+            <NavLink to="/admin/schoolMapping" className="text-decoration-none">
               {({ isActive }) => (
                 <>
                   <li
                     className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                   >
                     <small>
-                      <MdViewModule size={20} /> School Module Mapping
+                      <LuLink2 size={20} /> School Module Mapping
                     </small>
                   </li>
                 </>
               )}
             </NavLink>
 
-            <NavLink to="/admin/moduleList" className="text-decoration-none">
-              {({ isActive }) => (
-                <li
-                  className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
-                >
-                  <small>
-                    <PiListBulletsFill size={20} /> School Menu Mapping
-                  </small>
-                </li>
-              )}
-            </NavLink>
             <NavLink
-              to="/admin/userGroupmapping"
+              to="/admin/module-mapping/list"
               className="text-decoration-none"
             >
               {({ isActive }) => (
@@ -265,67 +277,13 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> School User Group Mapping
-                  </small>
-                </li>
-              )}
-            </NavLink>
-            <NavLink
-              to="/admin/userGroupmapping"
-              className="text-decoration-none"
-            >
-              {({ isActive }) => (
-                <li
-                  className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
-                >
-                  <small>
-                    <PiListBulletsFill size={20} /> School User Mapping
+                    <LuList size={20} /> School Module Mapping List
                   </small>
                 </li>
               )}
             </NavLink>
           </ul>
         </li>
-
-        {/* Users */}
-        <NavLink to="/admin/users">
-          {({ isActive }) => (
-            <li className={`py-2 sidebar-item ${isActive ? "active" : ""}`}>
-              <i className="bi bi-people sidebar-icon"></i>
-              <small className="ms-3">Users</small>
-            </li>
-          )}
-        </NavLink>
-
-        {/* Users */}
-        <NavLink to="/admin/modules">
-          {({ isActive }) => (
-            <li className={`py-2 sidebar-item ${isActive ? "active" : ""}`}>
-              <i className="bi bi-people sidebar-icon"></i>
-              <small className="ms-3">Modules Creation</small>
-            </li>
-          )}
-        </NavLink>
-
-        {/* user group mapping */}
-        <NavLink to="/admin/userGroupmapping">
-          {({ isActive }) => (
-            <li className={`py-2 sidebar-item ${isActive ? "active" : ""}`}>
-              <i className="bi bi-people sidebar-icon"></i>
-              <small className="ms-3">UserGroup Mapping</small>
-            </li>
-          )}
-        </NavLink>
-
-        {/* school Mapping  */}
-        <NavLink to="/admin/schoolMapping">
-          {({ isActive }) => (
-            <li className={`py-2 sidebar-item ${isActive ? "active" : ""}`}>
-              <i className="bi bi-people sidebar-icon"></i>
-              <small className="ms-3">School Mapping</small>
-            </li>
-          )}
-        </NavLink>
 
         {/* User Group Management */}
         <li className=" ">
@@ -341,7 +299,7 @@ const AdminSidebar = () => {
                     className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                   >
                     <small>
-                      <MdViewModule size={20} /> General Settings
+                      <LuSettings2 size={20} /> General Settings
                     </small>
                   </li>
                 </>
@@ -354,7 +312,7 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> Role & Permission
+                    <LuShieldCheck size={20} /> Role & Permission
                   </small>
                 </li>
               )}
@@ -368,13 +326,13 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> Notification Settings
+                    <LuBell size={20} /> Notification Settings
                   </small>
                 </li>
               )}
             </NavLink>
             <NavLink
-              to="/admin/userGroupmapping"
+              to="/settings/system-log/"
               className="text-decoration-none"
             >
               {({ isActive }) => (
@@ -382,7 +340,7 @@ const AdminSidebar = () => {
                   className={`py-2 px-0 sidebar-item ${isActive ? "active" : ""}`}
                 >
                   <small>
-                    <PiListBulletsFill size={20} /> System Log
+                    <LuFileClock size={20} /> System Log
                   </small>
                 </li>
               )}
@@ -393,6 +351,28 @@ const AdminSidebar = () => {
 
       {/* STYLES */}
       <style>{`
+      .admin-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(13, 110, 253, 0.45) transparent;
+}
+
+/* Chrome / Edge / Safari */
+.admin-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(13, 110, 253, 0.45);
+  border-radius: 10px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 110, 253, 0.8);
+}
         a {
           text-decoration: none;
           color: inherit;

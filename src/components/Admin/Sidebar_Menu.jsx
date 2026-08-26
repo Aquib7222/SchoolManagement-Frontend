@@ -16,7 +16,7 @@ Object.keys(images).forEach((path) => {
   imageMap[fileName] = images[path];
 });
 
-console.log("imageMap", imageMap);
+
 import {
   FaUsers,
   FaUserGraduate,
@@ -48,10 +48,10 @@ const Sidebar_menu = () => {
   const [hoveredMenu, setHoveredMenu] = useState(null);
   const [hoveredSubmenu, setHoveredSubmenu] = useState(null);
 
-  console.log("role", storedUser);
+  
 
   useEffect(() => {
-    console.log("Sidebar useEffect");
+   
     loadSidebar();
   }, []);
 
@@ -69,7 +69,7 @@ const Sidebar_menu = () => {
           },
         },
       );
-      console.log("Sidebar Response :", res.data);
+      
 
       setAllMenus(res.data);
     } catch (err) {
@@ -77,7 +77,7 @@ const Sidebar_menu = () => {
     }
   };
 
-  console.log("update sidebar",allmenus);
+  
   
 
   // const allmenus = allMenuItems || {};

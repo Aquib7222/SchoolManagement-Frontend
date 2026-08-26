@@ -81,6 +81,12 @@ import ReportCardVerification from "./pages/Assessment/ReportCardVerification";
 import ResultPublish from "./pages/Assessment/ResultPublish";
 import Results from "./pages/Results/Results";
 import StudentResult from "./pages/Results/StudentResult";
+import SchoolList from "./pages/AdminDashboard/SchoolList";
+import SchoolView from "./pages/SchoolView";
+import SuperAdminList from "./pages/AdminDashboard/SuperAdminList";
+import MenuList from "./pages/AdminDashboard/Menus/MenuList";
+import SchoolModuleMappingList from "./pages/AdminDashboard/SchoolMapping/SchoolModuleMappingList";
+import AuditLogList from "./pages/AdminDashboard/SystemLog/AuditLogList";
 
 const AppRoutes = () => {
   return (
@@ -258,23 +264,23 @@ const AppRoutes = () => {
           element={<ViewAssessmentStructure />}
         />
         <Route path="/assessment/marks-entry" element={<MarksEntry />} />
-        <Route path="/assessment/marks/verification" element={<MarksVerification />} />
-        <Route path="/assessment/report-card" element={<ReportCardVerification />} />
+        <Route
+          path="/assessment/marks/verification"
+          element={<MarksVerification />}
+        />
+        <Route
+          path="/assessment/report-card"
+          element={<ReportCardVerification />}
+        />
         <Route path="/assessment/result-publish" element={<ResultPublish />} />
         <Route
           path="/assessment/grade-management"
           element={<GradeManagement />}
         />
 
-        <Route
-          path="/results"
-          element={<Results />}
-        />
+        <Route path="/results" element={<Results />} />
 
-        <Route
-          path="/result"
-          element={<StudentResult />}
-        />
+        <Route path="/result" element={<StudentResult />} />
       </Route>
 
       {/* Admin Dashboard */}
@@ -288,14 +294,23 @@ const AppRoutes = () => {
 
       <Route path="/schools" element={<Schools />} />
       <Route path="/add/schools" element={<SchoolAddForm />} />
-      <Route path="/schools/:id" element={<SchoolDetailsView />} />
-      <Route path="/admin/modules/" element={<ModulesCreation />} />
-      <Route path="/admin/menus/" element={<MenuCreation />} />
+      <Route path="/school-list" element={<SchoolList />} />
+      <Route path="/school/view/:id" element={<SchoolView />} />
+      <Route path="/school-edit/:schoolId" element={<SchoolAddForm />} />
+
+      <Route path="/admin/modules" element={<ModulesCreation />} />
+
+      <Route path="/admin/modules/edit/:id" element={<ModulesCreation />} />
+      <Route path="/admin/menus/creation" element={<MenuCreation />} />
+      <Route path="/admin/menus/all" element={<MenuList />} />
       <Route path="/admin/userGroupmapping/" element={<UserGroupMapping />} />
       <Route path="/admin/schoolMapping/" element={<SchoolMapping />} />
+      <Route path="/admin/module-mapping/list/" element={<SchoolModuleMappingList />} />
       <Route path="/admin/moduleList/" element={<ModuleList />} />
 
       <Route path="/add/superadmins" element={<SuperAdminCreation />} />
+      <Route path="/superadmin-list" element={<SuperAdminList />} />
+      <Route path="/settings/system-log/" element={<AuditLogList />} />
       {/* Only admin can create schools */}
       <Route
         path="/dashboard/create-school"
