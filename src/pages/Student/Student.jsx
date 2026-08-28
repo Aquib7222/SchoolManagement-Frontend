@@ -1,14 +1,236 @@
+// import { useNavigate } from "react-router-dom";
+// import { useEffect, useState } from "react";
+
+// import useMasters from "../../hooks/useMasters";
+// import axios from "../../api/axiosInstance";
+
+// const Students = () => {
+//   const { loading: masterLoading, sessions, standards, sections } = useMasters();
+//   const navigate = useNavigate();
+//   const [sessionList, setSessionList] = useState([]);
+//   const [standardList, setStandardList] = useState([]);
+
+//   const [selectedSession, setSelectedSession] = useState("");
+//   const [selectedStandard, setSelectedStandard] = useState("");
+//   const [selectedSection, setSelectedSection] = useState("");
+
+//   const [students, setStudents] = useState([]);
+//   const [searchLoading, setSearchLoading] = useState(false);
+//   // const [loading, setLoading] = useState(false);
+
+//   const token = localStorage.getItem("token");
+
+ 
+
+//   const handleAdd = () => {
+//     navigate("/student/add_students");
+//   };
+
+//   const handleView = (admissionNumber) => {
+//     navigate(`/student/view/${admissionNumber}`);
+//   };
+
+//   // ✅ BACKEND SEARCH
+//   const handleFilter = async () => {
+//     try {
+//       setSearchLoading(true);
+
+//       const res = await axios.get("/api/students/search", {
+//         params: {
+//           academicYear: selectedSession || null,
+//           studentClass: selectedStandard || null,
+//           section: selectedSection || null,
+//         },
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       setStudents(res.data);
+//     } catch (error) {
+//       console.error(error);
+//       alert("Failed to fetch students");
+//     } finally {
+//       setSearchLoading(false);
+//     }
+//   };
+
+//   console.log(students);
+
+//   return (
+//     <>
+//       {/* Header */}
+//       <div
+//         className="rounded mt-3 p-2 bg-white shadow-lg"
+       
+//       >
+//         <div className="row"><h6>
+//           <strong>Students Standard Section wise</strong>
+//         </h6>
+//         <nav aria-label="breadcrumb py-2">
+//           <ol className="breadcrumb">
+//             <li className="breadcrumb-item">
+//               <a href="/" style={{ textDecoration: "none", color: "black" }}>
+//                 Home
+//               </a>
+//             </li>
+//             <li className="breadcrumb-item">
+//               <a href="#" style={{ textDecoration: "none", color: "black" }}>
+//                 Students Standard Section wise
+//               </a>
+//             </li>
+//           </ol>
+//         </nav></div>
+//       </div>
+
+//       {/* Filters */}
+//       <div className=" bg-white rounded p-3 shadow mt-3">
+//         <div className="row">
+//           <div className="col-md-3">
+//             <h6>
+//               <strong>Academic Year</strong>
+//             </h6>
+//             <select
+//               className="form-select"
+//               value={selectedSession}
+//               onChange={(e) => setSelectedSession(e.target.value)}
+//             >
+//               <option value="">All</option>
+
+//               {sessions.map((item) => (
+//                 <option key={item} value={item}>
+//                   {item}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+
+//           <div className="col-md-3">
+//             <h6>
+//               <strong>Standard</strong>
+//             </h6>
+//             <select
+//               className="form-select"
+//               value={selectedStandard}
+//               onChange={(e) => setSelectedStandard(e.target.value)}
+//             >
+//               <option value="">All</option>
+
+//               {standards.map((item) => (
+//                 <option key={item} value={item}>
+//                   {item}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+
+//           <div className="col-md-3">
+//             <h6>
+//               <strong>Section</strong>
+//             </h6>
+//             <select
+//               className="form-select"
+//               value={selectedSection}
+//               onChange={(e) => setSelectedSection(e.target.value)}
+//             >
+//               <option value="">All</option>
+//               <option value="A">A</option>
+//               <option value="B">B</option>
+//               <option value="C">C</option>
+//             </select>
+//           </div>
+
+//           <div className="col-md-3 d-flex align-items-end">
+//             <button className="btn btn-primary me-2" onClick={handleFilter}>
+//               Search
+//             </button>
+//             {/* <button className="btn btn-success" onClick={handleAdd}>
+//               + Add
+//             </button> */}
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Table */}
+//       <div className="mt-3 p-2 bg-white rounded shadow table-responsive">
+//         <table className="table table-bordered table-hover">
+//           <thead className="table-primary">
+//             <tr>
+//               <th>S.No</th>
+//               <th>Name</th>
+//               <th>Admission No</th>
+//               <th>Student Standard</th>
+//               <th>Address</th>
+//               <th>Gender</th>
+//               <th>View</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {searchLoading  ? (
+//               <tr>
+//                 <td colSpan="6" className="text-center">
+//                   Loading...
+//                 </td>
+//               </tr>
+//             ) : students.length > 0 ? (
+//               students.map((s, index) => (
+//                 <tr key={s.id}>
+//                   <td>{index + 1}</td>
+//                   <td>
+//                     {s.firstName} {s.lastName}
+//                   </td>
+//                   <td>{s.admissionNumber}</td>
+//                   <td>
+//                     {s.studentClass}/{s.section}
+//                   </td>
+//                   <td>
+//                     {" "}
+//                     {s.houseNo}, {s.street}, {s.town}, {s.state} - {s.zip}
+//                   </td>
+//                   <td>{s.gender}</td>
+//                   <td>
+//                     <button
+//                       className="btn btn-sm btn-primary"
+//                       onClick={() => handleView(s.admissionNumber)}
+//                     >
+//                       View
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan="6" className="text-center">
+//                   No students found
+//                 </td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default Students;
+
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import {
+  FaSearch,
+  FaEye,
+  FaUsers,
+  FaFilter,
+  FaRedo,
+} from "react-icons/fa";
 
 import useMasters from "../../hooks/useMasters";
 import axios from "../../api/axiosInstance";
 
 const Students = () => {
-  const { loading: masterLoading, sessions, standards, sections } = useMasters();
+  const { sessions, standards } = useMasters();
   const navigate = useNavigate();
-  const [sessionList, setSessionList] = useState([]);
-  const [standardList, setStandardList] = useState([]);
 
   const [selectedSession, setSelectedSession] = useState("");
   const [selectedStandard, setSelectedStandard] = useState("");
@@ -16,61 +238,10 @@ const Students = () => {
 
   const [students, setStudents] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  // const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
-  // ==========================
-  // Load Masters
-  // ==========================
-  // useEffect(() => {
-  //   // loadSessions();
-  //   loadStandards();
-  // }, []);
-
-  // // ==========================
-  // // Sessions
-  // // ==========================
-  // const loadSessions = async () => {
-  //   try {
-  //     const res = await axios.get("/api/master/sessions", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     setSessionList(res.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  // // ==========================
-  // // Standards
-  // // ==========================
-  // const loadStandards = async () => {
-  //   try {
-  //     const res = await axios.get("/api/master/standard", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     setStandardList(res.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-
-  const handleAdd = () => {
-    navigate("/student/add_students");
-  };
-
-  const handleView = (admissionNumber) => {
-    navigate(`/student/view/${admissionNumber}`);
-  };
-
-  // ✅ BACKEND SEARCH
+  // ================= SEARCH =================
   const handleFilter = async () => {
     try {
       setSearchLoading(true);
@@ -86,56 +257,163 @@ const Students = () => {
         },
       });
 
-      setStudents(res.data);
+      setStudents(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.error(error);
-      alert("Failed to fetch students");
+      console.error("Student Search Error:", error);
+      setStudents([]);
     } finally {
       setSearchLoading(false);
     }
   };
 
-  console.log(students);
+  // ================= RESET =================
+  const handleReset = () => {
+    setSelectedSession("");
+    setSelectedStandard("");
+    setSelectedSection("");
+    setStudents([]);
+  };
+
+  // ================= VIEW =================
+  const handleView = (admissionNumber) => {
+    navigate(`/student/view/${admissionNumber}`);
+  };
 
   return (
-    <>
-      {/* Header */}
-      <div
-        className="rounded mt-3 p-2 bg-white shadow-lg"
-       
-      >
-        <div className="row"><h6>
-          <strong>Students Standard Section wise</strong>
-        </h6>
-        <nav aria-label="breadcrumb py-2">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
-                Home
-              </a>
-            </li>
-            <li className="breadcrumb-item">
-              <a href="#" style={{ textDecoration: "none", color: "black" }}>
-                Students Standard Section wise
-              </a>
-            </li>
-          </ol>
-        </nav></div>
+    <div className="container-fluid px-0">
+
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
+      <div className="bg-white rounded-4 shadow border-0 mt-3 p-3">
+
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+          <div className="d-flex align-items-center">
+
+            <div
+              className="rounded-3 d-flex align-items-center justify-content-center me-3"
+              style={{
+                width: "46px",
+                height: "46px",
+                background: "#E8F1FF",
+                color: "#2563eb",
+              }}
+            >
+              <FaUsers size={21} />
+            </div>
+
+            <div>
+              <h5 className="fw-bold mb-1">
+                Students
+              </h5>
+
+              <small className="text-muted">
+                View students by academic year, standard and section
+              </small>
+            </div>
+
+          </div>
+
+          {/* Student Count */}
+          <div
+            className="px-3 py-2 rounded-3"
+            style={{
+              background: "#f8fafc",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <small className="text-muted d-block">
+              Students Found
+            </small>
+
+            <strong className="text-primary">
+              {students.length}
+            </strong>
+          </div>
+
+        </div>
+
+        {/* Breadcrumb */}
+        <div className="mt-3">
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb mb-0 small">
+
+              <li className="breadcrumb-item">
+                <span
+                  style={{
+                    cursor: "pointer",
+                    color: "#64748b",
+                  }}
+                  onClick={() => navigate("/")}
+                >
+                  Home
+                </span>
+              </li>
+
+              <li className="breadcrumb-item active">
+                Students
+              </li>
+
+            </ol>
+          </nav>
+        </div>
+
       </div>
 
-      {/* Filters */}
-      <div className=" bg-white rounded p-3 shadow mt-3">
-        <div className="row">
-          <div className="col-md-3">
-            <h6>
-              <strong>Academic Year</strong>
+
+      {/* =====================================================
+          FILTER CARD
+      ====================================================== */}
+      <div className="bg-white rounded-4 shadow mt-3 p-3">
+
+        {/* Filter Header */}
+        <div className="d-flex align-items-center mb-3">
+
+          <div
+            className="rounded-3 d-flex align-items-center justify-content-center me-2"
+            style={{
+              width: "34px",
+              height: "34px",
+              background: "#eff6ff",
+              color: "#2563eb",
+            }}
+          >
+            <FaFilter size={14} />
+          </div>
+
+          <div>
+            <h6 className="fw-bold mb-0">
+              Student Filters
             </h6>
+
+            <small className="text-muted">
+              Select criteria to find students
+            </small>
+          </div>
+
+        </div>
+
+
+        <div className="row g-3">
+
+          {/* Academic Year */}
+          <div className="col-xl-3 col-md-6">
+
+            <label className="form-label small fw-semibold text-secondary">
+              Academic Year
+            </label>
+
             <select
               className="form-select"
               value={selectedSession}
-              onChange={(e) => setSelectedSession(e.target.value)}
+              onChange={(e) =>
+                setSelectedSession(e.target.value)
+              }
             >
-              <option value="">All</option>
+              <option value="">
+                All Academic Years
+              </option>
 
               {sessions.map((item) => (
                 <option key={item} value={item}>
@@ -143,18 +421,27 @@ const Students = () => {
                 </option>
               ))}
             </select>
+
           </div>
 
-          <div className="col-md-3">
-            <h6>
-              <strong>Standard</strong>
-            </h6>
+
+          {/* Standard */}
+          <div className="col-xl-3 col-md-6">
+
+            <label className="form-label small fw-semibold text-secondary">
+              Standard
+            </label>
+
             <select
               className="form-select"
               value={selectedStandard}
-              onChange={(e) => setSelectedStandard(e.target.value)}
+              onChange={(e) =>
+                setSelectedStandard(e.target.value)
+              }
             >
-              <option value="">All</option>
+              <option value="">
+                All Standards
+              </option>
 
               {standards.map((item) => (
                 <option key={item} value={item}>
@@ -162,95 +449,379 @@ const Students = () => {
                 </option>
               ))}
             </select>
+
           </div>
 
-          <div className="col-md-3">
-            <h6>
-              <strong>Section</strong>
-            </h6>
+
+          {/* Section */}
+          <div className="col-xl-3 col-md-6">
+
+            <label className="form-label small fw-semibold text-secondary">
+              Section
+            </label>
+
             <select
               className="form-select"
               value={selectedSection}
-              onChange={(e) => setSelectedSection(e.target.value)}
+              onChange={(e) =>
+                setSelectedSection(e.target.value)
+              }
             >
-              <option value="">All</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
+              <option value="">
+                All Sections
+              </option>
+
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
             </select>
+
           </div>
 
-          <div className="col-md-3 d-flex align-items-end">
-            <button className="btn btn-primary me-2" onClick={handleFilter}>
-              Search
+
+          {/* Buttons */}
+          <div className="col-xl-3 col-md-6 d-flex align-items-end">
+
+            <button
+              className="btn btn-primary rounded-3 flex-grow-1 me-2"
+              onClick={handleFilter}
+              disabled={searchLoading}
+            >
+
+              {searchLoading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  />
+                  Searching...
+                </>
+              ) : (
+                <>
+                  <FaSearch className="me-2" />
+                  Search
+                </>
+              )}
+
             </button>
-            {/* <button className="btn btn-success" onClick={handleAdd}>
-              + Add
-            </button> */}
+
+
+            <button
+              className="btn btn-light border rounded-3"
+              onClick={handleReset}
+              title="Reset Filters"
+            >
+              <FaRedo />
+            </button>
+
           </div>
+
         </div>
+
       </div>
 
-      {/* Table */}
-      <div className="mt-3 p-2 bg-white rounded shadow table-responsive">
-        <table className="table table-bordered table-hover">
-          <thead className="table-primary">
-            <tr>
-              <th>S.No</th>
-              <th>Name</th>
-              <th>Admission No</th>
-              <th>Student Standard</th>
-              <th>Address</th>
-              <th>Gender</th>
-              <th>View</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {searchLoading  ? (
+      {/* =====================================================
+          STUDENT TABLE
+      ====================================================== */}
+      <div className="bg-white rounded-4 shadow mt-3 overflow-hidden">
+
+        {/* Table Header */}
+        <div
+          className="p-3 border-bottom d-flex justify-content-between align-items-center"
+        >
+
+          <div className="d-flex align-items-center">
+
+            <div
+              className="rounded-3 d-flex align-items-center justify-content-center me-2"
+              style={{
+                width: "36px",
+                height: "36px",
+                background: "#E8F1FF",
+                color: "#2563eb",
+              }}
+            >
+              <FaUsers size={15} />
+            </div>
+
+            <div>
+              <h6 className="fw-bold mb-0">
+                Student List
+              </h6>
+
+              <small className="text-muted">
+                {students.length} student
+                {students.length !== 1 ? "s" : ""} found
+              </small>
+            </div>
+
+          </div>
+
+          {students.length > 0 && (
+            <span className="badge rounded-pill bg-primary px-3 py-2">
+              {students.length} Records
+            </span>
+          )}
+
+        </div>
+
+
+        <div className="table-responsive">
+
+          <table className="table table-hover align-middle mb-0">
+
+            <thead
+              style={{
+                background: "#f8fafc",
+              }}
+            >
               <tr>
-                <td colSpan="6" className="text-center">
-                  Loading...
-                </td>
+
+                <th className="ps-4 text-secondary small">
+                  #
+                </th>
+
+                <th className="text-secondary small">
+                  Student
+                </th>
+
+                <th className="text-secondary small">
+                  Admission No
+                </th>
+
+                <th className="text-secondary small">
+                  Standard
+                </th>
+
+                <th className="text-secondary small">
+                  Address
+                </th>
+
+                <th className="text-secondary small">
+                  Gender
+                </th>
+
+                <th className="text-center text-secondary small">
+                  Action
+                </th>
+
               </tr>
-            ) : students.length > 0 ? (
-              students.map((s, index) => (
-                <tr key={s.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    {s.firstName} {s.lastName}
+            </thead>
+
+
+            <tbody>
+
+              {/* Loading */}
+              {searchLoading ? (
+                <tr>
+
+                  <td colSpan="7" className="text-center py-5">
+
+                    <div
+                      className="spinner-border text-primary mb-3"
+                      role="status"
+                    />
+
+                    <div className="text-muted small">
+                      Loading students...
+                    </div>
+
                   </td>
-                  <td>{s.admissionNumber}</td>
-                  <td>
-                    {s.studentClass}/{s.section}
-                  </td>
-                  <td>
-                    {" "}
-                    {s.houseNo}, {s.street}, {s.town}, {s.state} - {s.zip}
-                  </td>
-                  <td>{s.gender}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => handleView(s.admissionNumber)}
-                    >
-                      View
-                    </button>
-                  </td>
+
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center">
-                  No students found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              ) : students.length > 0 ? (
+
+                students.map((s, index) => (
+
+                  <tr key={s.id}>
+
+                    {/* Serial */}
+                    <td className="ps-4 text-muted">
+                      {index + 1}
+                    </td>
+
+
+                    {/* Student */}
+                    <td>
+
+                      <div className="d-flex align-items-center">
+
+                        <img
+                          src={`https://ui-avatars.com/api/?background=2563eb&color=fff&name=${encodeURIComponent(
+                            `${s.firstName || ""} ${
+                              s.lastName || ""
+                            }`
+                          )}`}
+                          alt="student"
+                          width="40"
+                          height="40"
+                          className="rounded-circle me-3"
+                        />
+
+                        <div>
+
+                          <div className="fw-semibold">
+                            {s.firstName} {s.lastName}
+                          </div>
+
+                          <small className="text-muted">
+                            Student
+                          </small>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+
+                    {/* Admission */}
+                    <td>
+
+                      <span
+                        className="badge rounded-pill"
+                        style={{
+                          background: "#eff6ff",
+                          color: "#2563eb",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {s.admissionNumber}
+                      </span>
+
+                    </td>
+
+
+                    {/* Standard */}
+                    <td>
+
+                      <span className="badge bg-light text-dark border">
+                        {s.studentClass === "NURSERY"
+                          ? "Nursery"
+                          : s.studentClass}
+
+                        {s.section && (
+                          <>
+                            {" / "}
+                            {s.section}
+                          </>
+                        )}
+                      </span>
+
+                    </td>
+
+
+                    {/* Address */}
+                    <td style={{ minWidth: "230px" }}>
+
+                      <small className="text-muted">
+
+                        {[
+                          s.houseNo,
+                          s.street,
+                          s.town,
+                          s.state,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+
+                        {s.zip && ` - ${s.zip}`}
+
+                      </small>
+
+                    </td>
+
+
+                    {/* Gender */}
+                    <td>
+
+                      <span
+                        className={`badge rounded-pill ${
+                          s.gender === "MALE"
+                            ? "bg-primary"
+                            : s.gender === "FEMALE"
+                            ? "bg-danger"
+                            : "bg-secondary"
+                        }`}
+                      >
+                        {s.gender || "N/A"}
+                      </span>
+
+                    </td>
+
+
+                    {/* Action */}
+                    <td className="text-center">
+
+                      <button
+                        className="btn btn-sm btn-outline-primary rounded-3"
+                        onClick={() =>
+                          handleView(
+                            s.admissionNumber
+                          )
+                        }
+                        title="View Student"
+                      >
+                        <FaEye className="me-1" />
+                        View
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                /* Empty State */
+                <tr>
+
+                  <td
+                    colSpan="7"
+                    className="text-center py-5"
+                  >
+
+                    <div
+                      className="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "65px",
+                        height: "65px",
+                        background: "#f1f5f9",
+                        color: "#94a3b8",
+                      }}
+                    >
+                      <FaUsers size={25} />
+                    </div>
+
+                    <h6 className="fw-bold text-secondary">
+                      No Students Found
+                    </h6>
+
+                    <small className="text-muted">
+                      Select filters and click Search
+                      to load students.
+                    </small>
+
+                  </td>
+
+                </tr>
+
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
-    </>
+
+    </div>
   );
 };
 
 export default Students;
+

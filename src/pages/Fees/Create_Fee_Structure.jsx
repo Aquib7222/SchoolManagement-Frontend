@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  LuPlus,
+  LuPencil,
+  LuTrash2,
+  LuX,
+  LuSearch,
+  LuRefreshCw,
+  LuSave,
+  LuLayers,
+} from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
@@ -7,135 +16,137 @@ const Create_Fee_Structure = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  // =====================================================
+  // FORM
+  // =====================================================
+
+  const initialFormData = {
     session: "",
     standard: "",
     category: "",
     batch: "",
-  });
+  };
 
-  const [feeInput, setFeeInput] = useState({
+  const initialFeeInput = {
     type: "",
     amount: "",
-  });
+  };
 
-  const [fees, setFees] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState(initialFormData);
+  const [feeInput, setFeeInput] = useState(initialFeeInput);
 
-  // Backend Data
+  // =====================================================
+  // DATA
+  // =====================================================
+
   const [feeCategories, setFeeCategories] = useState([]);
   const [feeBatches, setFeeBatches] = useState([]);
-  const [standard, setStandard] = useState([]);
+  const [standards, setStandards] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [feeMaster, setFeeMaster] = useState([]);
   const [feeStructures, setFeeStructures] = useState([]);
 
-  const [allFeeStructures, setAllFeeStructures] = useState([]);
+  // Fees being added to current structure
+  const [fees, setFees] = useState([]);
 
+  // =====================================================
+  // EDIT STATES
+  // =====================================================
+
+  const [editingId, setEditingId] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
+
+  // =====================================================
+  // LOADING
+  // =====================================================
+
+  const [pageLoading, setPageLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  // =====================================================
+  // FILTER
+  // =====================================================
 
   const [filter, setFilter] = useState({
     session: "",
     standard: "",
     category: "",
     batch: "",
+    search: "",
   });
 
-  useEffect(() => {
-    loadFeeCategories();
-    loadFeeBatches();
-    loadStandard();
-    loadFeeMaster();
-  }, []);
-
-  console.log("feeCategories", feeCategories);
-  console.log("feeBatches", feeBatches);
-  console.log("standard", standard);
-  console.log("feeMaster", feeMaster);
-  console.log("feeStructures", feeStructures);
+  // =====================================================
+  // LOAD ALL MASTER DATA
+  // =====================================================
 
   useEffect(() => {
+    loadMasterData();
     loadFeeStructures();
   }, []);
 
+  const authConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const loadMasterData = async () => {
+    setPageLoading(true);
+
+    try {
+      const [
+        sessionRes,
+        standardRes,
+        categoryRes,
+        batchRes,
+        feeMasterRes,
+      ] = await Promise.all([
+        axiosInstance.get("/api/master/sessions", authConfig),
+        axiosInstance.get("/api/master/standard", authConfig),
+        axiosInstance.get("/api/master/fee-category", authConfig),
+        axiosInstance.get("/api/master/fee-batch", authConfig),
+        axiosInstance.get("/api/fee-master", authConfig),
+      ]);
+
+      setSessions(sessionRes.data || []);
+      setStandards(standardRes.data || []);
+      setFeeCategories(categoryRes.data || []);
+      setFeeBatches(batchRes.data || []);
+      setFeeMaster(feeMasterRes.data || []);
+    } catch (error) {
+      console.error("Master data error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Unable to load master data",
+      );
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
+  // =====================================================
+  // LOAD FEE STRUCTURES
+  // =====================================================
+
   const loadFeeStructures = async () => {
     try {
-      setLoading(true);
-
-      const res = await axiosInstance.get("/api/fee-structure", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setFeeStructures(res.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadFeeMaster = async () => {
-    try {
-      const res = await axios.get("/api/fee-master", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setFeeMaster(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadStandard = async () => {
-    try {
-      const res = await axiosInstance.get("/api/master/standard", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setStandard(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const loadFeeCategories = async () => {
-    try {
       const res = await axiosInstance.get(
-        "/api/master/fee-category",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        "/api/fee-structure",
+        authConfig,
       );
 
-      setFeeCategories(res.data);
+      setFeeStructures(res.data || []);
     } catch (error) {
-      console.log(error);
+      console.error("Fee structure error:", error);
+      setFeeStructures([]);
     }
   };
 
-  const loadFeeBatches = async () => {
-    try {
-      const res = await axiosInstance.get(
-        "/api/master/fee-batch",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      setFeeBatches(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // =====================================================
+  // FORM CHANGE
+  // =====================================================
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -146,6 +157,10 @@ const Create_Fee_Structure = () => {
     }));
   };
 
+  // =====================================================
+  // FEE INPUT CHANGE
+  // =====================================================
+
   const handleFeeInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -155,89 +170,150 @@ const Create_Fee_Structure = () => {
     }));
   };
 
-  //   const handleAddFee = () => {
-  //     if (!feeInput.type || !feeInput.amount) return;
+  // =====================================================
+  // ADD / UPDATE FEE IN TEMPORARY LIST
+  // =====================================================
 
-  //     if (editIndex !== null) {
-  //       const updated = [...fees];
-  //       updated[editIndex] = feeInput;
-  //       setFees(updated);
-  //       setEditIndex(null);
-  //     } else {
-  //       setFees([...fees, feeInput]);
-  //     }
+  const handleAddFee = () => {
+    if (!feeInput.type || !feeInput.amount) {
+      alert("Please select Fee Type and enter Amount.");
+      return;
+    }
 
-  //     setFeeInput({
-  //       type: "",
-  //       amount: "",
-  //     });
-  //   };
+    if (Number(feeInput.amount) <= 0) {
+      alert("Amount must be greater than 0.");
+      return;
+    }
+
+    const selectedFee = feeMaster.find(
+      (item) => String(item.id) === String(feeInput.type),
+    );
+
+    if (!selectedFee) {
+      alert("Invalid Fee Type.");
+      return;
+    }
+
+    const obj = {
+      feeMasterId: selectedFee.id,
+      feeName: selectedFee.feeName,
+      feeCode: selectedFee.feeCode,
+      amount: Number(feeInput.amount),
+    };
+
+    // UPDATE EXISTING TEMP FEE
+    if (editIndex !== null) {
+      const updatedFees = [...fees];
+      updatedFees[editIndex] = obj;
+
+      setFees(updatedFees);
+      setEditIndex(null);
+    } else {
+      // Prevent duplicate fee type
+      const alreadyExists = fees.some(
+        (fee) => Number(fee.feeMasterId) === Number(selectedFee.id),
+      );
+
+      if (alreadyExists) {
+        alert("This Fee Type is already added.");
+        return;
+      }
+
+      setFees((prev) => [...prev, obj]);
+    }
+
+    setFeeInput(initialFeeInput);
+  };
+
+  // =====================================================
+  // EDIT TEMP FEE
+  // =====================================================
 
   const handleEditFee = (index) => {
     const fee = fees[index];
 
     setFeeInput({
-      type: fee.feeMasterId,
+      type: String(fee.feeMasterId),
       amount: fee.amount,
     });
 
     setEditIndex(index);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure to delete this Fee Structure?")) return;
+  // =====================================================
+  // DELETE TEMP FEE
+  // =====================================================
 
-    try {
-      const res = await axiosInstance.delete(
-        `/api/fee-structure/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+  const handleDeleteFee = (index) => {
+    const updatedFees = fees.filter((_, i) => i !== index);
 
-      alert(res.data);
+    setFees(updatedFees);
 
-      loadFeeStructures();
-    } catch (err) {
-      console.log(err);
-      alert("Delete Failed");
+    if (editIndex === index) {
+      setEditIndex(null);
+      setFeeInput(initialFeeInput);
     }
   };
 
-  const [editingId, setEditingId] = useState(null);
-  // table structure handlee
- const handleEdit = (item) => {
-  setEditingId(item.id);
+  // =====================================================
+  // CANCEL TEMP FEE EDIT
+  // =====================================================
 
-  setFormData({
-    session: item.session,
-    standard: item.standard,
-    category: item.feeCategory,
-    batch: item.batch,
-  });
+  const handleCancelFeeEdit = () => {
+    setEditIndex(null);
+    setFeeInput(initialFeeInput);
+  };
 
-  setFees(
-    item.feeDetails.map((d) => ({
-      feeMasterId: d.feeMaster.id,
-      feeName: d.feeMaster.feeName,
-      amount: d.amount,
-    }))
-  );
+  // =====================================================
+  // EDIT FEE STRUCTURE
+  // =====================================================
 
-  // Reset fee input
-  setFeeInput({
-    type: "",
-    amount: "",
-  });
+  const handleEdit = (item) => {
+    setEditingId(item.id);
 
-  setEditIndex(null);
-};
+    setFormData({
+      session: item.session || "",
+      standard: item.standard || "",
+      category: item.feeCategory || "",
+      batch: item.batch || "",
+    });
 
-  // saved api call
+    setFees(
+      (item.feeDetails || []).map((detail) => ({
+        feeMasterId: detail.feeMaster?.id,
+        feeName: detail.feeMaster?.feeName,
+        feeCode: detail.feeMaster?.feeCode,
+        amount: detail.amount,
+      })),
+    );
+
+    setFeeInput(initialFeeInput);
+    setEditIndex(null);
+
+    // Scroll to form
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // =====================================================
+  // RESET FORM
+  // =====================================================
+
+  const resetForm = () => {
+    setEditingId(null);
+    setEditIndex(null);
+    setFormData(initialFormData);
+    setFeeInput(initialFeeInput);
+    setFees([]);
+  };
+
+  // =====================================================
+  // SAVE / UPDATE
+  // =====================================================
+
   const handleSave = async (e) => {
-    setLoading(true);
     e.preventDefault();
 
     if (
@@ -246,7 +322,7 @@ const Create_Fee_Structure = () => {
       !formData.category ||
       !formData.batch
     ) {
-      alert("Please fill all fields");
+      alert("Please fill all Fee Structure fields.");
       return;
     }
 
@@ -266,151 +342,286 @@ const Create_Fee_Structure = () => {
       })),
     };
 
-    // 👇 Ye 2 console yahin lagao
     console.log("editingId =", editingId);
     console.log("payload =", payload);
+
+    setSaveLoading(true);
 
     try {
       let res;
 
       if (editingId) {
-        console.log("PUT API Call");
         res = await axiosInstance.put(
           `/api/fee-structure/${editingId}`,
           payload,
           {
+            ...authConfig,
             headers: {
-              Authorization: `Bearer ${token}`,
+              ...authConfig.headers,
               "Content-Type": "application/json",
             },
           },
         );
       } else {
-        console.log("POST API Call");
         res = await axiosInstance.post(
           "/api/fee-structure",
           payload,
           {
+            ...authConfig,
             headers: {
-              Authorization: `Bearer ${token}`,
+              ...authConfig.headers,
               "Content-Type": "application/json",
             },
           },
         );
       }
 
-      alert(res.data);
+      alert(
+        res.data?.message ||
+          res.data ||
+          (editingId
+            ? "Fee Structure Updated Successfully"
+            : "Fee Structure Created Successfully"),
+      );
 
-      setEditingId(null);
-
-      setFormData({
-        session: "",
-        standard: "",
-        category: "",
-        batch: "",
-      });
-
-      setFeeInput({
-        type: "",
-        amount: "",
-      });
-
-      setFees([]);
-
-      loadFeeStructures();
-    } catch (err) {
-      console.log(err);
+      resetForm();
+      await loadFeeStructures();
+    } catch (error) {
+      console.error("Save Fee Structure Error:", error);
 
       alert(
-        err.response?.data?.message ||
-          err.response?.data ||
+        error.response?.data?.message ||
+          error.response?.data ||
           "Something went wrong",
       );
     } finally {
-      setLoading(false);
+      setSaveLoading(false);
     }
   };
 
-  // add before saved
-  const handleAddFee = () => {
-  if (!feeInput.type || !feeInput.amount) return;
+  // =====================================================
+  // DELETE STRUCTURE
+  // =====================================================
 
-  const selectedFee = feeMaster.find(
-    (item) => item.id === Number(feeInput.type)
+  const handleDelete = async (id) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this Fee Structure?",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.delete(
+        `/api/fee-structure/${id}`,
+        authConfig,
+      );
+
+      alert(
+        res.data?.message ||
+          res.data ||
+          "Fee Structure deleted successfully",
+      );
+
+      if (editingId === id) {
+        resetForm();
+      }
+
+      await loadFeeStructures();
+    } catch (error) {
+      console.error("Delete Error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          error.response?.data ||
+          "Delete Failed",
+      );
+    }
+  };
+
+  // =====================================================
+  // FILTER CHANGE
+  // =====================================================
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+
+    setFilter((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // =====================================================
+  // FILTER STRUCTURES
+  // =====================================================
+
+  const filteredStructures = useMemo(() => {
+    return feeStructures.filter((item) => {
+      const search = filter.search.toLowerCase();
+
+      const matchesSearch =
+        !search ||
+        item.session?.toLowerCase().includes(search) ||
+        item.standard?.toLowerCase().includes(search) ||
+        item.feeCategory?.toLowerCase().includes(search) ||
+        item.batch?.toLowerCase().includes(search);
+
+      const matchesSession =
+        !filter.session || item.session === filter.session;
+
+      const matchesStandard =
+        !filter.standard || item.standard === filter.standard;
+
+      const matchesCategory =
+        !filter.category || item.feeCategory === filter.category;
+
+      const matchesBatch =
+        !filter.batch || item.batch === filter.batch;
+
+      return (
+        matchesSearch &&
+        matchesSession &&
+        matchesStandard &&
+        matchesCategory &&
+        matchesBatch
+      );
+    });
+  }, [feeStructures, filter]);
+
+  // =====================================================
+  // CLEAR FILTER
+  // =====================================================
+
+  const clearFilter = () => {
+    setFilter({
+      session: "",
+      standard: "",
+      category: "",
+      batch: "",
+      search: "",
+    });
+  };
+
+  // =====================================================
+  // BATCH VALUE HELPER
+  // =====================================================
+
+  const getBatchValue = (item) => {
+    if (typeof item === "string") return item;
+
+    return item?.batch || item?.name || item?.value || "";
+  };
+
+  // =====================================================
+  // TOTAL CURRENT FEES
+  // =====================================================
+
+  const totalCurrentFee = fees.reduce(
+    (sum, fee) => sum + Number(fee.amount || 0),
+    0,
   );
 
-  const obj = {
-    feeMasterId: selectedFee.id,
-    feeName: selectedFee.feeName,
-    amount: Number(feeInput.amount),
-  };
-
-  if (editIndex !== null) {
-    const temp = [...fees];
-    temp[editIndex] = obj;
-    setFees(temp);
-    setEditIndex(null);
-  } else {
-    setFees([...fees, obj]);
-  }
-
-  setFeeInput({
-    type: "",
-    amount: "",
-  });
-};
-
-  // handle delete fee
-  const handleDeleteFee = (index) => {
-    const updated = [...fees];
-    updated.splice(index, 1);
-    setFees(updated);
-
-    if (editIndex === index) {
-      setEditIndex(null);
-      setFeeInput({
-        type: "",
-        amount: "",
-      });
-    }
-  };
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <>
-      <div className="shadow bg-white p-3 mb-3" style={{ borderRadius: "6px" }}>
-        <h5 className="mb-1">Create Fee Structure</h5>
+      {/* =====================================================
+          PAGE HEADER
+      ===================================================== */}
 
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb mb-0">
-            <li className="breadcrumb-item">Home</li>
-            {/* <li className="breadcrumb-item">Master</li> */}
-            <li className="breadcrumb-item active">Fee Structure</li>
-          </ol>
-        </nav>
-      </div>
-      <div className="">
-        <div className="card shadow-sm">
-          <div className="card-header">
-            <div className="row">
-              <div className="col-md-6">
-                <h6 className="mb-0">Create Fee Structure</h6>
-              </div>
-              <div className="col-md-6 text-end">
-                <button
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => navigate("fee-types")}
-                >
-                  Fee Type Master
-                </button>
-              </div>
-            </div>
+      <div
+        className="bg-white shadow rounded-3 p-3 mb-3"
+         style={{
+          borderLeft: "5px solid #0d6efd",
+        }}
+      >
+        <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <h5 className="mb-1">
+              <strong>Fee Structure</strong>
+            </h5>
+
+            <nav aria-label="breadcrumb">
+              <ol className="breadcrumb mb-0">
+                <li className="breadcrumb-item">
+                  <span>Home</span>
+                </li>
+
+                <li className="breadcrumb-item">
+                  <span>Fee</span>
+                </li>
+
+                <li className="breadcrumb-item active">
+                  Fee Structure
+                </li>
+              </ol>
+            </nav>
           </div>
 
-          <div className="p-3">
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => navigate("fee-types")}
+          >
+            <LuLayers className="me-1" size={17} />
+            Fee Type Master
+          </button>
+        </div>
+      </div>
+
+      {/* =====================================================
+          CREATE / UPDATE FORM
+      ===================================================== */}
+
+      <div className="card border-0 shadow mb-3">
+        <div className="card-header bg-white py-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <h6 className="mb-0">
+              <strong>
+                {editingId
+                  ? "Update Fee Structure"
+                  : "Create Fee Structure"}
+              </strong>
+            </h6>
+
+            {editingId && (
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-secondary"
+                onClick={resetForm}
+              >
+                <LuX size={16} className="me-1" />
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="card-body">
+          {pageLoading ? (
+            <div className="text-center py-4">
+              <div className="spinner-border text-primary" />
+              <p className="mt-2 mb-0 text-muted">
+                Loading master data...
+              </p>
+            </div>
+          ) : (
             <form onSubmit={handleSave}>
-              <div className="row">
-                <div className="col-md-3">
-                  <label>Session</label>
+              {/* ==========================
+                  STRUCTURE DETAILS
+              ========================== */}
+
+              <div className="row g-3">
+                {/* Session */}
+
+                <div className="col-12 col-md-6 col-xl-3">
+                  <label className="form-label">
+                    Session <span className="text-danger">*</span>
+                  </label>
 
                   <select
                     className="form-select"
@@ -418,14 +629,22 @@ const Create_Fee_Structure = () => {
                     value={formData.session}
                     onChange={handleFormChange}
                   >
-                    <option value="">Select</option>
-                    <option value="2025-26">2025-26</option>
-                    <option value="2026-27">2026-27</option>
+                    <option value="">Select Session</option>
+
+                    {sessions.map((item, index) => (
+                      <option key={index} value={item}>
+                        {String(item).replaceAll("_", "-")}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                <div className="col-md-3">
-                  <label>Standard</label>
+                {/* Standard */}
+
+                <div className="col-12 col-md-6 col-xl-3">
+                  <label className="form-label">
+                    Standard <span className="text-danger">*</span>
+                  </label>
 
                   <select
                     className="form-select"
@@ -433,18 +652,22 @@ const Create_Fee_Structure = () => {
                     value={formData.standard}
                     onChange={handleFormChange}
                   >
-                    <option value="">Select</option>
+                    <option value="">Select Standard</option>
 
-                    {standard.map((item) => (
-                      <option key={item} value={item}>
+                    {standards.map((item, index) => (
+                      <option key={index} value={item}>
                         {item}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div className="col-md-3">
-                  <label>Fee Category</label>
+                {/* Category */}
+
+                <div className="col-12 col-md-6 col-xl-3">
+                  <label className="form-label">
+                    Fee Category <span className="text-danger">*</span>
+                  </label>
 
                   <select
                     className="form-select"
@@ -452,18 +675,22 @@ const Create_Fee_Structure = () => {
                     value={formData.category}
                     onChange={handleFormChange}
                   >
-                    <option value="">Select</option>
+                    <option value="">Select Category</option>
 
-                    {feeCategories.map((item) => (
-                      <option key={item} value={item}>
+                    {feeCategories.map((item, index) => (
+                      <option key={index} value={item}>
                         {item}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div className="col-md-3">
-                  <label>Batch</label>
+                {/* Batch */}
+
+                <div className="col-12 col-md-6 col-xl-3">
+                  <label className="form-label">
+                    Fee Batch <span className="text-danger">*</span>
+                  </label>
 
                   <select
                     className="form-select"
@@ -471,118 +698,405 @@ const Create_Fee_Structure = () => {
                     value={formData.batch}
                     onChange={handleFormChange}
                   >
-                    <option value="">Select</option>
+                    <option value="">Select Batch</option>
 
-                    {feeBatches.map((item) => (
-                      <option key={item.id} value={item}>
-                        {item}
-                      </option>
-                    ))}
+                    {feeBatches.map((item, index) => {
+                      const value = getBatchValue(item);
+
+                      return (
+                        <option key={index} value={value}>
+                          {value}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
 
-              <hr />
+              <hr className="my-4" />
 
-              <div className="row">
-                <div className="col-md-5">
-                  <select
-                    className="form-select"
-                    name="type"
-                    value={feeInput.type}
-                    onChange={handleFeeInputChange}
-                  >
-                    <option value="">Select Fee Type</option>
+              {/* ==========================
+                  ADD FEE
+              ========================== */}
 
-                    {feeMaster.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.feeName}
+              <div className="mb-3">
+                <h6 className="mb-3">
+                  <strong>Add Fee Components</strong>
+                </h6>
+
+                <div className="row g-3">
+                  <div className="col-12 col-md-5">
+                    <label className="form-label">
+                      Fee Type
+                    </label>
+
+                    <select
+                      className="form-select"
+                      name="type"
+                      value={feeInput.type}
+                      onChange={handleFeeInputChange}
+                    >
+                      <option value="">
+                        Select Fee Type
                       </option>
-                    ))}
-                  </select>
-                </div>
 
-                <div className="col-md-5">
-                  <input
-                    className="form-control"
-                    placeholder="Amount"
-                    name="amount"
-                    value={feeInput.amount}
-                    onChange={handleFeeInputChange}
-                  />
-                </div>
+                      {feeMaster.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.feeCode
+                            ? `${item.feeCode} - ${item.feeName}`
+                            : item.feeName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div className="col-md-2">
+                  <div className="col-12 col-md-5">
+                    <label className="form-label">
+                      Amount
+                    </label>
+
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      placeholder="Enter Amount"
+                      name="amount"
+                      value={feeInput.amount}
+                      onChange={handleFeeInputChange}
+                    />
+                  </div>
+
+                  <div className="col-12 col-md-2 d-flex align-items-end">
+                    <div className="w-100 d-flex gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-primary flex-grow-1"
+                        onClick={handleAddFee}
+                      >
+                        {editIndex !== null ? (
+                          <>
+                            <LuPencil
+                              size={16}
+                              className="me-1"
+                            />
+                            Update
+                          </>
+                        ) : (
+                          <>
+                            <LuPlus
+                              size={16}
+                              className="me-1"
+                            />
+                            Add
+                          </>
+                        )}
+                      </button>
+
+                      {editIndex !== null && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          onClick={handleCancelFeeEdit}
+                        >
+                          <LuX size={17} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ==========================
+                  TEMP FEE TABLE
+              ========================== */}
+
+              <div className="table-responsive">
+                <table className="table table-bordered table-hover align-middle mb-2">
+                  <thead className="table-light">
+                    <tr>
+                      <th width="70">S.No</th>
+                      <th>Fee Code</th>
+                      <th>Fee Type</th>
+                      <th>Amount</th>
+                      <th width="150">Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {fees.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="5"
+                          className="text-center text-muted py-4"
+                        >
+                          No fee components added yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      fees.map((fee, index) => (
+                        <tr key={`${fee.feeMasterId}-${index}`}>
+                          <td>{index + 1}</td>
+
+                          <td>{fee.feeCode || "-"}</td>
+
+                          <td>{fee.feeName}</td>
+
+                          <td>
+                            <strong>
+                              ₹ {Number(fee.amount).toLocaleString("en-IN")}
+                            </strong>
+                          </td>
+
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-warning me-2"
+                              title="Edit"
+                              onClick={() =>
+                                handleEditFee(index)
+                              }
+                            >
+                              <LuPencil size={15} />
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              title="Delete"
+                              onClick={() =>
+                                handleDeleteFee(index)
+                              }
+                            >
+                              <LuTrash2 size={15} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+
+                  {fees.length > 0 && (
+                    <tfoot>
+                      <tr>
+                        <th
+                          colSpan="3"
+                          className="text-end"
+                        >
+                          Total Fee
+                        </th>
+
+                        <th>
+                          ₹{" "}
+                          {totalCurrentFee.toLocaleString(
+                            "en-IN",
+                          )}
+                        </th>
+
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                  )}
+                </table>
+              </div>
+
+              {/* ==========================
+                  SAVE
+              ========================== */}
+
+              <div className="d-flex justify-content-end gap-2 mt-4">
+                {editingId && (
                   <button
                     type="button"
-                    className="btn btn-primary w-100"
-                    onClick={handleAddFee}
+                    className="btn btn-outline-secondary"
+                    onClick={resetForm}
+                    disabled={saveLoading}
                   >
-                    {editIndex === null ? "Add" : "Update"}
+                    <LuX className="me-1" />
+                    Cancel
                   </button>
-                </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="btn btn-success px-4"
+                  disabled={saveLoading}
+                >
+                  {saveLoading ? (
+                    <>
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      />
+
+                      Saving...
+                    </>
+                  ) : editingId ? (
+                    <>
+                      <LuSave className="me-1" />
+                      Update Fee Structure
+                    </>
+                  ) : (
+                    <>
+                      <LuSave className="me-1" />
+                      Save Fee Structure
+                    </>
+                  )}
+                </button>
               </div>
-
-              <table className="table table-bordered mt-4">
-                <thead>
-                  <tr>
-                    <th>Fee Type</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {fees.map((fee, index) => (
-                    <tr key={index}>
-                      <td>{fee.feeName}</td>
-
-                      <td>{fee.amount}</td>
-
-                      <td>
-                        <button
-                          type="button"
-                          className="btn btn-warning btn-sm me-2"
-                          onClick={() => handleEditFee(index)}
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleDeleteFee(index)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <button className="btn btn-success">
-                {editingId ? "Update Fee Structure" : "Save Fee Structure"}
-              </button>
             </form>
+          )}
+        </div>
+      </div>
+
+      {/* =====================================================
+          FILTER
+      ===================================================== */}
+
+      <div className="card border-0 shadow mb-3">
+        <div className="card-header bg-white py-3">
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h6 className="mb-0">
+              <strong>Search Fee Structures</strong>
+            </h6>
+
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary"
+              onClick={clearFilter}
+            >
+              <LuRefreshCw size={15} className="me-1" />
+              Clear
+            </button>
           </div>
         </div>
 
-        {/* TODO */}
-        {/* Filter Section */}
+        <div className="card-body">
+          <div className="row g-3">
+            <div className="col-12 col-md-6 col-xl-2">
+              <label className="form-label">Session</label>
 
-        {/* TODO */}
-        {/* Saved Fee Structure Table */}
+              <select
+                className="form-select"
+                name="session"
+                value={filter.session}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Sessions</option>
+
+                {sessions.map((item, index) => (
+                  <option key={index} value={item}>
+                    {String(item).replaceAll("_", "-")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6 col-xl-2">
+              <label className="form-label">Standard</label>
+
+              <select
+                className="form-select"
+                name="standard"
+                value={filter.standard}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Standards</option>
+
+                {standards.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6 col-xl-2">
+              <label className="form-label">Category</label>
+
+              <select
+                className="form-select"
+                name="category"
+                value={filter.category}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Categories</option>
+
+                {feeCategories.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6 col-xl-2">
+              <label className="form-label">Batch</label>
+
+              <select
+                className="form-select"
+                name="batch"
+                value={filter.batch}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Batches</option>
+
+                {feeBatches.map((item, index) => {
+                  const value = getBatchValue(item);
+
+                  return (
+                    <option key={index} value={value}>
+                      {value}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div className="col-12 col-xl-4">
+              <label className="form-label">
+                Search
+              </label>
+
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <LuSearch size={17} />
+                </span>
+
+                <input
+                  type="search"
+                  className="form-control"
+                  name="search"
+                  value={filter.search}
+                  onChange={handleFilterChange}
+                  placeholder="Search session, class, category..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="card mt-3 shadow-sm mb-3" style={{ borderRadius: "6px" }}>
-        <div className="card-header">
-          <strong>Fee Structure List</strong>
+      {/* =====================================================
+          FEE STRUCTURE LIST
+      ===================================================== */}
+
+      <div className="card border-0 shadow mb-4">
+        <div className="card-header bg-white py-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <h6 className="mb-0">
+              <strong>Fee Structure List</strong>
+            </h6>
+
+            <span className="badge bg-primary">
+              {filteredStructures.length} Structure
+              {filteredStructures.length !== 1 ? "s" : ""}
+            </span>
+          </div>
         </div>
 
         <div className="card-body">
           <div className="table-responsive">
-            <table className="table table-bordered table-hover">
+            <table className="table table-bordered table-hover align-middle">
               <thead className="table-primary">
                 <tr>
                   <th>S.No</th>
@@ -594,83 +1108,141 @@ const Create_Fee_Structure = () => {
                   <th>Fee Name</th>
                   <th>Amount</th>
                   <th>Status</th>
-                  <th width="150">Action</th>
+                  <th width="130">Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {loading ? (
+                {filteredStructures.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="text-center">
-                      Loading...
+                    <td
+                      colSpan="10"
+                      className="text-center py-5 text-muted"
+                    >
+                      <div className="mb-2">
+                        <LuLayers size={30} />
+                      </div>
+
+                      No Fee Structure Found
                     </td>
                   </tr>
-                ) : feeStructures.length > 0 ? (
-                  feeStructures.map((item, index) =>
-                    item.feeDetails.map((detail, i) => (
-                      <tr key={detail.id}>
-                        {i === 0 && (
-                          <>
-                            <td rowSpan={item.feeDetails.length}>
-                              {index + 1}
-                            </td>
+                ) : (
+                  filteredStructures.map((item, index) => {
+                    const details = item.feeDetails || [];
 
-                            <td rowSpan={item.feeDetails.length}>
-                              {item.session}
-                            </td>
+                    return details.length > 0 ? (
+                      details.map((detail, detailIndex) => (
+                        <tr key={`${item.id}-${detail.id}`}>
+                          {detailIndex === 0 && (
+                            <>
+                              <td
+                                rowSpan={details.length}
+                                className="text-center"
+                              >
+                                {index + 1}
+                              </td>
 
-                            <td rowSpan={item.feeDetails.length}>
-                              {item.standard}
-                            </td>
+                              <td
+                                rowSpan={details.length}
+                              >
+                                {item.session}
+                              </td>
 
-                            <td rowSpan={item.feeDetails.length}>
-                              {item.feeCategory}
-                            </td>
+                              <td
+                                rowSpan={details.length}
+                              >
+                                {item.standard}
+                              </td>
 
-                            <td rowSpan={item.feeDetails.length}>
-                              {item.batch}
-                            </td>
-                          </>
-                        )}
+                              <td
+                                rowSpan={details.length}
+                              >
+                                {item.feeCategory}
+                              </td>
 
-                        <td>{detail.feeMaster.feeCode}</td>
-
-                        <td>{detail.feeMaster.feeName}</td>
-
-                        <td>₹ {detail.amount}</td>
-
-                        <td>
-                          {detail.feeMaster.status === "ACTIVE" ? (
-                            <span className="badge bg-success">ACTIVE</span>
-                          ) : (
-                            <span className="badge bg-danger">INACTIVE</span>
+                              <td
+                                rowSpan={details.length}
+                              >
+                                {item.batch}
+                              </td>
+                            </>
                           )}
-                        </td>
 
-                        <td>
-                          <button
-                            className="btn btn-warning btn-sm me-2"
-                            onClick={() => handleEdit(item)}
-                          >
-                            Edit
-                          </button>
+                          <td>
+                            {detail.feeMaster?.feeCode ||
+                              "-"}
+                          </td>
 
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            Delete
-                          </button>
+                          <td>
+                            {detail.feeMaster?.feeName ||
+                              "-"}
+                          </td>
+
+                          <td>
+                            <strong>
+                              ₹{" "}
+                              {Number(
+                                detail.amount || 0,
+                              ).toLocaleString("en-IN")}
+                            </strong>
+                          </td>
+
+                          <td>
+                            {detail.feeMaster?.status ===
+                            "ACTIVE" ? (
+                              <span className="badge bg-success">
+                                ACTIVE
+                              </span>
+                            ) : (
+                              <span className="badge bg-danger">
+                                INACTIVE
+                              </span>
+                            )}
+                          </td>
+
+                          {detailIndex === 0 && (
+                            <td
+                              rowSpan={details.length}
+                              className="text-center"
+                            >
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-warning me-2"
+                                title="Edit Structure"
+                                onClick={() =>
+                                  handleEdit(item)
+                                }
+                              >
+                                <LuPencil size={16} />
+                              </button>
+
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger"
+                                title="Delete Structure"
+                                onClick={() =>
+                                  handleDelete(item.id)
+                                }
+                              >
+                                <LuTrash2 size={16} />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr key={item.id}>
+                        <td>{index + 1}</td>
+                        <td>{item.session}</td>
+                        <td>{item.standard}</td>
+                        <td>{item.feeCategory}</td>
+                        <td>{item.batch}</td>
+                        <td colSpan="5">
+                          No fee details available
                         </td>
                       </tr>
-                    )),
-                  )
-                ) : (
-                  <tr>
-                    <td colSpan="10" className="text-center">
-                      No records found
-                    </td>
-                  </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

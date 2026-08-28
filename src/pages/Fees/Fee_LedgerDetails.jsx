@@ -1,44 +1,34 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaArrowLeft, FaPrint } from "react-icons/fa";
-import { MdCurrencyRupee } from "react-icons/md";
+import {
+  FaArrowLeft,
+  FaPrint,
+  FaMoneyBillWave,
+  FaFileInvoiceDollar,
+  FaExclamationCircle,
+  FaPercentage,
+  FaReceipt,
+  FaEye,
+  FaFilePdf,
+  FaUserGraduate,
+} from "react-icons/fa";
 import axiosInstance from "../../api/axiosInstance";
 
 const Fee_LedgerDetails = () => {
   const { admissionNumber } = useParams();
-  console.log("admission Number", admissionNumber);
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
   // ==========================================
-  // Loading
+  // States
   // ==========================================
 
   const [loading, setLoading] = useState(true);
-
-  // ==========================================
-  // Student
-  // ==========================================
-
   const [student, setStudent] = useState(null);
-
-  // ==========================================
-  // Ledger
-  // ==========================================
-
   const [ledger, setLedger] = useState([]);
-
-  // ==========================================
-  // Receipt History
-  // ==========================================
-
   const [receipts, setReceipts] = useState([]);
-
-  // ==========================================
-  // Summary
-  // ==========================================
 
   const [summary, setSummary] = useState({
     totalFee: 0,
@@ -49,35 +39,33 @@ const Fee_LedgerDetails = () => {
   });
 
   // ==========================================
-  // Initial Load
-  // ==========================================
-
-  useEffect(() => {
-    // loadData();
-    loadLedger();
-    loadStudent();
-    loadReceipts();
-  }, []);
-
-  // ==========================================
   // Load All Data
   // ==========================================
 
-  //   const loadData = async () => {
-  //     try {
-  //       setLoading(true);
+  useEffect(() => {
+    if (!admissionNumber) return;
 
-  //       await Promise.all([loadStudent(), loadLedger()]);
-  //     } catch (err) {
-  //       console.log(err);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   console.log("load data",loadData);
+    loadData();
+  }, [admissionNumber]);
+
+  const loadData = async () => {
+    setLoading(true);
+
+    try {
+      await Promise.all([
+        loadStudent(),
+        loadLedger(),
+        loadReceipts(),
+      ]);
+    } catch (error) {
+      console.log("Fee Ledger Load Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ==========================================
-  // Student
+  // Load Student
   // ==========================================
 
   const loadStudent = async () => {
@@ -88,20 +76,18 @@ const Fee_LedgerDetails = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       setStudent(res.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.log("Student Error:", error);
+      setStudent(null);
     }
   };
-  console.log("Students ", student);
 
   // ==========================================
-  // Fee Ledger
+  // Load Fee Ledger
   // ==========================================
 
   const loadLedger = async () => {
@@ -112,22 +98,23 @@ const Fee_LedgerDetails = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
-      setLedger(res.data);
+      const data = Array.isArray(res.data) ? res.data : [];
 
-      calculateSummary(res.data);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+      setLedger(data);
+      calculateSummary(data);
+    } catch (error) {
+      console.log("Ledger Error:", error);
+
+      setLedger([]);
+      calculateSummary([]);
     }
   };
-  console.log("ledger", ledger);
 
   // ==========================================
-  // Receipt History
+  // Load Receipt History
   // ==========================================
 
   const loadReceipts = async () => {
@@ -138,20 +125,21 @@ const Fee_LedgerDetails = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
-      const successReceipts = res.data.filter(
-        (item) => item.status === "SUCCESS",
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      const successReceipts = data.filter(
+        (item) => item.status === "SUCCESS"
       );
 
       setReceipts(successReceipts);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log("Receipt Error:", error);
+      setReceipts([]);
     }
   };
-
-  console.log("receipt", receipts);
 
   // ==========================================
   // Summary Calculation
@@ -160,27 +148,27 @@ const Fee_LedgerDetails = () => {
   const calculateSummary = (data) => {
     const totalFee = data.reduce(
       (sum, item) => sum + Number(item.amount || 0),
-      0,
+      0
     );
 
     const paidAmount = data.reduce(
       (sum, item) => sum + Number(item.paidAmount || 0),
-      0,
+      0
     );
 
     const dueAmount = data.reduce(
       (sum, item) => sum + Number(item.dueAmount || 0),
-      0,
+      0
     );
 
     const fineAmount = data.reduce(
       (sum, item) => sum + Number(item.fineAmount || 0),
-      0,
+      0
     );
 
     const discountAmount = data.reduce(
       (sum, item) => sum + Number(item.discountAmount || 0),
-      0,
+      0
     );
 
     setSummary({
@@ -193,147 +181,286 @@ const Fee_LedgerDetails = () => {
   };
 
   // ==========================================
-  // Loading Screen
+  // Currency
+  // ==========================================
+
+  const currency = (value) => {
+    return `₹ ${Number(value || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  };
+
+  // ==========================================
+  // Print
+  // ==========================================
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  // ==========================================
+  // Loading
   // ==========================================
 
   if (loading) {
     return (
-      <div className="text-center mt-5">
-        <div className="spinner-border text-primary"></div>
-        <h5 className="mt-3">Loading Fee Ledger...</h5>
+      <div
+        className="d-flex flex-column justify-content-center align-items-center"
+        style={{ minHeight: "60vh" }}
+      >
+        <div className="spinner-border text-primary" role="status"></div>
+
+        <h6 className="mt-3 text-muted">
+          Loading Fee Ledger...
+        </h6>
       </div>
     );
   }
+
+  // ==========================================
+  // Student Not Found
+  // ==========================================
 
   if (!student) {
     return (
-      <div className="text-center mt-5">
-        <h4>Student Not Found</h4>
+      <div className="container-fluid mt-4">
+        <div className="card shadow border-0">
+          <div className="card-body text-center py-5">
+            <FaUserGraduate
+              size={45}
+              className="text-muted mb-3"
+            />
+
+            <h5>Student Not Found</h5>
+
+            <p className="text-muted mb-3">
+              No student record found for admission number{" "}
+              <strong>{admissionNumber}</strong>.
+            </p>
+
+            <button
+              className="btn btn-secondary"
+              onClick={() => navigate(-1)}
+            >
+              <FaArrowLeft className="me-2" />
+              Back
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
+
   return (
     <>
       {/* ==========================================
-      Header
-  ========================================== */}
+          Print CSS
+      ========================================== */}
 
-      <div
-        className="row shadow"
-        style={{
-          background: "#fff",
-          margin: "10px",
-          borderRadius: "6px",
-          padding: "15px",
-        }}
-      >
-        <div className="col-md-8">
-          <h4 className="mb-1">
-            <strong>Fee Ledger</strong>
-          </h4>
+      <style>
+        {`
+          @media print {
+            body {
+              background: #fff !important;
+            }
 
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item">Home</li>
-              <li className="breadcrumb-item">Fee</li>
-              <li className="breadcrumb-item active">Fee Ledger</li>
-            </ol>
-          </nav>
-        </div>
+            .no-print {
+              display: none !important;
+            }
 
-        <div className="col-md-4 text-end">
-          <button
-            className="btn btn-secondary me-2"
-            onClick={() => navigate(-1)}
-          >
-            <FaArrowLeft className="me-2" />
-            Back
-          </button>
+            .print-card {
+              box-shadow: none !important;
+              border: 1px solid #ddd !important;
+            }
 
-          <button className="btn btn-success" onClick={() => window.print()}>
-            <FaPrint className="me-2" />
-            Print
-          </button>
-        </div>
-      </div>
+            .container-fluid {
+              width: 100% !important;
+              max-width: 100% !important;
+            }
+
+            .table {
+              font-size: 11px !important;
+            }
+
+            .student-image {
+              width: 80px !important;
+              height: 80px !important;
+            }
+          }
+        `}
+      </style>
 
       {/* ==========================================
-      Student Details
-  ========================================== */}
+          Header
+      ========================================== */}
 
-      <div className="container-fluid mt-3">
-        <div className="card shadow">
+      <div className="container-fluid">
+        <div className="card shadow border-0 mb-3 no-print">
+          <div className="card-body p-3">
+            <div className="row align-items-center">
+              <div className="col-md-7">
+                <h5 className="mb-1 fw-semibold">
+                  Fee Ledger Details
+                </h5>
+
+                <nav aria-label="breadcrumb">
+                  <ol className="breadcrumb mb-0">
+                    <li className="breadcrumb-item">
+                      Home
+                    </li>
+
+                    <li className="breadcrumb-item">
+                      Fee
+                    </li>
+
+                    <li className="breadcrumb-item active">
+                      Fee Ledger
+                    </li>
+                  </ol>
+                </nav>
+              </div>
+
+              <div className="col-md-5 text-md-end mt-3 mt-md-0">
+                <button
+                  className="btn btn-secondary btn-sm me-2"
+                  onClick={() => navigate(-1)}
+                >
+                  <FaArrowLeft className="me-1" />
+                  Back
+                </button>
+
+                <button
+                  className="btn btn-success btn-sm"
+                  onClick={handlePrint}
+                >
+                  <FaPrint className="me-1" />
+                  Print Ledger
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ==========================================
+            Student Information
+        ========================================== */}
+
+        <div className="card shadow border-0 mb-4 print-card">
           <div className="card-header bg-primary text-white">
-            <h5 className="mb-0">Student Information</h5>
+            <div className="d-flex align-items-center">
+              <FaUserGraduate className="me-2" />
+
+              <h6 className="mb-0">
+                Student Information
+              </h6>
+            </div>
           </div>
 
           <div className="card-body">
-            <div className="row">
-              <div className="col-md-2 text-center">
+            <div className="row align-items-center">
+              {/* Image */}
+
+              <div className="col-lg-2 col-md-3 text-center mb-3 mb-md-0">
                 <img
-                  src={student.studentImage}
-                  alt=""
-                  className="img-thumbnail"
+                  src={
+                    student.studentImage ||
+                    "/images/default-avatar.png"
+                  }
+                  alt="Student"
+                  className="img-thumbnail student-image"
                   style={{
-                    width: "120px",
-                    height: "120px",
+                    width: "125px",
+                    height: "125px",
                     objectFit: "cover",
+                    borderRadius: "8px",
                   }}
                 />
               </div>
 
-              <div className="col-md-5">
-                <table className="table table-borderless table-sm">
+              {/* Basic Details */}
+
+              <div className="col-lg-5 col-md-5">
+                <table className="table table-borderless table-sm mb-0">
                   <tbody>
                     <tr>
-                      <th>Name</th>
+                      <th style={{ width: "140px" }}>
+                        Name
+                      </th>
+
                       <td>
-                        {student.firstName} {student.lastName}
+                        {student.firstName}{" "}
+                        {student.lastName}
                       </td>
                     </tr>
 
                     <tr>
                       <th>Admission No</th>
-                      <td>{student.admissionNumber}</td>
+
+                      <td className="fw-semibold">
+                        {student.admissionNumber}
+                      </td>
                     </tr>
 
                     <tr>
                       <th>Class</th>
+
                       <td>
-                        {student.studentClass} / {student.section}
+                        {student.studentClass || "-"}
+                        {" / "}
+                        {student.section || "-"}
                       </td>
                     </tr>
 
                     <tr>
                       <th>Session</th>
-                      <td>{student.academicYear}</td>
+
+                      <td>
+                        {student.academicYear || "-"}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <div className="col-md-5">
-                <table className="table table-borderless table-sm">
+              {/* Fee Details */}
+
+              <div className="col-lg-5 col-md-4">
+                <table className="table table-borderless table-sm mb-0">
                   <tbody>
                     <tr>
-                      <th>Mobile</th>
-                      <td>{student.mobile}</td>
+                      <th style={{ width: "140px" }}>
+                        Mobile
+                      </th>
+
+                      <td>
+                        {student.mobile || "-"}
+                      </td>
                     </tr>
 
                     <tr>
                       <th>Fee Category</th>
-                      <td>{student.feeCategory}</td>
+
+                      <td>
+                        {student.feeCategory || "-"}
+                      </td>
                     </tr>
 
                     <tr>
                       <th>Fee Batch</th>
-                      <td>{student.feeBatch}</td>
+
+                      <td>
+                        {student.feeBatch || "-"}
+                      </td>
                     </tr>
 
                     <tr>
                       <th>Status</th>
+
                       <td>
-                        <span className="badge bg-success">Active</span>
+                        <span className="badge bg-success">
+                          ACTIVE
+                        </span>
                       </td>
                     </tr>
                   </tbody>
@@ -342,102 +469,193 @@ const Fee_LedgerDetails = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ==========================================
-      Summary Cards
-  ========================================== */}
+        {/* ==========================================
+            Summary Cards
+        ========================================== */}
 
-      <div className="container-fluid mt-4">
-        <div className="row">
-          <div className="col-md-4">
-            <div className="card shadow border-0 bg-primary text-white">
-              <div className="card-body text-center">
-                <h6 className="mt-2">Total Fee</h6>
+        <div className="row g-3 mb-4">
+          {/* Total */}
 
-                <h4>₹ {summary.totalFee}</h4>
+          <div className="col-xl col-lg-4 col-md-6">
+            <div className="card shadow border-0 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <small className="text-muted">
+                      Total Fee
+                    </small>
+
+                    <h5 className="fw-bold mt-2 mb-0">
+                      {currency(summary.totalFee)}
+                    </h5>
+                  </div>
+
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white"
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                    }}
+                  >
+                    <FaFileInvoiceDollar />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="col-md-4">
-            <div className="card shadow border-0 bg-success text-white">
-              <div className="card-body text-center">
-                <h6 className="mt-2">Paid</h6>
+          {/* Paid */}
 
-                <h4>₹ {summary.paidAmount}</h4>
+          <div className="col-xl col-lg-4 col-md-6">
+            <div className="card shadow border-0 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <small className="text-muted">
+                      Paid Amount
+                    </small>
+
+                    <h5 className="fw-bold text-success mt-2 mb-0">
+                      {currency(summary.paidAmount)}
+                    </h5>
+                  </div>
+
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle bg-success text-white"
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                    }}
+                  >
+                    <FaMoneyBillWave />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="col-md-4">
-            <div className="card shadow border-0 bg-danger text-white">
-              <div className="card-body text-center">
-                <h6 className="mt-2">Due</h6>
+          {/* Due */}
 
-                <h4>₹ {summary.dueAmount}</h4>
+          <div className="col-xl col-lg-4 col-md-6">
+            <div className="card shadow border-0 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <small className="text-muted">
+                      Due Amount
+                    </small>
+
+                    <h5 className="fw-bold text-danger mt-2 mb-0">
+                      {currency(summary.dueAmount)}
+                    </h5>
+                  </div>
+
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle bg-danger text-white"
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                    }}
+                  >
+                    <FaExclamationCircle />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Fine */}
+
+          <div className="col-xl col-lg-4 col-md-6">
+            <div className="card shadow border-0 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <small className="text-muted">
+                      Fine
+                    </small>
+
+                    <h5 className="fw-bold text-warning mt-2 mb-0">
+                      {currency(summary.fineAmount)}
+                    </h5>
+                  </div>
+
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle bg-warning text-dark"
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                    }}
+                  >
+                    <FaExclamationCircle />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Discount */}
+
+          <div className="col-xl col-lg-4 col-md-6">
+            <div className="card shadow border-0 h-100">
+              <div className="card-body">
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <small className="text-muted">
+                      Discount
+                    </small>
+
+                    <h5 className="fw-bold text-info mt-2 mb-0">
+                      {currency(summary.discountAmount)}
+                    </h5>
+                  </div>
+
+                  <div
+                    className="d-flex align-items-center justify-content-center rounded-circle bg-info text-white"
+                    style={{
+                      width: "45px",
+                      height: "45px",
+                    }}
+                  >
+                    <FaPercentage />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="row mt-2">
-          <div className="col-md-4">
-            <div className="card shadow border-0 bg-warning">
-              <div className="card-body text-center">
-                <h6 className="mt-2">Fine</h6>
 
-                <h4>₹ {summary.fineAmount}</h4>
-              </div>
-            </div>
-          </div>
+        {/* ==========================================
+            Fee Ledger
+        ========================================== */}
 
-          <div className="col-md-4">
-            <div className="card shadow border-0 bg-info text-white">
-              <div className="card-body text-center">
-                <h6 className="mt-2">Discount</h6>
-
-                <h4>₹ {summary.discountAmount}</h4>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ==========================================
-      Fee Ledger Table
-  ========================================== */}
-
-      <div className="container-fluid mt-4">
-        <div className="card shadow">
+        <div className="card shadow border-0 mb-4 print-card">
           <div className="card-header bg-dark text-white">
-            <h5 className="mb-0">Fee Ledger</h5>
+            <div className="d-flex align-items-center">
+              <FaFileInvoiceDollar className="me-2" />
+
+              <h6 className="mb-0">
+                Fee Ledger
+              </h6>
+            </div>
           </div>
 
-          <div className="card-body">
+          <div className="card-body p-0">
             <div className="table-responsive">
-              <table className="table table-bordered table-hover align-middle">
+              <table className="table table-bordered table-hover align-middle text-center mb-0">
                 <thead className="table-primary">
                   <tr>
-                    <th width="60">#</th>
-
+                    <th>#</th>
                     <th>Month</th>
-
                     <th>Fee Code</th>
-
                     <th>Fee Name</th>
-
                     <th>Amount</th>
-
                     <th>Paid</th>
-
                     <th>Due</th>
-
                     <th>Status</th>
-
                     <th>Generate Date</th>
-
                     <th>Due Date</th>
-
                     <th>Payment Date</th>
                   </tr>
                 </thead>
@@ -445,29 +663,41 @@ const Fee_LedgerDetails = () => {
                 <tbody>
                   {ledger.length === 0 ? (
                     <tr>
-                      <td colSpan="11" className="text-center text-danger">
+                      <td
+                        colSpan="11"
+                        className="text-center py-4 text-danger"
+                      >
+                        <FaExclamationCircle className="me-2" />
                         No Fee Generated
                       </td>
                     </tr>
                   ) : (
                     ledger.map((fee, index) => (
-                      <tr key={fee.id}>
+                      <tr key={fee.id || index}>
                         <td>{index + 1}</td>
 
-                        <td>{fee.month}</td>
+                        <td>
+                          {fee.month || "-"}
+                        </td>
 
-                        <td>{fee.feeCode}</td>
+                        <td>
+                          {fee.feeCode || "-"}
+                        </td>
 
-                        <td>{fee.feeName}</td>
+                        <td className="text-start">
+                          {fee.feeName || "-"}
+                        </td>
 
-                        <td>₹ {Number(fee.amount).toFixed(2)}</td>
+                        <td className="fw-semibold">
+                          {currency(fee.amount)}
+                        </td>
 
                         <td className="text-success fw-bold">
-                          ₹ {Number(fee.paidAmount).toFixed(2)}
+                          {currency(fee.paidAmount)}
                         </td>
 
                         <td className="text-danger fw-bold">
-                          ₹ {Number(fee.dueAmount).toFixed(2)}
+                          {currency(fee.dueAmount)}
                         </td>
 
                         <td>
@@ -480,15 +710,21 @@ const Fee_LedgerDetails = () => {
                                   : "bg-danger"
                             }`}
                           >
-                            {fee.status}
+                            {fee.status || "DUE"}
                           </span>
                         </td>
 
-                        <td>{fee.generateDate || "-"}</td>
+                        <td>
+                          {fee.generateDate || "-"}
+                        </td>
 
-                        <td>{fee.dueDate || "-"}</td>
+                        <td>
+                          {fee.dueDate || "-"}
+                        </td>
 
-                        <td>{fee.paymentDate || "-"}</td>
+                        <td>
+                          {fee.paymentDate || "-"}
+                        </td>
                       </tr>
                     ))
                   )}
@@ -497,18 +733,23 @@ const Fee_LedgerDetails = () => {
                 {ledger.length > 0 && (
                   <tfoot className="table-secondary">
                     <tr>
-                      <th colSpan="4" className="text-end">
+                      <th
+                        colSpan="4"
+                        className="text-end"
+                      >
                         Grand Total
                       </th>
 
-                      <th>₹ {summary.totalFee.toFixed(2)}</th>
+                      <th>
+                        {currency(summary.totalFee)}
+                      </th>
 
                       <th className="text-success">
-                        ₹ {summary.paidAmount.toFixed(2)}
+                        {currency(summary.paidAmount)}
                       </th>
 
                       <th className="text-danger">
-                        ₹ {summary.dueAmount.toFixed(2)}
+                        {currency(summary.dueAmount)}
                       </th>
 
                       <th colSpan="4"></th>
@@ -519,94 +760,117 @@ const Fee_LedgerDetails = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ==========================================
-          Receipt History
-      ========================================== */}
+        {/* ==========================================
+            Receipt History
+        ========================================== */}
 
-      <div className="container-fluid mt-4">
-        <div className="card shadow">
+        <div className="card shadow border-0 mb-4 print-card">
           <div className="card-header bg-success text-white">
-            <h5 className="mb-0">Receipt History</h5>
+            <div className="d-flex align-items-center">
+              <FaReceipt className="me-2" />
+
+              <h6 className="mb-0">
+                Receipt History
+              </h6>
+            </div>
           </div>
 
-          <div className="card-body">
+          <div className="card-body p-0">
             <div className="table-responsive">
-              <table className="table table-bordered table-hover">
+              <table className="table table-bordered table-hover align-middle text-center mb-0">
                 <thead className="table-success">
                   <tr>
                     <th>#</th>
-
                     <th>Receipt No</th>
-
                     <th>Paid Month</th>
-
                     <th>Payment Mode</th>
-
                     <th>Transaction Id</th>
-
                     <th>Collected By</th>
-
                     <th>Paid Date</th>
-
                     <th>Amount</th>
-
                     <th>Status</th>
-
-                    <th width="170">Action</th>
+                    <th className="no-print">
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {receipts.length === 0 ? (
                     <tr>
-                      <td colSpan="10" className="text-center text-danger">
+                      <td
+                        colSpan="10"
+                        className="text-center py-4 text-danger"
+                      >
+                        <FaReceipt className="me-2" />
                         No Receipt Found
                       </td>
                     </tr>
                   ) : (
                     receipts.map((receipt, index) => (
-                      <tr key={receipt.id}>
+                      <tr key={receipt.id || index}>
                         <td>{index + 1}</td>
 
-                        <td>{receipt.receiptNo}</td>
-
-                        <td>{receipt.month}</td>
-
-                        <td>{receipt.paymentMode}</td>
-
-                        <td>{receipt.transactionId}</td>
-
-                        <td>{receipt.collectedBy}</td>
-
-                        <td>{receipt.paymentDate}</td>
-
-                        <td>₹ {Number(receipt.amount).toFixed(2)}</td>
-
-                        <td>
-                          <span className="badge bg-success">Paid</span>
+                        <td className="fw-semibold">
+                          {receipt.receiptNo || "-"}
                         </td>
 
                         <td>
+                          {receipt.month || "-"}
+                        </td>
+
+                        <td>
+                          {receipt.paymentMode || "-"}
+                        </td>
+
+                        <td>
+                          {receipt.transactionId || "-"}
+                        </td>
+
+                        <td>
+                          {receipt.collectedBy || "-"}
+                        </td>
+
+                        <td>
+                          {receipt.paymentDate || "-"}
+                        </td>
+
+                        <td className="fw-bold text-success">
+                          {currency(receipt.amount)}
+                        </td>
+
+                        <td>
+                          <span className="badge bg-success">
+                            PAID
+                          </span>
+                        </td>
+
+                        <td className="no-print">
                           <button
                             className="btn btn-sm btn-primary me-2"
+                            title="View Receipt"
                             onClick={() =>
-                              navigate(`/fee/receipt/${receipt.receiptNo}`)
+                              navigate(
+                                `/fee/receipt/${receipt.receiptNo}`
+                              )
                             }
                           >
+                            <FaEye className="me-1" />
                             View
                           </button>
 
                           <button
                             className="btn btn-sm btn-success"
+                            title="Print Receipt"
                             onClick={() =>
                               window.open(
                                 `/fee/receipt/print/${receipt.id}`,
-                                "_blank",
+                                "_blank"
                               )
                             }
                           >
+                            <FaPrint className="me-1" />
                             Print
                           </button>
                         </td>
@@ -618,50 +882,58 @@ const Fee_LedgerDetails = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ==========================================
-          Bottom Buttons
-      ========================================== */}
+        {/* ==========================================
+            Bottom Actions
+        ========================================== */}
 
-      <div className="container-fluid mt-4 mb-5">
-        <div className="row">
-          <div className="col-md-3">
-            <button
-              className="btn btn-primary w-100"
-              onClick={() =>
-                navigate(`/fee/feecollection/${student.admissionNumber}`)
-              }
-            >
-              Go To Fee Collection
-            </button>
-          </div>
+        <div className="card shadow border-0 mb-5 no-print">
+          <div className="card-body">
+            <div className="row g-2">
+              <div className="col-lg-3 col-md-6">
+                <button
+                  className="btn btn-primary w-100"
+                  onClick={() =>
+                    navigate(
+                      `/fee/feecollection/${student.admissionNumber}`
+                    )
+                  }
+                >
+                  <FaMoneyBillWave className="me-2" />
+                  Fee Collection
+                </button>
+              </div>
 
-          <div className="col-md-3">
-            <button
-              className="btn btn-success w-100"
-              onClick={() => window.print()}
-            >
-              Print Ledger
-            </button>
-          </div>
+              <div className="col-lg-3 col-md-6">
+                <button
+                  className="btn btn-success w-100"
+                  onClick={handlePrint}
+                >
+                  <FaPrint className="me-2" />
+                  Print Ledger
+                </button>
+              </div>
 
-          <div className="col-md-3">
-            <button
-              className="btn btn-warning w-100"
-              onClick={() => navigate(-1)}
-            >
-              Back
-            </button>
-          </div>
+              <div className="col-lg-3 col-md-6">
+                <button
+                  className="btn btn-warning w-100"
+                  onClick={() => navigate(-1)}
+                >
+                  <FaArrowLeft className="me-2" />
+                  Back
+                </button>
+              </div>
 
-          <div className="col-md-3">
-            <button
-              className="btn btn-danger w-100"
-              onClick={() => navigate("/")}
-            >
-              Dashboard
-            </button>
+              <div className="col-lg-3 col-md-6">
+                <button
+                  className="btn btn-danger w-100"
+                  onClick={() => navigate("/")}
+                >
+                  <FaFilePdf className="me-2" />
+                  Dashboard
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -670,3 +942,4 @@ const Fee_LedgerDetails = () => {
 };
 
 export default Fee_LedgerDetails;
+

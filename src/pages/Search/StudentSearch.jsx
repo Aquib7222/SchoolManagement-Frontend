@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
+import {
+  FaAngleDoubleDown,
+  FaAngleDoubleUp,
+  FaSearch,
+  FaRedo,
+  FaEye,
+  FaUsers,
+  FaFilter,
+} from "react-icons/fa";
 import useMasters from "../../hooks/useMasters";
 import api from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +15,8 @@ import { useNavigate } from "react-router-dom";
 const StudentSearch = () => {
   const [showInput, setShowInput] = useState(false);
   const navigate = useNavigate();
+
   const {
-    loading: masterLoading,
     sessions,
     standards,
     sections,
@@ -27,6 +35,10 @@ const StudentSearch = () => {
     motherName: "",
     phone: "",
   });
+
+  /* =========================
+     RESET FILTERS
+  ========================== */
   const handleReset = () => {
     setFilters({
       session: "",
@@ -38,22 +50,17 @@ const StudentSearch = () => {
       motherName: "",
       phone: "",
     });
+
+    setStudents([]);
     setShowInput(false);
   };
 
-  console.log(filters);
-
-  //   student search api
+  /* =========================
+     SEARCH STUDENT
+  ========================== */
   const handleSearch = async () => {
     try {
       setLoading(true);
-      const params = {
-        academicYear: filters.session,
-        studentClass: filters.standard,
-        section: filters.section,
-      };
-
-      console.log(params);
 
       const res = await api.get("/api/students/all", {
         params: {
@@ -68,326 +75,549 @@ const StudentSearch = () => {
         },
       });
 
-      setStudents(res.data);
+      setStudents(Array.isArray(res.data) ? res.data : []);
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Student search error:",
+        error.response?.data || error.message
+      );
+
+      setStudents([]);
     } finally {
       setLoading(false);
     }
   };
+
+  /* =========================
+     INPUT CHANGE
+  ========================== */
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <>
-      {/* Header */}
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
       <div
-        className="row shadow-lg ms-2 me-2"
+        className="bg-white shadow rounded-3 p-3 mb-3 mx-2 mt-3"
         style={{
-          backgroundColor: "white",
-        //   margin: "10px",
-          height: "70px",
-          borderRadius: "5px",
-          padding: "10px",
-          color: "black",
+          borderLeft: "4px solid #0d6efd",
         }}
       >
-        <h6>
-          <strong>Student Search</strong>
-        </h6>
-        <nav aria-label="breadcrumb py-2">
-          <ol className="breadcrumb">
+        <h5 className="mb-1 fw-bold">
+          Student Search
+        </h5>
+
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
+              <a
+                href="/"
+                className="text-decoration-none text-muted"
+              >
                 Home
               </a>
             </li>
-            <li className="breadcrumb-item">
-              <a href="#" style={{ textDecoration: "none", color: "black" }}>
-                Student Search
-              </a>
+
+            <li className="breadcrumb-item active">
+              Student Search
             </li>
           </ol>
         </nav>
       </div>
 
-      {/* Search card  */}
+      {/* =====================================================
+          SEARCH CARD
+      ====================================================== */}
+      <div className="bg-white shadow rounded-3 mx-2 mb-3">
 
-      <div className="ms-2 me-2 shadow bg-white rounded mt-4">
-        <div className="card">
-          <div className="card-header">Search Students</div>
-          <div className="card-body p-3 mt-3">
-            <div className="row">
-              <div className="col-md-4">
-                <label>
-                  <h6>Session:</h6>
-                </label>
-                <select
-                  name=""
-                  id=""
-                  className="form-select"
-                  value={filters.session}
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      session: e.target.value,
-                    })
-                  }
-                >
-                  <option value="">Select Session</option>{" "}
-                  {sessions.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-4">
-                <label>
-                  <h6>Admission Number:</h6>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={filters.admissionNumber}
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      admissionNumber: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="col-md-2">
-                <button
-                  className="btn  border btn-outline-primary"
-                  style={{ marginTop: "32px" }}
-                  onClick={() => setShowInput((prev) => !prev)}
-                >
-                  {showInput ? <FaAngleDoubleUp /> : <FaAngleDoubleDown />}
-                </button>
-              </div>
-              <div className="col-md-2">
-                <button
-                  className="btn btn-outline-danger"
-                  style={{ marginTop: "32px" }}
-                  onClick={handleReset}
-                >
-                  Reset Filters
-                </button>
-              </div> 
+        {/* Section Header */}
+        <div
+          className="d-flex justify-content-between align-items-center p-3 border-bottom"
+          style={{
+            borderLeft: "4px solid #0d6efd",
+          }}
+        >
+          <div>
+            <h6 className="mb-1 fw-bold">
+              <FaSearch className="text-primary me-2" />
+              Search Students
+            </h6>
+
+            <small className="text-muted">
+              Search students using admission, session and personal details
+            </small>
+          </div>
+
+          <span className="badge bg-primary px-3 py-2">
+            <FaUsers className="me-1" />
+            {students.length} Students
+          </span>
+        </div>
+
+        <div className="p-3">
+
+          {/* =================================================
+              PRIMARY FILTERS
+          ================================================== */}
+          <div className="row g-3">
+
+            {/* Session */}
+            <div className="col-xl-4 col-md-6">
+              <label className="form-label fw-semibold">
+                Session
+              </label>
+
+              <select
+                name="session"
+                className="form-select"
+                value={filters.session}
+                onChange={handleFilterChange}
+              >
+                <option value="">
+                  Select Session
+                </option>
+
+                {sessions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {showInput && (
-              <>
-                <div className="row mt-3">
-                  <div className="col-md-3">
-                    <label>Student Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={filters.studentName}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          studentName: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label>Father Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={filters.fatherName}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          fatherName: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label>Mother Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={filters.motherName}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          motherName: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label>Mobile Number</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={filters.phone}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          phone: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+            {/* Admission Number */}
+            <div className="col-xl-4 col-md-6">
+              <label className="form-label fw-semibold">
+                Admission Number
+              </label>
+
+              <input
+                type="text"
+                name="admissionNumber"
+                className="form-control"
+                placeholder="Enter admission number"
+                value={filters.admissionNumber}
+                onChange={handleFilterChange}
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="col-xl-4 col-md-12">
+              <label className="form-label fw-semibold d-block">
+                &nbsp;
+              </label>
+
+              <div className="d-flex gap-2">
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSearch}
+                >
+                  <FaSearch className="me-1" />
+                  Search
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() =>
+                    setShowInput((prev) => !prev)
+                  }
+                >
+                  <FaFilter className="me-1" />
+
+                  {showInput ? (
+                    <>
+                      Hide Filters{" "}
+                      <FaAngleDoubleUp />
+                    </>
+                  ) : (
+                    <>
+                      More Filters{" "}
+                      <FaAngleDoubleDown />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={handleReset}
+                  title="Reset Filters"
+                >
+                  <FaRedo />
+                </button>
+
+              </div>
+            </div>
+          </div>
+
+          {/* =================================================
+              ADVANCED FILTERS
+          ================================================== */}
+          {showInput && (
+            <div
+              className="mt-4 pt-3 border-top"
+            >
+              <div className="mb-3">
+                <h6 className="fw-bold mb-1">
+                  Advanced Search
+                </h6>
+
+                <small className="text-muted">
+                  Use additional details to narrow down the student list
+                </small>
+              </div>
+
+              {/* Row 1 */}
+              <div className="row g-3">
+
+                {/* Student Name */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Student Name
+                  </label>
+
+                  <input
+                    type="text"
+                    name="studentName"
+                    className="form-control"
+                    placeholder="Enter student name"
+                    value={filters.studentName}
+                    onChange={handleFilterChange}
+                  />
                 </div>
 
-                <div className="row mt-3">
-                  <div className="col-md-3">
-                    <label>Standard</label>
-                    <select
-                      name=""
-                      id=""
-                      className="form-select"
-                      value={filters.standard}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          standard: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Standard</option>
-                      {standards.map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-3">
-                    <label>Section</label>
-                    <select
-                      name=""
-                      id=""
-                      className="form-select"
-                      value={filters.section}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          section: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Section</option>
-                      {sections.map((item) => (
-                        <option key={item} value={item}>
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-3">
-                    <button
-                      className="btn btn-primary mt-4"
-                      onClick={handleSearch}
-                    >
-                      Search
-                    </button>
-                  </div>
+                {/* Father Name */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Father Name
+                  </label>
+
+                  <input
+                    type="text"
+                    name="fatherName"
+                    className="form-control"
+                    placeholder="Enter father name"
+                    value={filters.fatherName}
+                    onChange={handleFilterChange}
+                  />
                 </div>
-              </>
-            )}
-          </div>
+
+                {/* Mother Name */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Mother Name
+                  </label>
+
+                  <input
+                    type="text"
+                    name="motherName"
+                    className="form-control"
+                    placeholder="Enter mother name"
+                    value={filters.motherName}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+
+                {/* Mobile */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Mobile Number
+                  </label>
+
+                  <input
+                    type="text"
+                    name="phone"
+                    className="form-control"
+                    placeholder="Enter mobile number"
+                    value={filters.phone}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+              </div>
+
+              {/* Row 2 */}
+              <div className="row g-3 mt-1">
+
+                {/* Standard */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Standard
+                  </label>
+
+                  <select
+                    name="standard"
+                    className="form-select"
+                    value={filters.standard}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">
+                      Select Standard
+                    </option>
+
+                    {standards.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Section */}
+                <div className="col-xl-3 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Section
+                  </label>
+
+                  <select
+                    name="section"
+                    className="form-select"
+                    value={filters.section}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="">
+                      Select Section
+                    </option>
+
+                    {sections.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Search */}
+                <div className="col-xl-3 col-md-6 d-flex align-items-end">
+                  <button
+                    type="button"
+                    className="btn btn-primary w-100"
+                    onClick={handleSearch}
+                  >
+                    <FaSearch className="me-2" />
+                    Search Students
+                  </button>
+                </div>
+
+                {/* Reset */}
+                <div className="col-xl-3 col-md-6 d-flex align-items-end">
+                  <button
+                    type="button"
+                    className="btn btn-outline-danger w-100"
+                    onClick={handleReset}
+                  >
+                    <FaRedo className="me-2" />
+                    Reset Filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ==============================
-        Student List
-================================ */}
+      {/* =====================================================
+          STUDENT LIST
+      ====================================================== */}
+      <div className="bg-white shadow rounded-3 mx-2 mb-4">
 
-      <div className="card shadow mt-4 ms-2 me-2">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">Student List</h5>
+        {/* List Header */}
+        <div
+          className="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 border-bottom"
+        >
+          <div>
+            <h6 className="mb-1 fw-bold">
+              <FaUsers className="text-primary me-2" />
+              Student List
+            </h6>
 
-          <span className="badge bg-primary">Total : {students.length}</span>
+            <small className="text-muted">
+              Search result of students
+            </small>
+          </div>
+
+          <div>
+            <span className="badge bg-primary px-3 py-2">
+              Total : {students.length}
+            </span>
+          </div>
         </div>
 
-        <div className="card-body table-responsive">
-          <table className="table table-bordered table-hover table-striped align-middle">
-            <thead className="table-primary">
+        {/* Table */}
+        <div className="table-responsive p-3">
+          <table className="table table-bordered table-hover align-middle text-center mb-0">
+
+            <thead className="table-light">
               <tr>
-                <th>S.No</th>
+                <th style={{ width: "60px" }}>
+                  S.No
+                </th>
 
-                <th>Admission No</th>
+                <th>
+                  Admission No
+                </th>
 
-                <th>Student Name</th>
+                <th className="text-start">
+                  Student Name
+                </th>
 
-                <th>Class</th>
+                <th>
+                  Class
+                </th>
 
-                <th>Father Name</th>
+                <th className="text-start">
+                  Father Name
+                </th>
 
-                <th>Mother Name</th>
+                <th className="text-start">
+                  Mother Name
+                </th>
 
-                <th>Mobile</th>
+                <th>
+                  Mobile
+                </th>
 
-                <th>Address</th>
+                <th className="text-start">
+                  Address
+                </th>
 
-                <th>Action</th>
+                <th style={{ width: "90px" }}>
+                  Action
+                </th>
               </tr>
             </thead>
 
             <tbody>
+
+              {/* Loading */}
               {loading ? (
                 <tr>
-                  <td colSpan="9" className="text-center p-5">
-                    <div className="spinner-border text-primary"></div>
+                  <td
+                    colSpan="9"
+                    className="py-5"
+                  >
+                    <div
+                      className="spinner-border text-primary"
+                      role="status"
+                    />
 
-                    <p className="mt-2 mb-0">Loading...</p>
+                    <div className="mt-2 text-muted">
+                      Searching students...
+                    </div>
                   </td>
                 </tr>
               ) : students.length > 0 ? (
+
+                /* Students */
                 students.map((student, index) => (
                   <tr key={student.id}>
-                    <td>{index + 1}</td>
 
-                    <td>{student.admissionNumber}</td>
-
-                    <td>
-                      {student.firstName} {student.lastName}
+                    <td className="fw-semibold">
+                      {index + 1}
                     </td>
 
                     <td>
-                      {student.studentClass} ({student.section})
+                      <span className="badge bg-primary-subtle text-primary">
+                        {student.admissionNumber}
+                      </span>
                     </td>
 
-                    <td>{student.fatherName}</td>
-
-                    <td>{student.motherName}</td>
-
-                    <td>{student.mobile}</td>
+                    <td className="text-start fw-semibold">
+                      {student.firstName}{" "}
+                      {student.middleName || ""}{" "}
+                      {student.lastName || ""}
+                    </td>
 
                     <td>
-                      {student.houseNo}, {student.street},{student.town},{" "}
-                      {student.state} - {student.zip}
+                      <span className="badge bg-light text-dark border">
+                        {student.studentClass}
+                        {student.section
+                          ? ` (${student.section})`
+                          : ""}
+                      </span>
+                    </td>
+
+                    <td className="text-start">
+                      {student.fatherName || "-"}
+                    </td>
+
+                    <td className="text-start">
+                      {student.motherName || "-"}
+                    </td>
+
+                    <td>
+                      {student.mobile || "-"}
+                    </td>
+
+                    <td className="text-start">
+                      {[
+                        student.houseNo,
+                        student.street,
+                        student.town,
+                        student.state,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")}
+
+                      {student.zip && (
+                        <> - {student.zip}</>
+                      )}
                     </td>
 
                     <td>
                       <button
-                        className="btn btn-sm btn-primary"
+                        type="button"
+                        className="btn btn-sm btn-outline-primary"
+                        title="View Student"
                         onClick={() =>
-                          navigate(`/student/view/${student.admissionNumber}`)
+                          navigate(
+                            `/student/view/${student.admissionNumber}`
+                          )
                         }
                       >
+                        <FaEye className="me-1" />
                         View
                       </button>
                     </td>
                   </tr>
                 ))
+
               ) : (
+
+                /* No Data */
                 <tr>
                   <td
                     colSpan="9"
-                    className="text-center text-danger fw-bold p-4"
+                    className="py-5"
                   >
-                    No Student Found
+                    <div className="text-muted">
+                      <FaUsers
+                        size={35}
+                        className="mb-2 opacity-50"
+                      />
+
+                      <div className="fw-semibold">
+                        No Student Found
+                      </div>
+
+                      <small>
+                        Try changing your search filters.
+                      </small>
+                    </div>
                   </td>
                 </tr>
               )}
+
             </tbody>
           </table>
         </div>

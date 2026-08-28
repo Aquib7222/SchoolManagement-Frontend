@@ -1,296 +1,246 @@
-// import React, { useEffect, useState } from "react";
-// import { AiOutlineBars } from "react-icons/ai";
+
+// import React from "react";
 // import { FaListUl, FaSchool, FaUserTie } from "react-icons/fa";
 // import { MdViewInAr } from "react-icons/md";
 // import { RiShieldUserFill } from "react-icons/ri";
-// import axiosInstance from "../../api/axiosInstance";
-// import axios from "axios";
+// import useDashboardData from "../../hooks/UserDashBoardData";
+
+
 
 // const Card = () => {
-//   const token = localStorage.getItem("token");
-//   const [superadmins, setSuperAdmins] = useState([]);
-//   const [schools, setSchools] = useState([]);
-//   const [modules, setModules] = useState([]);
-//   const [mappings, setMappings] = useState([]);
-//   const [totalStudents,setTotalStudents] = useState([]);
-
-//   const fetchSuperAdmins = async () => {
-//     try {
-//       const res = await axios.get("http://localhost:8080/api/superadmin/all", {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       console.log("res", res);
-//       setSuperAdmins(res.data);
-//     } catch (err) {
-//       console.error("Failed to load super admins", err);
-//     }
-//   };
-//   console.log("superadmin count", superadmins.length);
-
-//   const fetchSchools = async () => {
-//     try {
-//       const res = await axios.get("http://localhost:8080/api/school/all", {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-//       setSchools(res.data);
-//     } catch (err) {
-//       console.error("Error fetching schools", err);
-//     }
-//   };
-//   const loadModules = async () => {
-//     try {
-//       const res = await axios.get("http://localhost:8080/api/module/all");
-
-//       const filteredModules = res.data.filter(
-//         (module) => module.hasMenu === true,
-//       );
-
-//       setModules(filteredModules);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-//   const loadMappings = async () => {
-//     try {
-//       const res = await axios.get(
-//         "http://localhost:8080/api/user-group-mapping/all",
-//       );
-
-//       setMappings(res.data);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   const fetchStudentsCount = async () => {
-//     try {
-//       const res = await axios.get("http://localhost:8080/api/students/count", {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       console.log("student count", res);
-//       setTotalStudents(res.data);
-//     } catch (err) {
-//       console.log("Failed to load Students", err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchSchools();
-//     fetchSuperAdmins();
-//     loadModules();
-//     loadMappings();
-//     fetchStudentsCount();
-//   }, []);
+//   const { schools, superadmins, modules, mappings, totalStudents, loading } =
+//     useDashboardData();
 
 //   const totalMenuMapping = mappings.reduce(
 //     (total, item) => total + (item.menuMappings?.length || 0),
 //     0,
 //   );
+
 //   const totalSubMenuMapping = mappings.reduce(
 //     (total, item) => total + (item.subMenuMappings?.length || 0),
 //     0,
 //   );
 
+//   const activeSchools = schools.filter(
+//     (school) => school.status === "Active",
+//   ).length;
+
+//   const inactiveSchools = schools.filter(
+//     (school) => school.status === "Inactive",
+//   ).length;
+
+//   const activeSuperadmins = superadmins.filter(
+//     (admin) => admin.status === "Active",
+//   ).length;
+
+//   const inactiveSuperadmins = superadmins.filter(
+//     (admin) => admin.status === "Inactive",
+//   ).length;
+
+//   const activeModules = modules.filter(
+//     (module) => module.status === "Active",
+//   ).length;
+
+//   const inactiveModules = modules.filter(
+//     (module) => module.status === "Inactive",
+//   ).length;
+
+//   if (loading) {
+//     return <div className="p-3">Loading...</div>;
+//   }
+
 //   return (
-//     <>
-//       <div className="container-fluid px-2 mt-3">
-//         <div className="row g-3">
-//           {/* Total Schools */}
-//           <div className="col-12 col-sm-6 col-md-4 col-lg">
-//             <div className="card h-100 shadow-sm">
-//               <div className="card-body d-flex align-items-center">
-//                 <div
-//                   className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
-//                   style={{
-//                     backgroundColor: "#f8d9fc",
-//                     minWidth: "60px",
-//                     height: "60px",
-//                   }}
-//                 >
-//                   <FaSchool color="purple" size={32} />
-//                 </div>
-
-//                 <div className="flex-grow-1">
-//                   <h6 className="mb-1">Total Schools</h6>
-//                   <strong className="fs-4 d-block">{schools.length}</strong>
-
-//                   <div className="d-flex gap-2 flex-wrap">
-//                     <small>
-//                       Active:{" "}
-//                       {
-//                         schools.filter((school) => school.status === "Active")
-//                           .length
-//                       }
-//                     </small>
-//                     <small>
-//                       Inactive:{" "}
-//                       {
-//                         schools.filter((school) => school.status === "Inactive")
-//                           .length
-//                       }
-//                     </small>
-//                   </div>
-//                 </div>
+//     <div className="container-fluid px-2 mt-3">
+//       <div className="row g-3">
+//         {/* Schools */}
+//         <div className="col-12 col-sm-6 col-md-4 col-lg">
+//           <div className="card h-100 shadow">
+//             <div className="card-body d-flex align-items-center">
+//               <div
+//                 className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+//                 style={{
+//                   backgroundColor: "#f8d9fc",
+//                   minWidth: "60px",
+//                   height: "60px",
+//                 }}
+//               >
+//                 <FaSchool color="purple" size={32} />
 //               </div>
-//             </div>
-//           </div>
 
-//           {/* Super Admins */}
-//           <div className="col-12 col-sm-6 col-md-4 col-lg">
-//             <div className="card h-100 shadow-sm">
-//               <div className="card-body d-flex align-items-center">
-//                 <div
-//                   className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
-//                   style={{
-//                     backgroundColor: "#d9e0fc",
-//                     minWidth: "60px",
-//                     height: "60px",
-//                   }}
-//                 >
-//                   <RiShieldUserFill color="blue" size={32} />
-//                 </div>
+//               <div className="flex-grow-1">
+//                 <h6 className="mb-1">Total Schools</h6>
 
-//                 <div className="flex-grow-1">
-//                   <h6 className="mb-1">Super Admins</h6>
-//                   <strong className="fs-4 d-block">{superadmins.length}</strong>
+//                 <strong className="fs-4 d-block">{schools.length}</strong>
 
-//                   <div className="d-flex gap-2 flex-wrap">
-//                     <small>
-//                       Active:{" "}
-//                       {
-//                         superadmins.filter(
-//                           (superadmin) => superadmin.status === "Active",
-//                         ).length
-//                       }
-//                     </small>
-//                     <small>
-//                       Inactive:{" "}
-//                       {
-//                         superadmins.filter(
-//                           (superadmin) => superadmin.status === "Inactive",
-//                         ).length
-//                       }
-//                     </small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Modules */}
-//           <div className="col-12 col-sm-6 col-md-4 col-lg">
-//             <div className="card h-100 shadow-sm">
-//               <div className="card-body d-flex align-items-center">
-//                 <div
-//                   className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
-//                   style={{
-//                     backgroundColor: "#d9fce5",
-//                     minWidth: "60px",
-//                     height: "60px",
-//                   }}
-//                 >
-//                   <MdViewInAr color="green" size={32} />
-//                 </div>
-
-//                 <div className="flex-grow-1">
-//                   <h6 className="mb-1">Total Modules</h6>
-//                   <strong className="fs-4 d-block">{modules.length}</strong>
-
-//                   <div className="d-flex gap-2 flex-wrap">
-//                     <small>
-//                       Active:{" "}
-//                       {
-//                         modules.filter((module) => module.status === "Active")
-//                           .length
-//                       }
-//                     </small>
-//                     <small>
-//                       Inactive:{" "}
-//                       {
-//                         modules.filter((module) => module.status === "Inactive")
-//                           .length
-//                       }
-//                     </small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Menus */}
-//           <div className="col-12 col-sm-6 col-md-4 col-lg">
-//             <div className="card h-100 shadow-sm">
-//               <div className="card-body d-flex align-items-center">
-//                 <div
-//                   className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
-//                   style={{
-//                     backgroundColor: "#fce9d9",
-//                     minWidth: "60px",
-//                     height: "60px",
-//                   }}
-//                 >
-//                   {/* <AiOutlineBars color="orange" size={32} /> */}
-//                   <FaListUl color="orange" size={32} />
-//                 </div>
-
-//                 <div className="flex-grow-1">
-//                   <h6 className="mb-1">Total Menus</h6>
-//                   <strong className="fs-4 d-block">{totalMenuMapping}</strong>
-
-//                   <small>Total Submenus: {totalSubMenuMapping}</small>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Users */}
-//           <div className="col-12 col-sm-6 col-md-4 col-lg">
-//             <div className="card h-100 shadow-sm">
-//               <div className="card-body d-flex align-items-center">
-//                 <div
-//                   className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
-//                   style={{
-//                     backgroundColor: "#d9f9fc",
-//                     minWidth: "60px",
-//                     height: "60px",
-//                   }}
-//                 >
-//                   <FaUserTie color="skyblue" size={32} />
-//                 </div>
-
-//                 <div className="flex-grow-1">
-//                   <h6 className="mb-1">Total Users</h6>
-//                   <strong className="fs-4 d-block">{superadmins.length + totalStudents}</strong>
-
-//                   <div className="d-flex gap-2 flex-wrap">
-//                     <small>Active: 8</small>
-//                     <small>Inactive: 0</small>
-//                   </div>
+//                 <div className="d-flex gap-2 flex-wrap">
+//                   <small>Active: {activeSchools}</small>
+//                   <small>Inactive: {inactiveSchools}</small>
 //                 </div>
 //               </div>
 //             </div>
 //           </div>
 //         </div>
+
+//         {/* Super Admins */}
+//         <div className="col-12 col-sm-6 col-md-4 col-lg">
+//           <div className="card h-100 shadow">
+//             <div className="card-body d-flex align-items-center">
+//               <div
+//                 className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+//                 style={{
+//                   backgroundColor: "#d9e0fc",
+//                   minWidth: "60px",
+//                   height: "60px",
+//                 }}
+//               >
+//                 <RiShieldUserFill color="blue" size={32} />
+//               </div>
+
+//               <div className="flex-grow-1">
+//                 <h6 className="mb-1">Super Admins</h6>
+
+//                 <strong className="fs-4 d-block">{superadmins.length}</strong>
+
+//                 <div className="d-flex gap-2 flex-wrap">
+//                   <small>Active: {activeSuperadmins}</small>
+
+//                   <small>Inactive: {inactiveSuperadmins}</small>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Modules */}
+//         <div className="col-12 col-sm-6 col-md-4 col-lg">
+//           <div className="card h-100 shadow">
+//             <div className="card-body d-flex align-items-center">
+//               <div
+//                 className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+//                 style={{
+//                   backgroundColor: "#d9fce5",
+//                   minWidth: "60px",
+//                   height: "60px",
+//                 }}
+//               >
+//                 <MdViewInAr color="green" size={32} />
+//               </div>
+
+//               <div className="flex-grow-1">
+//                 <h6 className="mb-1">Total Modules</h6>
+
+//                 <strong className="fs-4 d-block">{modules.length}</strong>
+
+//                 <div className="d-flex gap-2 flex-wrap">
+//                   <small>Active: {activeModules}</small>
+
+//                   <small>Inactive: {inactiveModules}</small>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Menus */}
+//         <div className="col-12 col-sm-6 col-md-4 col-lg">
+//           <div className="card h-100 shadow">
+//             <div className="card-body d-flex align-items-center">
+//               <div
+//                 className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+//                 style={{
+//                   backgroundColor: "#fce9d9",
+//                   minWidth: "60px",
+//                   height: "60px",
+//                 }}
+//               >
+//                 <FaListUl color="orange" size={32} />
+//               </div>
+
+//               <div className="flex-grow-1">
+//                 <h6 className="mb-1">Total Menus</h6>
+
+//                 <strong className="fs-4 d-block">{totalMenuMapping}</strong>
+
+//                 <small>Total Submenus: {totalSubMenuMapping}</small>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Users */}
+//         <div className="col-12 col-sm-6 col-md-4 col-lg">
+//           <div className="card h-100 shadow">
+//             <div className="card-body d-flex align-items-center">
+//               <div
+//                 className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+//                 style={{
+//                   backgroundColor: "#d9f9fc",
+//                   minWidth: "60px",
+//                   height: "60px",
+//                 }}
+//               >
+//                 <FaUserTie color="skyblue" size={32} />
+//               </div>
+
+//               <div className="flex-grow-1">
+//                 <h6 className="mb-1">Total Users</h6>
+
+//                 <strong className="fs-4 d-block">
+//                   {superadmins.length + totalStudents}
+//                 </strong>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
 //       </div>
-//     </>
+//     </div>
 //   );
 // };
 
 // export default Card;
 
+
 import React from "react";
-import { FaListUl, FaSchool, FaUserTie } from "react-icons/fa";
+import {
+  FaListUl,
+  FaSchool,
+  FaUserTie,
+  FaUserGraduate,
+  FaChalkboardTeacher,
+  FaUsers,
+  FaUserPlus,
+  FaMoneyBillWave,
+  FaCalendarCheck,
+  FaFileInvoiceDollar,
+} from "react-icons/fa";
+
 import { MdViewInAr } from "react-icons/md";
 import { RiShieldUserFill } from "react-icons/ri";
+
 import useDashboardData from "../../hooks/UserDashBoardData";
 
-
-
 const Card = () => {
-  const { schools, superadmins, modules, mappings, totalStudents, loading } =
-    useDashboardData();
+  const {
+    schools = [],
+    superadmins = [],
+    modules = [],
+    mappings = [],
+    totalStudents = 0,
+
+    // Future/API data
+    teacherCount = 0,
+    totalStaff = 0,
+    admissions = [],
+    feeCollected = 0,
+    attendancePercentage = 0,
+    pendingFee = 0,
+
+    loading,
+  } = useDashboardData();
+
+  /* ===============================
+     MAPPING COUNTS
+  =============================== */
 
   const totalMenuMapping = mappings.reduce(
     (total, item) => total + (item.menuMappings?.length || 0),
@@ -302,6 +252,10 @@ const Card = () => {
     0,
   );
 
+  /* ===============================
+     SCHOOL STATUS
+  =============================== */
+
   const activeSchools = schools.filter(
     (school) => school.status === "Active",
   ).length;
@@ -309,6 +263,10 @@ const Card = () => {
   const inactiveSchools = schools.filter(
     (school) => school.status === "Inactive",
   ).length;
+
+  /* ===============================
+     SUPER ADMIN STATUS
+  =============================== */
 
   const activeSuperadmins = superadmins.filter(
     (admin) => admin.status === "Active",
@@ -318,6 +276,10 @@ const Card = () => {
     (admin) => admin.status === "Inactive",
   ).length;
 
+  /* ===============================
+     MODULE STATUS
+  =============================== */
+
   const activeModules = modules.filter(
     (module) => module.status === "Active",
   ).length;
@@ -326,153 +288,652 @@ const Card = () => {
     (module) => module.status === "Inactive",
   ).length;
 
+  /* ===============================
+     CURRENCY FORMAT
+  =============================== */
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(amount || 0);
+  };
+
   if (loading) {
-    return <div className="p-3">Loading...</div>;
+    return (
+      <div className="container-fluid px-2 mt-3">
+        <div className="row g-3">
+          {[1, 2, 3, 4].map((item) => (
+            <div
+              className="col-12 col-sm-6 col-md-4 col-lg-3"
+              key={item}
+            >
+              <div
+                className="card shadow-sm border-0"
+                style={{ minHeight: "125px" }}
+              >
+                <div className="card-body d-flex align-items-center">
+                  <div
+                    className="placeholder rounded-circle"
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                    }}
+                  />
+
+                  <div className="ms-3 flex-grow-1">
+                    <div className="placeholder col-7 mb-2"></div>
+                    <div className="placeholder col-4"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="container-fluid px-2 mt-3">
       <div className="row g-3">
-        {/* Schools */}
-        <div className="col-12 col-sm-6 col-md-4 col-lg">
-          <div className="card h-100 shadow-sm">
+
+        {/* =====================================================
+            1. TOTAL SCHOOLS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div className="card h-100 shadow border-0">
             <div className="card-body d-flex align-items-center">
+
               <div
-                className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
                 style={{
                   backgroundColor: "#f8d9fc",
                   minWidth: "60px",
                   height: "60px",
                 }}
               >
-                <FaSchool color="purple" size={32} />
+                <FaSchool color="purple" size={30} />
               </div>
 
               <div className="flex-grow-1">
-                <h6 className="mb-1">Total Schools</h6>
 
-                <strong className="fs-4 d-block">{schools.length}</strong>
+                <h6 className="mb-1 text-muted">
+                  Total Schools
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {schools.length}
+                </strong>
 
                 <div className="d-flex gap-2 flex-wrap">
-                  <small>Active: {activeSchools}</small>
-                  <small>Inactive: {inactiveSchools}</small>
+
+                  <small className="text-success">
+                    Active: {activeSchools}
+                  </small>
+
+                  <small className="text-danger">
+                    Inactive: {inactiveSchools}
+                  </small>
+
                 </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        {/* Super Admins */}
-        <div className="col-12 col-sm-6 col-md-4 col-lg">
-          <div className="card h-100 shadow-sm">
+
+        {/* =====================================================
+            2. TOTAL STUDENTS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
             <div className="card-body d-flex align-items-center">
+
               <div
-                className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
                 style={{
-                  backgroundColor: "#d9e0fc",
+                  backgroundColor: "#d9e8fc",
                   minWidth: "60px",
                   height: "60px",
                 }}
               >
-                <RiShieldUserFill color="blue" size={32} />
+                <FaUserGraduate
+                  color="#0d6efd"
+                  size={30}
+                />
               </div>
 
               <div className="flex-grow-1">
-                <h6 className="mb-1">Super Admins</h6>
 
-                <strong className="fs-4 d-block">{superadmins.length}</strong>
+                <h6 className="mb-1 text-muted">
+                  Total Students
+                </h6>
 
-                <div className="d-flex gap-2 flex-wrap">
-                  <small>Active: {activeSuperadmins}</small>
+                <strong className="fs-4 d-block">
+                  {Number(totalStudents).toLocaleString("en-IN")}
+                </strong>
 
-                  <small>Inactive: {inactiveSuperadmins}</small>
-                </div>
+                <small className="text-muted">
+                  All Schools
+                </small>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
-        {/* Modules */}
-        <div className="col-12 col-sm-6 col-md-4 col-lg">
-          <div className="card h-100 shadow-sm">
+
+        {/* =====================================================
+            3. TOTAL TEACHERS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
             <div className="card-body d-flex align-items-center">
+
               <div
-                className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
                 style={{
                   backgroundColor: "#d9fce5",
                   minWidth: "60px",
                   height: "60px",
                 }}
               >
-                <MdViewInAr color="green" size={32} />
+                <FaChalkboardTeacher
+                  color="green"
+                  size={30}
+                />
               </div>
 
               <div className="flex-grow-1">
-                <h6 className="mb-1">Total Modules</h6>
 
-                <strong className="fs-4 d-block">{modules.length}</strong>
+                <h6 className="mb-1 text-muted">
+                  Total Teachers
+                </h6>
 
-                <div className="d-flex gap-2 flex-wrap">
-                  <small>Active: {activeModules}</small>
+                <strong className="fs-4 d-block">
+                  {Number(teacherCount).toLocaleString("en-IN")}
+                </strong>
 
-                  <small>Inactive: {inactiveModules}</small>
-                </div>
+                <small className="text-muted">
+                  All Schools
+                </small>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
-        {/* Menus */}
-        <div className="col-12 col-sm-6 col-md-4 col-lg">
-          <div className="card h-100 shadow-sm">
+
+        {/* =====================================================
+            4. TOTAL STAFF
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
             <div className="card-body d-flex align-items-center">
+
               <div
-                className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
                 style={{
                   backgroundColor: "#fce9d9",
                   minWidth: "60px",
                   height: "60px",
                 }}
               >
-                <FaListUl color="orange" size={32} />
+                <FaUsers
+                  color="orange"
+                  size={30}
+                />
               </div>
 
               <div className="flex-grow-1">
-                <h6 className="mb-1">Total Menus</h6>
 
-                <strong className="fs-4 d-block">{totalMenuMapping}</strong>
+                <h6 className="mb-1 text-muted">
+                  Total Staff
+                </h6>
 
-                <small>Total Submenus: {totalSubMenuMapping}</small>
+                <strong className="fs-4 d-block">
+                  {Number(totalStaff).toLocaleString("en-IN")}
+                </strong>
+
+                <small className="text-muted">
+                  All Schools
+                </small>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
-        {/* Users */}
-        <div className="col-12 col-sm-6 col-md-4 col-lg">
-          <div className="card h-100 shadow-sm">
+
+        {/* =====================================================
+            5. ADMISSIONS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
             <div className="card-body d-flex align-items-center">
+
               <div
-                className="p-2 rounded-circle d-flex justify-content-center align-items-center me-2"
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#eee0fc",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <FaUserPlus
+                  color="#8e44ad"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Admissions
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {/* {Number(totalAdmissions).toLocaleString("en-IN")} */}
+                  {admissions.length} 
+                </strong>
+
+                <small className="text-muted">
+                  Total Admissions
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            6. FEE COLLECTED
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
                 style={{
                   backgroundColor: "#d9f9fc",
                   minWidth: "60px",
                   height: "60px",
                 }}
               >
-                <FaUserTie color="skyblue" size={32} />
+                <FaMoneyBillWave
+                  color="#0dcaf0"
+                  size={30}
+                />
               </div>
 
               <div className="flex-grow-1">
-                <h6 className="mb-1">Total Users</h6>
+
+                <h6 className="mb-1 text-muted">
+                  Fee Collected
+                </h6>
+
+                <strong
+                  className="fs-5 d-block"
+                  style={{
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {formatCurrency(feeCollected)}
+                </strong>
+
+                <small className="text-success">
+                  Collected
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            7. ATTENDANCE
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#e0f8e7",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <FaCalendarCheck
+                  color="#198754"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Attendance
+                </h6>
 
                 <strong className="fs-4 d-block">
-                  {superadmins.length + totalStudents}
+                  {Number(attendancePercentage).toFixed(1)}%
                 </strong>
+
+                <small className="text-success">
+                  Overall Attendance
+                </small>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
+
+        {/* =====================================================
+            8. PENDING FEES
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#fce0e0",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <FaFileInvoiceDollar
+                  color="#dc3545"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Pending Fees
+                </h6>
+
+                <strong
+                  className="fs-5 d-block"
+                  style={{
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {formatCurrency(pendingFee)}
+                </strong>
+
+                <small className="text-danger">
+                  Outstanding
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            9. SUPER ADMINS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#d9e0fc",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <RiShieldUserFill
+                  color="blue"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Super Admins
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {superadmins.length}
+                </strong>
+
+                <div className="d-flex gap-2 flex-wrap">
+
+                  <small className="text-success">
+                    Active: {activeSuperadmins}
+                  </small>
+
+                  <small className="text-danger">
+                    Inactive: {inactiveSuperadmins}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            10. MODULES
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#d9fce5",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <MdViewInAr
+                  color="green"
+                  size={32}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Total Modules
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {modules.length}
+                </strong>
+
+                <div className="d-flex gap-2 flex-wrap">
+
+                  <small className="text-success">
+                    Active: {activeModules}
+                  </small>
+
+                  <small className="text-danger">
+                    Inactive: {inactiveModules}
+                  </small>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            11. MENUS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#fce9d9",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <FaListUl
+                  color="orange"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Total Menus
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {totalMenuMapping}
+                </strong>
+
+                <small className="text-muted">
+                  Submenus: {totalSubMenuMapping}
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+            12. TOTAL USERS
+        ===================================================== */}
+
+        <div className="col-12 col-sm-6 col-md-4 col-lg-3">
+
+          <div className="card h-100 shadow border-0">
+
+            <div className="card-body d-flex align-items-center">
+
+              <div
+                className="rounded-circle d-flex justify-content-center align-items-center me-3"
+                style={{
+                  backgroundColor: "#d9f9fc",
+                  minWidth: "60px",
+                  height: "60px",
+                }}
+              >
+                <FaUserTie
+                  color="skyblue"
+                  size={30}
+                />
+              </div>
+
+              <div className="flex-grow-1">
+
+                <h6 className="mb-1 text-muted">
+                  Total Users
+                </h6>
+
+                <strong className="fs-4 d-block">
+                  {(
+                    Number(superadmins.length) +
+                    Number(totalStudents) +
+                    Number(teacherCount) +
+                    Number(totalStaff)
+                  ).toLocaleString("en-IN")}
+                </strong>
+
+                <small className="text-muted">
+                  All System Users
+                </small>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </div>
   );

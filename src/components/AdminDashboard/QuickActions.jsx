@@ -33,35 +33,35 @@ const QuickActions = () => {
       icon: <MdViewInAr size={26} />,
       color: "#198754",
       bg: "#e8f7ef",
-      path: "/module/add",
+      path: "/admin/add-modules",
     },
     {
       title: "Create Menu",
       icon: <AiOutlineBars size={26} />,
       color: "#fd7e14",
       bg: "#fff0e1",
-      path: "/menu/add",
+      path: "/admin/menus/creation",
     },
     {
       title: "Create User Group",
       icon: <HiOutlineUserGroup size={26} />,
       color: "#d63384",
       bg: "#fce7f3",
-      path: "/user-group/add",
+      path: "/admin/user-group/create",
     },
     {
       title: "Map School",
       icon: <BsBuildings size={26} />,
       color: "#dc3545",
       bg: "#fde8ea",
-      path: "/school-mapping",
+      path: "/admin/schoolMapping",
     },
     {
       title: "User Mapping",
       icon: <FaUsers size={26} />,
       color: "#0dcaf0",
       bg: "#e5f9fd",
-      path: "/user-mapping",
+      path: "/admin/userGroupmapping",
     },
     {
       title: "View Reports",
@@ -75,7 +75,7 @@ const QuickActions = () => {
   return (
     <div className="container-fluid px-2 mt-4">
 
-      <div className="card shadow-sm border-0">
+      <div className="card shadow border">
 
         <div className="card-body">
 

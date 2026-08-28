@@ -55,14 +55,14 @@ const ModuleMenuOverview = () => {
 
   if (loading) {
     return (
-      <div className="card border shadow-sm rounded-3">
+      <div className="card border shadow rounded-3">
         <div className="card-body">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="card border shadow-sm rounded-3">
+    <div className="card border shadow rounded-3">
       <div className="card-body">
         <h5 className="fw-semibold mb-3">Module & Menu Overview</h5>
 

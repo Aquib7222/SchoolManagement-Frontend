@@ -153,7 +153,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Greetings />
+      {/* <Greetings /> */}
       <Card />
       <SchoolGrowthAndModuleOverview/>
       <RecentSchoolActivitySummary/>

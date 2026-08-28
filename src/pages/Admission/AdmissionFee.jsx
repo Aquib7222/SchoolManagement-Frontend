@@ -1506,10 +1506,483 @@
 
 // export default Admission_Fee;
 
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+// import React, { useEffect, useState } from "react";
+// import { useParams, useNavigate } from "react-router-dom";
 
+// import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
+// import axios from "../../api/axiosInstance";
+// import useMasters from "../../hooks/useMasters";
+
+// const MONTHS = [
+//   "April",
+//   "May",
+//   "June",
+//   "July",
+//   "August",
+//   "September",
+//   "October",
+//   "November",
+//   "December",
+//   "January",
+//   "February",
+//   "March",
+// ];
+
+// const Admission_Fee = () => {
+//   const { id } = useParams();
+//   const navigate = useNavigate();
+
+//   const user = JSON.parse(localStorage.getItem("user"));
+//   const schoolId = user?.schoolId;
+//   const token = localStorage.getItem("token");
+
+//   const [visibleMonths, setVisibleMonths] = useState(["April"]);
+//   const [student, setStudent] = useState(null);
+//   const [admissionStudent, setAdmissionStudent] = useState([]);
+//   const { sessions, standards } = useMasters();
+
+//   useEffect(() => {
+//   if (!student) return;
+
+//   setFormData((prev) => ({
+//     ...prev,
+//     session: student.academicYear || prev.session,
+//     standard: student.studentClass || prev.standard,
+//   }));
+// }, [student]);
+// console.log("student",student);
+
+//   const [formData, setFormData] = useState({
+//     session: "",
+//     standard: "",
+//     tuitionFee: {},
+//     annualCharges: { amount: 0, discount: 0 },
+//     examCharges: { amount: 0, discount: 0 },
+//     sportsFee: { amount: 0, discount: 0 },
+//     photoCardFee: { amount: 0, discount: 0 },
+//     libraryLabFee: { amount: 0, discount: 0 },
+//     transportFee: { amount: 0, discount: 0 },
+//     miscCharges: { amount: 0, discount: 0 },
+//     registrationFee: { amount: 0, discount: 0 },
+//     securityMoney: { amount: 0, discount: 0 },
+//   });
+//   const [totalAmount, setTotalAmount] = useState(0);
+//   const [showPaymentMode, setShowPaymentMode] = useState(false);
+//   const [paymentMode, setPaymentMode] = useState("");
+//   const [feeAlreadyPaid, setFeeAlreadyPaid] = useState(false); // top-level hook
+//   const [admissionFees,setAdmissionFee] = useState([]);
+
+  
+
+//   /* ---------------- LOAD ADMISSION STUDENTS ---------------- */
+//   useEffect(() => {
+//     if (!schoolId || !token) return;
+
+//     axios
+//       .get(`/api/admissions/school?schoolId=${schoolId}`, {
+//         headers: { Authorization: `Bearer ${token}` },
+//       })
+//       .then((res) => {
+//         const approved = res.data.filter((i) => i.status === "APPROVED");
+//         setAdmissionStudent(approved);
+//       })
+//       .catch(console.error);
+//   }, [schoolId, token]);
+
+//   // Set selected student
+//   useEffect(() => {
+//     const selected = admissionStudent.find((i) => Number(i.id) === Number(id));
+//     if (selected) setStudent(selected);
+//   }, [admissionStudent, id]);
+
+//   const hasTransport = student?.transportRequired === "yes";
+
+//   console.log("selected ",student);
+//   /* ---------------- SESSION + CLASS CHANGE (BACKEND) ---------------- */
+//   const handleSessionClassChange = async (e) => {
+//     const { name, value } = e.target;
+//     const updated = { ...formData, [name]: value };
+//     setFormData(updated);
+
+//     if (!updated.session || !updated.standard) return;
+
+//     try {
+//       const res = await axios.get(
+//         "/api/admission-fee/get",
+//         {
+//           params: {
+//             schoolId,
+//             session: updated.session,
+//             standard: updated.standard,
+//           },
+//           headers: { Authorization: `Bearer ${token}` },
+//         },
+//       );
+//       const fee = res.data;
+//       const tuitionObj = {};
+//       MONTHS.forEach((m) => (tuitionObj[m] = fee.tuitionFee || 0));
+
+//       setFormData((prev) => ({
+//         ...prev,
+//         session: updated.session,
+//         standard: updated.standard,
+//         tuitionFee: tuitionObj,
+//         annualCharges: { amount: fee.annualCharges || 0, discount: 0 },
+//         examCharges: { amount: fee.examCharges || 0, discount: 0 },
+//         sportsFee: { amount: fee.sportsFee || 0, discount: 0 },
+//         photoCardFee: { amount: fee.photoCardFee || 0, discount: 0 },
+//         libraryLabFee: { amount: fee.libraryLabFee || 0, discount: 0 },
+//         transportFee: { amount: hasTransport ? fee.transportFee || 0 : 0, discount: 0 },
+//         miscCharges: { amount: fee.miscCharges || 0, discount: 0 },
+//         registrationFee: { amount: fee.registrationFee || 0, discount: 0 },
+//         securityMoney: { amount: fee.securityMoney || 0, discount: 0 },
+//       }));
+//     } catch {
+//       alert("Fee setup not found for selected Session & Class");
+//     }
+//   };
+
+//   /* ---------------- MONTH LOGIC ---------------- */
+//   const addNextMonth = () => {
+//     const next = MONTHS[visibleMonths.length];
+//     if (next) setVisibleMonths([...visibleMonths, next]);
+//   };
+//   const removeMonth = (month) =>
+//     setVisibleMonths((prev) => prev.filter((m) => m !== month));
+
+//   /* ---------------- AMOUNT / DISCOUNT CHANGE ---------------- */
+//   const handleFeeChange = (fee, field, value) =>
+//     setFormData((prev) => ({
+//       ...prev,
+//       [fee]: { ...prev[fee], [field]: Number(value) || 0 },
+//     }));
+
+//   /* ---------------- TOTAL CALCULATION ---------------- */
+//   useEffect(() => {
+//     let total = 0;
+//     const FixedFees=[
+//       "annualCharges",
+//       "examCharges",
+//       "sportsFee",
+//       "photoCardFee",
+//       "libraryLabFee",
+//       "transportFee",
+//       "miscCharges",
+//       "registrationFee",
+//       "securityMoney",
+//     ]
+//     if (hasTransport) FixedFees.push("transportFee");
+    
+//     FixedFees.forEach((f) => {
+//       const { amount, discount } = formData[f];
+//       total += Math.max(amount - discount, 0);
+//     });
+//     visibleMonths.forEach((m) => {
+//       total += Number(formData.tuitionFee[m]) || 0;
+//     });
+//     setTotalAmount(total);
+//   }, [formData, visibleMonths]);
+//   /* ---------------- RESET TRANSPORT IF NOT REQUIRED ---------------- */
+// useEffect(() => {
+// if (!hasTransport) {
+// setFormData((prev) => ({
+// ...prev,
+// transportFee: { amount: 0, discount: 0 },
+// }));
+// }
+// }, [hasTransport]);
+
+//   /* ---------------- CHECK IF FEE ALREADY PAID ---------------- */
+//   useEffect(() => {
+//     if (!student || !formData.session || !formData.standard) return;
+
+//     axios
+//       .get("/api/admission-fee/check", {
+//         params: {
+//           admissionNumber: student.admissionNumber,
+//           session: formData.session,
+//           standard: formData.standard,
+//           schoolId,
+//         },
+//         headers: { Authorization: `Bearer ${token}` },
+//       })
+//       .then((res) => setFeeAlreadyPaid(res.data.alreadyPaid))
+//       .catch(console.error);
+//   }, [student, formData.session, formData.standard, schoolId, token]);
+
+//   /* ---------------- PAY FEE ---------------- */
+//   const handlePayFee = async () => {
+//     if (!paymentMode) return alert("Please select a payment mode");
+
+//     const payload = {
+//       admission: student.admissionNumber,
+//       schoolId: Number(schoolId),
+//       session: formData.session,
+//       standard: formData.standard,
+//       tuitionFee: formData.tuitionFee,
+//       paidMonths: visibleMonths,
+//       fixedFees: {
+//         annualCharges: formData.annualCharges,
+//         examCharges: formData.examCharges,
+//         sportsFee: formData.sportsFee,
+//         photoCardFee: formData.photoCardFee,
+//         libraryLabFee: formData.libraryLabFee,
+//         ...(hasTransport && { transportFee: formData.transportFee }),
+//         miscCharges: formData.miscCharges,
+//         registrationFee: formData.registrationFee,
+//         securityMoney: formData.securityMoney,
+//       },
+//       totalAmount,
+//       paymentMode,
+//     };
+
+//     try {
+//       const res = await axios.post(
+//         "/api/admission-fee/pay",
+//         payload,
+//         {
+//           headers: { Authorization: `Bearer ${token}` },
+//         },
+//       );
+
+//       const receiptData = {
+//         receiptNo: res.data.id,
+//         schoolName: student.school?.schoolName,
+//         studentName: `${student.firstName} ${student.lastName || ""}`,
+//         admissionNumber: student.admissionNumber,
+//         standard: formData.standard,
+//         session: formData.session,
+//         paymentDate: new Date(),
+//         paymentMode,
+//         fees: payload.fixedFees,
+//         tuitionMonths: visibleMonths,
+//         tuitionFee: formData.tuitionFee,
+//         totalAmount,
+//       };
+
+//       alert("Fee paid successfully ✅");
+//       navigate("/admission/fee/receipt", { state: { receiptData } });
+//     } catch (error) {
+//       console.error("Payment error:", error.response?.data || error);
+//       alert("Fee payment failed ❌");
+//     }
+//   };
+
+//   if (!student) return <div>Loading...</div>;
+//   const fullName = `${student.firstName} ${student.lastName || ""}`;
+
+//   /* ---------------- JSX ---------------- */
+//   return (
+//     <>
+//       <div
+//         className="row shadow"
+//         style={{
+//           backgroundColor: "white",
+//           margin: "10px",
+//           height: "67px",
+//           borderRadius: "5px",
+//           padding: "10px",
+//           color: "black",
+//         }}
+//       >
+//         <h6>
+//           <strong>Admission Fee </strong>
+//         </h6>
+//         <nav aria-label="breadcrumb py-2">
+//           <ol className="breadcrumb">
+//             <li className="breadcrumb-item">
+//               <a href="/" style={{ textDecoration: "none", color: "black" }}>
+//                 Home
+//               </a>
+//             </li>
+//             <li className="breadcrumb-item">
+//               <a href="#" style={{ textDecoration: "none", color: "black" }}>
+//                 Admission Fee Payment
+//               </a>
+//             </li>
+//           </ol>
+//         </nav>
+//       </div>
+
+//       <div className="ms-2 mt-4 me-2 bg-white p-3 rounded shadow">
+//         <h5 className="mb-3 mt-1 bg-primary text-white p-2 rounded">
+//           Admission Fee Payment
+//         </h5>
+
+//         <div className="row mb-3">
+//           <div className="col-md-4">
+//             <label>Student Name</label>
+//             <input value={fullName} className="form-control" disabled />
+//           </div>
+//           <div className="col-md-4">
+//             <label>Class</label>
+//             <input
+//               value={student.studentClass}
+//               className="form-control"
+//               disabled
+//             />
+//           </div>
+//           <div className="col-md-4">
+//             <label>Admission No</label>
+//             <input
+//               value={student.admissionNumber}
+//               className="form-control"
+//               disabled
+//             />
+//           </div>
+//         </div>
+
+//         <div className="row mb-3">
+//           <div className="col-md-4">
+//             <label>Session</label>
+//             <select
+//               name="session"
+//               value={formData.session}
+//               onChange={handleSessionClassChange}
+//               className="form-select"
+//               // disabled
+//             >
+//               <option value="">Select</option>
+//              {sessions.map((s) => (
+//                 <option key={s} value={s}>
+//                   {s}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//           <div className="col-md-4">
+//             <label>Class</label>
+//             <select
+//               name="standard"
+//               value={formData.standard}
+//               onChange={handleSessionClassChange}
+//               className="form-select"
+//               // disabled
+//             >
+//               <option value="">Select</option>
+//              {standards.map((s) => (
+//                 <option key={s} value={s}>
+//                   {s}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//         </div>
+
+//         <div className="row mb-3">
+//           <div className="col-md-4">
+//             {visibleMonths.map((month, i) => (
+//               <div key={month} className="mb-2">
+//                 <div className="d-flex align-items-center">
+//                   <label>Tuition Fee {month}</label>
+//                   {i === visibleMonths.length - 1 && (
+//                     <CiSquarePlus
+//                       size={22}
+//                       className="ms-2"
+//                       onClick={addNextMonth}
+//                     />
+//                   )}
+//                   {visibleMonths.length > 1 && (
+//                     <CiSquareMinus
+//                       size={22}
+//                       className="ms-2 text-danger"
+//                       onClick={() => removeMonth(month)}
+//                     />
+//                   )}
+//                 </div>
+//                 <input
+//                   className="form-control"
+//                   value={formData.tuitionFee[month] || ""}
+//                   onChange={(e) =>
+//                     setFormData((p) => ({
+//                       ...p,
+//                       tuitionFee: { ...p.tuitionFee, [month]: e.target.value },
+//                     }))
+//                   }
+//                 />
+//               </div>
+//             ))}
+//           </div>
+//           {[
+//             "annualCharges",
+//             "examCharges",
+//             "sportsFee",
+//             "libraryLabFee",
+//             "photoCardFee",
+//             "transportFee",
+//             "registrationFee",
+//             "securityMoney",
+//           ].map((key) => (
+//             <div className="col-md-4" key={key}>
+//               <label>{key}</label>
+//               <input
+//                 type="number"
+//                 className="form-control"
+//                 value={formData[key].amount}
+//                 onChange={(e) => handleFeeChange(key, "amount", e.target.value)}
+//               />
+//               <input
+//                 type="number"
+//                 className="form-control"
+//                 value={formData[key].discount}
+//                 onChange={(e) =>
+//                   handleFeeChange(key, "discount", e.target.value)
+//                 }
+//                 placeholder="Discount"
+//               />
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className="d-flex justify-content-between mt-4">
+//           <h5>Total: ₹{totalAmount}</h5>
+//           <button
+//             className="btn btn-success"
+//             onClick={() => setShowPaymentMode(true)}
+//             disabled={feeAlreadyPaid}
+//           >
+//             {feeAlreadyPaid ? "Fee Already Paid" : "Pay"}
+//           </button>
+//         </div>
+
+//         {showPaymentMode && !feeAlreadyPaid && (
+//           <div className="mt-3">
+//             <select
+//               className="form-select w-25"
+//               onChange={(e) => setPaymentMode(e.target.value)}
+//             >
+//               <option value="">Payment Mode</option>
+//               <option>Cash</option>
+//               <option>UPI</option>
+//               <option>Net Banking</option>
+//             </select>
+//             <button
+//               className="btn btn-primary mt-3"
+//               disabled={!paymentMode}
+//               onClick={handlePayFee}
+//             >
+//               Pay Now
+//             </button>
+//           </div>
+//         )}
+//       </div>
+//     </>
+//   );
+// };
+
+// export default Admission_Fee;
+
+
+import React, { useEffect, useMemo, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CiSquareMinus, CiSquarePlus } from "react-icons/ci";
+import {
+  FaUserGraduate,
+  FaMoneyBillWave,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
+
 import axios from "../../api/axiosInstance";
 import useMasters from "../../hooks/useMasters";
 
@@ -1528,252 +2001,656 @@ const MONTHS = [
   "March",
 ];
 
+const FIXED_FEE_FIELDS = [
+  {
+    key: "annualCharges",
+    label: "Annual Charges",
+  },
+  {
+    key: "examCharges",
+    label: "Exam Charges",
+  },
+  {
+    key: "sportsFee",
+    label: "Sports Fee",
+  },
+  {
+    key: "photoCardFee",
+    label: "Photo Card Fee",
+  },
+  {
+    key: "libraryLabFee",
+    label: "Library / Lab Fee",
+  },
+  {
+    key: "transportFee",
+    label: "Transport Fee",
+  },
+  {
+    key: "miscCharges",
+    label: "Miscellaneous Charges",
+  },
+  {
+    key: "registrationFee",
+    label: "Registration Fee",
+  },
+  {
+    key: "securityMoney",
+    label: "Security Money",
+  },
+];
+
+const createEmptyFixedFee = () => ({
+  amount: 0,
+  discount: 0,
+});
+
 const Admission_Fee = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { sessions = [], standards = [] } = useMasters();
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
   const schoolId = user?.schoolId;
   const token = localStorage.getItem("token");
 
-  const [visibleMonths, setVisibleMonths] = useState(["April"]);
   const [student, setStudent] = useState(null);
-  const [admissionStudent, setAdmissionStudent] = useState([]);
-  const { sessions, standards } = useMasters();
+  const [admissionStudents, setAdmissionStudents] = useState([]);
 
-  useEffect(() => {
-  if (!student) return;
+  const [visibleMonths, setVisibleMonths] = useState(["April"]);
 
-  setFormData((prev) => ({
-    ...prev,
-    session: student.academicYear || prev.session,
-    standard: student.studentClass || prev.standard,
-  }));
-}, [student]);
-console.log("student",student);
+  const [loadingStudent, setLoadingStudent] = useState(true);
+  const [loadingFee, setLoadingFee] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+
+  const [feeAlreadyPaid, setFeeAlreadyPaid] = useState(false);
+
+  const [showPaymentMode, setShowPaymentMode] = useState(false);
+  const [paymentMode, setPaymentMode] = useState("");
 
   const [formData, setFormData] = useState({
     session: "",
     standard: "",
+
     tuitionFee: {},
-    annualCharges: { amount: 0, discount: 0 },
-    examCharges: { amount: 0, discount: 0 },
-    sportsFee: { amount: 0, discount: 0 },
-    photoCardFee: { amount: 0, discount: 0 },
-    libraryLabFee: { amount: 0, discount: 0 },
-    transportFee: { amount: 0, discount: 0 },
-    miscCharges: { amount: 0, discount: 0 },
-    registrationFee: { amount: 0, discount: 0 },
-    securityMoney: { amount: 0, discount: 0 },
+
+    annualCharges: createEmptyFixedFee(),
+    examCharges: createEmptyFixedFee(),
+    sportsFee: createEmptyFixedFee(),
+    photoCardFee: createEmptyFixedFee(),
+    libraryLabFee: createEmptyFixedFee(),
+    transportFee: createEmptyFixedFee(),
+    miscCharges: createEmptyFixedFee(),
+    registrationFee: createEmptyFixedFee(),
+    securityMoney: createEmptyFixedFee(),
   });
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [showPaymentMode, setShowPaymentMode] = useState(false);
-  const [paymentMode, setPaymentMode] = useState("");
-  const [feeAlreadyPaid, setFeeAlreadyPaid] = useState(false); // top-level hook
-  const [admissionFees,setAdmissionFee] = useState([]);
 
-  
+  /* =========================================================
+     LOAD APPROVED ADMISSIONS
+  ========================================================= */
 
-  /* ---------------- LOAD ADMISSION STUDENTS ---------------- */
   useEffect(() => {
-    if (!schoolId || !token) return;
+    if (!schoolId || !token) {
+      setLoadingStudent(false);
+      return;
+    }
 
-    axios
-      .get(`/api/admissions/school?schoolId=${schoolId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const approved = res.data.filter((i) => i.status === "APPROVED");
-        setAdmissionStudent(approved);
-      })
-      .catch(console.error);
+    const loadStudents = async () => {
+      try {
+        setLoadingStudent(true);
+
+        const res = await axios.get(
+          `/api/admissions/school?schoolId=${schoolId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const approved = (res.data || []).filter(
+          (item) => item.status === "APPROVED"
+        );
+
+        setAdmissionStudents(approved);
+      } catch (error) {
+        console.error("Admission students error:", error);
+      } finally {
+        setLoadingStudent(false);
+      }
+    };
+
+    loadStudents();
   }, [schoolId, token]);
 
-  // Set selected student
+  /* =========================================================
+     FIND SELECTED STUDENT
+  ========================================================= */
+
   useEffect(() => {
-    const selected = admissionStudent.find((i) => Number(i.id) === Number(id));
-    if (selected) setStudent(selected);
-  }, [admissionStudent, id]);
+    if (!id || admissionStudents.length === 0) return;
 
-  const hasTransport = student?.transportRequired === "yes";
+    const selected = admissionStudents.find(
+      (item) => Number(item.id) === Number(id)
+    );
 
-  console.log("selected ",student);
-  /* ---------------- SESSION + CLASS CHANGE (BACKEND) ---------------- */
-  const handleSessionClassChange = async (e) => {
-    const { name, value } = e.target;
-    const updated = { ...formData, [name]: value };
-    setFormData(updated);
+    if (selected) {
+      setStudent(selected);
+    }
+  }, [admissionStudents, id]);
 
-    if (!updated.session || !updated.standard) return;
+  /* =========================================================
+     SET SESSION + STANDARD FROM STUDENT
+  ========================================================= */
+
+  useEffect(() => {
+    if (!student) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      session: student.academicYear || prev.session,
+      standard: student.studentClass || prev.standard,
+    }));
+  }, [student]);
+
+  /* =========================================================
+     TRANSPORT REQUIRED
+  ========================================================= */
+
+  const hasTransport = useMemo(() => {
+    return String(student?.transportRequired || "").toLowerCase() === "yes";
+  }, [student]);
+
+  /* =========================================================
+     LOAD FEE STRUCTURE
+  ========================================================= */
+
+  const loadFeeStructure = async (session, standard) => {
+    if (!session || !standard || !schoolId) return;
 
     try {
-      const res = await axios.get(
-        "/api/admission-fee/get",
-        {
-          params: {
-            schoolId,
-            session: updated.session,
-            standard: updated.standard,
-          },
-          headers: { Authorization: `Bearer ${token}` },
+      setLoadingFee(true);
+
+      const res = await axios.get("/api/admission-fee/get", {
+        params: {
+          schoolId,
+          session,
+          standard,
         },
-      );
-      const fee = res.data;
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const fee = res.data || {};
+
       const tuitionObj = {};
-      MONTHS.forEach((m) => (tuitionObj[m] = fee.tuitionFee || 0));
+
+      MONTHS.forEach((month) => {
+        tuitionObj[month] = Number(fee.tuitionFee || 0);
+      });
 
       setFormData((prev) => ({
         ...prev,
-        session: updated.session,
-        standard: updated.standard,
+
+        session,
+        standard,
+
         tuitionFee: tuitionObj,
-        annualCharges: { amount: fee.annualCharges || 0, discount: 0 },
-        examCharges: { amount: fee.examCharges || 0, discount: 0 },
-        sportsFee: { amount: fee.sportsFee || 0, discount: 0 },
-        photoCardFee: { amount: fee.photoCardFee || 0, discount: 0 },
-        libraryLabFee: { amount: fee.libraryLabFee || 0, discount: 0 },
-        transportFee: { amount: hasTransport ? fee.transportFee || 0 : 0, discount: 0 },
-        miscCharges: { amount: fee.miscCharges || 0, discount: 0 },
-        registrationFee: { amount: fee.registrationFee || 0, discount: 0 },
-        securityMoney: { amount: fee.securityMoney || 0, discount: 0 },
+
+        annualCharges: {
+          amount: Number(fee.annualCharges || 0),
+          discount: 0,
+        },
+
+        examCharges: {
+          amount: Number(fee.examCharges || 0),
+          discount: 0,
+        },
+
+        sportsFee: {
+          amount: Number(fee.sportsFee || 0),
+          discount: 0,
+        },
+
+        photoCardFee: {
+          amount: Number(fee.photoCardFee || 0),
+          discount: 0,
+        },
+
+        libraryLabFee: {
+          amount: Number(fee.libraryLabFee || 0),
+          discount: 0,
+        },
+
+        transportFee: {
+          amount: hasTransport ? Number(fee.transportFee || 0) : 0,
+          discount: 0,
+        },
+
+        miscCharges: {
+          amount: Number(fee.miscCharges || 0),
+          discount: 0,
+        },
+
+        registrationFee: {
+          amount: Number(fee.registrationFee || 0),
+          discount: 0,
+        },
+
+        securityMoney: {
+          amount: Number(fee.securityMoney || 0),
+          discount: 0,
+        },
       }));
-    } catch {
-      alert("Fee setup not found for selected Session & Class");
+    } catch (error) {
+      console.error("Fee structure error:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Fee setup not found for selected Session & Class"
+      );
+    } finally {
+      setLoadingFee(false);
     }
   };
 
-  /* ---------------- MONTH LOGIC ---------------- */
-  const addNextMonth = () => {
-    const next = MONTHS[visibleMonths.length];
-    if (next) setVisibleMonths([...visibleMonths, next]);
-  };
-  const removeMonth = (month) =>
-    setVisibleMonths((prev) => prev.filter((m) => m !== month));
+  /* =========================================================
+     SESSION / CLASS CHANGE
+  ========================================================= */
 
-  /* ---------------- AMOUNT / DISCOUNT CHANGE ---------------- */
-  const handleFeeChange = (fee, field, value) =>
+  const handleSessionClassChange = async (e) => {
+    const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [fee]: { ...prev[fee], [field]: Number(value) || 0 },
+      [name]: value,
     }));
 
-  /* ---------------- TOTAL CALCULATION ---------------- */
+    if (!formData.session && name !== "session") return;
+    if (!formData.standard && name !== "standard") return;
+
+    const session = name === "session" ? value : formData.session;
+    const standard = name === "standard" ? value : formData.standard;
+
+    if (!session || !standard) return;
+
+    await loadFeeStructure(session, standard);
+  };
+
+  /* =========================================================
+     LOAD FEE WHEN STUDENT IS SELECTED
+  ========================================================= */
+
   useEffect(() => {
+    if (!student) return;
+
+    const session = student.academicYear;
+    const standard = student.studentClass;
+
+    if (!session || !standard) return;
+
+    loadFeeStructure(session, standard);
+  }, [student]);
+
+  /* =========================================================
+     MONTH MANAGEMENT
+  ========================================================= */
+
+  const addNextMonth = () => {
+    const nextMonth = MONTHS[visibleMonths.length];
+
+    if (!nextMonth) return;
+
+    setVisibleMonths((prev) => [...prev, nextMonth]);
+  };
+
+  const removeMonth = (month) => {
+    setVisibleMonths((prev) => {
+      const updated = prev.filter((item) => item !== month);
+
+      return updated.length > 0 ? updated : ["April"];
+    });
+  };
+
+  /* =========================================================
+     FEE CHANGE
+  ========================================================= */
+
+  const handleFeeChange = (fee, field, value) => {
+    const numericValue = Math.max(Number(value) || 0, 0);
+
+    setFormData((prev) => ({
+      ...prev,
+      [fee]: {
+        ...prev[fee],
+        [field]: numericValue,
+      },
+    }));
+  };
+
+  /* =========================================================
+     TUITION FEE CHANGE
+  ========================================================= */
+
+  const handleTuitionChange = (month, value) => {
+    const numericValue = Math.max(Number(value) || 0, 0);
+
+    setFormData((prev) => ({
+      ...prev,
+      tuitionFee: {
+        ...prev.tuitionFee,
+        [month]: numericValue,
+      },
+    }));
+  };
+
+  /* =========================================================
+     TOTAL CALCULATION
+  ========================================================= */
+
+  const totalAmount = useMemo(() => {
     let total = 0;
-    const FixedFees=[
-      "annualCharges",
-      "examCharges",
-      "sportsFee",
-      "photoCardFee",
-      "libraryLabFee",
-      "transportFee",
-      "miscCharges",
-      "registrationFee",
-      "securityMoney",
-    ]
-    if (hasTransport) FixedFees.push("transportFee");
-    
-    FixedFees.forEach((f) => {
-      const { amount, discount } = formData[f];
+
+    FIXED_FEE_FIELDS.forEach(({ key }) => {
+      if (key === "transportFee" && !hasTransport) {
+        return;
+      }
+
+      const fee = formData[key] || {};
+
+      const amount = Number(fee.amount || 0);
+      const discount = Number(fee.discount || 0);
+
       total += Math.max(amount - discount, 0);
     });
-    visibleMonths.forEach((m) => {
-      total += Number(formData.tuitionFee[m]) || 0;
+
+    visibleMonths.forEach((month) => {
+      total += Number(formData.tuitionFee?.[month] || 0);
     });
-    setTotalAmount(total);
-  }, [formData, visibleMonths]);
-  /* ---------------- RESET TRANSPORT IF NOT REQUIRED ---------------- */
-useEffect(() => {
-if (!hasTransport) {
-setFormData((prev) => ({
-...prev,
-transportFee: { amount: 0, discount: 0 },
-}));
-}
-}, [hasTransport]);
 
-  /* ---------------- CHECK IF FEE ALREADY PAID ---------------- */
+    return total;
+  }, [formData, visibleMonths, hasTransport]);
+
+  /* =========================================================
+     RESET TRANSPORT IF NOT REQUIRED
+  ========================================================= */
+
   useEffect(() => {
-    if (!student || !formData.session || !formData.standard) return;
-
-    axios
-      .get("/api/admission-fee/check", {
-        params: {
-          admissionNumber: student.admissionNumber,
-          session: formData.session,
-          standard: formData.standard,
-          schoolId,
+    if (!hasTransport) {
+      setFormData((prev) => ({
+        ...prev,
+        transportFee: {
+          amount: 0,
+          discount: 0,
         },
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setFeeAlreadyPaid(res.data.alreadyPaid))
-      .catch(console.error);
-  }, [student, formData.session, formData.standard, schoolId, token]);
+      }));
+    }
+  }, [hasTransport]);
 
-  /* ---------------- PAY FEE ---------------- */
+  /* =========================================================
+     CHECK FEE ALREADY PAID
+  ========================================================= */
+
+  useEffect(() => {
+    if (!student || !formData.session || !formData.standard || !schoolId) {
+      return;
+    }
+
+    const checkFee = async () => {
+      try {
+        const res = await axios.get("/api/admission-fee/check", {
+          params: {
+            admissionNumber: student.admissionNumber,
+            session: formData.session,
+            standard: formData.standard,
+            schoolId,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setFeeAlreadyPaid(Boolean(res.data?.alreadyPaid));
+
+        if (res.data?.alreadyPaid) {
+          setShowPaymentMode(false);
+          setPaymentMode("");
+        }
+      } catch (error) {
+        console.error("Fee check error:", error);
+      }
+    };
+
+    checkFee();
+  }, [
+    student,
+    formData.session,
+    formData.standard,
+    schoolId,
+    token,
+  ]);
+
+  /* =========================================================
+     PAYMENT
+  ========================================================= */
+
   const handlePayFee = async () => {
-    if (!paymentMode) return alert("Please select a payment mode");
+    if (!student) {
+      alert("Student information not found.");
+      return;
+    }
+
+    if (!paymentMode) {
+      alert("Please select a payment mode");
+      return;
+    }
+
+    if (!formData.session || !formData.standard) {
+      alert("Please select Session and Class");
+      return;
+    }
+
+    if (totalAmount <= 0) {
+      alert("Fee amount must be greater than zero.");
+      return;
+    }
+
+    if (feeAlreadyPaid) {
+      alert("Admission fee is already paid.");
+      return;
+    }
 
     const payload = {
       admission: student.admissionNumber,
+
       schoolId: Number(schoolId),
+
       session: formData.session,
+
       standard: formData.standard,
+
       tuitionFee: formData.tuitionFee,
+
       paidMonths: visibleMonths,
+
       fixedFees: {
         annualCharges: formData.annualCharges,
         examCharges: formData.examCharges,
         sportsFee: formData.sportsFee,
         photoCardFee: formData.photoCardFee,
         libraryLabFee: formData.libraryLabFee,
-        ...(hasTransport && { transportFee: formData.transportFee }),
+
+        ...(hasTransport && {
+          transportFee: formData.transportFee,
+        }),
+
         miscCharges: formData.miscCharges,
         registrationFee: formData.registrationFee,
         securityMoney: formData.securityMoney,
       },
+
       totalAmount,
+
       paymentMode,
     };
 
     try {
-      const res = await axios.post(
-        "/api/admission-fee/pay",
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
+      setPaymentLoading(true);
+
+      const res = await axios.post("/api/admission-fee/pay", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       const receiptData = {
-        receiptNo: res.data.id,
-        schoolName: student.school?.schoolName,
-        studentName: `${student.firstName} ${student.lastName || ""}`,
+        receiptNo: res.data?.id,
+
+        schoolName:
+          student.school?.schoolName ||
+          user?.school?.schoolName ||
+          "School Management System",
+
+        studentName: `${student.firstName || ""} ${
+          student.lastName || ""
+        }`.trim(),
+
         admissionNumber: student.admissionNumber,
+
         standard: formData.standard,
+
         session: formData.session,
+
         paymentDate: new Date(),
+
         paymentMode,
+
         fees: payload.fixedFees,
+
         tuitionMonths: visibleMonths,
+
         tuitionFee: formData.tuitionFee,
+
         totalAmount,
       };
 
       alert("Fee paid successfully ✅");
-      navigate("/admission/fee/receipt", { state: { receiptData } });
+
+      navigate("/admission/fee/receipt", {
+        state: {
+          receiptData,
+        },
+      });
     } catch (error) {
-      console.error("Payment error:", error.response?.data || error);
-      alert("Fee payment failed ❌");
+      console.error(
+        "Payment error:",
+        error?.response?.data || error
+      );
+
+      alert(
+        error?.response?.data?.message ||
+          "Fee payment failed ❌"
+      );
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
-  if (!student) return <div>Loading...</div>;
-  const fullName = `${student.firstName} ${student.lastName || ""}`;
+  /* =========================================================
+     LOADING
+  ========================================================= */
 
-  /* ---------------- JSX ---------------- */
+  if (loadingStudent) {
+    return (
+      <div className="d-flex justify-content-center align-items-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+
+        <span className="ms-2">Loading student...</span>
+      </div>
+    );
+  }
+
+  if (!student) {
+    return (
+      <>
+        <div
+          className="row shadow"
+          style={{
+            backgroundColor: "white",
+            margin: "10px",
+            height: "67px",
+            borderRadius: "5px",
+            padding: "10px",
+            color: "black",
+          }}
+        >
+          <h6>
+            <strong>Admission Fee</strong>
+          </h6>
+
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item">
+                <a
+                  href="/"
+                  style={{
+                    textDecoration: "none",
+                    color: "black",
+                  }}
+                >
+                  Home
+                </a>
+              </li>
+
+              <li className="breadcrumb-item active">
+                Admission Fee Payment
+              </li>
+            </ol>
+          </nav>
+        </div>
+
+        <div className="m-3 p-5 bg-white shadow rounded text-center">
+          <FaExclamationCircle
+            size={45}
+            className="text-danger mb-3"
+          />
+
+          <h5>Student Not Found</h5>
+
+          <p className="text-muted">
+            Approved admission record could not be found.
+          </p>
+
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/admission/fee")}
+          >
+            Back to Admission Fee
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  const fullName =
+    `${student.firstName || ""} ${
+      student.middleName || ""
+    } ${student.lastName || ""}`.replace(/\s+/g, " ").trim();
+
+  /* =========================================================
+     JSX
+  ========================================================= */
+
   return (
     <>
+      {/* =====================================================
+          HEADER
+      ===================================================== */}
+
       <div
         className="row shadow"
         style={{
@@ -1786,188 +2663,620 @@ transportFee: { amount: 0, discount: 0 },
         }}
       >
         <h6>
-          <strong>Admission Fee </strong>
+          <strong>Admission Fee</strong>
         </h6>
-        <nav aria-label="breadcrumb py-2">
+
+        <nav aria-label="breadcrumb">
           <ol className="breadcrumb">
             <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
+              <a
+                href="/"
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                }}
+              >
                 Home
               </a>
             </li>
+
             <li className="breadcrumb-item">
-              <a href="#" style={{ textDecoration: "none", color: "black" }}>
+              <a
+                href="/admission/fee"
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                }}
+              >
                 Admission Fee Payment
               </a>
+            </li>
+
+            <li className="breadcrumb-item active">
+              {student.admissionNumber}
             </li>
           </ol>
         </nav>
       </div>
 
+      {/* =====================================================
+          MAIN CARD
+      ===================================================== */}
+
       <div className="ms-2 mt-4 me-2 bg-white p-3 rounded shadow">
-        <h5 className="mb-3 mt-1 bg-primary text-white p-2 rounded">
-          Admission Fee Payment
-        </h5>
 
-        <div className="row mb-3">
-          <div className="col-md-4">
-            <label>Student Name</label>
-            <input value={fullName} className="form-control" disabled />
-          </div>
-          <div className="col-md-4">
-            <label>Class</label>
-            <input
-              value={student.studentClass}
-              className="form-control"
-              disabled
-            />
-          </div>
-          <div className="col-md-4">
-            <label>Admission No</label>
-            <input
-              value={student.admissionNumber}
-              className="form-control"
-              disabled
-            />
-          </div>
+        {/* PAGE TITLE */}
+
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="mb-0 bg-primary text-white p-2 rounded">
+            <FaMoneyBillWave className="me-2" />
+            Admission Fee Payment
+          </h5>
+
+          {feeAlreadyPaid && (
+            <span className="badge bg-success fs-6 p-2">
+              <FaCheckCircle className="me-1" />
+              Fee Paid
+            </span>
+          )}
         </div>
 
-        <div className="row mb-3">
-          <div className="col-md-4">
-            <label>Session</label>
-            <select
-              name="session"
-              value={formData.session}
-              onChange={handleSessionClassChange}
-              className="form-select"
-              // disabled
-            >
-              <option value="">Select</option>
-             {sessions.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="col-md-4">
-            <label>Class</label>
-            <select
-              name="standard"
-              value={formData.standard}
-              onChange={handleSessionClassChange}
-              className="form-select"
-              // disabled
-            >
-              <option value="">Select</option>
-             {standards.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+        {/* =================================================
+            STUDENT INFORMATION
+        ================================================= */}
 
-        <div className="row mb-3">
-          <div className="col-md-4">
-            {visibleMonths.map((month, i) => (
-              <div key={month} className="mb-2">
-                <div className="d-flex align-items-center">
-                  <label>Tuition Fee {month}</label>
-                  {i === visibleMonths.length - 1 && (
-                    <CiSquarePlus
-                      size={22}
-                      className="ms-2"
-                      onClick={addNextMonth}
-                    />
-                  )}
-                  {visibleMonths.length > 1 && (
-                    <CiSquareMinus
-                      size={22}
-                      className="ms-2 text-danger"
-                      onClick={() => removeMonth(month)}
-                    />
-                  )}
-                </div>
+        <div className="card border-0 shadow mb-4">
+
+          <div className="card-header bg-light">
+            <h6 className="mb-0">
+              <FaUserGraduate className="me-2 text-primary" />
+              Student Information
+            </h6>
+          </div>
+
+          <div className="card-body">
+
+            <div className="row g-3">
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Student Name
+                </label>
+
                 <input
+                  value={fullName}
                   className="form-control"
-                  value={formData.tuitionFee[month] || ""}
-                  onChange={(e) =>
-                    setFormData((p) => ({
-                      ...p,
-                      tuitionFee: { ...p.tuitionFee, [month]: e.target.value },
-                    }))
-                  }
+                  disabled
                 />
               </div>
-            ))}
-          </div>
-          {[
-            "annualCharges",
-            "examCharges",
-            "sportsFee",
-            "libraryLabFee",
-            "photoCardFee",
-            "transportFee",
-            "registrationFee",
-            "securityMoney",
-          ].map((key) => (
-            <div className="col-md-4" key={key}>
-              <label>{key}</label>
-              <input
-                type="number"
-                className="form-control"
-                value={formData[key].amount}
-                onChange={(e) => handleFeeChange(key, "amount", e.target.value)}
-              />
-              <input
-                type="number"
-                className="form-control"
-                value={formData[key].discount}
-                onChange={(e) =>
-                  handleFeeChange(key, "discount", e.target.value)
-                }
-                placeholder="Discount"
-              />
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Class
+                </label>
+
+                <input
+                  value={student.studentClass || "-"}
+                  className="form-control"
+                  disabled
+                />
+              </div>
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Admission No
+                </label>
+
+                <input
+                  value={student.admissionNumber || "-"}
+                  className="form-control"
+                  disabled
+                />
+              </div>
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Father's Name
+                </label>
+
+                <input
+                  value={student.fatherName || "-"}
+                  className="form-control"
+                  disabled
+                />
+              </div>
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Father's Mobile
+                </label>
+
+                <input
+                  value={student.fatherMobile || "-"}
+                  className="form-control"
+                  disabled
+                />
+              </div>
+
+              <div className="col-12 col-md-4">
+                <label className="form-label fw-semibold">
+                  Transport Required
+                </label>
+
+                <input
+                  value={hasTransport ? "Yes" : "No"}
+                  className="form-control"
+                  disabled
+                />
+              </div>
+
             </div>
-          ))}
+
+          </div>
         </div>
 
-        <div className="d-flex justify-content-between mt-4">
-          <h5>Total: ₹{totalAmount}</h5>
-          <button
-            className="btn btn-success"
-            onClick={() => setShowPaymentMode(true)}
-            disabled={feeAlreadyPaid}
-          >
-            {feeAlreadyPaid ? "Fee Already Paid" : "Pay"}
-          </button>
+        {/* =================================================
+            SESSION / CLASS
+        ================================================= */}
+
+        <div className="card border-0 shadow mb-4">
+
+          <div className="card-header bg-light">
+            <h6 className="mb-0">
+              Fee Structure
+            </h6>
+          </div>
+
+          <div className="card-body">
+
+            <div className="row g-3">
+
+              <div className="col-12 col-md-4">
+
+                <label className="form-label fw-semibold">
+                  Session
+                </label>
+
+                <select
+                  name="session"
+                  value={formData.session}
+                  onChange={handleSessionClassChange}
+                  className="form-select"
+                >
+                  <option value="">
+                    Select Session
+                  </option>
+
+                  {sessions.map((session) => (
+                    <option
+                      key={session}
+                      value={session}
+                    >
+                      {session}
+                    </option>
+                  ))}
+                </select>
+
+              </div>
+
+              <div className="col-12 col-md-4">
+
+                <label className="form-label fw-semibold">
+                  Class
+                </label>
+
+                <select
+                  name="standard"
+                  value={formData.standard}
+                  onChange={handleSessionClassChange}
+                  className="form-select"
+                >
+                  <option value="">
+                    Select Class
+                  </option>
+
+                  {standards.map((standard) => (
+                    <option
+                      key={standard}
+                      value={standard}
+                    >
+                      {standard}
+                    </option>
+                  ))}
+                </select>
+
+              </div>
+
+              {loadingFee && (
+                <div className="col-12 col-md-4 d-flex align-items-end">
+                  <span className="text-primary">
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    />
+                    Loading fee structure...
+                  </span>
+                </div>
+              )}
+
+            </div>
+
+          </div>
         </div>
+
+        {/* =================================================
+            TUITION + FIXED FEES
+        ================================================= */}
+
+        <div className="card border-0 shadow">
+
+          <div className="card-header bg-primary text-white">
+            <h6 className="mb-0">
+              Fee Details
+            </h6>
+          </div>
+
+          <div className="card-body">
+
+            <div className="row g-3">
+
+              {/* ================= TUITION ================= */}
+
+              <div className="col-12 col-md-4">
+
+                <div className="border rounded p-3 h-100">
+
+                  <h6 className="fw-bold text-primary border-bottom pb-2">
+                    Tuition Fee
+                  </h6>
+
+                  {visibleMonths.map((month, index) => (
+                    <div
+                      key={month}
+                      className="mb-3"
+                    >
+
+                      <div className="d-flex align-items-center justify-content-between">
+
+                        <label className="form-label fw-semibold mb-1">
+                          {month}
+                        </label>
+
+                        <div className="d-flex align-items-center">
+
+                          {index ===
+                            visibleMonths.length - 1 &&
+                            visibleMonths.length <
+                              MONTHS.length && (
+                              <CiSquarePlus
+                                size={25}
+                                className="text-primary"
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                onClick={addNextMonth}
+                              />
+                            )}
+
+                          {visibleMonths.length > 1 && (
+                            <CiSquareMinus
+                              size={25}
+                              className="text-danger ms-1"
+                              style={{
+                                cursor: "pointer",
+                              }}
+                              onClick={() =>
+                                removeMonth(month)
+                              }
+                            />
+                          )}
+
+                        </div>
+
+                      </div>
+
+                      <div className="input-group">
+
+                        <span className="input-group-text">
+                          ₹
+                        </span>
+
+                        <input
+                          type="number"
+                          min="0"
+                          className="form-control"
+                          value={
+                            formData.tuitionFee?.[
+                              month
+                            ] ?? ""
+                          }
+                          onChange={(e) =>
+                            handleTuitionChange(
+                              month,
+                              e.target.value
+                            )
+                          }
+                        />
+
+                      </div>
+
+                    </div>
+                  ))}
+
+                  <small className="text-muted">
+                    Add months using the + icon.
+                  </small>
+
+                </div>
+
+              </div>
+
+              {/* ================= FIXED FEES ================= */}
+
+              {FIXED_FEE_FIELDS.map(
+                ({ key, label }) => {
+
+                  if (
+                    key === "transportFee" &&
+                    !hasTransport
+                  ) {
+                    return null;
+                  }
+
+                  const fee =
+                    formData[key] || {};
+
+                  return (
+                    <div
+                      className="col-12 col-md-4"
+                      key={key}
+                    >
+
+                      <div className="border rounded p-3 h-100">
+
+                        <label className="form-label fw-semibold">
+                          {label}
+                        </label>
+
+                        <div className="input-group mb-2">
+
+                          <span className="input-group-text">
+                            ₹
+                          </span>
+
+                          <input
+                            type="number"
+                            min="0"
+                            className="form-control"
+                            value={
+                              fee.amount ?? 0
+                            }
+                            onChange={(e) =>
+                              handleFeeChange(
+                                key,
+                                "amount",
+                                e.target.value
+                              )
+                            }
+                          />
+
+                        </div>
+
+                        <input
+                          type="number"
+                          min="0"
+                          className="form-control"
+                          placeholder="Discount"
+                          value={
+                            fee.discount ?? 0
+                          }
+                          onChange={(e) =>
+                            handleFeeChange(
+                              key,
+                              "discount",
+                              e.target.value
+                            )
+                          }
+                        />
+
+                        {Number(
+                          fee.discount || 0
+                        ) > 0 && (
+                          <small className="text-success">
+                            Discount: ₹
+                            {Number(
+                              fee.discount || 0
+                            ).toFixed(2)}
+                          </small>
+                        )}
+
+                      </div>
+
+                    </div>
+                  );
+                }
+              )}
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* =================================================
+            PAYMENT SUMMARY
+        ================================================= */}
+
+        <div className="card border-0 shadow mt-4">
+
+          <div className="card-body">
+
+            <div className="row align-items-center">
+
+              <div className="col-12 col-md-6">
+
+                <div className="bg-light rounded p-3">
+
+                  <h6 className="text-muted mb-1">
+                    Total Payable Amount
+                  </h6>
+
+                  <h2 className="text-primary fw-bold mb-0">
+                    ₹{totalAmount.toFixed(2)}
+                  </h2>
+
+                  <small className="text-muted">
+                    {visibleMonths.length} tuition month
+                    {visibleMonths.length > 1
+                      ? "s"
+                      : ""}{" "}
+                    selected
+                  </small>
+
+                </div>
+
+              </div>
+
+              <div className="col-12 col-md-6 mt-3 mt-md-0 text-md-end">
+
+                {feeAlreadyPaid ? (
+                  <div>
+                    <span className="badge bg-success fs-6 p-2">
+                      <FaCheckCircle className="me-1" />
+                      Admission Fee Already Paid
+                    </span>
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-success btn-lg px-5"
+                    onClick={() =>
+                      setShowPaymentMode(true)
+                    }
+                    disabled={
+                      paymentLoading ||
+                      totalAmount <= 0
+                    }
+                  >
+                    <FaMoneyBillWave className="me-2" />
+                    Pay ₹{totalAmount.toFixed(2)}
+                  </button>
+                )}
+
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        {/* =================================================
+            PAYMENT MODE
+        ================================================= */}
 
         {showPaymentMode && !feeAlreadyPaid && (
-          <div className="mt-3">
-            <select
-              className="form-select w-25"
-              onChange={(e) => setPaymentMode(e.target.value)}
-            >
-              <option value="">Payment Mode</option>
-              <option>Cash</option>
-              <option>UPI</option>
-              <option>Net Banking</option>
-            </select>
-            <button
-              className="btn btn-primary mt-3"
-              disabled={!paymentMode}
-              onClick={handlePayFee}
-            >
-              Pay Now
-            </button>
+          <div className="card border-0 shadow mt-4">
+
+            <div className="card-header bg-success text-white">
+              <h6 className="mb-0">
+                Select Payment Mode
+              </h6>
+            </div>
+
+            <div className="card-body">
+
+              <div className="row align-items-end">
+
+                <div className="col-12 col-md-5">
+
+                  <label className="form-label fw-semibold">
+                    Payment Mode
+                  </label>
+
+                  <select
+                    className="form-select"
+                    value={paymentMode}
+                    onChange={(e) =>
+                      setPaymentMode(
+                        e.target.value
+                      )
+                    }
+                  >
+                    <option value="">
+                      Select Payment Mode
+                    </option>
+
+                    <option value="Cash">
+                      Cash
+                    </option>
+
+                    <option value="UPI">
+                      UPI
+                    </option>
+
+                    <option value="Net Banking">
+                      Net Banking
+                    </option>
+                  </select>
+
+                </div>
+
+                <div className="col-12 col-md-3 mt-3 mt-md-0">
+
+                  <button
+                    className="btn btn-primary w-100"
+                    disabled={
+                      !paymentMode ||
+                      paymentLoading
+                    }
+                    onClick={handlePayFee}
+                  >
+                    {paymentLoading ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                        />
+                        Processing...
+                      </>
+                    ) : (
+                      "Pay Now"
+                    )}
+                  </button>
+
+                </div>
+
+                <div className="col-12 col-md-3 mt-3 mt-md-0">
+
+                  <button
+                    className="btn btn-outline-secondary w-100"
+                    disabled={paymentLoading}
+                    onClick={() => {
+                      setShowPaymentMode(false);
+                      setPaymentMode("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+
+                </div>
+
+              </div>
+
+              <div className="alert alert-info mt-3 mb-0">
+                <small>
+                  Please verify the student details and
+                  total amount before completing the
+                  payment.
+                </small>
+              </div>
+
+            </div>
           </div>
         )}
+
       </div>
     </>
   );
 };
 
 export default Admission_Fee;
+

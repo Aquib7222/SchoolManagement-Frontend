@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import axios from "../../api/axiosInstance";
 import useMasters from "../../hooks/useMasters";
+import { LuBell, LuClipboardCheck, LuSchool } from "react-icons/lu";
 
 const StudentAttendanceNotice = () => {
   const { standards } = useMasters();
@@ -69,16 +70,16 @@ const StudentAttendanceNotice = () => {
     setClassWiseStudents(chartData);
   };
 
-   // -------------------- Dropdown Filter --------------------
-    useEffect(() => {
-      if (selectedClass) {
-        calculateClassWise(
-          students.filter((s) => s.studentClass === selectedClass),
-        );
-      } else {
-        calculateClassWise(students);
-      }
-    }, [selectedClass]);
+  // -------------------- Dropdown Filter --------------------
+  useEffect(() => {
+    if (selectedClass) {
+      calculateClassWise(
+        students.filter((s) => s.studentClass === selectedClass),
+      );
+    } else {
+      calculateClassWise(students);
+    }
+  }, [selectedClass]);
 
   return (
     <>
@@ -91,14 +92,27 @@ const StudentAttendanceNotice = () => {
               {/* Student Class Wise */}
 
               <div className="col-md-6">
-                <div className="card border-0 shadow-sm rounded-4 h-100">
+                <div className="card border-0 shadow rounded h-100">
                   <div className="card-header bg-white border-0 pt-3">
                     <div className="d-flex justify-content-between align-items-center">
-                      <h6 className="fw-bold mb-0">📊 Student Class Wise</h6>
+                      <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
+                        <span
+                          className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                          }}
+                        >
+                          <LuSchool size={22} />
+                        </span>
+                        School Overview
+                      </h6>
 
                       <select
-                        className="form-select form-select-sm"
-                        style={{ width: "120px" }}
+                        className="form-select form-select-sm "
+
+                        style={{ width: "120px" ,borderColor: "#0d6efd",
+    outlineColor: "#0d6efd",}}
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
                       >
@@ -125,9 +139,20 @@ const StudentAttendanceNotice = () => {
               {/* Attendance */}
 
               <div className="col-md-6">
-                <div className="card border-0 shadow-sm rounded-4 h-100">
+                <div className="card border-0 shadow rounded h-100">
                   <div className="card-header bg-white border-0 pt-3">
-                    <h6 className="fw-bold mb-0">📅 Attendance Overview</h6>
+                    <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
+                      <span
+                        className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                        }}
+                      >
+                        <LuClipboardCheck size={22} />
+                      </span>
+                      Attendance Overview
+                    </h6>
                   </div>
 
                   <div className="card-body" style={{ minHeight: "300px" }}>
@@ -141,10 +166,21 @@ const StudentAttendanceNotice = () => {
           {/* ================= NOTICE BOARD ================= */}
 
           <div className="col-lg-4">
-            <div className="card border-0 shadow-sm rounded-4 h-100">
+            <div className="card border-0 shadow rounded h-100">
               <div className="card-header bg-white border-0">
                 <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="fw-bold text-primary mb-0">📢 Notice Board</h6>
+                  <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <span
+                      className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                      }}
+                    >
+                      <LuBell size={22} />
+                    </span>
+                    Notice Board
+                  </h6>
 
                   <button className="btn btn-sm btn-outline-primary">
                     View All

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import useMasters from "../../../hooks/useMasters";
 import axiosInstance from "../../../api/axiosInstance";
@@ -12,6 +13,7 @@ const AttendanceView = () => {
   } = useMasters();
 
   const token = localStorage.getItem("token");
+
   const [selectedSession, setSelectedSession] = useState("");
   const [selectedStandard, setSelectedStandard] = useState("");
   const [selectedSection, setSelectedSection] = useState("");
@@ -20,12 +22,15 @@ const AttendanceView = () => {
   const [search, setSearch] = useState("");
   const [input, setInput] = useState(false);
   const [students, setStudents] = useState([]);
-  
 
-  //   split session to year like 2026-2027 to 2026
+  /* =========================
+     YEAR
+  ========================== */
   const year = Number(selectedSession?.split("-")[0]);
 
-  //   map month string to number
+  /* =========================
+     MONTH MAP
+  ========================== */
   const monthMap = {
     JANUARY: 1,
     FEBRUARY: 2,
@@ -43,52 +48,66 @@ const AttendanceView = () => {
 
   const monthNumber = monthMap[selectedMonth];
 
-  //   get how many days in a month
-  const getDaysInMonth = (year, monthNumber) =>
-    new Date(year, monthNumber, 0).getDate();
-
-  //   how many sundays in a month
-  const getSundays = (year, monthNumber) => {
-    const sundays = [];
-    const totalDays = getDaysInMonth(year, monthNumber);
-    for (let day = 1; day <= totalDays; day++) {
-      const date = new Date(year, monthNumber - 1, day);
-      if (date.getDay() === 0) sundays.push(day);
-    }
-    return sundays;
-
-    console.log("sundays", sundays);
+  /* =========================
+     DAYS IN MONTH
+  ========================== */
+  const getDaysInMonth = (year, monthNumber) => {
+    if (!year || !monthNumber) return 0;
+    return new Date(year, monthNumber, 0).getDate();
   };
 
-  const sundays = year && monthNumber ? getSundays(year, monthNumber) : [];
+  /* =========================
+     SUNDAYS
+  ========================== */
+  const getSundays = (year, monthNumber) => {
+    if (!year || !monthNumber) return [];
 
-  if (year && monthNumber) {
-    console.log(getDaysInMonth(year, monthNumber));
-    console.log(getSundays(year, monthNumber));
-  }
+    const sundays = [];
+    const totalDays = getDaysInMonth(year, monthNumber);
 
-  const totalDays = year && monthNumber ? getDaysInMonth(year, monthNumber) : 0;
+    for (let day = 1; day <= totalDays; day++) {
+      const date = new Date(year, monthNumber - 1, day);
+
+      if (date.getDay() === 0) {
+        sundays.push(day);
+      }
+    }
+
+    return sundays;
+  };
+
+  const totalDays =
+    year && monthNumber
+      ? getDaysInMonth(year, monthNumber)
+      : 0;
+
+  const sundays =
+    year && monthNumber
+      ? getSundays(year, monthNumber)
+      : [];
 
   const workingDays =
-    year && monthNumber ? totalDays - getSundays(year, monthNumber).length : 0;
+    totalDays > 0
+      ? totalDays - sundays.length
+      : 0;
 
-  //  search student attendance monthly wise
-
+  /* =========================
+     SEARCH ATTENDANCE
+  ========================== */
   const handleSearch = async () => {
-    try {
-      if (
-        !selectedSession ||
-        !selectedStandard ||
-        !selectedSection ||
-        !selectedMonth
-      ) {
-        alert("Please select Session, Standard, Section and Month");
-        return;
-      }
+    if (
+      !selectedSession ||
+      !selectedStandard ||
+      !selectedSection ||
+      !selectedMonth
+    ) {
+      alert("Please select Session, Standard, Section and Month");
+      return;
+    }
 
+    try {
       setSearchLoading(true);
 
-      // Attendance
       const attendanceRes = await axiosInstance.get(
         "/api/student/attendance/monthly",
         {
@@ -101,33 +120,41 @@ const AttendanceView = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
-      setStudents(attendanceRes.data);
+      setStudents(attendanceRes.data || []);
       setInput(true);
+      setSearch("");
     } catch (error) {
-      console.log(error);
+      console.error("Attendance error:", error);
+      setStudents([]);
+      setInput(true);
       alert("Student attendance not found");
     } finally {
       setSearchLoading(false);
     }
   };
-  console.log("Students", students);
 
-  //   filter student or search students
+  /* =========================
+     FILTER STUDENTS
+  ========================== */
   const filterStudents = students.filter((student) => {
-    const keyword = search.toLowerCase();
+    const keyword = search.toLowerCase().trim();
 
     return (
-      student.studentName?.toLowerCase().includes(keyword) ||
-      student.admissionNumber?.toLowerCase().includes(keyword)
+      student.studentName
+        ?.toLowerCase()
+        .includes(keyword) ||
+      student.admissionNumber
+        ?.toLowerCase()
+        .includes(keyword)
     );
   });
 
-  console.log("filterStudents", filterStudents);
-  console.log("filterStudents length", filterStudents.length);
-
+  /* =========================
+     STATUS MAP
+  ========================== */
   const statusMap = {
     PRESENT: "P",
     ABSENT: "A",
@@ -135,30 +162,54 @@ const AttendanceView = () => {
     HALF_DAY: "HD",
   };
 
+  /* =========================
+     STATUS CLASS
+  ========================== */
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "PRESENT":
+        return "text-success fw-bold";
+
+      case "ABSENT":
+        return "text-danger fw-bold";
+
+      case "LEAVE":
+        return "text-warning fw-bold";
+
+      case "HALF_DAY":
+        return "text-info fw-bold";
+
+      default:
+        return "text-muted";
+    }
+  };
+
   return (
     <>
-      {/* Header */}
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
       <div
-        className="row shadow-lg"
+        className="bg-white shadow rounded-3 p-3 mx-2 mb-3 mt-3"
         style={{
-          backgroundColor: "white",
-          margin: "10px",
-          height: "70px",
-          borderRadius: "5px",
-          padding: "10px",
-          color: "black",
+          borderLeft: "4px solid #0d6efd",
         }}
       >
-        <h6>
-          <strong>Student Attendance View</strong>
-        </h6>
-        <nav aria-label="breadcrumb py-2">
-          <ol className="breadcrumb">
+        <h5 className="mb-1 fw-semibold">
+          Student Attendance View
+        </h5>
+
+        <nav aria-label="breadcrumb">
+          <ol className="breadcrumb mb-0">
             <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
+              <a
+                href="/"
+                className="text-decoration-none text-dark"
+              >
                 Home
               </a>
             </li>
+
             <li className="breadcrumb-item active">
               View Attendance ClassWise
             </li>
@@ -166,23 +217,37 @@ const AttendanceView = () => {
         </nav>
       </div>
 
-      {/* search section  */}
+      {/* =====================================================
+          SEARCH SECTION
+      ====================================================== */}
+      <div className="mx-2 mb-3">
+        <div className="card border-0 shadow rounded-3">
+          <div className="card-header bg-white border-bottom py-3">
+            <h6 className="mb-0 fw-semibold">
+              Search Student Attendance
+            </h6>
+          </div>
 
-      <div className="ms-2 me-2 rounded shadow bg-white mt-3 ">
-        <div className="card">
-          <div className="card-header p-2">Search Student Class Wise</div>
           <div className="card-body">
-            <div className="row">
+            <div className="row g-3">
+              {/* SESSION */}
               <div className="col-12 col-md-3">
-                <label htmlFor="">Session:</label>
+                <label className="form-label fw-semibold">
+                  Session
+                </label>
+
                 <select
-                  name=""
-                  id=""
                   className="form-select"
                   value={selectedSession}
-                  onChange={(e) => setSelectedSession(e.target.value)}
+                  onChange={(e) =>
+                    setSelectedSession(e.target.value)
+                  }
+                  disabled={masterLoading}
                 >
-                  <option value="">Select Session</option>
+                  <option value="">
+                    Select Session
+                  </option>
+
                   {sessions.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -191,16 +256,24 @@ const AttendanceView = () => {
                 </select>
               </div>
 
+              {/* STANDARD */}
               <div className="col-12 col-md-3">
-                <label htmlFor="">Standard:</label>
+                <label className="form-label fw-semibold">
+                  Standard
+                </label>
+
                 <select
-                  name=""
-                  id=""
-                  value={selectedStandard}
-                  onChange={(e) => setSelectedStandard(e.target.value)}
                   className="form-select"
+                  value={selectedStandard}
+                  onChange={(e) =>
+                    setSelectedStandard(e.target.value)
+                  }
+                  disabled={masterLoading}
                 >
-                  <option value="">Select Standard</option>
+                  <option value="">
+                    Select Standard
+                  </option>
+
                   {standards.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -208,16 +281,25 @@ const AttendanceView = () => {
                   ))}
                 </select>
               </div>
+
+              {/* SECTION */}
               <div className="col-12 col-md-3">
-                <label htmlFor="">Section:</label>
+                <label className="form-label fw-semibold">
+                  Section
+                </label>
+
                 <select
-                  name=""
-                  id=""
                   className="form-select"
                   value={selectedSection}
-                  onChange={(e) => setSelectedSection(e.target.value)}
+                  onChange={(e) =>
+                    setSelectedSection(e.target.value)
+                  }
+                  disabled={masterLoading}
                 >
-                  <option value="">Select Section</option>
+                  <option value="">
+                    Select Section
+                  </option>
+
                   {sections.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -225,16 +307,25 @@ const AttendanceView = () => {
                   ))}
                 </select>
               </div>
+
+              {/* MONTH */}
               <div className="col-12 col-md-3">
-                <label htmlFor="">Month:</label>
+                <label className="form-label fw-semibold">
+                  Month
+                </label>
+
                 <select
-                  name=""
-                  id=""
                   className="form-select"
                   value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  onChange={(e) =>
+                    setSelectedMonth(e.target.value)
+                  }
+                  disabled={masterLoading}
                 >
-                  <option value="">Select Month</option>
+                  <option value="">
+                    Select Month
+                  </option>
+
                   {month.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -244,140 +335,418 @@ const AttendanceView = () => {
               </div>
             </div>
 
-            <div className="row d-flex justify-content-end mt-3">
-              <button className="btn btn-success w-25" onClick={handleSearch}>
-                Search
+            {/* SEARCH BUTTON */}
+            <div className="d-flex justify-content-end mt-4">
+              <button
+                className="btn btn-primary px-5"
+                onClick={handleSearch}
+                disabled={searchLoading}
+              >
+                {searchLoading ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    ></span>
+                    Searching...
+                  </>
+                ) : (
+                  "Search"
+                )}
               </button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* =====================================================
+          RESULT SECTION
+      ====================================================== */}
       {input && (
         <>
-          {/* search by admission no and name   */}
+          {/* SEARCH + EXPORT */}
+          <div className="mx-2 mb-3">
+            <div className="card border-0 shadow rounded-3">
+              <div className="card-body">
+                <div className="row g-2 align-items-center">
+                  {/* SEARCH */}
+                  <div className="col-12 col-md-6 col-lg-5">
+                    <input
+                      type="search"
+                      className="form-control"
+                      placeholder="Search by Student Name or Admission Number"
+                      value={search}
+                      onChange={(e) =>
+                        setSearch(e.target.value)
+                      }
+                    />
+                  </div>
 
-          <div className="ms-2 me-2 bg-white rounded shadow mt-3 p-3">
-            <div className="row ">
-              <div className="col-12 col-md-4">
-                <input
-                  type="search"
-                  name=""
-                  className="form-control"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by Name and Admission No"
-                />
-              </div>
+                  <div className="col-6 col-md-3 col-lg-2 ms-md-auto">
+                    <button className="btn btn-outline-success w-100">
+                      Export Excel
+                    </button>
+                  </div>
 
-              <div className="col-6 col-md-2">
-                <button className="btn btn-outline-success w-100">
-                  Export Excel
-                </button>
-              </div>
-              <div className="col-6 col-md-2">
-                <button className="btn btn-outline-danger w-100">
-                  Export PDF
-                </button>
+                  <div className="col-6 col-md-3 col-lg-2">
+                    <button className="btn btn-outline-danger w-100">
+                      Export PDF
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* attendance Table  */}
-          <div className="ms-2 me-2 bg-white rounded shadow mt-3">
-            <div className="card">
-              <div className="card-header">
-                <h6 className="mb-2">
-                  {filterStudents.length === 1
-                    ? `Attendance Summary for ${filterStudents[0].studentName}`
-                    : `Attendance Summary for ${selectedStandard} ${selectedSection}`}
-                </h6>
+          {/* =====================================================
+              SUMMARY CARD
+          ====================================================== */}
+          <div className="mx-2 mb-3">
+            <div className="card border-0 shadow rounded-3">
+              <div className="card-body">
+                <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                  <div>
+                    <h6 className="fw-semibold mb-1">
+                      {filterStudents.length === 1
+                        ? `Attendance Summary for ${filterStudents[0].studentName}`
+                        : `Attendance Summary for ${selectedStandard} - ${selectedSection}`}
+                    </h6>
 
-                <div className="d-flex gap-5 mt-1">
-                  {filterStudents.length === 1 && (
-                    <>
-                      <h6>
-                        Present: <strong>{filterStudents[0].present}</strong>
-                      </h6>
-                      <h6>
-                        Absent: <strong>{filterStudents[0].absent}</strong>
-                      </h6>
-                      <h6>
-                        Leave: <strong>{filterStudents[0].leave}</strong>
-                      </h6>
-                      <h6>
-                        Half Day: <strong>{filterStudents[0].halfDay}</strong>
-                      </h6>
-                    </>
-                  )}
+                    <small className="text-muted">
+                      {selectedMonth} {year}
+                    </small>
+                  </div>
 
-                  <h6>Total Students: <strong>{filterStudents.length}</strong></h6>
+                  <div className="d-flex flex-wrap gap-2">
+                    {filterStudents.length === 1 && (
+                      <>
+                        <span className="badge bg-success-subtle text-success border px-3 py-2">
+                          Present:{" "}
+                          {filterStudents[0].present}
+                        </span>
 
-                  <h6>
-                    Working Days: <strong>{workingDays}</strong>
+                        <span className="badge bg-danger-subtle text-danger border px-3 py-2">
+                          Absent:{" "}
+                          {filterStudents[0].absent}
+                        </span>
+
+                        <span className="badge bg-warning-subtle text-warning border px-3 py-2">
+                          Leave:{" "}
+                          {filterStudents[0].leave}
+                        </span>
+
+                        <span className="badge bg-info-subtle text-info border px-3 py-2">
+                          Half Day:{" "}
+                          {filterStudents[0].halfDay}
+                        </span>
+                      </>
+                    )}
+
+                    <span className="badge bg-primary-subtle text-primary border px-3 py-2">
+                      Total Students:{" "}
+                      {filterStudents.length}
+                    </span>
+
+                    <span className="badge bg-secondary-subtle text-secondary border px-3 py-2">
+                      Working Days: {workingDays}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* =====================================================
+              ATTENDANCE TABLE
+          ====================================================== */}
+          <div className="mx-2 mb-4">
+            <div className="card border-0 shadow rounded-3">
+              <div className="card-header bg-white border-bottom py-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <h6 className="mb-0 fw-semibold">
+                    Monthly Attendance
                   </h6>
+
+                  <span className="badge bg-primary">
+                    {selectedMonth}
+                  </span>
                 </div>
               </div>
 
-              <div className="card-body">
+              <div className="card-body p-0">
                 <div className="table-responsive">
-                  <table className="table  table-bordered table-hovered">
+                  <table className="table table-bordered table-hover align-middle text-center mb-0">
                     <thead className="table-primary">
                       <tr>
-                        <th>S.No</th>
-                        <th>Student Name</th>
-                        <th>Admission Number</th>
+                        <th
+                          style={{
+                            minWidth: "65px",
+                            position: "sticky",
+                            left: 0,
+                            zIndex: 3,
+                          }}
+                        >
+                          S.No
+                        </th>
 
-                        {Array.from({ length: totalDays }, (_, i) => (
-                          <th key={i + 1}>{i + 1}</th>
-                        ))}
-                        <th>P</th>
-                        <th>A</th>
-                        <th>L</th>
-                        <th>HD</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filterStudents.map((student, index) => (
-                        <tr key={student.studentId}>
-                          <td>{index + 1}</td>
-                          <td>{student.studentName}</td>
-                          <td>{student.admissionNumber}</td>
+                        <th
+                          style={{
+                            minWidth: "180px",
+                            position: "sticky",
+                            left: "65px",
+                            zIndex: 3,
+                          }}
+                        >
+                          Student Name
+                        </th>
 
-                          {Array.from({ length: totalDays }, (_, i) => {
+                        <th
+                          style={{
+                            minWidth: "150px",
+                            position: "sticky",
+                            left: "245px",
+                            zIndex: 3,
+                          }}
+                        >
+                          Admission Number
+                        </th>
+
+                        {/* DAYS */}
+                        {Array.from(
+                          { length: totalDays },
+                          (_, i) => {
                             const day = i + 1;
-
-                            // Agar Sunday hai to H dikhao
-                            if (sundays.includes(day)) {
-                              return (
-                                <td
-                                  key={day}
-                                  className="bg-light text-danger fw-bold text-center"
-                                >
-                                  H
-                                </td>
-                              );
-                            }
+                            const isSunday =
+                              sundays.includes(day);
 
                             return (
-                              <td key={day} className="text-center">
-                                {statusMap[student.attendance[day]] || "-"}
-                              </td>
+                              <th
+                                key={day}
+                                style={{
+                                  minWidth: "42px",
+                                  backgroundColor: isSunday
+                                    ? "#f8d7da"
+                                    : undefined,
+                                  color: isSunday
+                                    ? "#842029"
+                                    : undefined,
+                                }}
+                              >
+                                {day}
+                              </th>
                             );
-                          })}
+                          }
+                        )}
 
-                          <td>
-                            <strong>
-                              {student.present} / {workingDays}
-                            </strong>
+                        <th
+                          style={{
+                            minWidth: "55px",
+                            backgroundColor: "#d1e7dd",
+                          }}
+                        >
+                          P
+                        </th>
+
+                        <th
+                          style={{
+                            minWidth: "55px",
+                            backgroundColor: "#f8d7da",
+                          }}
+                        >
+                          A
+                        </th>
+
+                        <th
+                          style={{
+                            minWidth: "55px",
+                            backgroundColor: "#fff3cd",
+                          }}
+                        >
+                          L
+                        </th>
+
+                        <th
+                          style={{
+                            minWidth: "60px",
+                            backgroundColor: "#cff4fc",
+                          }}
+                        >
+                          HD
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {searchLoading ? (
+                        <tr>
+                          <td
+                            colSpan={totalDays + 7}
+                            className="py-5"
+                          >
+                            <div className="spinner-border text-primary"></div>
+                            <div className="mt-2 text-muted">
+                              Loading attendance...
+                            </div>
                           </td>
-                          <td>{student.absent}</td>
-                          <td>{student.leave}</td>
-                          <td>{student.halfDay}</td>
                         </tr>
-                      ))}
+                      ) : filterStudents.length > 0 ? (
+                        filterStudents.map(
+                          (student, index) => (
+                            <tr key={student.studentId}>
+                              <td
+                                style={{
+                                  position: "sticky",
+                                  left: 0,
+                                  background: "white",
+                                  zIndex: 2,
+                                }}
+                              >
+                                {index + 1}
+                              </td>
+
+                              <td
+                                className="fw-semibold text-start"
+                                style={{
+                                  position: "sticky",
+                                  left: "65px",
+                                  background: "white",
+                                  zIndex: 2,
+                                }}
+                              >
+                                {student.studentName}
+                              </td>
+
+                              <td
+                                style={{
+                                  position: "sticky",
+                                  left: "245px",
+                                  background: "white",
+                                  zIndex: 2,
+                                }}
+                              >
+                                {student.admissionNumber}
+                              </td>
+
+                              {/* DAYS */}
+                              {Array.from(
+                                { length: totalDays },
+                                (_, i) => {
+                                  const day = i + 1;
+
+                                  /* SUNDAY */
+                                  if (
+                                    sundays.includes(day)
+                                  ) {
+                                    return (
+                                      <td
+                                        key={day}
+                                        className="fw-bold text-danger"
+                                        style={{
+                                          backgroundColor:
+                                            "#f8d7da",
+                                        }}
+                                      >
+                                        H
+                                      </td>
+                                    );
+                                  }
+
+                                  const status =
+                                    student.attendance?.[
+                                      day
+                                    ];
+
+                                  return (
+                                    <td
+                                      key={day}
+                                      className={getStatusClass(
+                                        status
+                                      )}
+                                    >
+                                      {statusMap[status] ||
+                                        "-"}
+                                    </td>
+                                  );
+                                }
+                              )}
+
+                              {/* PRESENT */}
+                              <td className="fw-bold text-success">
+                                {student.present} /{" "}
+                                {workingDays}
+                              </td>
+
+                              {/* ABSENT */}
+                              <td className="fw-bold text-danger">
+                                {student.absent}
+                              </td>
+
+                              {/* LEAVE */}
+                              <td className="fw-bold text-warning">
+                                {student.leave}
+                              </td>
+
+                              {/* HALF DAY */}
+                              <td className="fw-bold text-info">
+                                {student.halfDay}
+                              </td>
+                            </tr>
+                          )
+                        )
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={totalDays + 7}
+                            className="py-5 text-danger fw-semibold"
+                          >
+                            No Student Attendance Found
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
+                </div>
+              </div>
+
+              {/* =================================================
+                  LEGEND
+              ================================================== */}
+              <div className="card-footer bg-white">
+                <div className="d-flex flex-wrap gap-3 small">
+                  <span>
+                    <strong className="text-success">
+                      P
+                    </strong>{" "}
+                    = Present
+                  </span>
+
+                  <span>
+                    <strong className="text-danger">
+                      A
+                    </strong>{" "}
+                    = Absent
+                  </span>
+
+                  <span>
+                    <strong className="text-warning">
+                      L
+                    </strong>{" "}
+                    = Leave
+                  </span>
+
+                  <span>
+                    <strong className="text-info">
+                      HD
+                    </strong>{" "}
+                    = Half Day
+                  </span>
+
+                  <span>
+                    <strong className="text-danger">
+                      H
+                    </strong>{" "}
+                    = Holiday / Sunday
+                  </span>
                 </div>
               </div>
             </div>
@@ -389,3 +758,4 @@ const AttendanceView = () => {
 };
 
 export default AttendanceView;
+

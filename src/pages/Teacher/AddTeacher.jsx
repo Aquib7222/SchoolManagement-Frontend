@@ -1,13 +1,29 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  FaArrowLeft,
+  FaUser,
+  FaIdCard,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaFileAlt,
+  FaShieldAlt,
+  FaGraduationCap,
+  FaBriefcase,
+  FaCamera,
+  FaPen,
+  FaSave,
+} from "react-icons/fa";
 import axiosInstance from "../../api/axiosInstance";
 
 const AddTeacher = () => {
   const { employeeId } = useParams();
+  const navigate = useNavigate();
 
   const isEditMode = Boolean(employeeId);
 
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -28,52 +44,123 @@ const AddTeacher = () => {
     designation: "",
     teachingLevel: "",
     employeeType: "",
+
     phoneNumber: "",
     alternatePhoneNumber: "",
     mobileNumber: "",
     emergencyContact: "",
     emergencyRelation: "",
     email: "",
+
     addressLine1: "",
     addressLine2: "",
     addressLine3: "",
     city: "",
     state: "",
     pincode: "",
+
     panNumber: "",
     biometricCard: "",
     esiNumber: "",
     aadharNumber: "",
     pfNumber: "",
+    pfUniversalAccount: "",
+    basicPayment: "",
+    bankInfo: "",
+    ifscCode: "",
+    certificates: "",
+    schoolSponsorship: "",
+    sponsorName: "",
+    sponsorContact: "",
+
+    maritalStatus: "",
+    spouseName: "",
+    spouseGender: "",
+    spouseDOB: "",
+    firstChildName: "",
+    firstChildGender: "",
+    firstChildDOB: "",
+    secondChildName: "",
+    secondChildGender: "",
+    secondChildDOB: "",
+    numberOfChild: "",
+
+    religion: "",
+    caste: "",
+
     photo: "",
-    maritalStatus:"",
-    religion:"",
-    caste:"",
-    qualification:"",
-    degreeBoard:"",
-    passingYear:"",
-    percentage:"",
+    signature: "",
+
+    qualification: "",
+    degreeBoard: "",
+    passingYear: "",
+    percentage: "",
+
     active: true,
   });
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData((prev) => ({
-        ...prev,
-        photo: reader.result, // base64 string
-      }));
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
+
+  const [qualifications, setQualifications] = useState([
+    {
+      qualification: "",
+      university: "",
+      year: "",
+      percentage: "",
+    },
+    {
+      qualification: "",
+      university: "",
+      year: "",
+      percentage: "",
+    },
+    {
+      qualification: "",
+      university: "",
+      year: "",
+      percentage: "",
+    },
+    {
+      qualification: "",
+      university: "",
+      year: "",
+      percentage: "",
+    },
+  ]);
+
+  const [experiences, setExperiences] = useState([
+    {
+      company: "",
+      designation: "",
+      fromDate: "",
+      toDate: "",
+      totalExp: "",
+    },
+    {
+      company: "",
+      designation: "",
+      fromDate: "",
+      toDate: "",
+      totalExp: "",
+    },
+    {
+      company: "",
+      designation: "",
+      fromDate: "",
+      toDate: "",
+      totalExp: "",
+    },
+  ]);
+
+  /* =========================
+     FETCH TEACHER FOR EDIT
+  ========================= */
 
   useEffect(() => {
     const fetchTeacher = async () => {
       if (!employeeId) return;
 
       try {
+        setLoading(true);
+
         const user = JSON.parse(localStorage.getItem("user"));
         const token = localStorage.getItem("token");
 
@@ -81,1205 +168,1286 @@ const AddTeacher = () => {
 
         const res = await axiosInstance.get("/api/teachers/search", {
           params: {
-            employeeId: employeeId,
-            schoolId: schoolId,
+            employeeId,
+            schoolId,
           },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        console.log("Teacher Data:", res.data);
-
-        setFormData(res.data);
-
-        console.log("Set Form Data:", res.data);
+        setFormData((prev) => ({
+          ...prev,
+          ...res.data,
+        }));
       } catch (error) {
-        console.log(
+        console.error(
           "Teacher fetch error:",
           error.response?.data || error.message,
         );
 
         alert("Teacher not found");
+        navigate(-1);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchTeacher();
-  }, [employeeId]);
+  }, [employeeId, navigate]);
 
-  //   e.preventDefault();
-  //   const savedData = JSON.parse(localStorage.getItem("TeacherFormData")) || [];
-  //   const teacherAccounts =
-  //     JSON.parse(localStorage.getItem("TeacherUserName")) || [];
+  /* =========================
+     HANDLE INPUT
+  ========================= */
 
-  //   // Add teacher form data
-  //   savedData.push(formData);
-
-  //   // Add username/password as an object
-  //   teacherAccounts.push({
-  //     username: formData.username,
-  //     password: formData.password,
-  //   });
-
-  //   localStorage.setItem("TeacherFormData", JSON.stringify(savedData));
-  //   localStorage.setItem("TeacherUserName", JSON.stringify(teacherAccounts));
-
-  //   alert("Teacher data saved successfully!");
-  //   // You can also reset form if needed
-  //   setFormData({
-  //     username: "",
-  //     password: "",
-  //     firstName: "",
-  //     middleName: "",
-  //     lastName: "",
-  //     dob: "",
-  //     fatherName: "",
-  //     doj: "",
-  //     status: "",
-  //     gender: "",
-  //     category: "",
-  //     nationality: "",
-  //     bloodGroup: "",
-  //     department: "",
-  //     designation: "",
-  //     teachingLevel: "",
-  //     employeeType: "",
-  //     phoneNumber: "",
-  //     alternatePhoneNumber: "",
-  //     mobileNumber: "",
-  //     emergencyContact: "",
-  //     emergencyRelation: "",
-  //     email: "",
-  //     addressLine1: "",
-  //     addressLine2: "",
-  //     addressLine3: "",
-  //     city: "",
-  //     state: "",
-  //     pincode: "",
-  //     panNumber: "",
-  //     biometricCard: "",
-  //     esiNumber: "",
-  //     aadharNumber: "",
-  //     pfNumber: "",
-  //     photo: "",
-  //   });
-  //   navigate(-1);
-  // };
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-
-    // 📸 Photo (Base64)
-    if (type === "file") {
-      const file = files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-      return;
-    }
+    const { name, value, type, checked } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
+
+  /* =========================
+     IMAGE UPLOAD
+  ========================= */
+
+  const handleFileChange = (e, field) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: reader.result,
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  };
+
+  /* =========================
+     QUALIFICATION
+  ========================= */
+
+  const handleQualificationChange = (index, field, value) => {
+    setQualifications((prev) =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
+      ),
+    );
+  };
+
+  /* =========================
+     EXPERIENCE
+  ========================= */
+
+  const handleExperienceChange = (index, field, value) => {
+    setExperiences((prev) =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              [field]: value,
+            }
+          : item,
+      ),
+    );
+  };
+
+  /* =========================
+     SUBMIT
+  ========================= */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const loggedInUser = JSON.parse(localStorage.getItem("user"));
-      console.log("school user", loggedInUser);
+      setLoading(true);
 
-      const schoolId = loggedInUser.school.id;
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+      const schoolId = loggedInUser?.school?.id;
 
       if (!schoolId) {
         alert("School not found");
         return;
       }
+
+      const payload = {
+        ...formData,
+        qualifications,
+        experiences,
+      };
+
       if (isEditMode) {
-        await axiosInstance.put(`/api/teachers/${employeeId}`, formData, {
-          params: {
-            schoolId,
+        await axiosInstance.put(
+          `/api/teachers/${employeeId}`,
+          payload,
+          {
+            params: {
+              schoolId,
+            },
           },
-        });
+        );
 
         alert("Teacher updated successfully");
       } else {
         await axiosInstance.post(
           `/api/teachers?schoolId=${schoolId}`,
-          formData,
+          payload,
         );
 
         alert("Teacher added successfully");
       }
 
       navigate(-1);
-      navigate(-1);
     } catch (error) {
-      console.error("Error adding teacher:", error);
-      alert("Failed to add teacher");
+      console.error(
+        "Teacher save error:",
+        error.response?.data || error.message,
+      );
+
+      alert(
+        error.response?.data?.message ||
+          `Failed to ${isEditMode ? "update" : "add"} teacher`,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
+  /* =========================
+     COMMON FIELD
+  ========================= */
+
+  const Field = ({
+    label,
+    name,
+    type = "text",
+    required = false,
+    placeholder = "",
+    children,
+    className = "",
+  }) => {
+    return (
+      <div className={`col-12 col-md-6 col-xl-3 ${className}`}>
+        <label className="form-label fw-semibold">
+          {label}
+          {required && <span className="text-danger ms-1">*</span>}
+        </label>
+
+        {children ? (
+          children
+        ) : (
+          <input
+            type={type}
+            name={name}
+            value={formData[name] ?? ""}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className="form-control teacher-input"
+          />
+        )}
+      </div>
+    );
+  };
+
+  /* =========================
+     SELECT
+  ========================= */
+
+  const SelectField = ({
+    label,
+    name,
+    options,
+    required = false,
+  }) => {
+    return (
+      <div className="col-12 col-md-6 col-xl-3">
+        <label className="form-label fw-semibold">
+          {label}
+          {required && <span className="text-danger ms-1">*</span>}
+        </label>
+
+        <select
+          name={name}
+          value={formData[name] ?? ""}
+          onChange={handleChange}
+          className="form-select teacher-input"
+        >
+          <option value="">Select {label}</option>
+
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
+  /* =========================
+     SECTION HEADER
+  ========================= */
+
+  const SectionHeader = ({ icon, title, subtitle }) => (
+    <div className="teacher-section-header">
+      <div className="teacher-section-icon">{icon}</div>
+
+      <div>
+        <h5 className="mb-0 fw-bold">{title}</h5>
+        {subtitle && (
+          <small className="text-muted">{subtitle}</small>
+        )}
+      </div>
+    </div>
+  );
+
+  if (loading && isEditMode && !formData.employeeId) {
+    return (
+      <div className="d-flex justify-content-center align-items-center py-5">
+        <div className="spinner-border text-primary" />
+      </div>
+    );
+  }
+
   return (
     <>
-      <div
-        className="row shadow-lg"
-        style={{
-          backgroundColor: "white",
-          margin: "10px",
-          height: "70px",
-          borderRadius: "5px",
-          padding: "10px",
-          color: "black",
-        }}
-      >
-        <h6>
-          <strong>{isEditMode ? "Edit Teacher" : "Add Teacher"}</strong>
-        </h6>
-        <nav aria-label="breadcrumb py-2">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <a href="/" style={{ textDecoration: "none", color: "black" }}>
-                Home
-              </a>
-            </li>
-            <li className="breadcrumb-item">
-              <a href="#" style={{ textDecoration: "none", color: "black" }}>
+      <style>
+        {`
+          .teacher-page {
+            padding-bottom: 30px;
+          }
+
+          .teacher-breadcrumb {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+          }
+
+          .teacher-breadcrumb h6 {
+            margin-bottom: 5px;
+          }
+
+          .teacher-card {
+            background: #fff;
+            border-radius: 12px;
+            margin: 18px 10px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+            border: 1px solid #eef1f5;
+            overflow: hidden;
+          }
+
+          .teacher-card-body {
+            padding: 20px;
+          }
+
+          .teacher-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 9px;
+            background: linear-gradient(
+              90deg,
+              rgba(13,110,253,0.10),
+              rgba(13,110,253,0.025)
+            );
+            border-left: 4px solid #0d6efd;
+          }
+
+          .teacher-section-icon {
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d6efd;
+            color: #fff;
+          }
+
+          .teacher-input {
+            min-height: 42px;
+            border-radius: 7px;
+            border: 1px solid #dfe3e8;
+            font-size: 14px;
+            transition: all 0.2s ease;
+          }
+
+          .teacher-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.15rem rgba(13,110,253,0.10);
+          }
+
+          .teacher-form-row {
+            row-gap: 18px;
+          }
+
+          .teacher-photo-box {
+            border: 1px dashed #cfd6df;
+            border-radius: 10px;
+            padding: 15px;
+            background: #fafbfc;
+          }
+
+          .teacher-preview {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+          }
+
+          .teacher-table th {
+            background: #f7f8fa;
+            font-size: 14px;
+            white-space: nowrap;
+          }
+
+          .teacher-table td {
+            vertical-align: middle;
+          }
+
+          .teacher-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 20px;
+            background: #fff;
+            border-radius: 12px;
+            margin: 18px 10px 0;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+          }
+
+          @media (max-width: 767px) {
+            .teacher-card-body {
+              padding: 14px;
+            }
+
+            .teacher-action-bar {
+              flex-direction: column;
+              align-items: stretch;
+            }
+
+            .teacher-action-bar button {
+              width: 100%;
+            }
+          }
+        `}
+      </style>
+
+      <div className="teacher-page ">
+        
+
+        <div className="teacher-breadcrumb shadow">
+          <h6>
+            <strong>
+              {isEditMode ? "Edit Teacher" : "Add Teacher"}
+            </strong>
+          </h6>
+
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb mb-0">
+              <li className="breadcrumb-item">
+                <span
+                  role="button"
+                  onClick={() => navigate("/")}
+                  style={{
+                    cursor: "pointer",
+                    color: "#555",
+                  }}
+                >
+                  Home
+                </span>
+              </li>
+
+              <li className="breadcrumb-item active">
                 {isEditMode ? "Edit Teacher" : "Add Teacher"}
-              </a>
-            </li>
-          </ol>
-        </nav>
-      </div>
+              </li>
+            </ol>
+          </nav>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="ms-2 me-2 rounded shadow bg-white p-3">
-          <div className="row bg-primary p-1 d-flex text-center text-white ms-2 me-2">
-            <strong>EduMatric Login Details</strong>
-          </div>
+        <form onSubmit={handleSubmit}>
+          
 
-          <div className="row bg-primary p-1 d-flex text-center text-white ms-2 me-2">
-            <strong>Basic Details</strong>
-          </div>
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaUser />}
+                title="Basic Details"
+                subtitle="Teacher's personal and professional information"
+              />
 
-          {/* second row  */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  FirstName <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                className="w-100 rounded p-2"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Middle Name <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="middleName"
-                className="w-100 rounded p-2"
-                value={formData.middleName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  LastName <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                className="w-100 rounded p-2"
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Date of Birth <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="date"
-                name="dob"
-                className="w-100 rounded p-2"
-                value={formData.dob}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+              <div className="row teacher-form-row">
+                <Field
+                  label="Employee ID"
+                  name="employeeId"
+                  required
+                />
 
-          {/* third row  */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Father's Name <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="fatherName"
-                className="w-100 rounded p-2"
-                value={formData.fatherName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Date of Joining <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="date"
-                name="doj"
-                className="w-100 rounded p-2"
-                value={formData.doj}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Status <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="status"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option value="Working">Working</option>
-                <option value="Resign">Resign</option>
-                <option value="MaternityLeave">Maternity Leave</option>
-                <option value="LongLeave">Long Leave</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Gender <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="gender"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.gender}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="NotApplicable">Not Applicable</option>
-              </select>
-            </div>
-          </div>
+                <Field
+                  label="First Name"
+                  name="firstName"
+                  required
+                />
 
-          {/* fourth row  */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Category <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="category"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.category}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option value="Teaching">Teaching</option>
-                <option value="NonTeaching">Non Teaching</option>
-                <option value="Admin">Admin</option>
-                <option value="Transport">Transport</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Nationality <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="nationality"
-                className="w-100 rounded p-2"
-                value={formData.nationality}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Blood Group <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="bloodGroup"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.bloodGroup}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "NA"].map(
-                  (group) => (
-                    <option key={group} value={group}>
-                      {group}
-                    </option>
-                  ),
-                )}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Department <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="department"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.department}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                {[
-                  "ADMIN",
-                  "ADMIN ASSISSTENT",
-                  "ADMIN STAFF",
-                  "COORDINATOR",
-                  "LIBRARIAN",
-                  "NON-TEACHING",
-                  "PHYSICAL EDUCATION",
-                  "PRINCIPAL",
-                  "TEACHER",
-                  "VICE PRINCIPAL",
-                ].map((depart) => (
-                  <option key={depart} value={depart}>
-                    {depart}
-                  </option>
-                ))}
-              </select>
+                <Field
+                  label="Middle Name"
+                  name="middleName"
+                />
+
+                <Field
+                  label="Last Name"
+                  name="lastName"
+                  required
+                />
+
+                <Field
+                  label="Date of Birth"
+                  name="dob"
+                  type="date"
+                  required
+                />
+
+                <Field
+                  label="Father's Name"
+                  name="fatherName"
+                  required
+                />
+
+                <Field
+                  label="Date of Joining"
+                  name="doj"
+                  type="date"
+                  required
+                />
+
+                <SelectField
+                  label="Status"
+                  name="status"
+                  required
+                  options={[
+                    "Working",
+                    "Resign",
+                    "MaternityLeave",
+                    "LongLeave",
+                  ]}
+                />
+
+                <SelectField
+                  label="Gender"
+                  name="gender"
+                  required
+                  options={[
+                    "Male",
+                    "Female",
+                    "NotApplicable",
+                  ]}
+                />
+
+                <SelectField
+                  label="Category"
+                  name="category"
+                  required
+                  options={[
+                    "Teaching",
+                    "NonTeaching",
+                    "Admin",
+                    "Transport",
+                  ]}
+                />
+
+                <Field
+                  label="Nationality"
+                  name="nationality"
+                  required
+                />
+
+                <SelectField
+                  label="Blood Group"
+                  name="bloodGroup"
+                  required
+                  options={[
+                    "A+",
+                    "A-",
+                    "B+",
+                    "B-",
+                    "AB+",
+                    "AB-",
+                    "O+",
+                    "O-",
+                    "NA",
+                  ]}
+                />
+
+                <SelectField
+                  label="Department"
+                  name="department"
+                  required
+                  options={[
+                    "ADMIN",
+                    "ADMIN ASSISSTENT",
+                    "ADMIN STAFF",
+                    "COORDINATOR",
+                    "LIBRARIAN",
+                    "NON-TEACHING",
+                    "PHYSICAL EDUCATION",
+                    "PRINCIPAL",
+                    "TEACHER",
+                    "VICE PRINCIPAL",
+                  ]}
+                />
+
+                <SelectField
+                  label="Designation"
+                  name="designation"
+                  required
+                  options={[
+                    "Administrator",
+                    "Admin Manager",
+                    "HR Manager",
+                    "Admin Assistant",
+                    "Clerical Assistant",
+                    "Receptionist",
+                    "Office Executive",
+                    "Data Entry Operator",
+                    "Academic Coordinator",
+                    "Discipline Coordinator",
+                    "Exam Coordinator",
+                    "Senior Librarian",
+                    "Assistant Librarian",
+                    "Peon",
+                    "Cleaner",
+                    "Driver",
+                    "Security Guard",
+                    "Bus Conductor",
+                    "Physical Education Teacher",
+                    "Sports Coach",
+                    "Yoga Instructor",
+                    "Principal",
+                    "TGT (Trained Graduate Teacher)",
+                    "PGT (Post Graduate Teacher)",
+                    "PRT (Primary Teacher)",
+                    "Subject Teacher",
+                    "Computer Teacher",
+                    "Vice Principal",
+                  ]}
+                />
+
+                <SelectField
+                  label="Teaching Level"
+                  name="teachingLevel"
+                  required
+                  options={[
+                    "Pre-Primary",
+                    "Primary School",
+                    "Middle School",
+                    "Higher School",
+                  ]}
+                />
+
+                <SelectField
+                  label="Employee Type"
+                  name="employeeType"
+                  required
+                  options={[
+                    "Permanent",
+                    "Temporary",
+                  ]}
+                />
+              </div>
             </div>
           </div>
 
-          {/* fifth row  */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Designation <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="designation"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.designation}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                {[
-                  "Administrator",
-                  "Admin Manager",
-                  "HR Manager",
-                  "Admin Assistant",
-                  "Clerical Assistant",
-                  "Receptionist",
-                  "Office Executive",
-                  "Data Entry Operator",
-                  "Academic Coordinator",
-                  "Discipline Coordinator",
-                  "Exam Coordinator",
-                  "Senior Librarian",
-                  "Assistant Librarian",
-                  "Peon",
-                  "Cleaner",
-                  "Driver",
-                  "Security Guard",
-                  "Bus Conductor",
-                  "Physical Education Teacher",
-                  "Sports Coach",
-                  "Yoga Instructor",
-                  "Principal",
-                  "TGT (Trained Graduate Teacher)",
-                  "PGT (Post Graduate Teacher)",
-                  "PRT (Primary Teacher)",
-                  "Subject Teacher",
-                  "Computer Teacher",
-                  "Vice Principal",
-                ].map((designa) => (
-                  <option key={designa} value={designa}>
-                    {designa}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Teaching Level <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="teachingLevel"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.teachingLevel}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                {[
-                  "Pre-Primary",
-                  "Primary School",
-                  "Middle School",
-                  "Higher School",
-                ].map((teachingLvl) => (
-                  <option key={teachingLvl} value={teachingLvl}>
-                    {teachingLvl}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Employee Type <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select
-                name="employeeType"
-                id=""
-                className="w-100 rounded p-2"
-                value={formData.employeeType}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                {["Permanent", "Temporary"].map((empLvl) => (
-                  <option key={empLvl} value={empLvl}>
-                    {empLvl}
-                  </option>
-                ))}
-              </select>
+         
+
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaPhoneAlt />}
+                title="Contact Details"
+                subtitle="Phone, email and emergency contact information"
+              />
+
+              <div className="row teacher-form-row">
+                <Field
+                  label="Phone Number"
+                  name="phoneNumber"
+                  required
+                />
+
+                <Field
+                  label="Alternate Phone Number"
+                  name="alternatePhoneNumber"
+                />
+
+                <Field
+                  label="Mobile Number"
+                  name="mobileNumber"
+                  required
+                />
+
+                <Field
+                  label="Email"
+                  name="email"
+                  type="email"
+                  required
+                />
+
+                <Field
+                  label="Emergency Contact"
+                  name="emergencyContact"
+                  required
+                />
+
+                <SelectField
+                  label="Emergency Relation"
+                  name="emergencyRelation"
+                  options={[
+                    "Father",
+                    "Mother",
+                    "Sibling",
+                    "Relative",
+                    "Other",
+                  ]}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Contact Details</strong>
-          </div>
+          
 
-          {/* First row of contact details */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Phone Number <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="phoneNumber"
-                className="w-100 rounded p-2"
-                value={formData.phoneNumber}
-                onChange={handleChange}
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaMapMarkerAlt />}
+                title="Address Details"
+                subtitle="Residential address information"
               />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Alternate Phone Number</strong>
-              </label>
-              <input
-                type="text"
-                name="alternatePhoneNumber"
-                className="w-100 rounded p-2"
-                value={formData.alternatePhoneNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Mobile Number <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="mobileNumber"
-                className="w-100 rounded p-2"
-                value={formData.mobileNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Emergency Contact <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="emergencyContact"
-                className="w-100 rounded p-2 mb-1"
-                placeholder="Contact No."
-                value={formData.emergencyContact}
-                onChange={handleChange}
-              />
-              <select
-                className="w-100 rounded p-2"
-                name="emergencyRelation"
-                value={formData.emergencyRelation}
-                onChange={handleChange}
-              >
-                <option value="">Select Relation</option>
-                <option value="Father">Father</option>
-                <option value="Mother">Mother</option>
-                <option value="Sibling">Sibling</option>
-                <option value="Relative">Relative</option>
-                <option value="Other">Other</option>
-              </select>
+
+              <div className="row teacher-form-row">
+                <Field
+                  label="Address Line 1"
+                  name="addressLine1"
+                  required
+                />
+
+                <Field
+                  label="Address Line 2"
+                  name="addressLine2"
+                />
+
+                <Field
+                  label="Address Line 3"
+                  name="addressLine3"
+                />
+
+                <Field
+                  label="City"
+                  name="city"
+                  required
+                />
+
+                <Field
+                  label="State"
+                  name="state"
+                  required
+                />
+
+                <Field
+                  label="Pincode"
+                  name="pincode"
+                  required
+                />
+              </div>
             </div>
           </div>
 
-          {/* Second row of contact details */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Email <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="email"
-                name="email"
-                className="w-100 rounded p-2"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Address Line 1 <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="addressLine1"
-                className="w-100 rounded p-2"
-                value={formData.addressLine1}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Address Line 2</strong>
-              </label>
-              <input
-                type="text"
-                name="addressLine2"
-                className="w-100 rounded p-2"
-                value={formData.addressLine2}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Address Line 3</strong>
-              </label>
-              <input
-                type="text"
-                name="addressLine3"
-                className="w-100 rounded p-2"
-                value={formData.addressLine3}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+         
 
-          {/* Third row of contact details */}
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  City <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="city"
-                className="w-100 rounded p-2"
-                value={formData.city}
-                onChange={handleChange}
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaIdCard />}
+                title="Documents & Payroll"
+                subtitle="Identity, statutory and payment information"
               />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  State <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="state"
-                className="w-100 rounded p-2"
-                value={formData.state}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Pincode <span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="pincode"
-                className="w-100 rounded p-2"
-                value={formData.pincode}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
 
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Documents Detail</strong>
-          </div>
+              <div className="row teacher-form-row">
+                <Field
+                  label="Biometric Card Number"
+                  name="biometricCard"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3"></div>
+                <Field
+                  label="PF Number"
+                  name="pfNumber"
+                />
 
-            <div className="col-md-3">
-              <label>
-                <strong>Biometric Card Number:</strong>
-              </label>
-              <input
-                type="text"
-                name="biometricCard"
-                className="w-100 rounded p-2"
-                value={formData.biometricCard}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>PF No.:</strong>
-              </label>
-              <input
-                type="text"
-                name="pfNumber"
-                className="w-100 rounded p-2"
-                value={formData.pfNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  PAN No.:<span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="panNumber"
-                className="w-100 rounded p-2"
-                value={formData.panNumber}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+                <Field
+                  label="PAN Number"
+                  name="panNumber"
+                  required
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>ESI No.:</strong>
-              </label>
-              <input
-                type="text"
-                name="esiNumber"
-                className="w-100 rounded p-2"
-                value={formData.esiNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Aadhar Card Number:<span className="text-danger">*</span>
-                </strong>
-              </label>
-              <input
-                type="text"
-                name="aadharNumber"
-                className="w-100 rounded p-2"
-                value={formData.aadharNumber}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>PF Universal Account No.:</strong>
-              </label>
-              <input
-                type="text"
-                name="pfUniversalAccount"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Basic Payment.:</strong>
-              </label>
-              <input
-                type="text"
-                name="basicPayment"
-                className="w-100 rounded p-2"
-              />
-            </div>
-          </div>
+                <Field
+                  label="ESI Number"
+                  name="esiNumber"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>Bank A/c Info:</strong>
-              </label>
-              <input
-                type="text"
-                name="bankInfo"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>IFSC Code:</strong>
-              </label>
-              <input
-                type="text"
-                name="ifscCode"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>List of Certificates submitted to HIS:</strong>
-              </label>
-              <textarea
-                name="certificates"
-                rows="2"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Under School Sponsorship:</strong>
-              </label>
-              <select name="schoolSponsorship" className="w-100 rounded p-2">
-                <option value="">Select Relation</option>
-                <option>Father</option>
-                <option>Mother</option>
-                <option>Relative</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
+                <Field
+                  label="Aadhar Number"
+                  name="aadharNumber"
+                  required
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>Sponsor Name:</strong>
-              </label>
-              <input
-                type="text"
-                name="sponsorName"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Sponsor Contact No.:</strong>
-              </label>
-              <input
-                type="text"
-                name="sponsorContact"
-                className="w-100 rounded p-2"
-              />
-            </div>
-          </div>
+                <Field
+                  label="PF Universal Account"
+                  name="pfUniversalAccount"
+                />
 
-          {/* Mediclaim Insurance Detail */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Mediclaim Insurance Detail</strong>
-          </div>
+                <Field
+                  label="Basic Payment"
+                  name="basicPayment"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>
-                  Marital Status::<span className="text-danger">*</span>
-                </strong>
-              </label>
-              <select name="maritalStatus" className="w-100 rounded p-2"  value={formData.maritalStatus}
-                onChange={handleChange}>
-                <option>Select</option>
-                <option value="Married">Married</option>
-                <option value="UnMarried">UnMarried</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Spouse Name:</strong>
-              </label>
-              <input
-                type="text"
-                name="spouseName"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Spouse Gender:</strong>
-              </label>
-              <select name="spouseGender" className="w-100 rounded p-2">
-                <option>Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Spouse DOB:</strong>
-              </label>
-              <input
-                type="date"
-                name="spouseDOB"
-                className="w-100 rounded p-2"
-              />
-            </div>
-          </div>
+                <Field
+                  label="Bank Account Info"
+                  name="bankInfo"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>First Child Name:</strong>
-              </label>
-              <input
-                type="text"
-                name="firstChildName"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>First Child Gender::</strong>
-              </label>
-              <select name="firstChildGender" className="w-100 rounded p-2">
-                <option>Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>First Child DOB:</strong>
-              </label>
-              <input
-                type="date"
-                name="firstChildDOB"
-                className="w-100 rounded p-2"
-              />
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Second Child Name:</strong>
-              </label>
-              <input
-                type="text"
-                name="secondChildName"
-                className="w-100 rounded p-2"
-              />
-            </div>
-          </div>
+                <Field
+                  label="IFSC Code"
+                  name="ifscCode"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>Second Child Gender:</strong>
-              </label>
-              <select name="secondChildGender" className="w-100 rounded p-2">
-                <option>Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Second Child DOB:</strong>
-              </label>
-              <input
-                type="date"
-                name="secondChildDOB"
-                className="w-100 rounded p-2"
-              />
-            </div>
-          </div>
+                <Field
+                  label="Sponsor Name"
+                  name="sponsorName"
+                />
 
-          {/* Religious Detail */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Religious Detail</strong>
-          </div>
+                <Field
+                  label="Sponsor Contact"
+                  name="sponsorContact"
+                />
 
-          <div className="row mt-2 ms-1 me-1">
-            <div className="col-md-3">
-              <label>
-                <strong>Religion:</strong>
-              </label>
-              <select name="religion" className="w-100 rounded p-2" value={formData.religion} onChange={handleChange}>
-                <option>--Select--</option>
-                <option value="Hindu">Hindu</option>
-                <option value="Muslim">Muslim</option>
-                <option value="Christian">Christian</option>
-                <option value="Sikh">Sikh</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Caste:</strong>
-              </label>
-              <select name="caste" className="w-100 rounded p-2" value={formData.caste} onChange={handleChange}>
-                <option>--Select--</option>
-                <option value="General">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <label>
-                <strong>Number of Child:</strong>
-              </label>
-              <select name="numberOfChild" className="w-100 rounded p-2">
-                <option>--Select--</option>
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3+</option>
-              </select>
-            </div>
-          </div>
+                <SelectField
+                  label="School Sponsorship"
+                  name="schoolSponsorship"
+                  options={[
+                    "Father",
+                    "Mother",
+                    "Relative",
+                    "Other",
+                  ]}
+                />
 
-          {/* Teacher Photo */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Teacher Photo</strong>
-          </div>
+                <div className="col-12 col-md-6">
+                  <label className="form-label fw-semibold">
+                    Certificates Submitted
+                  </label>
 
-          <div className="row mt-2 ms-1 me-1 mb-4">
-            <div className="col-md-12 d-flex gap-2">
-              <label>
-                <strong>Upload Photo</strong>
-              </label>
-              <input
-                type="file"
-                accept="image/jpeg, image/jpg, image/png"
-                className="form-control w-50 h-50"
-                name="photo"
-                onChange={handleImageUpload}
-              />
-              <small className="text-muted">(jpeg, jpg, png)</small>
-
-              {/* Preview */}
-              {formData.photo && (
-                <div className="mt-2">
-                  <img
-                    src={formData.photo}
-                    alt="Preview"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                    }}
+                  <textarea
+                    name="certificates"
+                    rows="3"
+                    value={formData.certificates ?? ""}
+                    onChange={handleChange}
+                    className="form-control teacher-input"
+                    placeholder="Enter certificate details"
                   />
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
-          {/* Teacher Signature */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Teacher Signature</strong>
-          </div>
+         
 
-          <div className="row mt-2 ms-1 me-1 mb-3">
-            <div className="col-md-4">
-              <label>
-                <strong>Upload Signature</strong>
-              </label>
-              <input
-                type="file"
-                accept="image/jpeg, image/jpg, image/png"
-                className="form-control"
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaShieldAlt />}
+                title="Family & Insurance Details"
+                subtitle="Marital and dependent information"
               />
-              <small className="text-muted">(jpeg, jpg, png)</small>
+
+              <div className="row teacher-form-row">
+                <SelectField
+                  label="Marital Status"
+                  name="maritalStatus"
+                  required
+                  options={[
+                    "Married",
+                    "UnMarried",
+                    "Divorced",
+                    "Widowed",
+                  ]}
+                />
+
+                <Field
+                  label="Spouse Name"
+                  name="spouseName"
+                />
+
+                <SelectField
+                  label="Spouse Gender"
+                  name="spouseGender"
+                  options={[
+                    "Male",
+                    "Female",
+                    "Other",
+                  ]}
+                />
+
+                <Field
+                  label="Spouse DOB"
+                  name="spouseDOB"
+                  type="date"
+                />
+
+                <Field
+                  label="First Child Name"
+                  name="firstChildName"
+                />
+
+                <SelectField
+                  label="First Child Gender"
+                  name="firstChildGender"
+                  options={[
+                    "Male",
+                    "Female",
+                    "Other",
+                  ]}
+                />
+
+                <Field
+                  label="First Child DOB"
+                  name="firstChildDOB"
+                  type="date"
+                />
+
+                <Field
+                  label="Second Child Name"
+                  name="secondChildName"
+                />
+
+                <SelectField
+                  label="Second Child Gender"
+                  name="secondChildGender"
+                  options={[
+                    "Male",
+                    "Female",
+                    "Other",
+                  ]}
+                />
+
+                <Field
+                  label="Second Child DOB"
+                  name="secondChildDOB"
+                  type="date"
+                />
+
+                <SelectField
+                  label="Number of Child"
+                  name="numberOfChild"
+                  options={[
+                    "0",
+                    "1",
+                    "2",
+                    "3+",
+                  ]}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Qualification Detail */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Qualification Detail</strong>
+          
+
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaUser />}
+                title="Religious Details"
+                subtitle="Optional demographic information"
+              />
+
+              <div className="row teacher-form-row">
+                <SelectField
+                  label="Religion"
+                  name="religion"
+                  options={[
+                    "Hindu",
+                    "Muslim",
+                    "Christian",
+                    "Sikh",
+                    "Other",
+                  ]}
+                />
+
+                <SelectField
+                  label="Caste"
+                  name="caste"
+                  options={[
+                    "General",
+                    "OBC",
+                    "SC",
+                    "ST",
+                  ]}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="table-responsive mt-2 ms-1 me-1">
-            <table className="table table-bordered">
-              <thead className="table-light text-center">
-                <tr>
-                  <th>Qualification</th>
-                  <th>University/Board</th>
-                  <th>Passing Year</th>
-                  <th>Percentage</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1, 2, 3, 4].map((row, idx) => (
-                  <tr key={idx}>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`qualification_${idx}`}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`university_${idx}`}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`year_${idx}`}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`percentage_${idx}`}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+         
 
-          {/* Work Experience Section */}
-          <div className="row bg-primary p-1 text-center text-white ms-2 me-2 mt-3">
-            <strong>Work Experience</strong>
-          </div>
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaCamera />}
+                title="Teacher Photo & Signature"
+                subtitle="Upload profile photo and signature"
+              />
 
-          <div className="table-responsive mt-2 ms-1 me-1">
-            <table className="table table-bordered">
-              <thead className="table-light text-center">
-                <tr>
-                  <th>Company Name</th>
-                  <th>Designation</th>
-                  <th>Duration</th>
-                  <th>Total Experience</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1, 2, 3].map((_, idx) => (
-                  <tr key={idx}>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`company_${idx}`}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`designation_${idx}`}
-                      />
-                    </td>
-                    <td>
-                      <div className="d-flex flex-column">
-                        <input
-                          type="date"
-                          className="form-control mb-1"
-                          name={`fromDate_${idx}`}
-                        />
-                        <input
-                          type="date"
-                          className="form-control"
-                          name={`toDate_${idx}`}
+              <div className="row g-4">
+                <div className="col-12 col-md-6">
+                  <div className="teacher-photo-box">
+                    <label className="form-label fw-semibold">
+                      Profile Photo
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="form-control teacher-input"
+                      onChange={(e) =>
+                        handleFileChange(e, "photo")
+                      }
+                    />
+
+                    <small className="text-muted d-block mt-2">
+                      Supported: JPG, JPEG, PNG
+                    </small>
+
+                    {formData.photo && (
+                      <div className="mt-3">
+                        <img
+                          src={formData.photo}
+                          alt="Teacher Preview"
+                          className="teacher-preview"
                         />
                       </div>
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name={`totalExp_${idx}`}
-                        placeholder="e.g. 2 Years"
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    )}
+                  </div>
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <div className="teacher-photo-box">
+                    <label className="form-label fw-semibold">
+                      Teacher Signature
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png"
+                      className="form-control teacher-input"
+                      onChange={(e) =>
+                        handleFileChange(e, "signature")
+                      }
+                    />
+
+                    <small className="text-muted d-block mt-2">
+                      Supported: JPG, JPEG, PNG
+                    </small>
+
+                    {formData.signature && (
+                      <div className="mt-3">
+                        <img
+                          src={formData.signature}
+                          alt="Signature Preview"
+                          style={{
+                            width: "180px",
+                            height: "70px",
+                            objectFit: "contain",
+                            border: "1px solid #ddd",
+                            borderRadius: "7px",
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Submit Button */}
-          <div className=" my-4">
-            <button className="btn btn-success px-4 py-2" type="submit">
-              <strong>{isEditMode ? "Update Teacher" : "Add Teacher"}</strong>
+          
+
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaGraduationCap />}
+                title="Qualification Details"
+                subtitle="Academic qualification history"
+              />
+
+              <div className="table-responsive">
+                <table className="table table-bordered teacher-table align-middle mb-0">
+                  <thead>
+                    <tr className="text-center">
+                      <th>Qualification</th>
+                      <th>University / Board</th>
+                      <th>Passing Year</th>
+                      <th>Percentage</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {qualifications.map((item, index) => (
+                      <tr key={index}>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.qualification}
+                            onChange={(e) =>
+                              handleQualificationChange(
+                                index,
+                                "qualification",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.university}
+                            onChange={(e) =>
+                              handleQualificationChange(
+                                index,
+                                "university",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.year}
+                            onChange={(e) =>
+                              handleQualificationChange(
+                                index,
+                                "year",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.percentage}
+                            onChange={(e) =>
+                              handleQualificationChange(
+                                index,
+                                "percentage",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* ================= EXPERIENCE ================= */}
+
+          <div className="teacher-card shadow">
+            <div className="teacher-card-body">
+              <SectionHeader
+                icon={<FaBriefcase />}
+                title="Work Experience"
+                subtitle="Previous employment details"
+              />
+
+              <div className="table-responsive">
+                <table className="table table-bordered teacher-table align-middle mb-0">
+                  <thead>
+                    <tr className="text-center">
+                      <th>Company Name</th>
+                      <th>Designation</th>
+                      <th>Duration</th>
+                      <th>Total Experience</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {experiences.map((item, index) => (
+                      <tr key={index}>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.company}
+                            onChange={(e) =>
+                              handleExperienceChange(
+                                index,
+                                "company",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.designation}
+                            onChange={(e) =>
+                              handleExperienceChange(
+                                index,
+                                "designation",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <div className="row g-2">
+                            <div className="col-12 col-md-6">
+                              <small className="text-muted">
+                                From
+                              </small>
+
+                              <input
+                                type="date"
+                                className="form-control teacher-input"
+                                value={item.fromDate}
+                                onChange={(e) =>
+                                  handleExperienceChange(
+                                    index,
+                                    "fromDate",
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </div>
+
+                            <div className="col-12 col-md-6">
+                              <small className="text-muted">
+                                To
+                              </small>
+
+                              <input
+                                type="date"
+                                className="form-control teacher-input"
+                                value={item.toDate}
+                                onChange={(e) =>
+                                  handleExperienceChange(
+                                    index,
+                                    "toDate",
+                                    e.target.value,
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control teacher-input"
+                            value={item.totalExp}
+                            placeholder="e.g. 2 Years"
+                            onChange={(e) =>
+                              handleExperienceChange(
+                                index,
+                                "totalExp",
+                                e.target.value,
+                              )
+                            }
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+       
+
+          <div className="teacher-action-bar shadow">
+            <button
+              type="button"
+              className="btn btn-light border px-4"
+              onClick={() => navigate(-1)}
+              disabled={loading}
+            >
+              <FaArrowLeft className="me-2" />
+              Back
+            </button>
+
+            <button
+              type="submit"
+              className="btn btn-success px-4"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                  />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  {isEditMode ? (
+                    <FaPen className="me-2" />
+                  ) : (
+                    <FaSave className="me-2" />
+                  )}
+
+                  {isEditMode
+                    ? "Update Teacher"
+                    : "Add Teacher"}
+                </>
+              )}
             </button>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 };

@@ -15,8 +15,9 @@ import {
   FaPauseCircle,
   FaUserGraduate,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SiAdguard } from "react-icons/si";
+import { LuBuilding2 } from "react-icons/lu";
 
 const SchoolList = () => {
   const navigate = useNavigate();
@@ -26,14 +27,14 @@ const SchoolList = () => {
   const [search, setSearch] = useState("");
 
   const formatDate = (date) => {
-  if (!date) return "-";
+    if (!date) return "-";
 
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-};
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   const getLogoUrl = (logoUrl) => {
     if (!logoUrl) {
@@ -46,8 +47,6 @@ const SchoolList = () => {
 
     return `http://localhost:8080${logoUrl}`;
   };
-
-  
 
   useEffect(() => {
     fetchSchools();
@@ -74,8 +73,6 @@ const SchoolList = () => {
       setLoading(false);
     }
   };
-
-  
 
   const filteredSchools = schools.filter((school) => {
     const searchText = search.toLowerCase();
@@ -122,8 +119,6 @@ const SchoolList = () => {
 
   return (
     <div className="container-fluid px-2 py-3">
-     
-
       <div className="card border-0 shadow mb-3">
         <div className="card-body">
           <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
@@ -158,8 +153,6 @@ const SchoolList = () => {
           </div>
         </div>
       </div>
-
-     
 
       <div className="row g-3 mb-3">
         <div className="col-12 col-sm-6 col-md-4 col-lg">
@@ -503,11 +496,9 @@ const SchoolList = () => {
 
                       <td>{school.affiliationBoard || "—"}</td>
 
-                     <td>{formatDate(school.createdAt)}</td>
+                      <td>{formatDate(school.createdAt)}</td>
 
                       {/* STATUS */}
-
-
 
                       <td>
                         <span
@@ -531,6 +522,16 @@ const SchoolList = () => {
                             }
                           >
                             <FaEye />
+                          </button>
+                          
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            title="School View"
+                            onClick={() =>
+                              navigate(`/admin/school-details/${school.id}`)
+                            }
+                          >
+                            <LuBuilding2 />
                           </button>
 
                           {/* <button
