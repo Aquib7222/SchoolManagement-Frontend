@@ -13,6 +13,7 @@ import {
 } from "react-icons/lu";
 import { FaArrowLeft } from "react-icons/fa";
 import axiosInstance from "../../../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 // =====================================================
 // MODULE ICONS
@@ -35,6 +36,7 @@ Object.keys(images).forEach((path) => {
 // =====================================================
 
 const MenuList = () => {
+  const navigate = useNavigate();
   const [menus, setMenus] = useState([]);
 
   const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ const MenuList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
 
   // Stores expanded module IDs
   const [expandedModules, setExpandedModules] = useState({});
@@ -417,7 +419,7 @@ const MenuList = () => {
   };
 
   const handleEdit = (menu) => {
-    console.log("Edit menu:", menu);
+    navigate(`/admin/menus/edit/${menu.id}`);
   };
 
   const handleDelete = (menu) => {

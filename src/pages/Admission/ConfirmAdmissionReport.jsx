@@ -331,7 +331,7 @@
 //               </div>
 //               <div className="col-6 col-md-2">
 //                 <button
-//                   className="btn btn-success w-100"
+//                   className="btn btn-primary w-100"
 //                   onClick={handleExportExcel}
 //                 >
 //                   Export Excel
@@ -398,7 +398,7 @@
 //                     <td>{student.category}</td>
 //                     <td>{student.religion}</td>
 //                     <td>{student.today}</td>
-//                     <td className="badge bg-success text-white align-items-center">
+//                     <td className="badge bg-primary text-white align-items-center">
 //                       {student.status}
 //                     </td>
 //                   </tr>
@@ -429,7 +429,9 @@ import {
   FaFilter,
   FaUsers,
   FaCheckCircle,
+  FaGraduationCap,
 } from "react-icons/fa";
+import { MdOutlineSchool } from "react-icons/md";
 
 const ConfirmAdmissionReport = () => {
   const { sessions, standards, sections } = useMasters();
@@ -883,42 +885,72 @@ const ConfirmAdmissionReport = () => {
     <>
       {/* ================= HEADER ================= */}
 
-      <div
-        className="row shadow"
-        style={{
-          backgroundColor: "#ffffff",
-          margin: "10px",
-          minHeight: "70px",
-          borderRadius: "8px",
-          padding: "10px 15px",
-          color: "#222",
-          borderLeft: "4px solid #0B6B53",
-        }}
-      >
-        <div>
-          <h6 className="mb-1">
-            <strong>Confirm Admission Report</strong>
-          </h6>
+     
 
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item">
-                <a
-                  href="/"
+      <div className="mx-2 mt-2 mb-3">
+        <div
+          className="rounded-4 shadow overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+            border: "1px solid #dbeafe",
+          }}
+        >
+          <div className="p-3 p-md-4">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3">
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3"
                   style={{
-                    textDecoration: "none",
-                    color: "#0B6B53",
+                    width: "52px",
+                    height: "52px",
+                    background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                    color: "#fff",
+                    boxShadow: "0 8px 20px rgba(37,99,235,.22)",
                   }}
                 >
-                  Home
-                </a>
-              </li>
+                  <FaGraduationCap size={27} />
+                </div>
 
-              <li className="breadcrumb-item active">
-                Confirm Admission Report
-              </li>
-            </ol>
-          </nav>
+                <div>
+                  <h5 className="mb-1 fw-bold text-dark">Confirm Admission Report</h5>
+
+                  <div className="text-muted small">
+                    Admission &nbsp;/ &nbsp; Confirm Admission Report
+                  </div>
+                </div>
+              </div>
+
+              <div className="d-flex align-items-center gap-2">
+                <span
+                  className="badge rounded-pill px-3 py-2"
+                  style={{
+                    backgroundColor: "#eff6ff",
+                    color: "#2563eb",
+                    border: "1px solid #bfdbfe",
+                  }}
+                >
+                  <MdOutlineSchool className="me-1" />
+                  Admission Report
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="px-4 py-2"
+            style={{
+              backgroundColor: "rgba(239,246,255,.75)",
+              borderTop: "1px solid #e0ecff",
+            }}
+          >
+            <small className="text-muted">
+              Home &nbsp;›&nbsp; Admission Report &nbsp;›&nbsp;
+              <span className="text-primary fw-semibold">
+                Confirm Admission Reports
+              </span>
+            </small>
+          </div>
         </div>
       </div>
 
@@ -940,7 +972,7 @@ const ConfirmAdmissionReport = () => {
               padding: "13px 18px",
             }}
           >
-            <FaFilter className="me-2" />
+            <FaFilter className="me-2 text-primary"  />
 
             <div>
               <h6 className="mb-0">
@@ -1046,9 +1078,9 @@ const ConfirmAdmissionReport = () => {
 
               <div className="col-12 col-lg-3 d-flex align-items-end gap-2">
                 <button
-                  className="btn w-100"
+                  className="btn w-100 btn-primary"
                   style={{
-                    backgroundColor: "#0B6B53",
+                    // backgroundColor: "#0B6B53",
                     color: "white",
                     height: "38px",
                   }}
@@ -1084,7 +1116,7 @@ const ConfirmAdmissionReport = () => {
               </button>
 
               <button
-                className="btn btn-outline-success"
+                className="btn btn-outline-primary"
                 onClick={handleExportExcel}
               >
                 <FaFileExcel className="me-2" />
@@ -1117,12 +1149,13 @@ const ConfirmAdmissionReport = () => {
             >
               <div className="card-body d-flex align-items-center">
                 <div
-                  className="rounded-circle d-flex align-items-center justify-content-center me-3"
+                  className="rounded-circle d-flex bg-primary align-items-center text-white justify-content-center me-3"
                   style={{
                     width: "48px",
                     height: "48px",
-                    backgroundColor: "#e7f5ef",
-                    color: "#0B6B53",
+                    
+                    // color: "#0B6B53",
+
                   }}
                 >
                   <FaUsers size={20} />
@@ -1134,8 +1167,8 @@ const ConfirmAdmissionReport = () => {
                   </small>
 
                   <h4
-                    className="mb-0 fw-bold"
-                    style={{ color: "#0B6B53" }}
+                    className="mb-0 fw-bold text-primary"
+                    
                   >
                     {students.length}
                   </h4>
@@ -1170,7 +1203,7 @@ const ConfirmAdmissionReport = () => {
                     Report Status
                   </small>
 
-                  <h6 className="mb-0 fw-bold text-success">
+                  <h6 className="mb-0 fw-bold text-primary">
                     {students.length > 0
                       ? "Report Generated"
                       : "No Report Generated"}
@@ -1213,7 +1246,7 @@ const ConfirmAdmissionReport = () => {
             <span
               className="badge"
               style={{
-                backgroundColor: "#e7f5ef",
+                backgroundColor: "#d4e2ff",
                 color: "#0B6B53",
                 padding: "8px 12px",
               }}
@@ -1223,34 +1256,154 @@ const ConfirmAdmissionReport = () => {
           </div>
 
           <div className="card-body p-0">
-            <div className="table-responsive p-3">
-              <table className="table table-hover table-bordered mb-0 align-middle">
+            <div className="table-responsive p-3" style={{maxHeight:"650px",overflow:"auto"}}>
+              <table className="table  mb-0 table-middle" style={{minWidth:"1950px"}}>
                 <thead
                   style={{
-                    backgroundColor: "#0B6B53",
-                    color: "white",
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 2,
+                    background: "#f8f9fa",
                   }}
                 >
-                  <tr>
-                    <th className="text-center">#</th>
-                    <th>Student Name</th>
-                    <th>Admission Number</th>
-                    <th>Academic Year</th>
-                    <th>Standard</th>
-                    <th>Section</th>
-                    <th>Email</th>
-                    <th>Aadhar Card</th>
-                    <th>Father's Name</th>
-                    <th>Father's Mobile</th>
-                    <th>Mother's Name</th>
-                    <th>Mother's Mobile</th>
-                    <th>Address</th>
-                    <th>Gender</th>
-                    <th>Date of Birth</th>
-                    <th>Category</th>
-                    <th>Religion</th>
-                    <th>Admission Date</th>
-                    <th>Status</th>
+                  <tr style={{
+                      borderBottom:
+                        "1px solid #dee2e6",
+                    }}>
+                    <th className="text-center"
+                      style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>#</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Student Name</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Admission Number</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Academic Year</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Standard</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Section</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Email</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Aadhar Card</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Father's Name</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Father's Mobile</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Mother's Name</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Mother's Mobile</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Address</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Gender</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Date of Birth</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Category</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Religion</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Admission Date</th>
+                    <th style={{
+                        width: "70px",
+                        padding: "14px 12px",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        fontWeight: "700",
+                      }}>Status</th>
                   </tr>
                 </thead>
 
@@ -1258,17 +1411,18 @@ const ConfirmAdmissionReport = () => {
                   {loading ? (
                     <tr>
                       <td
-                        colSpan="19"
-                        className="text-center py-4"
+                          colSpan="10"
+                        className="text-center py-5"
                       >
                         <div
-                          className="spinner-border"
+                          className="spinner-border text-primary"
                           style={{
-                            color: "#0B6B53",
+                            width: "2.5rem",
+                            height: "2.5rem",
                           }}
                         ></div>
 
-                        <div className="mt-2 text-muted">
+                        <div className="mt-3 text-muted small">
                           Generating report...
                         </div>
                       </td>

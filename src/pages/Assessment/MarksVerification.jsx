@@ -2183,7 +2183,7 @@ const MarksVerification = () => {
             <small className="text-muted">
               Home &nbsp;›&nbsp; Marks Entry &nbsp;›&nbsp;
               <span className="text-primary fw-semibold">
-                Marks Entry Verify
+                Marks Entry Verification
               </span>
             </small>
           </div>
@@ -3408,7 +3408,7 @@ const MarksVerification = () => {
               border: "1px solid #e2e8f0",
             }}
           >
-            <LuNotebookText size={30} />
+            <LuNotebookText size={30} className="text-primary"/>
           </div>
 
           <h6 className="mt-3 mb-2 fw-bold" style={{ color: "#334155" }}>

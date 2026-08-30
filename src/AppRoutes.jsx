@@ -515,6 +515,12 @@ const SectionShuffling = lazy(() =>
 const RollNoGeneration = lazy(() =>
   import("./pages/Setup/RollNoGeneration")
 );
+const DiscontinueStudent = lazy(() =>
+  import("./pages/Setup/DiscontinueStudent")
+);
+const PromotedStudent = lazy(() =>
+  import("./pages/Setup/PromotedStudent")
+);
 
 // Fees
 const Create_Fee_Structure = lazy(() =>
@@ -624,6 +630,20 @@ const StudentResult = lazy(() =>
 // Existing components
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomeRedirect from "./components/HomeRedirect";
+import AdmissionFeePaymentList from "./pages/Admission/AdmissionFeePaymentList";
+import SchoolInfo from "./pages/Setup/SchoolInfo";
+import LeaveYearCalendar from "./pages/Setup/LeaveYearCalendar";
+import AccountCreate from "./pages/Setup/AccountCreate";
+import HRPayroll from "./pages/Setup/HRPayroll";
+import EmployeeList from "./pages/Setup/EmployeeList";
+import AddTimeTable from "./pages/Setup/AddTimeTable";
+import TimeTableList from "./pages/Setup/TimeTableList";
+import StudentIdCards from "./pages/Student/StudentIdCards";
+import StudentLeaveLetter from "./pages/Student/StudentLeaveLetter";
+import StudentDocuments from "./pages/Student/StudentDocuments";
+import StudentPTM from "./pages/Student/StudentPTM";
+import AddPTM from "./pages/Setup/AddPTM";
+
 
 
 // =====================================================
@@ -709,6 +729,15 @@ const AppRoutes = () => {
         />
 
         <Route
+          path="/setup/discontinue"
+          element={<DiscontinueStudent />}
+        />
+        <Route
+          path="/setup/promoted_student"
+          element={<PromotedStudent />}
+        />
+
+        <Route
           path="/setup/section_shuffling"
           element={<SectionShuffling />}
         />
@@ -718,6 +747,46 @@ const AppRoutes = () => {
           element={<RollNoGeneration />}
         />
 
+        <Route
+  path="/setup/school-info"
+  element={<SchoolInfo />}
+/>
+
+        <Route
+  path="/setup/leave_year_calendar"
+  element={<LeaveYearCalendar />}
+/>
+
+ <Route
+  path="/setup/account_creations"
+  element={<AccountCreate />}
+/>
+
+ <Route
+  path="/setup/hr_payroll"
+  element={<HRPayroll />}
+/>
+
+ <Route
+  path="/setup/hr_payroll/employees"
+  element={<EmployeeList />}
+/>
+
+<Route
+  path="/setup/time_table_add"
+  element={<AddTimeTable />}
+/>
+
+<Route
+  path="/setup/time_table_show"
+  element={<TimeTableList />}
+/>
+
+
+<Route
+  path="/setup/add/ptm"
+  element={<AddPTM />}
+/>
 
         {/* =================================================
             ADMISSION
@@ -763,6 +832,10 @@ const AppRoutes = () => {
           element={<AdmissionFeePayment />}
         />
 
+          <Route
+          path="/admission/payment_list"
+          element={<AdmissionFeePaymentList />}
+        />
         <Route
           path="/admission/fee/:id"
           element={<Admission_Fee />}
@@ -877,6 +950,25 @@ const AppRoutes = () => {
           path="/student/view/:admissionNumber"
           element={<StudentDetails />}
         />
+         <Route
+          path="/student/id"
+          element={<StudentIdCards />}
+        />
+
+         <Route
+          path="/student/leave_letter"
+          element={<StudentLeaveLetter />}
+        />
+
+         <Route
+          path="/student/documents"
+          element={<StudentDocuments />}
+        />
+        <Route
+          path="/student/ptm"
+          element={<StudentPTM />}
+        />
+
 
 
         {/* =================================================
@@ -1121,9 +1213,14 @@ const AppRoutes = () => {
         {/* Menus */}
 
         <Route
-          path="/admin/menus/creation"
-          element={<MenuCreation />}
-        />
+  path="/admin/menus/creation"
+  element={<MenuCreation />}
+/>
+
+<Route
+  path="/admin/menus/edit/:id"
+  element={<MenuCreation />}
+/>
 
         <Route
           path="/admin/menus/all"

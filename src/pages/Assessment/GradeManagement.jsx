@@ -3665,7 +3665,7 @@ const GradeManagement = () => {
                   Academic Assessment
                 </span>
 
-                {/* {savedMarks?.status && (
+{/* {savedMarks?.status && (
                         <span
                           className={`badge rounded-pill px-3 py-2 ${
                             savedMarks.status ===
@@ -3920,10 +3920,6 @@ const GradeManagement = () => {
           </div>
         </div>
       </div>
-
-      {/* =====================================================
-          MAIN CONTENT
-      ===================================================== */}
 
      
 <div className="container-fluid mt-3 px-2">
@@ -4977,12 +4973,6 @@ const GradeManagement = () => {
 
   </div>
 </div>
-
-
-
-      {/* =====================================================
-          BOTTOM INFORMATION
-      ===================================================== */}
 
       <div
         className="mx-2 mt-3 shadow"

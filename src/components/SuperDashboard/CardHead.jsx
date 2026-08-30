@@ -233,12 +233,8 @@
 
 // export default CardHead;
 
-
 import { useEffect, useState } from "react";
-import {
-  FaChalkboardTeacher,
-  FaUserGraduate,
-} from "react-icons/fa";
+import { FaChalkboardTeacher, FaUserGraduate } from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import axios from "../../api/axiosInstance";
@@ -277,43 +273,36 @@ const CardHead = () => {
           },
         };
 
-        const [
-          studentCountResponse,
-          teacherResponse,
-          feeResponse,
-        ] = await Promise.all([
-          // Total Students
-          axios.get("/api/students/count", {
-            params: {
-              schoolId,
-            },
-            ...config,
-          }),
+        const [studentCountResponse, teacherResponse, feeResponse] =
+          await Promise.all([
+            // Total Students
+            axios.get("/api/students/count", {
+              params: {
+                schoolId,
+              },
+              ...config,
+            }),
 
-          // Total Working Teachers
-          axios.get("/api/teachers", {
-            params: {
-              schoolId,
-              status: "Working",
-            },
-            ...config,
-          }),
+            // Total Working Teachers
+            axios.get("/api/teachers", {
+              params: {
+                schoolId,
+                status: "Working",
+              },
+              ...config,
+            }),
 
-          // Fees
-          axios.get("/api/student-fee/all", config),
-        ]);
+            // Fees
+            axios.get("/api/student-fee/all", config),
+          ]);
 
         // ================= STUDENTS =================
 
-        setTotalStudents(
-          Number(studentCountResponse?.data || 0)
-        );
+        setTotalStudents(Number(studentCountResponse?.data || 0));
 
         // ================= TEACHERS =================
 
-        const teachers = Array.isArray(
-          teacherResponse?.data
-        )
+        const teachers = Array.isArray(teacherResponse?.data)
           ? teacherResponse.data
           : [];
 
@@ -321,39 +310,20 @@ const CardHead = () => {
 
         // ================= FEES =================
 
-        const fees = Array.isArray(feeResponse?.data)
-          ? feeResponse.data
-          : [];
+        const fees = Array.isArray(feeResponse?.data) ? feeResponse.data : [];
 
         const pending = fees
-          .filter(
-            (item) => item.status === "UNPAID"
-          )
-          .reduce(
-            (sum, item) =>
-              sum + Number(item.amount || 0),
-            0
-          );
+          .filter((item) => item.status === "UNPAID")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
         const paid = fees
-          .filter(
-            (item) =>
-              item.status === "PAID" ||
-              item.status === "PARTIAL"
-          )
-          .reduce(
-            (sum, item) =>
-              sum + Number(item.paidAmount || 0),
-            0
-          );
+          .filter((item) => item.status === "PAID" || item.status === "PARTIAL")
+          .reduce((sum, item) => sum + Number(item.paidAmount || 0), 0);
 
         setPendingAmount(pending);
         setPaidAmount(paid);
       } catch (error) {
-        console.error(
-          "Dashboard data fetch failed:",
-          error
-        );
+        console.error("Dashboard data fetch failed:", error);
       } finally {
         setLoading(false);
       }
@@ -384,9 +354,7 @@ const CardHead = () => {
     return (
       <div className="col-12 col-sm-6 col-lg-3">
         <div className="dashboard-stat-card shadow">
-
           <div className="stat-card-content">
-
             {/* ICON */}
             <div
               className="stat-icon"
@@ -399,10 +367,7 @@ const CardHead = () => {
 
             {/* CONTENT */}
             <div className="stat-content">
-
-              <div className="stat-title">
-                {title}
-              </div>
+              <div className="stat-title">{title}</div>
 
               {loading ? (
                 <div className="stat-loading">
@@ -411,20 +376,13 @@ const CardHead = () => {
                 </div>
               ) : (
                 <>
-                  <div
-                    className={`stat-value ${valueClass}`}
-                  >
-                    {value}
-                  </div>
+                  <div className={`stat-value ${valueClass}`}>{value}</div>
 
-                  <div
-                    className={`stat-subtitle ${subtitleClass}`}
-                  >
+                  <div className={`stat-subtitle ${subtitleClass}`}>
                     {subtitle}
                   </div>
                 </>
               )}
-
             </div>
           </div>
 
@@ -436,279 +394,81 @@ const CardHead = () => {
   };
 
   return (
-    <div className="container-fluid px-0 mt-3">
-      <div className="row g-3">
+    <>
+      <div className="row g-3 mb-4 mt-2">
+        {/* Total Amount */}
 
-        {/* ================= TOTAL STUDENTS ================= */}
+        <div className="col-xl-3 col-md-6">
+          <div className="premium-stat-card stat-blue shadow">
+            <div className="stat-icon">
+              <FaUserGraduate />
+            </div>
 
-        <StatCard
-          icon={
-            <FaUserGraduate
-              size={21}
-              color="#2563eb"
-            />
-          }
-          iconBg="#EAF2FF"
-          title="Total Students"
-          value={totalStudents}
-          subtitle="↑ 10% from last month"
-        />
+            <div className="stat-content">
+              <span>Total Students</span>
 
-        {/* ================= TOTAL TEACHERS ================= */}
+              <h3>₹{totalStudents}</h3>
 
-        <StatCard
-          icon={
-            <FaChalkboardTeacher
-              size={21}
-              color="#16a34a"
-            />
-          }
-          iconBg="#EAF8EF"
-          title="Total Teachers"
-          value={totalTeachers}
-          subtitle="↑ 5% from last month"
-        />
+              <small>↑ 10% from last month</small>
+            </div>
+          </div>
+        </div>
 
-        {/* ================= FEE COLLECTION ================= */}
+        {/* Collection */}
 
-        <StatCard
-          icon={
-            <MdPayments
-              size={23}
-              color="#f59e0b"
-            />
-          }
-          iconBg="#FFF5DC"
-          title="Fee Collection"
-          value={`₹ ${formatAmount(
-            paidAmount
-          )}`}
-          valueClass="fee-success"
-          subtitle="↑ 8% this month"
-        />
+        <div className="col-xl-3 col-md-6">
+          <div className="premium-stat-card stat-green shadow">
+            <div className="stat-icon">
+              <FaChalkboardTeacher />
+            </div>
 
-        {/* ================= FEE PENDING ================= */}
+            <div className="stat-content">
+              <span>Total Teachers</span>
 
-        <StatCard
-          icon={
-            <RiMoneyRupeeCircleFill
-              size={23}
-              color="#dc2626"
-            />
-          }
-          iconBg="#FFECEC"
-          title="Fee Pending"
-          value={`₹ ${formatAmount(
-            pendingAmount
-          )}`}
-          valueClass="fee-danger"
-          subtitle="Pending Collection"
-          subtitleClass="text-danger"
-        />
+              <h3>₹{totalTeachers}</h3>
 
+              <small>↑ 5% from last month</small>
+            </div>
+          </div>
+        </div>
+
+        {/* Discount */}
+
+        <div className="col-xl-3 col-md-6">
+          <div className="premium-stat-card stat-orange shadow">
+            <div className="stat-icon">
+              <MdPayments />
+            </div>
+
+            <div className="stat-content">
+              <span>Paid Amount</span>
+
+              <h3>₹{paidAmount}</h3>
+
+              <small>↑ 8% from this month</small>
+            </div>
+          </div>
+        </div>
+
+        {/* Fine */}
+
+        <div className="col-xl-3 col-md-6">
+          <div className="premium-stat-card stat-red shadow">
+            <div className="stat-icon">
+              <RiMoneyRupeeCircleFill />
+            </div>
+
+            <div className="stat-content">
+              <span>Pending Amount</span>
+
+              <h3>₹{pendingAmount}</h3>
+
+              <small>Pending amount</small>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* ================= CSS ================= */}
-
-      <style>{`
-        .dashboard-stat-card {
-          position: relative;
-          height: 100px;
-          min-height: 90px;
-          overflow: hidden;
-
-          background: #ffffff;
-
-          border: 1px solid #edf0f4;
-          border-radius: 14px;
-
-          box-shadow:
-            0 2px 8px rgba(15, 23, 42, 0.04),
-            0 6px 18px rgba(15, 23, 42, 0.035);
-
-          transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            border-color 0.2s ease;
-        }
-
-        .dashboard-stat-card:hover {
-          transform: translateY(-2px);
-
-          border-color: #e2e7ed;
-
-          box-shadow:
-            0 5px 14px rgba(15, 23, 42, 0.07),
-            0 10px 25px rgba(15, 23, 42, 0.05);
-        }
-
-        .stat-card-content {
-          position: relative;
-          z-index: 2;
-
-          height: 100%;
-
-          display: flex;
-          align-items: center;
-
-          padding: 10px 13px;
-        }
-
-        .stat-icon {
-          width: 48px;
-          height: 48px;
-
-          flex-shrink: 0;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          border-radius: 12px;
-
-          margin-right: 12px;
-
-          transition: transform 0.2s ease;
-        }
-
-        .dashboard-stat-card:hover .stat-icon {
-          transform: scale(1.05);
-        }
-
-        .stat-content {
-          min-width: 0;
-          flex: 1;
-        }
-
-        .stat-title {
-          color: #64748b;
-
-          font-size: 11px;
-          font-weight: 500;
-
-          line-height: 15px;
-
-          margin-bottom: 1px;
-        }
-
-        .stat-value {
-          color: #172033;
-
-          font-size: 19px;
-          font-weight: 700;
-
-          line-height: 23px;
-
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .fee-success {
-          color: #f59e0b;
-        }
-
-        .fee-danger {
-          color: #dc2626;
-        }
-
-        .stat-subtitle {
-          font-size: 10px;
-          font-weight: 500;
-
-          line-height: 14px;
-
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .stat-decoration {
-          position: absolute;
-
-          right: -35px;
-          bottom: -45px;
-
-          width: 100px;
-          height: 100px;
-
-          border-radius: 50%;
-
-          background: #2563eb;
-
-          opacity: 0.025;
-
-          pointer-events: none;
-        }
-
-        /* ================= LOADING ================= */
-
-        .loading-value {
-          width: 65px;
-          height: 20px;
-
-          margin-top: 2px;
-
-          border-radius: 5px;
-
-          background: #eef1f5;
-
-          animation: pulseLoading 1.2s infinite;
-        }
-
-        .loading-text {
-          width: 85px;
-          height: 9px;
-
-          margin-top: 5px;
-
-          border-radius: 4px;
-
-          background: #f1f3f6;
-
-          animation: pulseLoading 1.2s infinite;
-        }
-
-        @keyframes pulseLoading {
-          0% {
-            opacity: 0.5;
-          }
-
-          50% {
-            opacity: 1;
-          }
-
-          100% {
-            opacity: 0.5;
-          }
-        }
-
-        /* ================= MOBILE ================= */
-
-        @media (max-width: 575px) {
-          .dashboard-stat-card {
-            height: 86px;
-            min-height: 86px;
-            border-radius: 13px;
-          }
-
-          .stat-card-content {
-            padding: 9px 11px;
-          }
-
-          .stat-icon {
-            width: 45px;
-            height: 45px;
-
-            margin-right: 10px;
-          }
-
-          .stat-value {
-            font-size: 18px;
-          }
-        }
-      `}</style>
-    </div>
+    </>
   );
 };
 

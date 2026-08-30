@@ -1,274 +1,22 @@
-// // import React, { useEffect, useState } from "react";
-// // import { useLocation, useNavigate } from "react-router-dom";
-
-// // const AdmissionFeeReceipt = () => {
-// //   const location = useLocation();
-// //   const navigate = useNavigate();
-// //   const [data, setData] = useState(null);
-
-// //   useEffect(() => {
-// //     // Get payment details passed from previous page
-// //     if (location.state?.payment) {
-// //       setData(location.state.payment);
-// //     } else {
-// //       // If no data, redirect back
-// //       navigate("/"); 
-// //     }
-// //   }, [location, navigate]);
-
-// //   const handlePrint = () => {
-// //     window.print(); // Open browser print dialog
-// //   };
-
-// //   if (!data) return <div>Loading...</div>;
-
-// //   return (
-// //     <div className="container mt-4">
-// //       <div className="card p-4 shadow">
-// //         <h3 className="text-center mb-3">Fee Receipt</h3>
-
-// //         <div className="mb-2">
-// //           <strong>Student Name:</strong> {data.studentName}
-// //         </div>
-// //         <div className="mb-2">
-// //           <strong>Admission No:</strong> {data.admissionNumber}
-// //         </div>
-// //         <div className="mb-2">
-// //           <strong>Class:</strong> {data.standard}
-// //         </div>
-// //         <div className="mb-2">
-// //           <strong>Session:</strong> {data.session}
-// //         </div>
-// //         <div className="mb-2">
-// //           <strong>Payment Date:</strong>{" "}
-// //           {new Date(data.paymentDate).toLocaleString()}
-// //         </div>
-// //         <div className="mb-2">
-// //           <strong>Payment Mode:</strong> {data.paymentMode}
-// //         </div>
-
-// //         <hr />
-
-// //         <h5>Fee Details</h5>
-// //         <table className="table table-bordered">
-// //           <thead>
-// //             <tr>
-// //               <th>Fee Type</th>
-// //               <th>Amount</th>
-// //               <th>Discount</th>
-// //               <th>Paid</th>
-// //             </tr>
-// //           </thead>
-// //           <tbody>
-// //             {Object.entries(data.fixedFees || {}).map(([key, val]) => (
-// //               <tr key={key}>
-// //                 <td>{key}</td>
-// //                 <td>₹{val.amount}</td>
-// //                 <td>₹{val.discount}</td>
-// //                 <td>₹{val.amount - val.discount}</td>
-// //               </tr>
-// //             ))}
-// //             {data.paidMonths.map((month) => (
-// //               <tr key={month}>
-// //                 <td>Tuition Fee ({month})</td>
-// //                 <td>₹{data.tuitionFee[month]}</td>
-// //                 <td>₹0</td>
-// //                 <td>₹{data.tuitionFee[month]}</td>
-// //               </tr>
-// //             ))}
-// //           </tbody>
-// //         </table>
-
-// //         <h5 className="text-end">Total: ₹{data.totalAmount}</h5>
-
-// //         <div className="text-center mt-4">
-// //           <button className="btn btn-primary" onClick={handlePrint}>
-// //             Print / Download
-// //           </button>
-// //         </div>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// // export default AdmissionFeeReceipt;
-
-// // Receipt.jsx
-
-// import React, { useEffect, useRef } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import jsPDF from "jspdf";
-// import html2canvas from "html2canvas";
-
-// const AdmissionFeeReceipt = () => {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const receiptRef = useRef();
-
-//   // Receive data passed from payment page
-//   const { receiptData } = location.state || {};
-
-//   useEffect(() => {
-//     if (!receiptData) {
-//       navigate("/"); // redirect if no data
-//       return;
-//     }
-
-//     // Automatically generate PDF
-//     const generatePDF = async () => {
-//       const input = receiptRef.current;
-//       const canvas = await html2canvas(input, { scale: 2 });
-//       const imgData = canvas.toDataURL("image/png");
-
-//       const pdf = new jsPDF("p", "mm", "a4");
-//       const pdfWidth = pdf.internal.pageSize.getWidth();
-//       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-//       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-//       pdf.save(`Receipt_${receiptData.receiptNo}.pdf`);
-//     };
-
-//     generatePDF();
-//   }, [receiptData, navigate]);
-
-//   if (!receiptData) return null;
-
-//   return (
-//     <div
-//       ref={receiptRef}
-//       className="p-4"
-//       style={{
-//         maxWidth: "800px",
-//         margin: "20px auto",
-//         borderRadius: "10px",
-//         padding: "30px",
-//         // background: "linear-gradient(to right, #6a11cb, #2575fc)",
-//         background:"white",
-//         color: "black",
-//         border:"2px solid black",
-//         fontFamily: "Arial, sans-serif",
-//       }}
-//     >
-//       <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-//         {receiptData.schoolName || "School Name"}
-//       </h2>
-//       <h4 style={{ textAlign: "center", marginBottom: "30px" }}>
-//         Fee Receipt - #{receiptData.receiptNo}
-//       </h4>
-
-//       <div style={{ marginBottom: "20px" }}>
-//         <strong>Student Name:</strong> {receiptData.studentName} <br />
-//         <strong>Admission No:</strong> {receiptData.admissionNumber} <br />
-//         <strong>Class:</strong> {receiptData.standard} <br />
-//         <strong>Session:</strong> {receiptData.session} <br />
-//         <strong>Payment Date:</strong>{" "}
-//         {new Date(receiptData.paymentDate).toLocaleString()} <br />
-//         <strong>Payment Mode:</strong> {receiptData.paymentMode}
-//       </div>
-//       ------------------------------------------------------------------------------------------------------------------------------------
-//       <table
-//         style={{
-//           width: "100%",
-//           borderCollapse: "collapse",
-//           marginBottom: "20px",
-//         }}
-//       >
-//         <thead>
-//           <tr>
-//             <th
-//               style={{
-//                 borderBottom: "1px solid #fff",
-//                 textAlign: "left",
-//                 padding: "8px",
-//               }}
-//             >
-//               Fee Type
-//             </th>
-//             <th
-//               style={{
-//                 borderBottom: "1px solid #fff",
-//                 textAlign: "right",
-//                 padding: "8px",
-//               }}
-//             >
-//               Amount
-//             </th>
-//             <th
-//               style={{
-//                 borderBottom: "1px solid #fff",
-//                 textAlign: "right",
-//                 padding: "8px",
-//               }}
-//             >
-//               Discount
-//             </th>
-//             <th
-//               style={{
-//                 borderBottom: "1px solid #fff",
-//                 textAlign: "right",
-//                 padding: "8px",
-//               }}
-//             >
-//               Paid
-//             </th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {Object.entries(receiptData.fees).map(([fee, val]) => (
-//             <tr key={fee}>
-//               <td style={{ padding: "8px" }}>{fee}</td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>
-//                 ₹{val.amount || 0}
-//               </td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>
-//                 ₹{val.discount || 0}
-//               </td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>
-//                 ₹{(val.amount || 0) - (val.discount || 0)}
-//               </td>
-//             </tr>
-//           ))}
-
-//           {/* Tuition months */}
-//           {receiptData.tuitionMonths.map((month) => (
-//             <tr key={month}>
-//               <td style={{ padding: "8px" }}>Tuition Fee ({month})</td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>
-//                 ₹{receiptData.tuitionFee[month]}
-//               </td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>₹0</td>
-//               <td style={{ padding: "8px", textAlign: "right" }}>
-//                 ₹{receiptData.tuitionFee[month]}
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//         <tfoot>
-//           <tr>
-//             <td
-//               colSpan={3}
-//               style={{ textAlign: "right", fontWeight: "bold", padding: "8px" }}
-//             >
-//               Total Amount Paid:
-//             </td>
-//             <td style={{ textAlign: "right", fontWeight: "bold", padding: "8px" }}>
-//               ₹{receiptData.totalAmount}
-//             </td>
-//           </tr>
-//         </tfoot>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default AdmissionFeeReceipt;
-
 
 import React, { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { FaSchool, FaPhone, FaEnvelope, FaPrint } from "react-icons/fa";
+
+import {
+  FaSchool,
+  FaPhone,
+  FaEnvelope,
+  FaPrint,
+  FaMoneyBillWave,
+  FaUserGraduate,
+  FaReceipt,
+  FaCheckCircle,
+  FaUniversity,
+  FaHashtag,
+} from "react-icons/fa";
+
 import emblem from "../../assets/icon/emblem.png";
 
 const AdmissionFeeReceipt = () => {
@@ -278,63 +26,153 @@ const AdmissionFeeReceipt = () => {
 
   const { receiptData } = location.state || {};
 
-  // --------------------------------------------------
-  // FORMAT DATE
-  // --------------------------------------------------
+  console.log("receipt data",receiptData);
+
+  /* =====================================================
+     FORMAT DATE
+  ===================================================== */
+
   const formatDate = (date) => {
     if (!date) return "-";
 
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    try {
+      return new Date(date).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return "-";
+    }
   };
 
-  // --------------------------------------------------
-  // FORMAT CURRENCY
-  // --------------------------------------------------
+  /* =====================================================
+     FORMAT CURRENCY
+  ===================================================== */
+
   const currency = (amount) => {
-    return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
+    return `₹${Number(amount || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   };
 
-  // --------------------------------------------------
-  // FEE LABEL
-  // --------------------------------------------------
+  /* =====================================================
+     FEE LABEL
+  ===================================================== */
+
   const formatFeeName = (fee) => {
+    if (!fee) return "-";
+
     return fee
       .replace(/([A-Z])/g, " $1")
       .replace(/^./, (str) => str.toUpperCase());
   };
 
-  // --------------------------------------------------
-  // CALCULATE TOTALS
-  // --------------------------------------------------
-  const fixedFeeRows = Object.entries(receiptData?.fees || {});
+  /* =====================================================
+     PAYMENT INFORMATION
+  ===================================================== */
 
-  const fixedFeeTotal = fixedFeeRows.reduce((total, [, value]) => {
-    const amount = Number(value?.amount || 0);
-    const discount = Number(value?.discount || 0);
+  const paymentMode = receiptData?.paymentMode || "";
 
-    return total + Math.max(amount - discount, 0);
-  }, 0);
+  const utrNumber =
+    receiptData?.utrNumber ||
+    receiptData?.utrNo ||
+    receiptData?.transactionId ||
+    "";
 
-  const tuitionTotal = (receiptData?.tuitionMonths || []).reduce(
-    (total, month) => {
-      return total + Number(receiptData?.tuitionFee?.[month] || 0);
+  const bankName =
+    receiptData?.bankName ||
+    receiptData?.bank ||
+    "";
+
+  const referenceNumber =
+    receiptData?.referenceNumber ||
+    receiptData?.referenceNo ||
+    receiptData?.transactionReference ||
+    "";
+
+  /* =====================================================
+     FIXED FEE ROWS
+  ===================================================== */
+
+  const fixedFeeRows = Object.entries(
+    receiptData?.fees || {}
+  );
+
+  /* =====================================================
+     FIXED FEE TOTAL
+  ===================================================== */
+
+  const fixedFeeTotal = fixedFeeRows.reduce(
+    (total, [, value]) => {
+      const amount = Number(value?.amount || 0);
+      const discount = Number(value?.discount || 0);
+
+      return total + Math.max(amount - discount, 0);
     },
     0
   );
 
-  const totalDiscount = fixedFeeRows.reduce((total, [, value]) => {
-    return total + Number(value?.discount || 0);
+  /* =====================================================
+     TUITION TOTAL
+  ===================================================== */
+
+  const tuitionTotal = (
+    receiptData?.tuitionMonths || []
+  ).reduce((total, month) => {
+    return (
+      total +
+      Number(
+        receiptData?.tuitionFee?.[month] || 0
+      )
+    );
   }, 0);
 
-  const calculatedTotal = fixedFeeTotal + tuitionTotal;
+  /* =====================================================
+     TOTAL DISCOUNT
+  ===================================================== */
 
-  // --------------------------------------------------
-  // GENERATE PDF
-  // --------------------------------------------------
+  const totalDiscount = fixedFeeRows.reduce(
+    (total, [, value]) => {
+      return (
+        total +
+        Number(value?.discount || 0)
+      );
+    },
+    0
+  );
+
+  /* =====================================================
+     CALCULATED TOTAL
+  ===================================================== */
+
+  const calculatedTotal =
+    fixedFeeTotal + tuitionTotal;
+
+  const finalTotal = Number(
+    receiptData?.totalAmount ??
+      calculatedTotal
+  );
+
+  /* =====================================================
+     STUDENT NAME
+  ===================================================== */
+const name = [
+  receiptData?.admission?.firstName,
+  receiptData?.admission?.middleName,
+  receiptData?.admission?.lastName,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const studentName =
+  receiptData?.studentName || name || "-";
+
+  /* =====================================================
+     GENERATE PDF
+  ===================================================== */
+
   const generatePDF = async () => {
     const input = receiptRef.current;
 
@@ -348,7 +186,8 @@ const AdmissionFeeReceipt = () => {
         logging: false,
       });
 
-      const imgData = canvas.toDataURL("image/png");
+      const imgData =
+        canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
         orientation: "portrait",
@@ -356,15 +195,20 @@ const AdmissionFeeReceipt = () => {
         format: "a4",
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const pdfWidth =
+        pdf.internal.pageSize.getWidth();
 
-      const margin = 8;
+      const pdfHeight =
+        pdf.internal.pageSize.getHeight();
 
-      const availableWidth = pdfWidth - margin * 2;
+      const margin = 6;
+
+      const availableWidth =
+        pdfWidth - margin * 2;
 
       const imageHeight =
-        (canvas.height * availableWidth) / canvas.width;
+        (canvas.height * availableWidth) /
+        canvas.width;
 
       let heightLeft = imageHeight;
       let position = margin;
@@ -378,10 +222,14 @@ const AdmissionFeeReceipt = () => {
         imageHeight
       );
 
-      heightLeft -= pdfHeight - margin * 2;
+      heightLeft -=
+        pdfHeight - margin * 2;
 
       while (heightLeft > 0) {
-        position = heightLeft - imageHeight + margin;
+        position =
+          heightLeft -
+          imageHeight +
+          margin;
 
         pdf.addPage();
 
@@ -394,28 +242,39 @@ const AdmissionFeeReceipt = () => {
           imageHeight
         );
 
-        heightLeft -= pdfHeight - margin * 2;
+        heightLeft -=
+          pdfHeight - margin * 2;
       }
 
       pdf.save(
-        `Admission_Fee_Receipt_${receiptData.receiptNo}.pdf`
+        `Admission_Fee_Receipt_${
+          receiptData?.receiptNo || "receipt"
+        }.pdf`
       );
     } catch (error) {
-      console.error("PDF generation error:", error);
-      alert("Unable to generate PDF");
+      console.error(
+        "PDF generation error:",
+        error
+      );
+
+      alert(
+        "Unable to generate PDF"
+      );
     }
   };
 
-  // --------------------------------------------------
-  // PRINT
-  // --------------------------------------------------
+  /* =====================================================
+     PRINT
+  ===================================================== */
+
   const handlePrint = () => {
     window.print();
   };
 
-  // --------------------------------------------------
-  // AUTO PDF
-  // --------------------------------------------------
+  /* =====================================================
+     AUTO PDF
+  ===================================================== */
+
   useEffect(() => {
     if (!receiptData) {
       navigate("/");
@@ -424,625 +283,996 @@ const AdmissionFeeReceipt = () => {
 
     const timer = setTimeout(() => {
       generatePDF();
-    }, 500);
+    }, 700);
 
     return () => clearTimeout(timer);
   }, [receiptData]);
 
-  if (!receiptData) return null;
+  /* =====================================================
+     NO RECEIPT
+  ===================================================== */
+
+  if (!receiptData) {
+    return null;
+  }
 
   return (
     <>
       {/* =====================================================
-          PRINT BUTTON
-      ====================================================== */}
-      <div
-        className="d-flex justify-content-center gap-2 mt-3 mb-3 no-print"
-      >
+          ACTION BUTTONS
+      ===================================================== */}
+
+      <div className="d-flex justify-content-center gap-2 mt-3 mb-3 no-print">
         <button
-          className="btn btn-success"
+          className="btn btn-success px-4"
           onClick={generatePDF}
         >
+          <FaReceipt className="me-2" />
           Download PDF
         </button>
 
         <button
-          className="btn btn-primary"
+          className="btn btn-primary px-4"
           onClick={handlePrint}
         >
-          <FaPrint className="me-1" />
+          <FaPrint className="me-2" />
           Print Receipt
+        </button>
+
+        <button
+          className="btn btn-outline-secondary px-4"
+          onClick={() =>
+            navigate("/admission/fee")
+          }
+        >
+          Back
         </button>
       </div>
 
       {/* =====================================================
           RECEIPT
-      ====================================================== */}
+      ===================================================== */}
+
       <div
         ref={receiptRef}
         className="fee-receipt"
-        style={{
-          width: "794px",
-          minHeight: "1123px",
-          margin: "20px auto",
-          padding: "28px",
-          backgroundColor: "#ffffff",
-          color: "#111827",
-          fontFamily: "Arial, Helvetica, sans-serif",
-          border: "1px solid #d1d5db",
-          boxSizing: "border-box",
-        }}
       >
-        {/* =================================================
+        {/* ===================================================
             SCHOOL HEADER
-        ================================================== */}
-        <div
-          style={{
-            border: "2px solid #0B6B53",
-            borderRadius: "8px",
-            padding: "15px",
-            marginBottom: "15px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "18px",
-            }}
-          >
+        =================================================== */}
+
+        <div className="school-header">
+          <div className="school-header-inner">
             <img
               src={emblem}
               alt="School Logo"
-              style={{
-                width: "78px",
-                height: "78px",
-                objectFit: "contain",
-              }}
+              className="school-logo"
             />
 
-            <div style={{ textAlign: "center" }}>
-              <h2
-                style={{
-                  margin: 0,
-                  color: "#0B6B53",
-                  fontSize: "24px",
-                  fontWeight: "700",
-                  letterSpacing: "1px",
-                  textTransform: "uppercase",
-                }}
-              >
-                {receiptData.schoolName || "ABC PUBLIC SCHOOL"}
-              </h2>
+            <div className="school-info">
+              <h1>
+                {receiptData.schoolName || receiptData?.admission?.school.schoolName ||
+                  "ABC PUBLIC SCHOOL"}
+              </h1>
 
-              <div
-                style={{
-                  marginTop: "4px",
-                  color: "#555",
-                  fontSize: "12px",
-                }}
-              >
+              <div className="school-tagline">
                 Knowledge • Excellence • Integrity
               </div>
 
-              <div
-                style={{
-                  marginTop: "6px",
-                  fontSize: "12px",
-                }}
-              >
-                Station Road, Siwan, Bihar - 841226
+              <div className="school-address">
+                <FaSchool className="me-1" />
+                { receiptData?.admission?.school.addressLine1 ||
+                  "Station Road, Siwan, Bihar - 841226"}
+                
               </div>
 
-              <div
-                style={{
-                  marginTop: "4px",
-                  fontSize: "11px",
-                  color: "#555",
-                }}
-              >
-                <FaPhone size={9} /> +91-9876543210
-                &nbsp;&nbsp; | &nbsp;&nbsp;
-                <FaEnvelope size={9} /> abcpublicschool@gmail.com
+              <div className="school-contact">
+                <span>
+                  <FaPhone className="me-1" />
+                   { receiptData?.admission?.school.phoneNumber ||
+                  "+91-9876543210"}
+                  
+                </span>
+
+                <span className="separator">
+                  |
+                </span>
+
+                <span>
+                  <FaEnvelope className="me-1" />
+                 { receiptData?.admission?.school.email ||
+                  "abcpublicschool@gmail.com"}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* =================================================
+        {/* ===================================================
             RECEIPT TITLE
-        ================================================== */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "12px",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#0B6B53",
-              color: "#ffffff",
-              padding: "8px 24px",
-              borderRadius: "5px",
-              fontSize: "16px",
-              fontWeight: "700",
-            }}
-          >
+        =================================================== */}
+
+        <div className="receipt-title-row">
+          <div className="receipt-title">
+            <FaMoneyBillWave className="me-2" />
             ADMISSION FEE RECEIPT
           </div>
 
-          <div
-            style={{
-              textAlign: "right",
-              fontSize: "11px",
-              lineHeight: "1.6",
-            }}
-          >
+          <div className="receipt-meta">
             <div>
               <strong>Receipt No:</strong>{" "}
-              {receiptData.receiptNo}
+              {receiptData.receiptNo || "-"}
             </div>
 
             <div>
               <strong>Date:</strong>{" "}
-              {formatDate(receiptData.paymentDate)}
-            </div>
-          </div>
-        </div>
-
-        {/* =================================================
-            STUDENT INFORMATION
-        ================================================== */}
-        <div style={{ marginBottom: "15px" }}>
-          <div
-            style={{
-              backgroundColor: "#0B6B53",
-              color: "#ffffff",
-              padding: "7px 12px",
-              fontSize: "13px",
-              fontWeight: "700",
-              borderRadius: "5px 5px 0 0",
-            }}
-          >
-            STUDENT INFORMATION
-          </div>
-
-          <div
-            style={{
-              border: "1px solid #999",
-              borderTop: "none",
-              padding: "12px",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                rowGap: "8px",
-                columnGap: "30px",
-                fontSize: "12px",
-              }}
-            >
-              <div>
-                <strong>Student Name:</strong>{" "}
-                {receiptData.studentName || "-"}
-              </div>
-
-              <div>
-                <strong>Admission No:</strong>{" "}
-                {receiptData.admissionNumber || "-"}
-              </div>
-
-              <div>
-                <strong>Class:</strong>{" "}
-                {receiptData.standard || "-"}
-              </div>
-
-              <div>
-                <strong>Session:</strong>{" "}
-                {receiptData.session || "-"}
-              </div>
-
-              <div>
-                <strong>Payment Mode:</strong>{" "}
-                {receiptData.paymentMode || "-"}
-              </div>
-
-              <div>
-                <strong>Payment Date:</strong>{" "}
-                {formatDate(receiptData.paymentDate)}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* =================================================
-            FEE DETAILS
-        ================================================== */}
-        <div style={{ marginBottom: "15px" }}>
-          <div
-            style={{
-              backgroundColor: "#0B6B53",
-              color: "#ffffff",
-              padding: "7px 12px",
-              fontSize: "13px",
-              fontWeight: "700",
-              borderRadius: "5px 5px 0 0",
-            }}
-          >
-            FEE DETAILS
-          </div>
-
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              fontSize: "11px",
-            }}
-          >
-            <thead>
-              <tr>
-                <th style={headerStyle}>#</th>
-                <th style={{ ...headerStyle, textAlign: "left" }}>
-                  Fee Type
-                </th>
-                <th style={headerStyle}>Amount</th>
-                <th style={headerStyle}>Discount</th>
-                <th style={headerStyle}>Paid Amount</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {fixedFeeRows.map(([fee, value], index) => {
-                const amount = Number(value?.amount || 0);
-                const discount = Number(value?.discount || 0);
-                const paid = Math.max(amount - discount, 0);
-
-                return (
-                  <tr key={fee}>
-                    <td style={cellStyle}>{index + 1}</td>
-
-                    <td
-                      style={{
-                        ...cellStyle,
-                        textAlign: "left",
-                      }}
-                    >
-                      {formatFeeName(fee)}
-                    </td>
-
-                    <td style={cellStyle}>
-                      {currency(amount)}
-                    </td>
-
-                    <td style={cellStyle}>
-                      {currency(discount)}
-                    </td>
-
-                    <td style={cellStyle}>
-                      {currency(paid)}
-                    </td>
-                  </tr>
-                );
-              })}
-
-              {/* Tuition Fees */}
-              {(receiptData.tuitionMonths || []).map(
-                (month, index) => {
-                  const amount = Number(
-                    receiptData.tuitionFee?.[month] || 0
-                  );
-
-                  return (
-                    <tr key={`tuition-${month}`}>
-                      <td style={cellStyle}>
-                        {fixedFeeRows.length + index + 1}
-                      </td>
-
-                      <td
-                        style={{
-                          ...cellStyle,
-                          textAlign: "left",
-                        }}
-                      >
-                        Tuition Fee ({month})
-                      </td>
-
-                      <td style={cellStyle}>
-                        {currency(amount)}
-                      </td>
-
-                      <td style={cellStyle}>
-                        {currency(0)}
-                      </td>
-
-                      <td style={cellStyle}>
-                        {currency(amount)}
-                      </td>
-                    </tr>
-                  );
-                }
+              {formatDate(
+                receiptData.paymentDate 
               )}
-            </tbody>
+            </div>
+          </div>
+        </div>
 
-            <tfoot>
-              <tr>
-                <td
-                  colSpan="3"
-                  style={{
-                    border: "1px solid #555",
-                    padding: "8px",
-                    textAlign: "right",
-                    fontWeight: "700",
-                  }}
-                >
-                  Total Discount
-                </td>
+        {/* ===================================================
+            STUDENT INFORMATION
+        =================================================== */}
 
-                <td
-                  colSpan="2"
-                  style={{
-                    border: "1px solid #555",
-                    padding: "8px",
-                    textAlign: "right",
-                    fontWeight: "700",
-                  }}
-                >
-                  {currency(totalDiscount)}
-                </td>
-              </tr>
+        <div className="section-box">
+          <div className="section-header">
+            <FaUserGraduate className="me-2" />
+            STUDENT INFORMATION
+          </div>
 
-              <tr>
-                <td
-                  colSpan="3"
-                  style={{
-                    border: "1px solid #555",
-                    padding: "10px",
-                    textAlign: "right",
-                    fontWeight: "700",
-                    fontSize: "13px",
-                  }}
-                >
-                  TOTAL AMOUNT PAID
-                </td>
+          <div className="section-body">
+            <div className="student-grid">
 
-                <td
-                  colSpan="2"
-                  style={{
-                    border: "1px solid #555",
-                    padding: "10px",
-                    textAlign: "right",
-                    fontWeight: "700",
-                    fontSize: "15px",
-                    color: "#0B6B53",
-                  }}
-                >
-                  {currency(
-                    receiptData.totalAmount ?? calculatedTotal
+              <div className="info-item">
+                <span className="info-label">
+                  Student Name
+                </span>
+                <span className="info-value">
+                  {studentName}
+                </span>
+              </div>
+
+              <div className="info-item">
+                <span className="info-label">
+                  Admission No
+                </span>
+                <span className="info-value">
+                  {receiptData?.admission.admissionNumber || receiptData.admissionNumber ||
+                    "-"}
+                </span>
+              </div>
+
+              <div className="info-item">
+                <span className="info-label">
+                  Class
+                </span>
+                <span className="info-value">
+                  {receiptData.standard ||
+                    "-"}
+                </span>
+              </div>
+
+              <div className="info-item">
+                <span className="info-label">
+                  Academic Session
+                </span>
+                <span className="info-value">
+                  {receiptData.session || "-"}
+                </span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        {/* ===================================================
+            FEE DETAILS
+        =================================================== */}
+
+        <div className="section-box">
+          <div className="section-header">
+            <FaMoneyBillWave className="me-2" />
+            FEE DETAILS
+          </div>
+
+          <div className="table-responsive">
+            <table className="fee-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th className="text-start">
+                    Fee Type
+                  </th>
+                  <th>Amount</th>
+                  <th>Discount</th>
+                  <th>Paid Amount</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {fixedFeeRows.map(
+                  ([fee, value], index) => {
+                    const amount =
+                      Number(
+                        value?.amount || 0
+                      );
+
+                    const discount =
+                      Number(
+                        value?.discount || 0
+                      );
+
+                    const paid =
+                      Math.max(
+                        amount - discount,
+                        0
+                      );
+
+                    return (
+                      <tr key={fee}>
+                        <td>
+                          {index + 1}
+                        </td>
+
+                        <td className="text-start">
+                          {formatFeeName(fee)}
+                        </td>
+
+                        <td>
+                          {currency(amount)}
+                        </td>
+
+                        <td>
+                          {currency(discount)}
+                        </td>
+
+                        <td className="fw-bold">
+                          {currency(paid)}
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
+
+                {(receiptData.tuitionMonths ||
+                  []).map(
+                    (month, index) => {
+                      const amount =
+                        Number(
+                          receiptData
+                            ?.tuitionFee?.[
+                            month
+                          ] || 0
+                        );
+
+                      return (
+                        <tr
+                          key={`tuition-${month}`}
+                        >
+                          <td>
+                            {fixedFeeRows.length +
+                              index +
+                              1}
+                          </td>
+
+                          <td className="text-start">
+                            Tuition Fee (
+                            {month})
+                          </td>
+
+                          <td>
+                            {currency(amount)}
+                          </td>
+
+                          <td>
+                            {currency(0)}
+                          </td>
+
+                          <td className="fw-bold">
+                            {currency(amount)}
+                          </td>
+                        </tr>
+                      );
+                    }
                   )}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+              </tbody>
+
+              <tfoot>
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="total-label"
+                  >
+                    Total Discount
+                  </td>
+
+                  <td
+                    colSpan="2"
+                    className="total-value"
+                  >
+                    {currency(
+                      totalDiscount
+                    )}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="grand-total-label"
+                  >
+                    TOTAL AMOUNT PAID
+                  </td>
+
+                  <td
+                    colSpan="2"
+                    className="grand-total-value"
+                  >
+                    {currency(finalTotal)}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
 
-        {/* =================================================
-            PAYMENT SUMMARY
-        ================================================== */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            border: "1px solid #0B6B53",
-            borderRadius: "6px",
-            padding: "10px 14px",
-            marginBottom: "15px",
-          }}
-        >
-          <div style={{ fontSize: "12px" }}>
-            <strong>Payment Mode:</strong>{" "}
-            {receiptData.paymentMode || "-"}
+        {/* ===================================================
+            PAYMENT INFORMATION
+        =================================================== */}
+
+        <div className="section-box">
+          <div className="section-header">
+            <FaCheckCircle className="me-2" />
+            PAYMENT INFORMATION
           </div>
 
-          <div style={{ fontSize: "14px" }}>
-            <strong>Amount Paid:</strong>{" "}
-            <span
-              style={{
-                color: "#0B6B53",
-                fontWeight: "700",
-              }}
-            >
-              {currency(
-                receiptData.totalAmount ?? calculatedTotal
+          <div className="section-body">
+            <div className="payment-grid">
+
+              {/* PAYMENT MODE */}
+
+              <div className="payment-item">
+                <div className="payment-icon">
+                  <FaMoneyBillWave />
+                </div>
+
+                <div>
+                  <div className="payment-label">
+                    Payment Mode
+                  </div>
+
+                  <div className="payment-value">
+                    {paymentMode || "-"}
+                  </div>
+                </div>
+              </div>
+
+              {/* CASH */}
+
+              {paymentMode === "Cash" && (
+                <div className="payment-item">
+                  <div className="payment-icon">
+                    <FaCheckCircle />
+                  </div>
+
+                  <div>
+                    <div className="payment-label">
+                      Payment Status
+                    </div>
+
+                    <div className="payment-value text-success">
+                      Paid Successfully
+                    </div>
+                  </div>
+                </div>
               )}
-            </span>
+
+              {/* UPI */}
+
+              {paymentMode === "UPI" && (
+                <>
+                  <div className="payment-item">
+                    <div className="payment-icon">
+                      <FaHashtag />
+                    </div>
+
+                    <div>
+                      <div className="payment-label">
+                        UTR Number
+                      </div>
+
+                      <div className="payment-value">
+                        {utrNumber || "-"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="payment-item">
+                    <div className="payment-icon">
+                      <FaCheckCircle />
+                    </div>
+
+                    <div>
+                      <div className="payment-label">
+                        Payment Status
+                      </div>
+
+                      <div className="payment-value text-success">
+                        UPI Payment Verified
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* NET BANKING */}
+
+              {paymentMode ===
+                "Net Banking" && (
+                <>
+                  <div className="payment-item">
+                    <div className="payment-icon">
+                      <FaUniversity />
+                    </div>
+
+                    <div>
+                      <div className="payment-label">
+                        Bank Name
+                      </div>
+
+                      <div className="payment-value">
+                        {bankName || "-"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="payment-item">
+                    <div className="payment-icon">
+                      <FaHashtag />
+                    </div>
+
+                    <div>
+                      <div className="payment-label">
+                        Reference Number
+                      </div>
+
+                      <div className="payment-value">
+                        {referenceNumber ||
+                          "-"}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* PAYMENT DATE */}
+
+              <div className="payment-item">
+                <div className="payment-icon">
+                  <FaReceipt />
+                </div>
+
+                <div>
+                  <div className="payment-label">
+                    Payment Date
+                  </div>
+
+                  <div className="payment-value">
+                    {formatDate(
+                      receiptData.paymentDate
+                    )}
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        {/* =================================================
-            AMOUNT IN WORDS
-        ================================================== */}
-        <div
-          style={{
-            border: "1px solid #ddd",
-            backgroundColor: "#f8fafc",
-            padding: "10px",
-            marginBottom: "18px",
-            fontSize: "11px",
-          }}
-        >
-          <strong>Amount Received:</strong>{" "}
-          {currency(
-            receiptData.totalAmount ?? calculatedTotal
-          )}
+        {/* ===================================================
+            AMOUNT SUMMARY
+        =================================================== */}
+
+        <div className="amount-summary">
+          <div>
+            <div className="summary-label">
+              Amount Received
+            </div>
+
+            <div className="summary-note">
+              Fee payment received successfully
+            </div>
+          </div>
+
+          <div className="summary-amount">
+            {currency(finalTotal)}
+          </div>
         </div>
 
-        {/* =================================================
-            TERMS & CONDITIONS
-        ================================================== */}
-        <div style={{ marginBottom: "20px" }}>
-          <div
-            style={{
-              backgroundColor: "#0B6B53",
-              color: "#ffffff",
-              padding: "7px 12px",
-              fontSize: "12px",
-              fontWeight: "700",
-              borderRadius: "5px 5px 0 0",
-            }}
-          >
+        {/* ===================================================
+            TERMS
+        =================================================== */}
+
+        <div className="section-box">
+          <div className="section-header">
             TERMS & CONDITIONS
           </div>
 
-          <div
-            style={{
-              border: "1px solid #999",
-              borderTop: "none",
-              padding: "9px 15px",
-              fontSize: "10px",
-              lineHeight: "1.6",
-            }}
-          >
-            <ol style={{ margin: 0, paddingLeft: "18px" }}>
+          <div className="terms-body">
+            <ol>
               <li>
-                This receipt is valid as proof of fee payment.
+                This receipt is valid as
+                proof of fee payment.
               </li>
 
               <li>
-                Please preserve this receipt for future reference.
+                Please preserve this
+                receipt for future
+                reference.
               </li>
 
               <li>
-                Fee once paid will be subject to the school's refund
-                policy.
+                Fee once paid will be
+                subject to the school's
+                refund policy.
               </li>
 
               <li>
-                Any discrepancy in the receipt should be reported to
-                the school administration.
+                Any discrepancy in the
+                receipt should be reported
+                to the school administration.
               </li>
 
               <li>
-                This receipt is valid for the academic session mentioned
-                above.
+                This receipt is valid for
+                the academic session
+                mentioned above.
               </li>
             </ol>
           </div>
         </div>
 
-        {/* =================================================
-            SIGNATURE
-        ================================================== */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "35px",
-            fontSize: "11px",
-          }}
-        >
-          <div
-            style={{
-              width: "180px",
-              textAlign: "center",
-              borderTop: "1px solid #333",
-              paddingTop: "6px",
-            }}
-          >
+        {/* ===================================================
+            SIGNATURES
+        =================================================== */}
+
+        <div className="signature-row">
+
+          <div className="signature">
+            <div className="signature-line" />
             Parent / Guardian Signature
           </div>
 
-          <div
-            style={{
-              width: "180px",
-              textAlign: "center",
-              borderTop: "1px solid #333",
-              paddingTop: "6px",
-            }}
-          >
+          <div className="signature">
+            <div className="signature-line" />
             Authorized Signature
           </div>
+
         </div>
 
-        {/* =================================================
+        {/* ===================================================
             FOOTER
-        ================================================== */}
-        <div
-          style={{
-            textAlign: "center",
-            borderTop: "1px solid #ddd",
-            marginTop: "35px",
-            paddingTop: "8px",
-            fontSize: "9px",
-            color: "#666",
-          }}
-        >
-          This is a computer-generated fee receipt and does not require
-          a physical stamp.
+        =================================================== */}
+
+        <div className="receipt-footer">
+          This is a computer-generated fee
+          receipt and does not require a
+          physical stamp.
         </div>
       </div>
 
       {/* =====================================================
-          PRINT CSS
-      ====================================================== */}
+          STYLES
+      ===================================================== */}
+
       <style>
         {`
-          @media print {
-            body {
-              margin: 0 !important;
-              padding: 0 !important;
-              background: white !important;
-            }
 
-            .no-print {
-              display: none !important;
-            }
+        * {
+          box-sizing: border-box;
+        }
 
-            .fee-receipt {
-              margin: 0 auto !important;
-              border: none !important;
-              width: 794px !important;
-              min-height: 1123px !important;
-              box-shadow: none !important;
-            }
+        .fee-receipt {
+          width: 794px;
+          min-height: 1123px;
+          margin: 20px auto;
+          padding: 25px;
+          background: #ffffff;
+          color: #111827;
+          font-family: Arial, Helvetica, sans-serif;
+          border: 1px solid #d1d5db;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
 
-            @page {
-              size: A4 portrait;
-              margin: 0;
-            }
+        /* SCHOOL HEADER */
+
+        .school-header {
+          border: 2px solid #0B6B53;
+          border-radius: 8px;
+          padding: 14px;
+          margin-bottom: 15px;
+        }
+
+        .school-header-inner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 18px;
+        }
+
+        .school-logo {
+          width: 75px;
+          height: 75px;
+          object-fit: contain;
+        }
+
+        .school-info {
+          text-align: center;
+        }
+
+        .school-info h1 {
+          margin: 0;
+          color: #0B6B53;
+          font-size: 23px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        }
+
+        .school-tagline {
+          margin-top: 3px;
+          color: #555;
+          font-size: 11px;
+        }
+
+        .school-address {
+          margin-top: 5px;
+          font-size: 11px;
+        }
+
+        .school-contact {
+          margin-top: 4px;
+          font-size: 10px;
+          color: #555;
+        }
+
+        .separator {
+          margin: 0 8px;
+        }
+
+        /* RECEIPT TITLE */
+
+        .receipt-title-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 14px;
+        }
+
+        .receipt-title {
+          display: inline-flex;
+          align-items: center;
+          background: #0B6B53;
+          color: white;
+          padding: 8px 20px;
+          border-radius: 5px;
+          font-size: 15px;
+          font-weight: 700;
+        }
+
+        .receipt-meta {
+          text-align: right;
+          font-size: 10px;
+          line-height: 1.7;
+        }
+
+        /* SECTION */
+
+        .section-box {
+          margin-bottom: 14px;
+        }
+
+        .section-header {
+          background: #0B6B53;
+          color: white;
+          padding: 7px 12px;
+          font-size: 12px;
+          font-weight: 700;
+          border-radius: 5px 5px 0 0;
+        }
+
+        .section-body {
+          border: 1px solid #999;
+          border-top: none;
+          padding: 11px;
+        }
+
+        /* STUDENT */
+
+        .student-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px 35px;
+        }
+
+        .info-item {
+          display: flex;
+          gap: 5px;
+          font-size: 11px;
+        }
+
+        .info-label {
+          font-weight: 700;
+        }
+
+        .info-value {
+          color: #374151;
+        }
+
+        /* TABLE */
+
+        .table-responsive {
+          width: 100%;
+        }
+
+        .fee-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 10px;
+        }
+
+        .fee-table th {
+          border: 1px solid #555;
+          padding: 7px;
+          text-align: center;
+          background: #e8f5f1;
+          font-weight: 700;
+        }
+
+        .fee-table td {
+          border: 1px solid #777;
+          padding: 7px;
+          text-align: right;
+          vertical-align: middle;
+        }
+
+        .fee-table td:first-child {
+          text-align: center;
+        }
+
+        .text-start {
+          text-align: left !important;
+        }
+
+        .total-label {
+          border: 1px solid #555;
+          padding: 8px;
+          text-align: right !important;
+          font-weight: 700;
+        }
+
+        .total-value {
+          border: 1px solid #555;
+          padding: 8px;
+          text-align: right !important;
+          font-weight: 700;
+        }
+
+        .grand-total-label {
+          border: 1px solid #555;
+          padding: 10px;
+          text-align: right !important;
+          font-weight: 700;
+          font-size: 12px;
+        }
+
+        .grand-total-value {
+          border: 1px solid #555;
+          padding: 10px;
+          text-align: right !important;
+          font-weight: 700;
+          font-size: 14px;
+          color: #0B6B53;
+        }
+
+        /* PAYMENT */
+
+        .payment-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+
+        .payment-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          border: 1px solid #d1d5db;
+          border-radius: 5px;
+          padding: 9px;
+          background: #f8fafc;
+        }
+
+        .payment-icon {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #e8f5f1;
+          color: #0B6B53;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .payment-label {
+          font-size: 9px;
+          color: #6b7280;
+        }
+
+        .payment-value {
+          font-size: 11px;
+          font-weight: 700;
+          margin-top: 2px;
+        }
+
+        .text-success {
+          color: #198754;
+        }
+
+        /* AMOUNT */
+
+        .amount-summary {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border: 1px solid #0B6B53;
+          border-radius: 6px;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+        }
+
+        .summary-label {
+          font-size: 11px;
+          font-weight: 700;
+        }
+
+        .summary-note {
+          font-size: 9px;
+          color: #6b7280;
+          margin-top: 2px;
+        }
+
+        .summary-amount {
+          color: #0B6B53;
+          font-size: 17px;
+          font-weight: 700;
+        }
+
+        /* TERMS */
+
+        .terms-body {
+          border: 1px solid #999;
+          border-top: none;
+          padding: 8px 14px;
+          font-size: 9px;
+          line-height: 1.55;
+        }
+
+        .terms-body ol {
+          margin: 0;
+          padding-left: 17px;
+        }
+
+        /* SIGNATURE */
+
+        .signature-row {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 32px;
+          font-size: 10px;
+        }
+
+        .signature {
+          width: 180px;
+          text-align: center;
+        }
+
+        .signature-line {
+          border-top: 1px solid #333;
+          margin-bottom: 6px;
+        }
+
+        /* FOOTER */
+
+        .receipt-footer {
+          text-align: center;
+          border-top: 1px solid #ddd;
+          margin-top: 30px;
+          padding-top: 7px;
+          font-size: 8px;
+          color: #666;
+        }
+
+        /* PRINT */
+
+        @media print {
+
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
           }
 
-          @media screen and (max-width: 850px) {
-            .fee-receipt {
-              width: 100% !important;
-              min-height: auto !important;
-              margin: 10px !important;
-              padding: 15px !important;
-            }
+          .no-print {
+            display: none !important;
           }
+
+          .fee-receipt {
+            width: 794px !important;
+            min-height: 1123px !important;
+            margin: 0 auto !important;
+            padding: 25px !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
+
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+        }
+
+        /* MOBILE */
+
+        @media screen and (max-width: 850px) {
+
+          .fee-receipt {
+            width: 100% !important;
+            min-height: auto !important;
+            margin: 10px !important;
+            padding: 15px !important;
+          }
+
+          .school-header-inner {
+            flex-direction: column;
+          }
+
+          .school-info h1 {
+            font-size: 18px;
+          }
+
+          .receipt-title-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+
+          .receipt-meta {
+            text-align: left;
+          }
+
+          .student-grid,
+          .payment-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .fee-table {
+            min-width: 650px;
+          }
+
+          .table-responsive {
+            overflow-x: auto;
+          }
+        }
+
         `}
       </style>
     </>
   );
-};
-
-const headerStyle = {
-  border: "1px solid #555",
-  padding: "7px",
-  textAlign: "center",
-  backgroundColor: "#e8f5f1",
-  fontWeight: "700",
-};
-
-const cellStyle = {
-  border: "1px solid #777",
-  padding: "7px",
-  textAlign: "right",
-  verticalAlign: "middle",
 };
 
 export default AdmissionFeeReceipt;

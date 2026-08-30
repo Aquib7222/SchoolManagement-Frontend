@@ -10,6 +10,8 @@ import {
   LuGraduationCap,
 } from "react-icons/lu";
 import axiosInstance from "../../api/axiosInstance";
+import { FaGraduationCap } from "react-icons/fa";
+import { MdOutlineSchool } from "react-icons/md";
 
 
 
@@ -510,7 +512,7 @@ const StudentSchoolList = () => {
     return active ? (
 
       <span
-        className="px-2 py-1 rounded-2 d-inline-flex align-items-center"
+        className="px-2 py-1 rounded-4 d-inline-flex align-items-center"
         style={{
           background: "#dcfce7",
           color: "#16a34a",
@@ -529,7 +531,7 @@ const StudentSchoolList = () => {
     ) : (
 
       <span
-        className="px-2 py-1 rounded-2 d-inline-flex align-items-center"
+        className="px-2 py-1 rounded-4 d-inline-flex align-items-center"
         style={{
           background: "#fee2e2",
           color: "#dc2626",
@@ -567,7 +569,7 @@ const StudentSchoolList = () => {
       <div className="col-xl-3 col-md-6">
 
         <div
-          className="card shadow border-0 rounded-3 h-100"
+          className="card shadow border-0 rounded-4 h-100"
         >
 
           <div className="card-body">
@@ -607,7 +609,7 @@ const StudentSchoolList = () => {
               </div>
 
               <div
-                className="d-flex align-items-center justify-content-center rounded-3"
+                className="d-flex align-items-center justify-content-center rounded-4"
                 style={{
                   width: "48px",
                   height: "48px",
@@ -642,48 +644,71 @@ const StudentSchoolList = () => {
       {/* HEADER */}
       {/* ================================================= */}
 
-      <div className="container-fluid px-2">
-
+      <div className="mx-2 mt-2 mb-3">
         <div
-          className="bg-white shadow rounded-2 p-3 mt-2 mb-3"
+          className="rounded-4 shadow overflow-hidden"
           style={{
-            minHeight: "70px",
+            background:
+              "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+            border: "1px solid #dbeafe",
           }}
         >
-
-          <h4 className="fw-bold mb-1">
-            Student School List
-          </h4>
-
-          <nav aria-label="breadcrumb">
-
-            <ol className="breadcrumb mb-0 small">
-
-              <li className="breadcrumb-item">
-
-                <a
-                  href="/"
-                  className="text-decoration-none text-dark"
+          <div className="p-3 p-md-4">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3">
+                <div
+                  className="d-flex align-items-center justify-content-center rounded-3"
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                    color: "#fff",
+                    boxShadow: "0 8px 20px rgba(37,99,235,.22)",
+                  }}
                 >
-                  Dashboard
-                </a>
+                  <FaGraduationCap size={27} />
+                </div>
 
-              </li>
+                <div>
+                  <h5 className="mb-1 fw-bold text-dark">Student School List</h5>
 
-              <li className="breadcrumb-item">
-                Student Management
-              </li>
+                  <div className="text-muted small">
+                    School &nbsp;/ &nbsp; Student List
+                  </div>
+                </div>
+              </div>
 
-              <li className="breadcrumb-item active text-primary">
+              <div className="d-flex align-items-center gap-2">
+                <span
+                  className="badge rounded-pill px-3 py-2"
+                  style={{
+                    backgroundColor: "#eff6ff",
+                    color: "#2563eb",
+                    border: "1px solid #bfdbfe",
+                  }}
+                >
+                  <MdOutlineSchool className="me-1" />
+                  School
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="px-4 py-2"
+            style={{
+              backgroundColor: "rgba(239,246,255,.75)",
+              borderTop: "1px solid #e0ecff",
+            }}
+          >
+            <small className="text-muted">
+              Home &nbsp;›&nbsp; School &nbsp;›&nbsp;
+              <span className="text-primary fw-semibold">
                 Student List
-              </li>
-
-            </ol>
-
-          </nav>
-
+              </span>
+            </small>
+          </div>
         </div>
-
       </div>
 
 
@@ -693,35 +718,35 @@ const StudentSchoolList = () => {
 
       <div className="container-fluid px-2">
 
-        <div className="card shadow border-0 rounded-3 mb-3">
+        <div className="card shadow border-0 rounded-4 mb-3">
 
           <div className="card-header bg-white">
 
             <div className="d-flex align-items-center">
 
               <span
-                className="d-inline-flex align-items-center justify-content-center rounded-2 me-2"
+                className="d-inline-flex align-items-center justify-content-center rounded me-2"
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  background: "#f0eaff",
-                }}
+                    width: "42px",
+                    height: "42px",
+                    background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                    color: "#fff",
+                    boxShadow: "0 8px 20px rgba(37,99,235,.22)",
+                  }}
               >
                 <LuSchool
                   size={17}
-                  style={{
-                    color: "#6f2cff",
-                  }}
+                  
                 />
               </span>
 
               <div>
 
-                <h6 className="fw-bold mb-0">
+                <h6 className="fw-bold mb-0 small">
                   Student Search
                 </h6>
 
-                <small className="text-muted">
+                <small className="text-muted ">
                   Select school to view students
                 </small>
 
@@ -742,7 +767,7 @@ const StudentSchoolList = () => {
 
                 <label className="form-label">
 
-                  <h6>
+                  <h6 className="small">
                     School
                   </h6>
 
@@ -787,7 +812,7 @@ const StudentSchoolList = () => {
 
                 <label className="form-label">
 
-                  <h6>
+                  <h6 className="small">
                     Search Student
                   </h6>
 
@@ -948,14 +973,14 @@ const StudentSchoolList = () => {
 
         {!selectedSchool && (
 
-          <div className="card shadow border-0 rounded-3">
+          <div className="card shadow border-0 rounded-4">
 
             <div className="card-header bg-white border-0 p-3">
 
               <div className="d-flex align-items-center">
 
                 <span
-                  className="d-inline-flex align-items-center justify-content-center rounded-2 me-2"
+                  className="d-inline-flex align-items-center justify-content-center rounded-4 me-2"
                   style={{
                     width: "32px",
                     height: "32px",
@@ -1148,7 +1173,7 @@ const StudentSchoolList = () => {
                               <div className="d-flex align-items-center">
 
                                 <span
-                                  className="d-inline-flex align-items-center justify-content-center rounded-2 me-2"
+                                  className="d-inline-flex align-items-center justify-content-center rounded-4 me-2"
                                   style={{
                                     width:
                                       "36px",
@@ -1204,7 +1229,7 @@ const StudentSchoolList = () => {
                             <td className="text-center">
 
                               <span
-                                className="px-2 py-1 rounded-2"
+                                className="px-2 py-1 rounded-4"
                                 style={{
                                   background:
                                     "#f1edff",
@@ -1225,7 +1250,7 @@ const StudentSchoolList = () => {
                             <td className="text-center">
 
                               <span
-                                className="px-2 py-1 rounded-2"
+                                className="px-2 py-1 rounded-4"
                                 style={{
                                   background:
                                     "#dcfce7",
@@ -1246,7 +1271,7 @@ const StudentSchoolList = () => {
                             <td className="text-center">
 
                               <span
-                                className="px-2 py-1 rounded-2"
+                                className="px-2 py-1 rounded-4"
                                 style={{
                                   background:
                                     "#fee2e2",
@@ -1306,7 +1331,7 @@ const StudentSchoolList = () => {
 
         {selectedSchool && (
 
-          <div className="card shadow border-0 rounded-3">
+          <div className="card shadow border-0 rounded-4">
 
             {/* HEADER */}
 
@@ -1319,7 +1344,7 @@ const StudentSchoolList = () => {
                 <div className="d-flex align-items-center">
 
                   <span
-                    className="d-inline-flex align-items-center justify-content-center rounded-2 me-2"
+                    className="d-inline-flex align-items-center justify-content-center rounded-4 me-2"
                     style={{
                       width: "34px",
                       height: "34px",
@@ -1353,7 +1378,7 @@ const StudentSchoolList = () => {
                 <div>
 
                   <span
-                    className="px-2 py-1 rounded-2"
+                    className="px-2 py-1 rounded-4"
                     style={{
                       background:
                         "#f1edff",
@@ -1667,7 +1692,7 @@ const StudentSchoolList = () => {
                               <td>
 
                                 <span
-                                  className="px-2 py-1 rounded-2"
+                                  className="px-2 py-1 rounded-4"
                                   style={{
                                     background:
                                       "#f1edff",
@@ -1733,7 +1758,7 @@ const StudentSchoolList = () => {
                               <td>
 
                                 <span
-                                  className="px-2 py-1 rounded-2"
+                                  className="px-2 py-1 rounded-4"
                                   style={{
                                     background:
                                       "#f3e8ff",

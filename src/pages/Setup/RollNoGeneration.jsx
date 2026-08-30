@@ -91,7 +91,7 @@
 //         </nav>
 //       </div>
 
-//       <div className="ms-2 me-2 rounded shadow bg-white p-3 mt-4">
+//       <div className="ms-2 me-2 rounded-4 shadow bg-white p-3 mt-4">
 //         <div className="row g-3">
 //           <div className="col-12 col-sm-3 col-lg-3">
 //             <label className="form-label">
@@ -160,7 +160,7 @@
 //           </div>
 //           <div className="col-12 col-sm-3 col-lg-2">
 //             <button
-//               className="btn btn-success w-100 "
+//               className="btn bg-primary w-100 "
 //               style={{ marginTop: "32px" }}
 //               onClick={handleSearch}
 //             >
@@ -452,7 +452,7 @@
 //           FILTER
 //       ================================================= */}
 
-//       <div className="ms-2 me-2 rounded shadow bg-white p-3 mt-4">
+//       <div className="ms-2 me-2 rounded-4 shadow bg-white p-3 mt-4">
 //         <div className="row g-3">
 
 //           {/* SESSION */}
@@ -555,7 +555,7 @@
 //           <div className="col-12 col-sm-6 col-lg-2">
 //             <button
 //               type="button"
-//               className="btn btn-success w-100"
+//               className="btn bg-primary w-100"
 //               style={{ marginTop: "32px" }}
 //               onClick={handleSearch}
 //               disabled={loading}
@@ -574,7 +574,7 @@
 //           STUDENT LIST
 //       ================================================= */}
 
-//       <div className="ms-2 me-2 mt-3 bg-white rounded shadow p-3">
+//       <div className="ms-2 me-2 mt-3 bg-white rounded-4 shadow p-3">
 
 //         {/* HEADER */}
 
@@ -616,7 +616,7 @@
 
 //               <button
 //                 type="button"
-//                 className="btn btn-success"
+//                 className="btn bg-primary"
 //                 onClick={
 //                   handleSaveRollNumbers
 //                 }
@@ -635,7 +635,7 @@
 //         {/* TABLE */}
 
 //         {students.length === 0 ? (
-//           <div className="text-center text-muted py-5 border rounded">
+//           <div className="text-center text-muted py-5 border rounded-4">
 //             <LuNotebookText
 //               size={35}
 //               className="mb-2"
@@ -713,7 +713,7 @@
 
 //                       <td>
 //                         {student.rollNumber ? (
-//                           <span className="badge bg-success">
+//                           <span className="badge bg-primary">
 //                             Generated
 //                           </span>
 //                         ) : (
@@ -747,6 +747,8 @@ import { toast } from "react-toastify";
 
 import useMasters from "../../hooks/useMasters";
 import axiosInstance from "../../api/axiosInstance";
+import { MdOutlineSchool } from "react-icons/md";
+import { FaShuffle } from "react-icons/fa6";
 
 const RollNoGeneration = () => {
   const { sessions, standards, sections } = useMasters();
@@ -928,56 +930,82 @@ const RollNoGeneration = () => {
           HEADER
       ================================================= */}
 
-      <div
-        className="row shadow-lg"
-        style={{
-          backgroundColor: "white",
-          margin: "10px",
-          minHeight: "70px",
-          borderRadius: "5px",
-          padding: "10px",
-          color: "black",
-        }}
-      >
-        <h6 className="mb-1">
-          <LuNotebookText className="me-2 text-success" />
-          <strong>Roll No Generation</strong>
-        </h6>
-
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb mb-0">
-            <li className="breadcrumb-item">
-              <a
-                href="/"
+      <div className="mx-2 mt-2 mb-3">
+              <div
+                className="rounded-4 shadow overflow-hidden"
                 style={{
-                  textDecoration: "none",
-                  color: "black",
+                  background:
+                    "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+                  border: "1px solid #dbeafe",
                 }}
               >
-                <small>Home</small>
-              </a>
-            </li>
-
-            <li className="breadcrumb-item">
-              <small>Setup</small>
-            </li>
-
-            <li className="breadcrumb-item active">
-              <small>Roll No Generation</small>
-            </li>
-          </ol>
-        </nav>
-      </div>
+                <div className="p-3 p-md-4">
+                  <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div className="d-flex align-items-center gap-3">
+                      <div
+                        className="d-flex align-items-center justify-content-center rounded-3"
+                        style={{
+                          width: "52px",
+                          height: "52px",
+                          background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                          color: "#fff",
+                          boxShadow: "0 8px 20px rgba(37,99,235,.22)",
+                        }}
+                      >
+                        <FaShuffle size={27} />
+                      </div>
+      
+                      <div>
+                        <h5 className="mb-1 fw-bold text-dark">Roll No Generation</h5>
+      
+                        <div className="text-muted small">
+                          Setup &nbsp;/ &nbsp; Roll No Generation
+                        </div>
+                      </div>
+                    </div>
+      
+                    <div className="d-flex align-items-center gap-2">
+                      <span
+                        className="badge rounded-pill px-3 py-2"
+                        style={{
+                          backgroundColor: "#eff6ff",
+                          color: "#2563eb",
+                          border: "1px solid #bfdbfe",
+                        }}
+                      >
+                        <MdOutlineSchool className="me-1" />
+                        Setup
+                      </span>
+                    </div>
+                  </div>
+                </div>
+      
+                <div
+                  className="px-4 py-2"
+                  style={{
+                    backgroundColor: "rgba(239,246,255,.75)",
+                    borderTop: "1px solid #e0ecff",
+                  }}
+                >
+                  <small className="text-muted">
+                    Home &nbsp;›&nbsp; Setup &nbsp;›&nbsp;
+                    <span className="text-primary fw-semibold">
+                      Roll No Generation
+                    </span>
+                  </small>
+                </div>
+              </div>
+            </div>
 
       {/* =================================================
           FILTER CARD
       ================================================= */}
 
-      <div className="ms-2 me-2 mt-3 bg-white rounded shadow">
-        <div className="card border-0">
+      <div className="ms-2 me-2 mt-3 bg-white rounded-4 shadow">
+        <div className="card border-0 rounded-4">
           <div className="card-header bg-white border-bottom">
             <h6 className="mb-0">
-              <LuNotebookText className="me-2 text-success" />
+              <LuNotebookText className="me-2 text-primary" />
               Roll Number Setup
             </h6>
           </div>
@@ -1076,7 +1104,7 @@ const RollNoGeneration = () => {
 
                 <button
                   type="button"
-                  className="btn btn-success w-100"
+                  className="btn bg-primary w-100 text-white"
                   onClick={handleSearch}
                   disabled={loading}
                 >
@@ -1094,14 +1122,14 @@ const RollNoGeneration = () => {
           STUDENT LIST
       ================================================= */}
 
-      <div className="ms-2 me-2 mt-3 bg-white rounded shadow">
-        <div className="card border-0">
+      <div className="ms-2 me-2 mt-3 bg-white shadow rounded-4">
+        <div className="card border-0 rounded-4">
           {/* CARD HEADER */}
 
           <div className="card-header bg-white d-flex justify-content-between align-items-center">
             <div>
               <h6 className="mb-1">
-                <LuNotebookText className="me-2 text-success" />
+                <LuNotebookText className="me-2 text-primary" />
                 Student List
               </h6>
 
@@ -1129,7 +1157,7 @@ const RollNoGeneration = () => {
 
                 <button
                   type="button"
-                  className="btn btn-success"
+                  className="btn bg-primary"
                   onClick={handleSaveRollNumbers}
                   disabled={saving}
                 >
@@ -1146,14 +1174,14 @@ const RollNoGeneration = () => {
           <div className="card-body">
             {students.length === 0 ? (
               <div
-                className="text-center text-muted py-5 border rounded"
+                className="text-center text-muted py-5 border rounded-4"
                 style={{
                   backgroundColor: "#f8f9fa",
                 }}
               >
                 <LuNotebookText
                   size={40}
-                  className="mb-2 text-success"
+                  className="mb-2 text-primary"
                 />
 
                 <h6 className="mt-2">
@@ -1235,7 +1263,7 @@ const RollNoGeneration = () => {
 
                         <td className="text-center">
                           {student.rollNumber ? (
-                            <span className="badge bg-success">
+                            <span className="badge bg-primary">
                               Generated
                             </span>
                           ) : (

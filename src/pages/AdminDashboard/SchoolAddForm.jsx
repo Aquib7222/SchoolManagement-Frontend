@@ -1,1554 +1,53 @@
-// import React, { useState } from "react";
+
+// import React, { useEffect, useState } from "react";
 // import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+// import { useNavigate, useParams } from "react-router-dom";
+
+// import { IoReturnDownBackOutline } from "react-icons/io5";
+// import {
+//   MdErrorOutline,
+//   MdOutlineMedicalInformation,
+// } from "react-icons/md";
+// import { BiSolidSchool } from "react-icons/bi";
+// import { FaPhone } from "react-icons/fa";
+// import { HiAcademicCap } from "react-icons/hi2";
+// import { IoMdSettings } from "react-icons/io";
+
+// import useMasters from "../../hooks/useMasters";
 
 // const SchoolAddForm = () => {
-//   // const [form, setForm] = useState({
-//   //   schoolName: "",
-//   //   schoolCode: "",
-//   //   address: "",
-//   //   email: "",
-//   //   academicYear: "",
-//   //   phone: "",
-//   //   year: "",
-//   //   principal: "",
-//   //   status: "Active",
-//   // });
+//   const {
+//     schoolType = [],
+//     schoolCategory = [],
+//     affiliationBoard = [],
+//   } = useMasters();
 
-//   const [form, setForm] = useState({
-//   // School Details
-//   schoolName: "",
-//   schoolCode: "",
-//   schoolType: "",
-//   registrationNumber: "",
-//   affiliationBoard: "",
-//   establishedYear: "",
-//   academicYear: "",
-//   gstNumber: "",
-//   schoolLogo: null,
-
-//   // Contact Details
-//   principalName: "",
-//   contactPerson: "",
-//   mobileNo: "",
-//   alternateNo: "",
-//   email: "",
-//   website: "",
-//   address: "",
-//   city: "",
-//   state: "",
-//   country: "India",
-//   pincode: "",
-
-//   // Subscription Details
-//   subscriptionPlan: "",
-//   subscriptionType: "",
-//   startDate: "",
-//   endDate: "",
-//   trialStartDate: "",
-//   trialEndDate: "",
-//   renewalDate: "",
-//   subscriptionStatus: "Active",
-//   paymentStatus: "Pending",
-//   invoiceNumber: "",
-//   amount: 0,
-
-//   // Resource Limits
-//   maxStudents: 0,
-//   maxTeachers: 0,
-//   maxAdmins: 0,
-//   storageLimit: 0,
-//   smsCredits: 0,
-//   whatsappCredits: 0,
-// });
-
-// const PLAN_PRICES = {
-//   Basic: 2000,
-//   Standard: 3500,
-//   Premium: 5000,
-// };
-
-// const PLAN_LIMITS = {
-//   Basic: {
-//     maxStudents: 500,
-//     maxTeachers: 20,
-//     maxAdmins: 2,
-//     storageLimit: 10,
-//     smsCredits: 1000,
-//     whatsappCredits: 500,
-//   },
-
-//   Standard: {
-//     maxStudents: 1500,
-//     maxTeachers: 75,
-//     maxAdmins: 5,
-//     storageLimit: 50,
-//     smsCredits: 5000,
-//     whatsappCredits: 2500,
-//   },
-
-//   Premium: {
-//     maxStudents: 5000,
-//     maxTeachers: 200,
-//     maxAdmins: 10,
-//     storageLimit: 200,
-//     smsCredits: 20000,
-//     whatsappCredits: 10000,
-//   },
-// };
-// const calculateAmount = (plan, type) => {
-//   const monthlyPrice = PLAN_PRICES[plan] || 0;
-
-//   switch (type) {
-//     case "Monthly":
-//       return monthlyPrice;
-
-//     case "Quarterly":
-//       return monthlyPrice * 3;
-
-//     case "Annually":
-//       return monthlyPrice * 12;
-
-//     default:
-//       return 0;
-//   }
-// };
-// const calculateEndDate = (startDate, type) => {
-//   if (!startDate) return "";
-
-//   const date = new Date(startDate);
-
-//   switch (type) {
-//     case "Monthly":
-//       date.setMonth(date.getMonth() + 1);
-//       break;
-
-//     case "Quarterly":
-//       date.setMonth(date.getMonth() + 3);
-//       break;
-
-//     case "Annually":
-//       date.setFullYear(date.getFullYear() + 1);
-//       break;
-
-//     default:
-//       break;
-//   }
-
-//   return date.toISOString().split("T")[0];
-// };
-
-// const handleChange = (e) => {
-//   const { name, value, files } = e.target;
-
-//   let updatedForm = {
-//     ...form,
-//     [name]: files ? files[0] : value,
-//   };
-
-//   const selectedPlan =
-//     name === "subscriptionPlan"
-//       ? value
-//       : updatedForm.subscriptionPlan;
-
-//   const selectedType =
-//     name === "subscriptionType"
-//       ? value
-//       : updatedForm.subscriptionType;
-
-//   if (
-//     name === "subscriptionPlan" ||
-//     name === "subscriptionType"
-//   ) {
-//     updatedForm.amount = calculateAmount(
-//       selectedPlan,
-//       selectedType
-//     );
-
-//     if (PLAN_LIMITS[selectedPlan]) {
-//       updatedForm = {
-//         ...updatedForm,
-//         ...PLAN_LIMITS[selectedPlan],
-//       };
-//     }
-//   }
-
-//   if (
-//     name === "startDate" ||
-//     name === "subscriptionType"
-//   ) {
-//     const startDate =
-//       name === "startDate"
-//         ? value
-//         : updatedForm.startDate;
-
-//     updatedForm.endDate = calculateEndDate(
-//       startDate,
-//       selectedType
-//     );
-
-//     updatedForm.renewalDate =
-//       updatedForm.endDate;
-//   }
-
-//   setForm(updatedForm);
-// };
-// const saveSchool = async () => {
-//   try {
-//     const token = localStorage.getItem("token");
-
-//     const formData = new FormData();
-
-//     Object.keys(form).forEach((key) => {
-//       if (form[key] !== null) {
-//         formData.append(key, form[key]);
-//       }
-//     });
-
-//     await axios.post(
-//       "http://localhost:8080/api/school/add",
-//       formData,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     alert("School Created Successfully");
-//     navigate(-1);
-//   } catch (error) {
-//     console.error(error);
-//     alert("Failed to create school");
-//   }
-// };
+//   const { schoolId } = useParams();
 //   const navigate = useNavigate();
 
-//   // const handleChange = (e) => {
-//   //   setForm({ ...form, [e.target.name]: e.target.value });
-//   // };
-
-//   // const saveSchool = async () => {
-//   //   try {
-//   //     const token = localStorage.getItem("token");
-//   //     if (!token) {
-//   //       alert("You are not logged in!");
-//   //       return;
-//   //     }
-
-//   //     // Create FormData if you are uploading a logo, or send JSON for only text
-//   //     const response = await axios.post(
-//   //       "http://localhost:8080/api/school/add",
-//   //       form, // or formData if you have a file
-//   //       {
-//   //         headers: {
-//   //           Authorization: `Bearer ${token}`,
-//   //           "Content-Type": "application/json", // or multipart/form-data if file
-//   //         },
-//   //       },
-//   //     );
-
-//   //     alert("School added successfully!");
-//   //   } catch (error) {
-//   //     console.error("Error adding school:", error.response || error);
-//   //     if (error.response && error.response.status === 403) {
-//   //       alert("You do not have permission to add a school (Admin only).");
-//   //     } else if (error.response && error.response.status === 401) {
-//   //       alert("Invalid or expired token. Please login again.");
-//   //     } else {
-//   //       alert("Failed to add school. Check console for details.");
-//   //     }
-//   //   }
-//   // };
-
-//   const handleBack = () => {
-//     navigate(-1);
-//   };
-
-//   return (
-//     <>
-//       {/* ---------- HEADER ---------- */}
-//       <div
-//         className="row shadow"
-//         style={{
-//           // backgroundColor: "white",
-//           background:
-//             "linear-gradient(135deg, rgb(61, 87, 236) 0%, rgb(97, 150, 248) 50%, #87ddf7 100%)",
-//           margin: "10px",
-//           height: "67px",
-//           borderRadius: "5px",
-//           padding: "10px",
-//           color: "black",
-//         }}
-//       >
-//         <h6>
-//           <strong>Create Accounts</strong>
-//         </h6>
-//         <nav aria-label="breadcrumb py-2">
-//           <ol className="breadcrumb">
-//             <li className="breadcrumb-item">
-//               <a href="/" style={{ textDecoration: "none", color: "black" }}>
-//                 Home
-//               </a>
-//             </li>
-//             <li className="breadcrumb-item">
-//               <a href="#" style={{ textDecoration: "none", color: "black" }}>
-//                 School Creation
-//               </a>
-//             </li>
-//           </ol>
-//         </nav>
-//       </div>
-
-//       <div className="border p-4 rounded shadow mx-2 mt-4">
-//         <h5>Add New School</h5>
-
-//         <div
-//           className="row mt-3 text-center  text-white rounded"
-//           style={{ backgroundColor: "rgb(30, 58, 138)" }}
-//         >
-//           <h5>School Details</h5>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>School Name</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="schoolName"
-//               value={form.schoolName}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>School Code</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="schoolCode"
-//               value={form.schoolCode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>School Type</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="schoolType"
-//               value={form.schoolType}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>Registration Number</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="registrationNumber"
-//               value={form.registrationNumber}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Affiliation Board</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="affiliationBoard"
-//               value={form.affiliationBoard}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Established Year</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="establishedYear"
-//               value={form.establishedYear}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         {/* Contact Details Fields  */}
-//         <div
-//           className="row mt-3 text-center  text-white rounded"
-//           style={{ backgroundColor: "rgb(30, 58, 138)" }}
-//         >
-//           <h5>Contacts Details</h5>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>Principal Name</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="principalName"
-//               value={form.principalName}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Contact Person Name</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="contactPerson"
-//               value={form.contactPerson}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Mobile No</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="mobileNo"
-//               value={form.mobileNo}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>Alternate Mobile No</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="alternateNo"
-//               value={form.alternateNo}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Email Address</label>
-//             <input
-//               type="email"
-//               className="form-control"
-//               name="email"
-//               value={form.email}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Address</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="address"
-//               value={form.address}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>City</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="city"
-//               value={form.city}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>State</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="State"
-//               value={form.State}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-4">
-//             <label>Country</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="Country"
-//               value={form.Country}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-//         <div className="row mt-3">
-//           <div className="col-md-4">
-//             <label>Pincode</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         {/* Subscription Details  */}
-//         <div
-//           className="row mt-3 text-center  text-white rounded"
-//           style={{ backgroundColor: "rgb(30, 58, 138)" }}
-//         >
-//           <h5>Subscriptions Details</h5>
-//         </div>
-
-//         <div className="row mt-3">
-//           {/* <div className="col-md-3">
-//             <label>Subscription Plan Name</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-3">
-//             <label>Subscription Type</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-
-//           <div className="col-md-3">
-//             <label>Start Date</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-
-//           <div className="col-md-3">
-//             <label>End Date</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div> */}
-//           <div className="col-md-3">
-//   <label>Plan</label>
-//   <select
-//     className="form-control"
-//     name="subscriptionPlan"
-//     value={form.subscriptionPlan}
-//     onChange={handleChange}
-//   >
-//     <option value="">Select</option>
-//     <option value="Basic">Basic</option>
-//     <option value="Standard">Standard</option>
-//     <option value="Premium">Premium</option>
-//   </select>
-// </div>
-
-// <div className="col-md-3">
-//   <label>Type</label>
-//   <select
-//     className="form-control"
-//     name="subscriptionType"
-//     value={form.subscriptionType}
-//     onChange={handleChange}
-//   >
-//     <option value="">Select</option>
-//     <option value="Monthly">Monthly</option>
-//     <option value="Quarterly">Quarterly</option>
-//     <option value="Annually">Annually</option>
-//   </select>
-// </div>
-
-// <div className="col-md-3">
-//   <label>Amount</label>
-//   <input
-//     className="form-control"
-//     value={form.amount}
-//     readOnly
-//   />
-// </div>
-//         </div>
-
-//         <div className="row mt-3">
-//           <div className="col-md-3">
-//             <label>Trial Start Date</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-
-//           <div className="col-md-3">
-//             <label>Trial End Date</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-3">
-//             <label>Subscription Status</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//           <div className="col-md-3">
-//             <label>Renewal Date</label>
-//             <input
-//               type="text"
-//               className="form-control"
-//               name="pincode"
-//               value={form.pincode}
-//               onChange={handleChange}
-//             />
-//           </div>
-//         </div>
-
-//         <div className="row mt-3">
-//   <div className="col-md-2">
-//     <label>Students</label>
-//     <input
-//       className="form-control"
-//       value={form.maxStudents}
-//       readOnly
-//     />
-//   </div>
-
-//   <div className="col-md-2">
-//     <label>Teachers</label>
-//     <input
-//       className="form-control"
-//       value={form.maxTeachers}
-//       readOnly
-//     />
-//   </div>
-
-//   <div className="col-md-2">
-//     <label>Admins</label>
-//     <input
-//       className="form-control"
-//       value={form.maxAdmins}
-//       readOnly
-//     />
-//   </div>
-
-//   <div className="col-md-2">
-//     <label>Storage (GB)</label>
-//     <input
-//       className="form-control"
-//       value={form.storageLimit}
-//       readOnly
-//     />
-//   </div>
-
-//   <div className="col-md-2">
-//     <label>SMS</label>
-//     <input
-//       className="form-control"
-//       value={form.smsCredits}
-//       readOnly
-//     />
-//   </div>
-
-//   <div className="col-md-2">
-//     <label>WhatsApp</label>
-//     <input
-//       className="form-control"
-//       value={form.whatsappCredits}
-//       readOnly
-//     />
-//   </div>
-// </div>
-
-//         <div className="mt-4 d-flex">
-//           <button className="btn btn-success me-2" onClick={saveSchool}>
-//             Create School
-//           </button>
-//           <button className="btn btn-danger" onClick={handleBack}>
-//             Cancel
-//           </button>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default SchoolAddForm;
-
-// import React, { useState } from "react";
-// import { IoReturnDownBackOutline } from "react-icons/io5";
-// import { MdErrorOutline, MdOutlineMedicalInformation } from "react-icons/md";
-// import { BiSolidSchool } from "react-icons/bi";
-// import { FaPhone } from "react-icons/fa";
-// import { HiAcademicCap } from "react-icons/hi2";
-// import useMasters from "../../hooks/useMasters";
-// import { IoMdSettings } from "react-icons/io";
-
-// const SchoolAddForm = () => {
-//   const [selectedFile, setSelectedFile] = useState(null);
-//   const { schoolType, schoolCategory, affiliationBoard } = useMasters();
-//   console.log("schoolType", schoolType);
-//   console.log("schoolcategory", schoolCategory);
-//   console.log("affiliationBoard", affiliationBoard);
-
-//   const handleFileChange = (e) => {
-//     const file = e.target.files[0];
-
-//     if (file) {
-//       setSelectedFile(file);
-//     }
-//   };
-//   const countries = [
-//     "India",
-//     "China",
-//     "Japan",
-//     "South Korea",
-//     "Indonesia",
-//     "Malaysia",
-//     "Singapore",
-//     "Thailand",
-//     "Vietnam",
-//     "Philippines",
-//   ];
-
-//   const indianStates = [
-//     // States
-//     "Andhra Pradesh",
-//     "Arunachal Pradesh",
-//     "Assam",
-//     "Bihar",
-//     "Chhattisgarh",
-//     "Goa",
-//     "Gujarat",
-//     "Haryana",
-//     "Himachal Pradesh",
-//     "Jharkhand",
-//     "Karnataka",
-//     "Kerala",
-//     "Madhya Pradesh",
-//     "Maharashtra",
-//     "Manipur",
-//     "Meghalaya",
-//     "Mizoram",
-//     "Nagaland",
-//     "Odisha",
-//     "Punjab",
-//     "Rajasthan",
-//     "Sikkim",
-//     "Tamil Nadu",
-//     "Telangana",
-//     "Tripura",
-//     "Uttar Pradesh",
-//     "Uttarakhand",
-//     "West Bengal",
-
-//     // Union Territories
-//     "Andaman and Nicobar Islands",
-//     "Chandigarh",
-//     "Dadra and Nagar Haveli and Daman and Diu",
-//     "Delhi",
-//     "Jammu and Kashmir",
-//     "Ladakh",
-//     "Lakshadweep",
-//     "Puducherry",
-//   ];
-//   return (
-//     <>
-//       <div
-//         className="row shadow align-items-center p-3"
-//         style={{
-//           backgroundColor: "white",
-//           margin: "10px",
-//           minHeight: "70px",
-//           borderRadius: "5px",
-//           padding: "10px",
-//           color: "black",
-//         }}
-//       >
-//         {/* LEFT SIDE */}
-//         <div className="col">
-//           <h6 className="mb-1">Create New School</h6>
-
-//           <nav aria-label="breadcrumb">
-//             <ol className="breadcrumb mb-0">
-//               <li className="breadcrumb-item">
-//                 <a
-//                   href="/"
-//                   style={{
-//                     textDecoration: "none",
-//                     color: "black",
-//                   }}
-//                 >
-//                   <small>Dashboard</small>
-//                 </a>
-//               </li>
-
-//               <li className="breadcrumb-item">
-//                 <small>Organization Management</small>
-//               </li>
-
-//               <li className="breadcrumb-item">
-//                 <small>School List</small>
-//               </li>
-
-//               <li className="breadcrumb-item active">
-//                 <small>Create New School</small>
-//               </li>
-//             </ol>
-//           </nav>
-//         </div>
-
-//         {/* RIGHT / LAST */}
-//         <div className="col-auto">
-//           <button className="btn btn-outline-primary">
-//             <IoReturnDownBackOutline size={20} /> Back to School List
-//           </button>
-//         </div>
-//       </div>
-//       <div className="ms-2 me-2 mt-4 p-1">
-//         <div className="row g-3 align-items-stretch">
-//           {/* LEFT CARD */}
-//           <div className="col-12 col-md-8 col-lg-8">
-//             <div className="card bg-white shadow rounded-3 p-2 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <strong>
-//                   <span className=" p-1 rounded-5 bg-primary me-2">
-//                     <MdOutlineMedicalInformation
-//                       size={20}
-//                       className="text-white"
-//                     />
-//                   </span>
-//                   Basic Information
-//                 </strong>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="row">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         School Name <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter school name"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4 ">
-//                     <label className="form-label ">
-//                       <h6>
-//                         {" "}
-//                         School Code <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter School Code"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Organization Name <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select Organization</option>
-//                     </select>
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Address Line 1 <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter address line 1"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6> Address Line 2</h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter address line 2"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         City <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter city"
-//                     />
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         State <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select State</option>
-//                       {indianStates.map((state) => (
-//                         <option key={state} value={state}>
-//                           {state}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6> Country</h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select Country</option>
-//                       {countries.map((country) => (
-//                         <option key={country} value={country}>
-//                           {country}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Pincode <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter pincode"
-//                     />
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="col-12 col-md-4 col-lg-4">
-//             <div className="card bg-white shadow rounded-3 p-3 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <strong>School Logo</strong>
-
-//                 <p className="mt-2 text-muted">
-//                   Upload school logo (JPG, PNG, SVG-Max-2MB)
-//                 </p>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="">
-//                   <div className="custom-upload-box">
-//                     {/* ICON */}
-//                     <div className="upload-icon">
-//                       <BiSolidSchool />
-//                     </div>
-
-//                     {/* TEXT */}
-//                     <div className="fw-semibold">
-//                       <span className="text-primary">Click to upload </span>
-//                       <span className="text-muted small">or drag and drop</span>
-//                     </div>
-
-//                     <div className="text-muted small">
-//                       Recommended size: 200 × 200 px
-//                     </div>
-
-//                     {/* FILE INPUT */}
-//                     <input
-//                       type="file"
-//                       accept="image/png,image/jpeg,image/jpg"
-//                       className="custom-file-input"
-//                       onChange={handleFileChange}
-//                     />
-//                   </div>
-
-//                   {/* SELECTED FILE NAME */}
-//                   {selectedFile && (
-//                     <div className="mt-2 small text-success">
-//                       ✓ {selectedFile.name}
-//                     </div>
-//                   )}
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="ms-2 me-2 mt-2 p-1">
-//         <div className="row g-3 align-items-stretch">
-//           {/* LEFT CARD */}
-//           <div className="col-12 col-md-7 col-lg-7">
-//             <div className="card bg-white shadow rounded-3 p-2 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <strong>
-//                   <span className=" p-1 rounded-5 bg-primary me-2">
-//                     <FaPhone size={20} className="text-white" />
-//                   </span>
-//                   Contact Information
-//                 </strong>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="row">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Contact Person Name{" "}
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter contact person name"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4 ">
-//                     <label className="form-label ">
-//                       <h6>
-//                         {" "}
-//                         Designation <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter Designation"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Email <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter Email"
-//                     />
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Phone Number <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter phone number"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6> Alternate Phone</h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter alternate phone"
-//                     />
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="col-12 col-md-5 col-lg-5">
-//             <div className="card bg-white shadow rounded-3 p-3 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <span className=" p-1 rounded-5 bg-primary me-2">
-//                   <HiAcademicCap size={20} className="text-white" />
-//                 </span>
-//                 <strong>Academic Information</strong>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="row">
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Academic Ses Start Month{" "}
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select start month</option>
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Academic Session Format{" "}
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select format</option>
-//                     </select>
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Default Language <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select language</option>
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Currency <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select currency</option>
-//                     </select>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="ms-2 me-2 mt-2 p-1">
-//         <div className="row g-3 align-items-stretch">
-//           {/* LEFT CARD */}
-//           <div className="col-12 col-md-7 col-lg-7">
-//             <div className="card bg-white shadow rounded-3 p-2 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <strong>
-//                   <span className=" p-1 rounded-5 bg-primary me-2">
-//                     <MdErrorOutline size={20} className="text-white" />
-//                   </span>
-//                   Other Information
-//                 </strong>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="row">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         School Type <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select Type</option>
-//                       {schoolType.map((item) => (
-//                         <option key={item} value={item}>
-//                           {item}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-4 ">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         School Category <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select Category</option>
-//                       {schoolCategory.map((item) => (
-//                         <option key={item} value={item}>
-//                           {item}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Affiliation Board <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select name="" id="" className="form-select">
-//                       <option value="">Select Affiliation</option>
-//                       {affiliationBoard.map((item) => (
-//                         <option key={item} value={item}>
-//                           {item}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Established Year <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <select
-//                       name="establishedYear"
-//                       // value={formData.establishedYear}
-//                       // onChange={handleChange}
-//                       className="form-select"
-//                     >
-//                       <option value="">Select Established Year</option>
-
-//                       {Array.from(
-//                         { length: new Date().getFullYear() - 1980 + 1 },
-//                         (_, i) => new Date().getFullYear() - i,
-//                       ).map((year) => (
-//                         <option key={year} value={year}>
-//                           {year}
-//                         </option>
-//                       ))}
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6> Total Classes(approx)</h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter total classes"
-//                     />
-//                   </div>
-//                   <div className="col-12 col-md-4">
-//                     <label className="form-label">
-//                       <h6> Total Students(approx)</h6>
-//                     </label>
-//                     <input
-//                       type="text"
-//                       className="form-control"
-//                       placeholder="Enter total students"
-//                     />
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-12">
-//                     <label className="form-label">
-//                       <h6> Description</h6>
-//                     </label>
-//                     <textarea
-//                       name=""
-//                       id=""
-//                       className="form-control"
-//                       placeholder="Enter school description"
-//                     ></textarea>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           <div className="col-12 col-md-5 col-lg-5">
-//             <div className="card bg-white shadow rounded-3 p-3 h-100">
-//               <div className="card-header bg-white border-0 align-items-center">
-//                 <span className=" p-1 rounded-5 bg-primary me-2">
-//                   <IoMdSettings size={20} className="text-white" />
-//                 </span>
-//                 <strong>Status & Settings</strong>
-//               </div>
-
-//               <div className="card-body">
-//                 <div className="row">
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Status
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <div className="d-flex align-items-center gap-2">
-//                       <div className="form-check form-switch mb-0">
-//                         <input
-//                           className="form-check-input green-switch"
-//                           type="checkbox"
-//                           role="switch"
-//                           id="schoolStatus"
-//                         />
-//                       </div>
-
-//                       <label htmlFor="schoolStatus" className="mb-0">
-//                         Active
-//                       </label>
-//                     </div>
-//                   </div>
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Allow Parent Login
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <div className="d-flex align-items-center gap-2">
-//                       <div className="form-check form-switch mb-0">
-//                         <input
-//                           className="form-check-input green-switch"
-//                           type="checkbox"
-//                           role="switch"
-//                           id="allowParent"
-//                         />
-//                       </div>
-
-//                       <label htmlFor="allowParent" className="mb-0">
-//                         Yes
-//                       </label>
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label">
-//                       <h6>
-//                         {" "}
-//                         Allow Student Login
-//                         <span className="text-danger">*</span>
-//                       </h6>
-//                     </label>
-//                     <div className="d-flex align-items-center gap-2">
-//                       <div className="form-check form-switch mb-0">
-//                         <input
-//                           className="form-check-input green-switch"
-//                           type="checkbox"
-//                           role="switch"
-//                           id="allowStudent"
-//                         />
-//                       </div>
-
-//                       <label htmlFor="allowStudent" className="mb-0">
-//                         Yes
-//                       </label>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <div className="row mt-3">
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label ">
-//                       Time Zone <span className="text-danger">*</span>
-//                     </label>
-
-//                     <select className="form-select">
-//                       {/* <option value="">Select Time Zone</option> */}
-
-//                       <option value="Asia/Kolkata">
-//                         India Standard Time (IST) — UTC +05:30
-//                       </option>
-
-//                       <option value="Asia/Dubai">
-//                         Gulf Standard Time (GST) — UTC +04:00
-//                       </option>
-
-//                       <option value="Asia/Dhaka">
-//                         Bangladesh Standard Time — UTC +06:00
-//                       </option>
-
-//                       <option value="Asia/Kathmandu">
-//                         Nepal Time — UTC +05:45
-//                       </option>
-
-//                       <option value="Asia/Singapore">
-//                         Singapore Time — UTC +08:00
-//                       </option>
-
-//                       <option value="Asia/Tokyo">
-//                         Japan Standard Time — UTC +09:00
-//                       </option>
-//                     </select>
-//                   </div>
-//                   <div className="col-12 col-md-6">
-//                     <label className="form-label ">Date Format</label>
-
-//                     <select className="form-select">
-//                       <option value="">Select Date Format</option>
-
-//                       <option value="dd-MM-yyyy">
-//                         DD-MM-YYYY (23-08-2026)
-//                       </option>
-
-//                       <option value="dd/MM/yyyy">
-//                         DD/MM/YYYY (23/08/2026)
-//                       </option>
-
-//                       <option value="yyyy-MM-dd">
-//                         YYYY-MM-DD (2026-08-23)
-//                       </option>
-
-//                       <option value="MM/dd/yyyy">
-//                         MM/DD/YYYY (08/23/2026)
-//                       </option>
-//                     </select>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="row  mt-3 mx-2">
-//         <div className="col-12 d-flex gap-3 justify-content-end">
-//           <button className="btn btn-outline-primary">Reset</button>
-//         <button className="btn btn-success">Create School</button>
-//         </div>
-//       </div>
-
-//       <style>
-//         {`.custom-upload-box {
-//   position: relative;
-//   border: 2px dashed #ced4da;
-//   border-radius: 10px;
-//   min-height: 170px;
-//   padding: 25px;
-//   text-align: center;
-//   background-color: #f8f9fa;
-//   cursor: pointer;
-
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: center;
-//   align-items: center;
-
-//   transition: all 0.2s ease;
-// }
-
-// .custom-upload-box:hover {
-//   border-color: #0d6efd;
-//   background-color: #f1f6ff;
-// }
-
-// .upload-icon {
-//   font-size: 32px;
-//   margin-bottom: 8px;
-// }
-
-// .custom-file-input {
-//   position: absolute;
-//   inset: 0;
-//   width: 100%;
-//   height: 100%;
-//   opacity: 0;
-//   cursor: pointer;
-// }
-//   .green-switch:checked {
-//   background-color: #198754;
-//   border-color: #198754;
-// }
-
-// .green-switch {
-//   width: 35px !important;
-//   height: 20px !important;
-//   cursor: pointer;
-// }
-// `}
-//       </style>
-//     </>
-//   );
-// };
-
-// export default SchoolAddForm;
-
-
-// import React, { useState } from "react";
-// import axios from "axios";
-
-// import { IoReturnDownBackOutline } from "react-icons/io5";
-// import { MdErrorOutline, MdOutlineMedicalInformation } from "react-icons/md";
-// import { BiSolidSchool } from "react-icons/bi";
-// import { FaPhone } from "react-icons/fa";
-// import { HiAcademicCap } from "react-icons/hi2";
-// import { IoMdSettings } from "react-icons/io";
-
-// import useMasters from "../../hooks/useMasters";
-
-// const SchoolAddForm = () => {
-//   const { schoolType, schoolCategory, affiliationBoard } = useMasters();
+//   // =========================================================
+//   // CREATE / EDIT MODE
+//   // =========================================================
+
+//   const isEditMode = Boolean(schoolId);
 
 //   // =========================================================
-//   // FILE
+//   // STATES
 //   // =========================================================
 
 //   const [selectedFile, setSelectedFile] = useState(null);
+
+//   const [existingLogo, setExistingLogo] = useState(null);
+
+//   const [loadingSchool, setLoadingSchool] = useState(false);
+
+//   const [saving, setSaving] = useState(false);
 
 //   // =========================================================
 //   // FORM DATA
 //   // =========================================================
 
-//   const [formData, setFormData] = useState({
+//   const initialFormData = {
 //     // Basic Information
 //     schoolName: "",
 //     schoolCode: "",
@@ -1592,7 +91,9 @@
 //     // Localization
 //     timeZone: "Asia/Kolkata",
 //     dateFormat: "dd-MM-yyyy",
-//   });
+//   };
+
+//   const [formData, setFormData] = useState(initialFormData);
 
 //   // =========================================================
 //   // COUNTRIES
@@ -1656,6 +157,165 @@
 //   ];
 
 //   // =========================================================
+//   // FETCH SCHOOL FOR EDIT
+//   // =========================================================
+
+//   useEffect(() => {
+//     if (!schoolId) {
+//       return;
+//     }
+
+//     const fetchSchool = async () => {
+//       try {
+//         setLoadingSchool(true);
+
+//         const token = localStorage.getItem("token");
+
+//         if (!token) {
+//           alert("Authentication token not found.");
+//           return;
+//         }
+
+//         const response = await axios.get(
+//           `http://localhost:8080/api/school/${schoolId}`,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+
+//         const school = response.data;
+
+//         console.log("School data for edit:", school);
+
+//         // =====================================================
+//         // EXISTING LOGO
+//         // =====================================================
+
+//         setExistingLogo(
+//           school.logoUrl ||
+//             school.logo ||
+//             school.logoPath ||
+//             null
+//         );
+
+//         // =====================================================
+//         // SET FORM DATA
+//         // =====================================================
+
+//         setFormData({
+//           schoolName: school.schoolName || "",
+
+//           schoolCode: school.schoolCode || "",
+
+//           organizationName:
+//             school.organizationName || "",
+
+//           addressLine1:
+//             school.addressLine1 || "",
+
+//           addressLine2:
+//             school.addressLine2 || "",
+
+//           city:
+//             school.city || "",
+
+//           state:
+//             school.state || "",
+
+//           country:
+//             school.country || "India",
+
+//           pincode:
+//             school.pincode || "",
+
+//           contactPersonName:
+//             school.contactPerson ||
+//             school.contactPersonName ||
+//             "",
+
+//           designation:
+//             school.designation || "",
+
+//           email:
+//             school.email || "",
+
+//           phoneNumber:
+//             school.phoneNumber || "",
+
+//           alternatePhone:
+//             school.alternatePhone || "",
+
+//           academicSessionStartMonth:
+//             school.academicSessionStartMonth || "",
+
+//           academicSessionFormat:
+//             school.academicSessionFormat || "",
+
+//           defaultLanguage:
+//             school.defaultLanguage || "",
+
+//           currency:
+//             school.currency || "",
+
+//           schoolType:
+//             school.schoolType || "",
+
+//           schoolCategory:
+//             school.schoolCategory || "",
+
+//           affiliationBoard:
+//             school.affiliationBoard || "",
+
+//           establishedYear:
+//             school.establishedYear || "",
+
+//           totalClasses:
+//             school.totalClasses ?? "",
+
+//           totalStudents:
+//             school.totalStudents ?? "",
+
+//           description:
+//             school.description || "",
+
+//           status:
+//             school.active ??
+//             school.status ??
+//             true,
+
+//           allowParentLogin:
+//             school.allowParentLogin ?? true,
+
+//           allowStudentLogin:
+//             school.allowStudentLogin ?? true,
+
+//           timeZone:
+//             school.timeZone || "Asia/Kolkata",
+
+//           dateFormat:
+//             school.dateFormat || "dd-MM-yyyy",
+//         });
+//       } catch (error) {
+//         console.error(
+//           "Fetch school error:",
+//           error
+//         );
+
+//         alert(
+//           error.response?.data?.message ||
+//             "Failed to load school details."
+//         );
+//       } finally {
+//         setLoadingSchool(false);
+//       }
+//     };
+
+//     fetchSchool();
+//   }, [schoolId]);
+
+//   // =========================================================
 //   // HANDLE INPUT
 //   // =========================================================
 
@@ -1705,7 +365,9 @@
 //     ];
 
 //     if (!allowedTypes.includes(file.type)) {
-//       alert("Only JPG, PNG or SVG files are allowed.");
+//       alert(
+//         "Only JPG, PNG or SVG files are allowed."
+//       );
 //       return;
 //     }
 
@@ -1717,325 +379,400 @@
 //   // =========================================================
 
 //   const handleReset = () => {
-//     setFormData({
-//       schoolName: "",
-//       schoolCode: "",
-//       organizationName: "",
-
-//       addressLine1: "",
-//       addressLine2: "",
-//       city: "",
-//       state: "",
-//       country: "India",
-//       pincode: "",
-
-//       contactPersonName: "",
-//       designation: "",
-//       email: "",
-//       phoneNumber: "",
-//       alternatePhone: "",
-
-//       academicSessionStartMonth: "",
-//       academicSessionFormat: "",
-//       defaultLanguage: "",
-//       currency: "",
-
-//       schoolType: "",
-//       schoolCategory: "",
-//       affiliationBoard: "",
-//       establishedYear: "",
-//       totalClasses: "",
-//       totalStudents: "",
-//       description: "",
-
-//       status: true,
-//       allowParentLogin: true,
-//       allowStudentLogin: true,
-
-//       timeZone: "Asia/Kolkata",
-//       dateFormat: "dd-MM-yyyy",
-//     });
-
-//     setSelectedFile(null);
-//   };
-
-//   // =========================================================
-//   // CREATE SCHOOL
-//   // =========================================================
-
-//   const handleCreateSchool = async () => {
-//   try {
-//     const token = localStorage.getItem("token");
-
-//     if (!token) {
-//       alert("Authentication token not found.");
+//     // Edit mode me reload karke original data
+//     // dobara load karenge
+//     if (isEditMode) {
+//       window.location.reload();
 //       return;
 //     }
 
-//     // =====================================================
-//     // VALIDATION
-//     // =====================================================
+//     setFormData(initialFormData);
 
+//     setSelectedFile(null);
+
+//     setExistingLogo(null);
+//   };
+
+//   // =========================================================
+//   // VALIDATION
+//   // =========================================================
+
+//   const validateForm = () => {
 //     if (!formData.schoolName.trim()) {
 //       alert("School name is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.schoolCode.trim()) {
 //       alert("School code is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.addressLine1.trim()) {
 //       alert("Address Line 1 is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.city.trim()) {
 //       alert("City is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.state) {
 //       alert("Please select state.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.pincode.trim()) {
 //       alert("Pincode is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.contactPersonName.trim()) {
-//       alert("Contact person name is required.");
-//       return;
+//       alert(
+//         "Contact person name is required."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.designation.trim()) {
 //       alert("Designation is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.email.trim()) {
 //       alert("Email is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.phoneNumber.trim()) {
 //       alert("Phone number is required.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.academicSessionStartMonth) {
-//       alert("Please select academic session start month.");
-//       return;
+//       alert(
+//         "Please select academic session start month."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.academicSessionFormat) {
-//       alert("Please select academic session format.");
-//       return;
+//       alert(
+//         "Please select academic session format."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.defaultLanguage) {
-//       alert("Please select default language.");
-//       return;
+//       alert(
+//         "Please select default language."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.currency) {
 //       alert("Please select currency.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.schoolType) {
 //       alert("Please select school type.");
-//       return;
+//       return false;
 //     }
 
 //     if (!formData.schoolCategory) {
-//       alert("Please select school category.");
-//       return;
+//       alert(
+//         "Please select school category."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.affiliationBoard) {
-//       alert("Please select affiliation board.");
-//       return;
+//       alert(
+//         "Please select affiliation board."
+//       );
+//       return false;
 //     }
 
 //     if (!formData.establishedYear) {
-//       alert("Please select established year.");
-//       return;
+//       alert(
+//         "Please select established year."
+//       );
+//       return false;
 //     }
 
-//     // =====================================================
-//     // SCHOOL OBJECT
-//     // =====================================================
+//     return true;
+//   };
 
-//     const schoolData = {
-//       schoolName: formData.schoolName.trim(),
-//       schoolCode: formData.schoolCode.trim(),
-//       organizationName: formData.organizationName || null,
+//   // =========================================================
+//   // CREATE / UPDATE SCHOOL
+//   // =========================================================
 
-//       addressLine1: formData.addressLine1.trim(),
-//       addressLine2: formData.addressLine2 || null,
-//       city: formData.city.trim(),
-//       state: formData.state,
-//       country: formData.country,
-//       pincode: formData.pincode.trim(),
+//   const handleSaveSchool = async () => {
+//     try {
+//       const token = localStorage.getItem("token");
 
-//       contactPerson: formData.contactPersonName.trim(),
-//       designation: formData.designation.trim(),
-//       email: formData.email.trim(),
-//       phoneNumber: formData.phoneNumber.trim(),
-//       alternatePhone: formData.alternatePhone || null,
+//       if (!token) {
+//         alert("Authentication token not found.");
+//         return;
+//       }
 
-//       academicSessionStartMonth:
-//         formData.academicSessionStartMonth,
+//       // =====================================================
+//       // VALIDATION
+//       // =====================================================
 
-//       academicSessionFormat:
-//         formData.academicSessionFormat,
+//       if (!validateForm()) {
+//         return;
+//       }
 
-//       defaultLanguage:
-//         formData.defaultLanguage,
+//       setSaving(true);
 
-//       currency:
-//         formData.currency,
+//       // =====================================================
+//       // SCHOOL OBJECT
+//       // =====================================================
 
-//       schoolType:
-//         formData.schoolType,
+//       const schoolData = {
+//         schoolName:
+//           formData.schoolName.trim(),
 
-//       schoolCategory:
-//         formData.schoolCategory,
+//         schoolCode:
+//           formData.schoolCode.trim(),
 
-//       affiliationBoard:
-//         formData.affiliationBoard,
+//         organizationName:
+//           formData.organizationName || null,
 
-//       establishedYear:
-//         formData.establishedYear,
+//         addressLine1:
+//           formData.addressLine1.trim(),
 
-//       totalClasses:
-//         formData.totalClasses
-//           ? Number(formData.totalClasses)
-//           : null,
+//         addressLine2:
+//           formData.addressLine2 || null,
 
-//       totalStudents:
-//         formData.totalStudents
-//           ? Number(formData.totalStudents)
-//           : null,
+//         city:
+//           formData.city.trim(),
 
-//       description:
-//         formData.description || null,
+//         state:
+//           formData.state,
 
-//       active:
-//         Boolean(formData.status),
+//         country:
+//           formData.country,
 
-//       allowParentLogin:
-//         Boolean(formData.allowParentLogin),
+//         pincode:
+//           formData.pincode.trim(),
 
-//       allowStudentLogin:
-//         Boolean(formData.allowStudentLogin),
+//         contactPerson:
+//           formData.contactPersonName.trim(),
 
-//       timeZone:
-//         formData.timeZone,
+//         designation:
+//           formData.designation.trim(),
 
-//       dateFormat:
-//         formData.dateFormat,
-//     };
+//         email:
+//           formData.email.trim(),
 
-//     // =====================================================
-//     // MULTIPART DATA
-//     // =====================================================
+//         phoneNumber:
+//           formData.phoneNumber.trim(),
 
-//     const data = new FormData();
+//         alternatePhone:
+//           formData.alternatePhone || null,
 
-//     // School JSON
-//     data.append(
-//       "school",
-//       new Blob(
-//         [JSON.stringify(schoolData)],
-//         {
-//           type: "application/json",
-//         }
-//       )
-//     );
+//         academicSessionStartMonth:
+//           formData.academicSessionStartMonth,
 
-//     // Logo
-//     if (selectedFile) {
+//         academicSessionFormat:
+//           formData.academicSessionFormat,
+
+//         defaultLanguage:
+//           formData.defaultLanguage,
+
+//         currency:
+//           formData.currency,
+
+//         schoolType:
+//           formData.schoolType,
+
+//         schoolCategory:
+//           formData.schoolCategory,
+
+//         affiliationBoard:
+//           formData.affiliationBoard,
+
+//         establishedYear:
+//           formData.establishedYear,
+
+//         totalClasses:
+//           formData.totalClasses
+//             ? Number(formData.totalClasses)
+//             : null,
+
+//         totalStudents:
+//           formData.totalStudents
+//             ? Number(formData.totalStudents)
+//             : null,
+
+//         description:
+//           formData.description || null,
+
+//         active:
+//           Boolean(formData.status),
+
+//         allowParentLogin:
+//           Boolean(
+//             formData.allowParentLogin
+//           ),
+
+//         allowStudentLogin:
+//           Boolean(
+//             formData.allowStudentLogin
+//           ),
+
+//         timeZone:
+//           formData.timeZone,
+
+//         dateFormat:
+//           formData.dateFormat,
+//       };
+
+//       console.log(
+//         "School Data:",
+//         schoolData
+//       );
+
+//       // =====================================================
+//       // MULTIPART DATA
+//       // =====================================================
+
+//       const data = new FormData();
+
 //       data.append(
-//         "attachment",
+//         "school",
+//         new Blob(
+//           [JSON.stringify(schoolData)],
+//           {
+//             type: "application/json",
+//           }
+//         )
+//       );
+
+//       // =====================================================
+//       // LOGO
+//       // =====================================================
+
+//       if (selectedFile) {
+//         data.append(
+//           "attachment",
+//           selectedFile
+//         );
+//       }
+
+//       console.log(
+//         "Selected Logo:",
 //         selectedFile
 //       );
-//     }
 
-//     // =====================================================
-//     // DEBUG
-//     // =====================================================
+//       // =====================================================
+//       // API CALL
+//       // =====================================================
 
-//     console.log(
-//       "School Data:",
-//       schoolData
-//     );
+//       let response;
 
-//     console.log(
-//       "Selected Logo:",
-//       selectedFile
-//     );
+//       if (isEditMode) {
+//         // ===================================================
+//         // UPDATE
+//         // ===================================================
 
-//     // =====================================================
-//     // API CALL
-//     // =====================================================
+//         response = await axios.put(
+//           `http://localhost:8080/api/school/update/${schoolId}`,
+//           data,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+//       } else {
+//         // ===================================================
+//         // CREATE
+//         // ===================================================
 
-//     const response = await axios.post(
-//       "http://localhost:8080/api/school/add",
-//       data,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
+//         response = await axios.post(
+//           "http://localhost:8080/api/school/add",
+//           data,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
 //       }
-//     );
 
-//     console.log(
-//       "School Created Successfully:",
-//       response.data
-//     );
+//       console.log(
+//         isEditMode
+//           ? "School Updated Successfully:"
+//           : "School Created Successfully:",
+//         response.data
+//       );
 
-//     alert(
-//       "School created successfully!"
-//     );
+//       // =====================================================
+//       // SUCCESS
+//       // =====================================================
 
-//     // =====================================================
-//     // RESET
-//     // =====================================================
+//       alert(
+//         isEditMode
+//           ? "School updated successfully!"
+//           : "School created successfully!"
+//       );
 
-//     handleReset();
-
-//   } catch (error) {
-
-//     console.error(
-//       "Create School Error:",
-//       error
-//     );
-
-//     if (error.response) {
+//       // School list par redirect
+//       navigate("/school-list");
+//     } catch (error) {
+//       console.error(
+//         isEditMode
+//           ? "Update School Error:"
+//           : "Create School Error:",
+//         error
+//       );
 
 //       console.error(
 //         "Backend Response:",
-//         error.response.data
+//         error.response?.data
 //       );
 
 //       alert(
-//         error.response.data?.message ||
-//         "Failed to create school."
+//         error.response?.data?.message ||
+//           (isEditMode
+//             ? "Failed to update school."
+//             : "Failed to create school.")
 //       );
-
-//     } else {
-
-//       alert(
-//         "Unable to connect with server."
-//       );
+//     } finally {
+//       setSaving(false);
 //     }
+//   };
+
+//   // =========================================================
+//   // LOADING SCREEN
+//   // =========================================================
+
+//   if (isEditMode && loadingSchool) {
+//     return (
+//       <div className="container-fluid">
+//         <div
+//           className="d-flex justify-content-center align-items-center"
+//           style={{ minHeight: "500px" }}
+//         >
+//           <div className="text-center">
+//             <div
+//               className="spinner-border text-primary"
+//               role="status"
+//             ></div>
+
+//             <div className="mt-3 text-muted">
+//               Loading school details...
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     );
 //   }
-// };
 
 //   return (
 //     <>
@@ -2054,9 +791,12 @@
 //         }}
 //       >
 //         {/* LEFT */}
+
 //         <div className="col">
 //           <h6 className="mb-1">
-//             Create New School
+//             {isEditMode
+//               ? "Update School"
+//               : "Create New School"}
 //           </h6>
 
 //           <nav aria-label="breadcrumb">
@@ -2069,7 +809,9 @@
 //                     color: "black",
 //                   }}
 //                 >
-//                   <small>Dashboard</small>
+//                   <small>
+//                     Dashboard
+//                   </small>
 //                 </a>
 //               </li>
 
@@ -2080,23 +822,36 @@
 //               </li>
 
 //               <li className="breadcrumb-item">
-//                 <small>School List</small>
+//                 <small>
+//                   School List
+//                 </small>
 //               </li>
 
 //               <li className="breadcrumb-item active">
-//                 <small>Create New School</small>
+//                 <small>
+//                   {isEditMode
+//                     ? "Update School"
+//                     : "Create New School"}
+//                 </small>
 //               </li>
 //             </ol>
 //           </nav>
 //         </div>
 
 //         {/* RIGHT */}
+
 //         <div className="col-auto">
 //           <button
 //             type="button"
 //             className="btn btn-outline-primary"
+//             onClick={() =>
+//               navigate("/school-list")
+//             }
 //           >
-//             <IoReturnDownBackOutline size={20} />
+//             <IoReturnDownBackOutline
+//               size={20}
+//             />
+
 //             {" "}Back to School List
 //           </button>
 //         </div>
@@ -2116,6 +871,7 @@
 
 //               <div className="card-header bg-white border-0">
 //                 <strong>
+
 //                   <span className="p-1 rounded-5 bg-primary me-2">
 //                     <MdOutlineMedicalInformation
 //                       size={20}
@@ -2134,6 +890,7 @@
 //                 <div className="row">
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         School Name{" "}
@@ -2146,14 +903,19 @@
 //                     <input
 //                       type="text"
 //                       name="schoolName"
-//                       value={formData.schoolName}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.schoolName
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter school name"
 //                     />
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         School Code{" "}
@@ -2166,14 +928,19 @@
 //                     <input
 //                       type="text"
 //                       name="schoolCode"
-//                       value={formData.schoolCode}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.schoolCode
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter School Code"
 //                     />
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         Organization Name{" "}
@@ -2185,8 +952,12 @@
 
 //                     <select
 //                       name="organizationName"
-//                       value={formData.organizationName}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.organizationName
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
 //                       <option value="">
@@ -2202,6 +973,7 @@
 //                 <div className="row mt-3">
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         Address Line 1{" "}
@@ -2214,29 +986,41 @@
 //                     <input
 //                       type="text"
 //                       name="addressLine1"
-//                       value={formData.addressLine1}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.addressLine1
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter address line 1"
 //                     />
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
-//                       <h6>Address Line 2</h6>
+//                       <h6>
+//                         Address Line 2
+//                       </h6>
 //                     </label>
 
 //                     <input
 //                       type="text"
 //                       name="addressLine2"
-//                       value={formData.addressLine2}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.addressLine2
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter address line 2"
 //                     />
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         City{" "}
@@ -2249,8 +1033,12 @@
 //                     <input
 //                       type="text"
 //                       name="city"
-//                       value={formData.city}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.city
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter city"
 //                     />
@@ -2263,6 +1051,7 @@
 //                 <div className="row mt-3">
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         State{" "}
@@ -2274,52 +1063,68 @@
 
 //                     <select
 //                       name="state"
-//                       value={formData.state}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.state
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
 //                       <option value="">
 //                         Select State
 //                       </option>
 
-//                       {indianStates.map((state) => (
-//                         <option
-//                           key={state}
-//                           value={state}
-//                         >
-//                           {state}
-//                         </option>
-//                       ))}
+//                       {indianStates.map(
+//                         (state) => (
+//                           <option
+//                             key={state}
+//                             value={state}
+//                           >
+//                             {state}
+//                           </option>
+//                         )
+//                       )}
 //                     </select>
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
-//                       <h6>Country</h6>
+//                       <h6>
+//                         Country
+//                       </h6>
 //                     </label>
 
 //                     <select
 //                       name="country"
-//                       value={formData.country}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.country
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
 //                       <option value="">
 //                         Select Country
 //                       </option>
 
-//                       {countries.map((country) => (
-//                         <option
-//                           key={country}
-//                           value={country}
-//                         >
-//                           {country}
-//                         </option>
-//                       ))}
+//                       {countries.map(
+//                         (country) => (
+//                           <option
+//                             key={country}
+//                             value={country}
+//                           >
+//                             {country}
+//                           </option>
+//                         )
+//                       )}
 //                     </select>
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
 //                       <h6>
 //                         Pincode{" "}
@@ -2332,8 +1137,12 @@
 //                     <input
 //                       type="text"
 //                       name="pincode"
-//                       value={formData.pincode}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.pincode
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter pincode"
 //                     />
@@ -2348,18 +1157,51 @@
 //           {/* SCHOOL LOGO */}
 
 //           <div className="col-12 col-md-4 col-lg-4">
+
 //             <div className="card bg-white shadow rounded-3 p-3 h-100">
 
 //               <div className="card-header bg-white border-0">
-//                 <strong>School Logo</strong>
+
+//                 <strong>
+//                   School Logo
+//                 </strong>
 
 //                 <p className="mt-2 text-muted">
-//                   Upload school logo
-//                   (JPG, PNG, SVG - Max 2MB)
+//                   {isEditMode
+//                     ? "Update school logo (optional)"
+//                     : "Upload school logo (JPG, PNG, SVG - Max 2MB)"}
 //                 </p>
 //               </div>
 
 //               <div className="card-body">
+
+//                 {/* EXISTING LOGO */}
+
+//                 {existingLogo &&
+//                   !selectedFile && (
+//                     <div className="text-center mb-3">
+
+//                       <img
+//                         src={existingLogo}
+//                         alt="School Logo"
+//                         style={{
+//                           width: "100px",
+//                           height: "100px",
+//                           objectFit: "contain",
+//                           border: "1px solid #dee2e6",
+//                           borderRadius: "10px",
+//                           padding: "5px",
+//                         }}
+//                       />
+
+//                       <div className="small text-muted mt-2">
+//                         Current Logo
+//                       </div>
+
+//                     </div>
+//                   )}
+
+//                 {/* UPLOAD */}
 
 //                 <div className="custom-upload-box">
 
@@ -2368,6 +1210,7 @@
 //                   </div>
 
 //                   <div className="fw-semibold">
+
 //                     <span className="text-primary">
 //                       Click to upload{" "}
 //                     </span>
@@ -2375,17 +1218,21 @@
 //                     <span className="text-muted small">
 //                       or drag and drop
 //                     </span>
+
 //                   </div>
 
 //                   <div className="text-muted small">
-//                     Recommended size: 200 × 200 px
+//                     Recommended size:
+//                     {" "}200 × 200 px
 //                   </div>
 
 //                   <input
 //                     type="file"
 //                     accept="image/png,image/jpeg,image/jpg,image/svg+xml"
 //                     className="custom-file-input"
-//                     onChange={handleFileChange}
+//                     onChange={
+//                       handleFileChange
+//                     }
 //                   />
 
 //                 </div>
@@ -2408,24 +1255,32 @@
 //       ====================================================== */}
 
 //       <div className="ms-2 me-2 mt-2 p-1">
+
 //         <div className="row g-3 align-items-stretch">
 
 //           {/* CONTACT */}
 
 //           <div className="col-12 col-md-7 col-lg-7">
+
 //             <div className="card bg-white shadow rounded-3 p-2 h-100">
 
 //               <div className="card-header bg-white border-0">
+
 //                 <strong>
+
 //                   <span className="p-1 rounded-5 bg-primary me-2">
+
 //                     <FaPhone
 //                       size={20}
 //                       className="text-white"
 //                     />
+
 //                   </span>
 
 //                   Contact Information
+
 //                 </strong>
+
 //               </div>
 
 //               <div className="card-body">
@@ -2433,63 +1288,93 @@
 //                 <div className="row">
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Contact Person Name{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="text"
 //                       name="contactPersonName"
-//                       value={formData.contactPersonName}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.contactPersonName
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter contact person name"
 //                     />
+
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Designation{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="text"
 //                       name="designation"
-//                       value={formData.designation}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.designation
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter Designation"
 //                     />
+
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Email{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="email"
 //                       name="email"
-//                       value={formData.email}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.email
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter Email"
 //                     />
+
 //                   </div>
 
 //                 </div>
@@ -2497,38 +1382,58 @@
 //                 <div className="row mt-3">
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Phone Number{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="text"
 //                       name="phoneNumber"
-//                       value={formData.phoneNumber}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.phoneNumber
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter phone number"
 //                     />
+
 //                   </div>
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
-//                       <h6>Alternate Phone</h6>
+
+//                       <h6>
+//                         Alternate Phone
+//                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="text"
 //                       name="alternatePhone"
-//                       value={formData.alternatePhone}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.alternatePhone
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter alternate phone"
 //                     />
+
 //                   </div>
 
 //                 </div>
@@ -2540,17 +1445,24 @@
 //           {/* ACADEMIC */}
 
 //           <div className="col-12 col-md-5 col-lg-5">
+
 //             <div className="card bg-white shadow rounded-3 p-3 h-100">
 
 //               <div className="card-header bg-white border-0">
+
 //                 <span className="p-1 rounded-5 bg-primary me-2">
+
 //                   <HiAcademicCap
 //                     size={20}
 //                     className="text-white"
 //                   />
+
 //                 </span>
 
-//                 <strong>Academic Information</strong>
+//                 <strong>
+//                   Academic Information
+//                 </strong>
+
 //               </div>
 
 //               <div className="card-body">
@@ -2558,13 +1470,18 @@
 //                 <div className="row">
 
 //                   <div className="col-12 col-md-6">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Academic Sess Start Month{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
@@ -2572,9 +1489,12 @@
 //                       value={
 //                         formData.academicSessionStartMonth
 //                       }
-//                       onChange={handleChange}
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select start month
 //                       </option>
@@ -2594,17 +1514,24 @@
 //                       <option value="JULY">
 //                         July
 //                       </option>
+
 //                     </select>
+
 //                   </div>
 
 //                   <div className="col-12 col-md-6">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Academic Session Format{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
@@ -2612,9 +1539,12 @@
 //                       value={
 //                         formData.academicSessionFormat
 //                       }
-//                       onChange={handleChange}
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select format
 //                       </option>
@@ -2626,7 +1556,9 @@
 //                       <option value="YYYY-YY">
 //                         2026-27
 //                       </option>
+
 //                     </select>
+
 //                   </div>
 
 //                 </div>
@@ -2634,21 +1566,31 @@
 //                 <div className="row mt-3">
 
 //                   <div className="col-12 col-md-6">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Default Language{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="defaultLanguage"
-//                       value={formData.defaultLanguage}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.defaultLanguage
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select language
 //                       </option>
@@ -2660,25 +1602,37 @@
 //                       <option value="HINDI">
 //                         Hindi
 //                       </option>
+
 //                     </select>
+
 //                   </div>
 
 //                   <div className="col-12 col-md-6">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Currency{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="currency"
-//                       value={formData.currency}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.currency
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select currency
 //                       </option>
@@ -2690,7 +1644,9 @@
 //                       <option value="USD">
 //                         US Dollar ($)
 //                       </option>
+
 //                     </select>
+
 //                   </div>
 
 //                 </div>
@@ -2707,24 +1663,32 @@
 //       ====================================================== */}
 
 //       <div className="ms-2 me-2 mt-2 p-1">
+
 //         <div className="row g-3 align-items-stretch">
 
 //           {/* OTHER INFORMATION */}
 
 //           <div className="col-12 col-md-7 col-lg-7">
+
 //             <div className="card bg-white shadow rounded-3 p-2 h-100">
 
 //               <div className="card-header bg-white border-0">
+
 //                 <strong>
+
 //                   <span className="p-1 rounded-5 bg-primary me-2">
+
 //                     <MdErrorOutline
 //                       size={20}
 //                       className="text-white"
 //                     />
+
 //                   </span>
 
 //                   Other Information
+
 //                 </strong>
+
 //               </div>
 
 //               <div className="card-body">
@@ -2734,100 +1698,142 @@
 //                   {/* SCHOOL TYPE */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         School Type{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="schoolType"
-//                       value={formData.schoolType}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.schoolType
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select Type
 //                       </option>
 
-//                       {schoolType.map((item) => (
-//                         <option
-//                           key={item}
-//                           value={item}
-//                         >
-//                           {item}
-//                         </option>
-//                       ))}
+//                       {schoolType.map(
+//                         (item) => (
+//                           <option
+//                             key={item}
+//                             value={item}
+//                           >
+//                             {item}
+//                           </option>
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </div>
 
 //                   {/* CATEGORY */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         School Category{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="schoolCategory"
-//                       value={formData.schoolCategory}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.schoolCategory
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select Category
 //                       </option>
 
-//                       {schoolCategory.map((item) => (
-//                         <option
-//                           key={item}
-//                           value={item}
-//                         >
-//                           {item}
-//                         </option>
-//                       ))}
+//                       {schoolCategory.map(
+//                         (item) => (
+//                           <option
+//                             key={item}
+//                             value={item}
+//                           >
+//                             {item}
+//                           </option>
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </div>
 
 //                   {/* BOARD */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Affiliation Board{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="affiliationBoard"
-//                       value={formData.affiliationBoard}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.affiliationBoard
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select Affiliation
 //                       </option>
 
-//                       {affiliationBoard.map((item) => (
-//                         <option
-//                           key={item}
-//                           value={item}
-//                         >
-//                           {item}
-//                         </option>
-//                       ))}
+//                       {affiliationBoard.map(
+//                         (item) => (
+//                           <option
+//                             key={item}
+//                             value={item}
+//                           >
+//                             {item}
+//                           </option>
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </div>
 
 //                 </div>
@@ -2839,21 +1845,31 @@
 //                   {/* YEAR */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Established Year{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <select
 //                       name="establishedYear"
-//                       value={formData.establishedYear}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.establishedYear
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
+
 //                       <option value="">
 //                         Select Established Year
 //                       </option>
@@ -2866,7 +1882,8 @@
 //                             1,
 //                         },
 //                         (_, i) =>
-//                           new Date().getFullYear() - i
+//                           new Date().getFullYear() -
+//                           i
 //                       ).map((year) => (
 //                         <option
 //                           key={year}
@@ -2875,45 +1892,63 @@
 //                           {year}
 //                         </option>
 //                       ))}
+
 //                     </select>
+
 //                   </div>
 
 //                   {/* TOTAL CLASSES */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Total Classes (approx)
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="number"
 //                       name="totalClasses"
-//                       value={formData.totalClasses}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.totalClasses
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter total classes"
 //                     />
+
 //                   </div>
 
 //                   {/* TOTAL STUDENTS */}
 
 //                   <div className="col-12 col-md-4">
+
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Total Students (approx)
 //                       </h6>
+
 //                     </label>
 
 //                     <input
 //                       type="number"
 //                       name="totalStudents"
-//                       value={formData.totalStudents}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.totalStudents
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter total students"
 //                     />
+
 //                   </div>
 
 //                 </div>
@@ -2923,18 +1958,28 @@
 //                 <div className="row mt-3">
 
 //                   <div className="col-12">
+
 //                     <label className="form-label">
-//                       <h6>Description</h6>
+
+//                       <h6>
+//                         Description
+//                       </h6>
+
 //                     </label>
 
 //                     <textarea
 //                       name="description"
-//                       value={formData.description}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.description
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-control"
 //                       placeholder="Enter school description"
 //                       rows="4"
 //                     />
+
 //                   </div>
 
 //                 </div>
@@ -2946,19 +1991,24 @@
 //           {/* SETTINGS */}
 
 //           <div className="col-12 col-md-5 col-lg-5">
+
 //             <div className="card bg-white shadow rounded-3 p-3 h-100">
 
 //               <div className="card-header bg-white border-0">
+
 //                 <span className="p-1 rounded-5 bg-primary me-2">
+
 //                   <IoMdSettings
 //                     size={20}
 //                     className="text-white"
 //                   />
+
 //                 </span>
 
 //                 <strong>
 //                   Status & Settings
 //                 </strong>
+
 //               </div>
 
 //               <div className="card-body">
@@ -2970,12 +2020,16 @@
 //                   <div className="col-12 col-md-6">
 
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Status{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <div className="d-flex align-items-center gap-2">
@@ -2988,8 +2042,12 @@
 //                           role="switch"
 //                           id="schoolStatus"
 //                           name="status"
-//                           checked={formData.status}
-//                           onChange={handleSwitchChange}
+//                           checked={
+//                             formData.status
+//                           }
+//                           onChange={
+//                             handleSwitchChange
+//                           }
 //                         />
 
 //                       </div>
@@ -3012,12 +2070,16 @@
 //                   <div className="col-12 col-md-6">
 
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Allow Parent Login{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <div className="d-flex align-items-center gap-2">
@@ -3062,12 +2124,16 @@
 //                   <div className="col-12 col-md-6">
 
 //                     <label className="form-label">
+
 //                       <h6>
 //                         Allow Student Login{" "}
+
 //                         <span className="text-danger">
 //                           *
 //                         </span>
+
 //                       </h6>
+
 //                     </label>
 
 //                     <div className="d-flex align-items-center gap-2">
@@ -3112,16 +2178,23 @@
 //                   <div className="col-12 col-md-6">
 
 //                     <label className="form-label">
+
 //                       Time Zone{" "}
+
 //                       <span className="text-danger">
 //                         *
 //                       </span>
+
 //                     </label>
 
 //                     <select
 //                       name="timeZone"
-//                       value={formData.timeZone}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.timeZone
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
 
@@ -3161,8 +2234,12 @@
 
 //                     <select
 //                       name="dateFormat"
-//                       value={formData.dateFormat}
-//                       onChange={handleChange}
+//                       value={
+//                         formData.dateFormat
+//                       }
+//                       onChange={
+//                         handleChange
+//                       }
 //                       className="form-select"
 //                     >
 
@@ -3207,6 +2284,7 @@
 //             type="button"
 //             className="btn btn-outline-primary"
 //             onClick={handleReset}
+//             disabled={saving}
 //           >
 //             Reset
 //           </button>
@@ -3214,13 +2292,21 @@
 //           <button
 //             type="button"
 //             className="btn btn-success"
-//             onClick={handleCreateSchool}
+//             onClick={handleSaveSchool}
+//             disabled={
+//               saving || loadingSchool
+//             }
 //           >
-//             Create School
+
+//             {saving
+//               ? "Saving..."
+//               : isEditMode
+//                 ? "Update School"
+//                 : "Create School"}
+
 //           </button>
 
 //         </div>
-
 //       </div>
 
 //       {/* =====================================================
@@ -3284,21 +2370,26 @@
 
 // export default SchoolAddForm;
 
+
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { IoReturnDownBackOutline } from "react-icons/io5";
 import {
-  MdErrorOutline,
+  
+  IoMdSettings,
+} from "react-icons/io";
+import {
   MdOutlineMedicalInformation,
+  MdErrorOutline,
 } from "react-icons/md";
 import { BiSolidSchool } from "react-icons/bi";
-import { FaPhone } from "react-icons/fa";
+import { FaPhone, FaSave, FaCheckCircle } from "react-icons/fa";
 import { HiAcademicCap } from "react-icons/hi2";
-import { IoMdSettings } from "react-icons/io";
 
 import useMasters from "../../hooks/useMasters";
+import { IoReturnDownBackOutline } from "react-icons/io5";
 
 const SchoolAddForm = () => {
   const {
@@ -3310,10 +2401,6 @@ const SchoolAddForm = () => {
   const { schoolId } = useParams();
   const navigate = useNavigate();
 
-  // =========================================================
-  // CREATE / EDIT MODE
-  // =========================================================
-
   const isEditMode = Boolean(schoolId);
 
   // =========================================================
@@ -3321,24 +2408,19 @@ const SchoolAddForm = () => {
   // =========================================================
 
   const [selectedFile, setSelectedFile] = useState(null);
-
   const [existingLogo, setExistingLogo] = useState(null);
-
   const [loadingSchool, setLoadingSchool] = useState(false);
-
   const [saving, setSaving] = useState(false);
 
   // =========================================================
-  // FORM DATA
+  // INITIAL FORM
   // =========================================================
 
   const initialFormData = {
-    // Basic Information
     schoolName: "",
     schoolCode: "",
     organizationName: "",
 
-    // Address
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -3346,20 +2428,17 @@ const SchoolAddForm = () => {
     country: "India",
     pincode: "",
 
-    // Contact
     contactPersonName: "",
     designation: "",
     email: "",
     phoneNumber: "",
     alternatePhone: "",
 
-    // Academic
     academicSessionStartMonth: "",
     academicSessionFormat: "",
     defaultLanguage: "",
     currency: "",
 
-    // Other
     schoolType: "",
     schoolCategory: "",
     affiliationBoard: "",
@@ -3368,12 +2447,10 @@ const SchoolAddForm = () => {
     totalStudents: "",
     description: "",
 
-    // Settings
     status: true,
     allowParentLogin: true,
     allowStudentLogin: true,
 
-    // Localization
     timeZone: "Asia/Kolkata",
     dateFormat: "dd-MM-yyyy",
   };
@@ -3398,7 +2475,7 @@ const SchoolAddForm = () => {
   ];
 
   // =========================================================
-  // INDIAN STATES + UT
+  // STATES
   // =========================================================
 
   const indianStates = [
@@ -3430,7 +2507,6 @@ const SchoolAddForm = () => {
     "Uttar Pradesh",
     "Uttarakhand",
     "West Bengal",
-
     "Andaman and Nicobar Islands",
     "Chandigarh",
     "Dadra and Nagar Haveli and Daman and Diu",
@@ -3442,13 +2518,11 @@ const SchoolAddForm = () => {
   ];
 
   // =========================================================
-  // FETCH SCHOOL FOR EDIT
+  // FETCH SCHOOL
   // =========================================================
 
   useEffect(() => {
-    if (!schoolId) {
-      return;
-    }
+    if (!schoolId) return;
 
     const fetchSchool = async () => {
       try {
@@ -3472,11 +2546,7 @@ const SchoolAddForm = () => {
 
         const school = response.data;
 
-        console.log("School data for edit:", school);
-
-        // =====================================================
-        // EXISTING LOGO
-        // =====================================================
+        console.log("School data:", school);
 
         setExistingLogo(
           school.logoUrl ||
@@ -3485,52 +2555,27 @@ const SchoolAddForm = () => {
             null
         );
 
-        // =====================================================
-        // SET FORM DATA
-        // =====================================================
-
         setFormData({
           schoolName: school.schoolName || "",
-
           schoolCode: school.schoolCode || "",
+          organizationName: school.organizationName || "",
 
-          organizationName:
-            school.organizationName || "",
-
-          addressLine1:
-            school.addressLine1 || "",
-
-          addressLine2:
-            school.addressLine2 || "",
-
-          city:
-            school.city || "",
-
-          state:
-            school.state || "",
-
-          country:
-            school.country || "India",
-
-          pincode:
-            school.pincode || "",
+          addressLine1: school.addressLine1 || "",
+          addressLine2: school.addressLine2 || "",
+          city: school.city || "",
+          state: school.state || "",
+          country: school.country || "India",
+          pincode: school.pincode || "",
 
           contactPersonName:
             school.contactPerson ||
             school.contactPersonName ||
             "",
 
-          designation:
-            school.designation || "",
-
-          email:
-            school.email || "",
-
-          phoneNumber:
-            school.phoneNumber || "",
-
-          alternatePhone:
-            school.alternatePhone || "",
+          designation: school.designation || "",
+          email: school.email || "",
+          phoneNumber: school.phoneNumber || "",
+          alternatePhone: school.alternatePhone || "",
 
           academicSessionStartMonth:
             school.academicSessionStartMonth || "",
@@ -3541,17 +2586,11 @@ const SchoolAddForm = () => {
           defaultLanguage:
             school.defaultLanguage || "",
 
-          currency:
-            school.currency || "",
+          currency: school.currency || "",
 
-          schoolType:
-            school.schoolType || "",
-
-          schoolCategory:
-            school.schoolCategory || "",
-
-          affiliationBoard:
-            school.affiliationBoard || "",
+          schoolType: school.schoolType || "",
+          schoolCategory: school.schoolCategory || "",
+          affiliationBoard: school.affiliationBoard || "",
 
           establishedYear:
             school.establishedYear || "",
@@ -3583,10 +2622,7 @@ const SchoolAddForm = () => {
             school.dateFormat || "dd-MM-yyyy",
         });
       } catch (error) {
-        console.error(
-          "Fetch school error:",
-          error
-        );
+        console.error("Fetch school error:", error);
 
         alert(
           error.response?.data?.message ||
@@ -3601,7 +2637,7 @@ const SchoolAddForm = () => {
   }, [schoolId]);
 
   // =========================================================
-  // HANDLE INPUT
+  // INPUT CHANGE
   // =========================================================
 
   const handleChange = (e) => {
@@ -3614,7 +2650,7 @@ const SchoolAddForm = () => {
   };
 
   // =========================================================
-  // HANDLE SWITCH
+  // SWITCH
   // =========================================================
 
   const handleSwitchChange = (e) => {
@@ -3627,7 +2663,7 @@ const SchoolAddForm = () => {
   };
 
   // =========================================================
-  // FILE CHANGE
+  // FILE
   // =========================================================
 
   const handleFileChange = (e) => {
@@ -3635,13 +2671,11 @@ const SchoolAddForm = () => {
 
     if (!file) return;
 
-    // 2MB validation
     if (file.size > 2 * 1024 * 1024) {
       alert("Logo size must be less than 2MB.");
       return;
     }
 
-    // Image validation
     const allowedTypes = [
       "image/png",
       "image/jpeg",
@@ -3650,9 +2684,7 @@ const SchoolAddForm = () => {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      alert(
-        "Only JPG, PNG or SVG files are allowed."
-      );
+      alert("Only JPG, PNG or SVG files are allowed.");
       return;
     }
 
@@ -3664,17 +2696,13 @@ const SchoolAddForm = () => {
   // =========================================================
 
   const handleReset = () => {
-    // Edit mode me reload karke original data
-    // dobara load karenge
     if (isEditMode) {
       window.location.reload();
       return;
     }
 
     setFormData(initialFormData);
-
     setSelectedFile(null);
-
     setExistingLogo(null);
   };
 
@@ -3714,9 +2742,7 @@ const SchoolAddForm = () => {
     }
 
     if (!formData.contactPersonName.trim()) {
-      alert(
-        "Contact person name is required."
-      );
+      alert("Contact person name is required.");
       return false;
     }
 
@@ -3736,23 +2762,17 @@ const SchoolAddForm = () => {
     }
 
     if (!formData.academicSessionStartMonth) {
-      alert(
-        "Please select academic session start month."
-      );
+      alert("Please select academic session start month.");
       return false;
     }
 
     if (!formData.academicSessionFormat) {
-      alert(
-        "Please select academic session format."
-      );
+      alert("Please select academic session format.");
       return false;
     }
 
     if (!formData.defaultLanguage) {
-      alert(
-        "Please select default language."
-      );
+      alert("Please select default language.");
       return false;
     }
 
@@ -3767,23 +2787,17 @@ const SchoolAddForm = () => {
     }
 
     if (!formData.schoolCategory) {
-      alert(
-        "Please select school category."
-      );
+      alert("Please select school category.");
       return false;
     }
 
     if (!formData.affiliationBoard) {
-      alert(
-        "Please select affiliation board."
-      );
+      alert("Please select affiliation board.");
       return false;
     }
 
     if (!formData.establishedYear) {
-      alert(
-        "Please select established year."
-      );
+      alert("Please select established year.");
       return false;
     }
 
@@ -3791,7 +2805,7 @@ const SchoolAddForm = () => {
   };
 
   // =========================================================
-  // CREATE / UPDATE SCHOOL
+  // SAVE
   // =========================================================
 
   const handleSaveSchool = async () => {
@@ -3803,62 +2817,27 @@ const SchoolAddForm = () => {
         return;
       }
 
-      // =====================================================
-      // VALIDATION
-      // =====================================================
-
-      if (!validateForm()) {
-        return;
-      }
+      if (!validateForm()) return;
 
       setSaving(true);
 
-      // =====================================================
-      // SCHOOL OBJECT
-      // =====================================================
-
       const schoolData = {
-        schoolName:
-          formData.schoolName.trim(),
+        schoolName: formData.schoolName.trim(),
+        schoolCode: formData.schoolCode.trim(),
+        organizationName: formData.organizationName || null,
 
-        schoolCode:
-          formData.schoolCode.trim(),
+        addressLine1: formData.addressLine1.trim(),
+        addressLine2: formData.addressLine2 || null,
+        city: formData.city.trim(),
+        state: formData.state,
+        country: formData.country,
+        pincode: formData.pincode.trim(),
 
-        organizationName:
-          formData.organizationName || null,
-
-        addressLine1:
-          formData.addressLine1.trim(),
-
-        addressLine2:
-          formData.addressLine2 || null,
-
-        city:
-          formData.city.trim(),
-
-        state:
-          formData.state,
-
-        country:
-          formData.country,
-
-        pincode:
-          formData.pincode.trim(),
-
-        contactPerson:
-          formData.contactPersonName.trim(),
-
-        designation:
-          formData.designation.trim(),
-
-        email:
-          formData.email.trim(),
-
-        phoneNumber:
-          formData.phoneNumber.trim(),
-
-        alternatePhone:
-          formData.alternatePhone || null,
+        contactPerson: formData.contactPersonName.trim(),
+        designation: formData.designation.trim(),
+        email: formData.email.trim(),
+        phoneNumber: formData.phoneNumber.trim(),
+        alternatePhone: formData.alternatePhone || null,
 
         academicSessionStartMonth:
           formData.academicSessionStartMonth,
@@ -3869,62 +2848,35 @@ const SchoolAddForm = () => {
         defaultLanguage:
           formData.defaultLanguage,
 
-        currency:
-          formData.currency,
+        currency: formData.currency,
 
-        schoolType:
-          formData.schoolType,
+        schoolType: formData.schoolType,
+        schoolCategory: formData.schoolCategory,
+        affiliationBoard: formData.affiliationBoard,
 
-        schoolCategory:
-          formData.schoolCategory,
+        establishedYear: formData.establishedYear,
 
-        affiliationBoard:
-          formData.affiliationBoard,
+        totalClasses: formData.totalClasses
+          ? Number(formData.totalClasses)
+          : null,
 
-        establishedYear:
-          formData.establishedYear,
+        totalStudents: formData.totalStudents
+          ? Number(formData.totalStudents)
+          : null,
 
-        totalClasses:
-          formData.totalClasses
-            ? Number(formData.totalClasses)
-            : null,
+        description: formData.description || null,
 
-        totalStudents:
-          formData.totalStudents
-            ? Number(formData.totalStudents)
-            : null,
-
-        description:
-          formData.description || null,
-
-        active:
-          Boolean(formData.status),
+        active: Boolean(formData.status),
 
         allowParentLogin:
-          Boolean(
-            formData.allowParentLogin
-          ),
+          Boolean(formData.allowParentLogin),
 
         allowStudentLogin:
-          Boolean(
-            formData.allowStudentLogin
-          ),
+          Boolean(formData.allowStudentLogin),
 
-        timeZone:
-          formData.timeZone,
-
-        dateFormat:
-          formData.dateFormat,
+        timeZone: formData.timeZone,
+        dateFormat: formData.dateFormat,
       };
-
-      console.log(
-        "School Data:",
-        schoolData
-      );
-
-      // =====================================================
-      // MULTIPART DATA
-      // =====================================================
 
       const data = new FormData();
 
@@ -3938,33 +2890,13 @@ const SchoolAddForm = () => {
         )
       );
 
-      // =====================================================
-      // LOGO
-      // =====================================================
-
       if (selectedFile) {
-        data.append(
-          "attachment",
-          selectedFile
-        );
+        data.append("attachment", selectedFile);
       }
-
-      console.log(
-        "Selected Logo:",
-        selectedFile
-      );
-
-      // =====================================================
-      // API CALL
-      // =====================================================
 
       let response;
 
       if (isEditMode) {
-        // ===================================================
-        // UPDATE
-        // ===================================================
-
         response = await axios.put(
           `http://localhost:8080/api/school/update/${schoolId}`,
           data,
@@ -3975,10 +2907,6 @@ const SchoolAddForm = () => {
           }
         );
       } else {
-        // ===================================================
-        // CREATE
-        // ===================================================
-
         response = await axios.post(
           "http://localhost:8080/api/school/add",
           data,
@@ -3990,16 +2918,7 @@ const SchoolAddForm = () => {
         );
       }
 
-      console.log(
-        isEditMode
-          ? "School Updated Successfully:"
-          : "School Created Successfully:",
-        response.data
-      );
-
-      // =====================================================
-      // SUCCESS
-      // =====================================================
+      console.log("School response:", response.data);
 
       alert(
         isEditMode
@@ -4007,20 +2926,9 @@ const SchoolAddForm = () => {
           : "School created successfully!"
       );
 
-      // School list par redirect
       navigate("/school-list");
     } catch (error) {
-      console.error(
-        isEditMode
-          ? "Update School Error:"
-          : "Create School Error:",
-        error
-      );
-
-      console.error(
-        "Backend Response:",
-        error.response?.data
-      );
+      console.error("School save error:", error);
 
       alert(
         error.response?.data?.message ||
@@ -4034,1526 +2942,1080 @@ const SchoolAddForm = () => {
   };
 
   // =========================================================
-  // LOADING SCREEN
+  // LOADING
   // =========================================================
 
   if (isEditMode && loadingSchool) {
     return (
-      <div className="container-fluid">
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "500px" }}
-        >
-          <div className="text-center">
-            <div
-              className="spinner-border text-primary"
-              role="status"
-            ></div>
-
-            <div className="mt-3 text-muted">
-              Loading school details...
-            </div>
-          </div>
+      <div className="school-page">
+        <div className="school-loading">
+          <div className="spinner-border text-primary" />
+          <p className="mt-3 text-muted">
+            Loading school details...
+          </p>
         </div>
       </div>
     );
   }
 
+  // =========================================================
+  // SMALL COMPONENT
+  // =========================================================
+
+  const SectionHeader = ({
+    icon,
+    title,
+    description,
+  }) => (
+    <div className="section-header">
+      <div className="section-icon">
+        {icon}
+      </div>
+
+      <div>
+        <h6 className="section-title">
+          {title}
+        </h6>
+
+        {description && (
+          <small className="section-description">
+            {description}
+          </small>
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <>
+    <div className="school-page ">
+
       {/* =====================================================
-          HEADER
+          PAGE HEADER
       ====================================================== */}
 
-      <div
-        className="row shadow align-items-center p-3"
-        style={{
-          backgroundColor: "white",
-          margin: "10px",
-          minHeight: "70px",
-          borderRadius: "5px",
-          color: "black",
-        }}
-      >
-        {/* LEFT */}
+      {/* =====================================================
+    MODERN PAGE HEADER
+===================================================== */}
 
-        <div className="col">
-          <h6 className="mb-1">
-            {isEditMode
-              ? "Update School"
-              : "Create New School"}
-          </h6>
+<div className="mx-2 mt-2 mb-3">
+  <div
+    className="rounded-4 shadow overflow-hidden"
+    style={{
+      background:
+        "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+      border: "1px solid #dbeafe",
+    }}
+  >
+    <div className="p-3 p-md-4">
+      <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
 
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item">
-                <a
-                  href="/"
-                  style={{
-                    textDecoration: "none",
-                    color: "black",
-                  }}
-                >
-                  <small>
-                    Dashboard
-                  </small>
-                </a>
-              </li>
+        {/* LEFT SIDE */}
+        <div className="d-flex align-items-center gap-3">
 
-              <li className="breadcrumb-item">
-                <small>
-                  Organization Management
-                </small>
-              </li>
+          {/* ICON */}
+          <div
+            className="d-flex align-items-center justify-content-center rounded-3"
+            style={{
+              width: "52px",
+              height: "52px",
+              background:
+                "linear-gradient(135deg,#2563eb,#3b82f6)",
+              color: "#fff",
+              boxShadow:
+                "0 8px 20px rgba(37,99,235,.22)",
+              flexShrink: 0,
+            }}
+          >
+            <BiSolidSchool size={27} />
+          </div>
 
-              <li className="breadcrumb-item">
-                <small>
-                  School List
-                </small>
-              </li>
+          {/* TITLE */}
+          <div>
+            <h5 className="mb-1 fw-bold text-dark">
+              {isEditMode
+                ? "Update School"
+                : "Create New School"}
+            </h5>
 
-              <li className="breadcrumb-item active">
-                <small>
-                  {isEditMode
-                    ? "Update School"
-                    : "Create New School"}
-                </small>
-              </li>
-            </ol>
-          </nav>
+            <div className="text-muted small">
+              Organization Management &nbsp;/&nbsp; School
+            </div>
+          </div>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT BADGE */}
+        <div className="d-flex align-items-center gap-2">
 
-        <div className="col-auto">
-          <button
-            type="button"
-            className="btn btn-outline-primary"
-            onClick={() =>
-              navigate("/school-list")
-            }
+          <span
+            className="badge rounded-pill px-3 py-2"
+            style={{
+              backgroundColor: "#eff6ff",
+              color: "#2563eb",
+              border: "1px solid #bfdbfe",
+              fontSize: "13px",
+            }}
           >
-            <IoReturnDownBackOutline
+            <BiSolidSchool className="me-1" />
+
+            {isEditMode
+              ? "Update School"
+              : "New School"}
+          </span>
+
+        </div>
+      </div>
+    </div>
+
+    {/* BOTTOM BREADCRUMB */}
+    <div
+      className="px-4 py-2"
+      style={{
+        backgroundColor: "rgba(239,246,255,.75)",
+        borderTop: "1px solid #e0ecff",
+      }}
+    >
+      <small className="text-muted">
+
+        <span
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/")}
+        >
+          Home
+        </span>
+
+        &nbsp;›&nbsp;
+
+        <span>
+          Organization Management
+        </span>
+
+        &nbsp;›&nbsp;
+
+        <span
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/school-list")}
+        >
+          School List
+        </span>
+
+        &nbsp;›&nbsp;
+
+        <span className="text-primary fw-semibold">
+          {isEditMode
+            ? "Update School"
+            : "Create New School"}
+        </span>
+
+      </small>
+    </div>
+  </div>
+</div>
+
+      {/* =====================================================
+          BASIC INFORMATION
+      ====================================================== */}
+
+      <div className="form-card shadow">
+
+        <SectionHeader
+          icon={
+            <MdOutlineMedicalInformation
               size={20}
             />
+          }
+          title="Basic Information"
+          description="Enter basic details of the school"
+        />
 
-            {" "}Back to School List
-          </button>
+        <div className="form-card-body">
+
+          <div className="row g-3">
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                School Name
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="schoolName"
+                value={formData.schoolName}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter school name"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                School Code
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="schoolCode"
+                value={formData.schoolCode}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter school code"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Organization Name
+              </label>
+
+              <select
+                name="organizationName"
+                value={formData.organizationName}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select Organization
+                </option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Address Line 1
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="addressLine1"
+                value={formData.addressLine1}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter address line 1"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Address Line 2
+              </label>
+
+              <input
+                type="text"
+                name="addressLine2"
+                value={formData.addressLine2}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter address line 2"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                City
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter city"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                State
+                <span>*</span>
+              </label>
+
+              <select
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select State
+                </option>
+
+                {indianStates.map((state) => (
+                  <option
+                    key={state}
+                    value={state}
+                  >
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Country
+              </label>
+
+              <select
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                {countries.map((country) => (
+                  <option
+                    key={country}
+                    value={country}
+                  >
+                    {country}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Pincode
+                <span>*</span>
+              </label>
+
+              <input
+                type="text"
+                name="pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter pincode"
+              />
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* =====================================================
-          BASIC INFORMATION + LOGO
+          LOGO + CONTACT
       ====================================================== */}
 
-      <div className="ms-2 me-2 mt-4 p-1">
-        <div className="row g-3 align-items-stretch">
+      <div className="row g-3 mt-0">
 
-          {/* BASIC INFORMATION */}
+        {/* LOGO */}
 
-          <div className="col-12 col-md-8 col-lg-8">
-            <div className="card bg-white shadow rounded-3 p-2 h-100">
+        <div className="col-12 col-lg-4">
 
-              <div className="card-header bg-white border-0">
-                <strong>
+          <div className="form-card h-100">
 
-                  <span className="p-1 rounded-5 bg-primary me-2">
-                    <MdOutlineMedicalInformation
-                      size={20}
-                      className="text-white"
-                    />
-                  </span>
+            <div className="form-card-inner">
 
-                  Basic Information
-                </strong>
-              </div>
+              <SectionHeader
+                icon={
+                  <BiSolidSchool size={20} />
+                }
+                title="School Logo"
+                description="Upload school logo"
+              />
 
-              <div className="card-body">
-
-                {/* ROW 1 */}
-
-                <div className="row">
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        School Name{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="schoolName"
-                      value={
-                        formData.schoolName
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter school name"
-                    />
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        School Code{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="schoolCode"
-                      value={
-                        formData.schoolCode
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter School Code"
-                    />
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        Organization Name{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <select
-                      name="organizationName"
-                      value={
-                        formData.organizationName
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-                      <option value="">
-                        Select Organization
-                      </option>
-                    </select>
-                  </div>
-
-                </div>
-
-                {/* ROW 2 */}
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        Address Line 1{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="addressLine1"
-                      value={
-                        formData.addressLine1
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter address line 1"
-                    />
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        Address Line 2
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="addressLine2"
-                      value={
-                        formData.addressLine2
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter address line 2"
-                    />
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        City{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="city"
-                      value={
-                        formData.city
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter city"
-                    />
-                  </div>
-
-                </div>
-
-                {/* ROW 3 */}
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        State{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <select
-                      name="state"
-                      value={
-                        formData.state
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-                      <option value="">
-                        Select State
-                      </option>
-
-                      {indianStates.map(
-                        (state) => (
-                          <option
-                            key={state}
-                            value={state}
-                          >
-                            {state}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        Country
-                      </h6>
-                    </label>
-
-                    <select
-                      name="country"
-                      value={
-                        formData.country
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-                      <option value="">
-                        Select Country
-                      </option>
-
-                      {countries.map(
-                        (country) => (
-                          <option
-                            key={country}
-                            value={country}
-                          >
-                            {country}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-                      <h6>
-                        Pincode{" "}
-                        <span className="text-danger">
-                          *
-                        </span>
-                      </h6>
-                    </label>
-
-                    <input
-                      type="text"
-                      name="pincode"
-                      value={
-                        formData.pincode
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter pincode"
-                    />
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* SCHOOL LOGO */}
-
-          <div className="col-12 col-md-4 col-lg-4">
-
-            <div className="card bg-white shadow rounded-3 p-3 h-100">
-
-              <div className="card-header bg-white border-0">
-
-                <strong>
-                  School Logo
-                </strong>
-
-                <p className="mt-2 text-muted">
-                  {isEditMode
-                    ? "Update school logo (optional)"
-                    : "Upload school logo (JPG, PNG, SVG - Max 2MB)"}
-                </p>
-              </div>
-
-              <div className="card-body">
-
-                {/* EXISTING LOGO */}
+              <div className="logo-upload-wrapper">
 
                 {existingLogo &&
                   !selectedFile && (
-                    <div className="text-center mb-3">
-
+                    <div className="current-logo">
                       <img
                         src={existingLogo}
                         alt="School Logo"
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "contain",
-                          border: "1px solid #dee2e6",
-                          borderRadius: "10px",
-                          padding: "5px",
-                        }}
                       />
 
-                      <div className="small text-muted mt-2">
+                      <span>
                         Current Logo
-                      </div>
-
+                      </span>
                     </div>
                   )}
 
-                {/* UPLOAD */}
+                <div className="upload-box">
 
-                <div className="custom-upload-box">
-
-                  <div className="upload-icon">
-                    <BiSolidSchool />
+                  <div className="upload-circle">
+                    <BiSolidSchool size={28} />
                   </div>
 
-                  <div className="fw-semibold">
+                  <h6>
+                    <span className="upload-primary">
+                      Click to upload
+                    </span>{" "}
+                    or drag and drop
+                  </h6>
 
-                    <span className="text-primary">
-                      Click to upload{" "}
-                    </span>
+                  <small>
+                    JPG, PNG or SVG
+                  </small>
 
-                    <span className="text-muted small">
-                      or drag and drop
-                    </span>
-
-                  </div>
-
-                  <div className="text-muted small">
-                    Recommended size:
-                    {" "}200 × 200 px
-                  </div>
+                  <small>
+                    Maximum size: 2MB
+                  </small>
 
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-                    className="custom-file-input"
-                    onChange={
-                      handleFileChange
-                    }
+                    onChange={handleFileChange}
                   />
-
                 </div>
 
                 {selectedFile && (
-                  <div className="mt-2 small text-success">
-                    ✓ {selectedFile.name}
+                  <div className="selected-file">
+                    <FaCheckCircle />
+                    <span>
+                      {selectedFile.name}
+                    </span>
                   </div>
                 )}
 
               </div>
             </div>
           </div>
+        </div>
 
+        {/* CONTACT */}
+
+        <div className="col-12 col-lg-8">
+
+          <div className="form-card h-100">
+
+            <SectionHeader
+              icon={
+                <FaPhone size={18} />
+              }
+              title="Contact Information"
+              description="School contact details"
+            />
+
+            <div className="form-card-body">
+
+              <div className="row g-3">
+
+                <div className="col-12 col-md-4">
+                  <label className="field-label">
+                    Contact Person Name
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    name="contactPersonName"
+                    value={
+                      formData.contactPersonName
+                    }
+                    onChange={handleChange}
+                    className="form-control theme-input"
+                    placeholder="Enter contact person"
+                  />
+                </div>
+
+                <div className="col-12 col-md-4">
+                  <label className="field-label">
+                    Designation
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    name="designation"
+                    value={formData.designation}
+                    onChange={handleChange}
+                    className="form-control theme-input"
+                    placeholder="Enter designation"
+                  />
+                </div>
+
+                <div className="col-12 col-md-4">
+                  <label className="field-label">
+                    Email
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="form-control theme-input"
+                    placeholder="Enter email"
+                  />
+                </div>
+
+                <div className="col-12 col-md-4">
+                  <label className="field-label">
+                    Phone Number
+                    <span>*</span>
+                  </label>
+
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className="form-control theme-input"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+
+                <div className="col-12 col-md-4">
+                  <label className="field-label">
+                    Alternate Phone
+                  </label>
+
+                  <input
+                    type="text"
+                    name="alternatePhone"
+                    value={formData.alternatePhone}
+                    onChange={handleChange}
+                    className="form-control theme-input"
+                    placeholder="Enter alternate phone"
+                  />
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* =====================================================
+          ACADEMIC INFORMATION
+      ====================================================== */}
+
+      <div className="form-card mt-3">
+
+        <SectionHeader
+          icon={
+            <HiAcademicCap size={21} />
+          }
+          title="Academic Information"
+          description="Configure academic session and localization"
+        />
+
+        <div className="form-card-body">
+
+          <div className="row g-3">
+
+            <div className="col-12 col-md-3">
+              <label className="field-label">
+                Academic Session Start Month
+                <span>*</span>
+              </label>
+
+              <select
+                name="academicSessionStartMonth"
+                value={
+                  formData.academicSessionStartMonth
+                }
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select month
+                </option>
+
+                <option value="JANUARY">
+                  January
+                </option>
+
+                <option value="APRIL">
+                  April
+                </option>
+
+                <option value="JUNE">
+                  June
+                </option>
+
+                <option value="JULY">
+                  July
+                </option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-3">
+              <label className="field-label">
+                Academic Session Format
+                <span>*</span>
+              </label>
+
+              <select
+                name="academicSessionFormat"
+                value={
+                  formData.academicSessionFormat
+                }
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select format
+                </option>
+
+                <option value="YYYY-YYYY">
+                  2026-2027
+                </option>
+
+                <option value="YYYY-YY">
+                  2026-27
+                </option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-3">
+              <label className="field-label">
+                Default Language
+                <span>*</span>
+              </label>
+
+              <select
+                name="defaultLanguage"
+                value={formData.defaultLanguage}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select language
+                </option>
+
+                <option value="ENGLISH">
+                  English
+                </option>
+
+                <option value="HINDI">
+                  Hindi
+                </option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-3">
+              <label className="field-label">
+                Currency
+                <span>*</span>
+              </label>
+
+              <select
+                name="currency"
+                value={formData.currency}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select currency
+                </option>
+
+                <option value="INR">
+                  Indian Rupee (₹)
+                </option>
+
+                <option value="USD">
+                  US Dollar ($)
+                </option>
+              </select>
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* =====================================================
-          CONTACT + ACADEMIC
+          OTHER INFORMATION
       ====================================================== */}
 
-      <div className="ms-2 me-2 mt-2 p-1">
+      <div className="form-card mt-3">
 
-        <div className="row g-3 align-items-stretch">
+        <SectionHeader
+          icon={
+            <MdErrorOutline size={21} />
+          }
+          title="Other Information"
+          description="Additional school information"
+        />
 
-          {/* CONTACT */}
+        <div className="form-card-body">
 
-          <div className="col-12 col-md-7 col-lg-7">
+          <div className="row g-3">
 
-            <div className="card bg-white shadow rounded-3 p-2 h-100">
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                School Type
+                <span>*</span>
+              </label>
 
-              <div className="card-header bg-white border-0">
+              <select
+                name="schoolType"
+                value={formData.schoolType}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select type
+                </option>
 
-                <strong>
-
-                  <span className="p-1 rounded-5 bg-primary me-2">
-
-                    <FaPhone
-                      size={20}
-                      className="text-white"
-                    />
-
-                  </span>
-
-                  Contact Information
-
-                </strong>
-
-              </div>
-
-              <div className="card-body">
-
-                <div className="row">
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Contact Person Name{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="text"
-                      name="contactPersonName"
-                      value={
-                        formData.contactPersonName
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter contact person name"
-                    />
-
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Designation{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="text"
-                      name="designation"
-                      value={
-                        formData.designation
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter Designation"
-                    />
-
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Email{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="email"
-                      name="email"
-                      value={
-                        formData.email
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter Email"
-                    />
-
-                  </div>
-
-                </div>
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Phone Number{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="text"
-                      name="phoneNumber"
-                      value={
-                        formData.phoneNumber
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter phone number"
-                    />
-
-                  </div>
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Alternate Phone
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="text"
-                      name="alternatePhone"
-                      value={
-                        formData.alternatePhone
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter alternate phone"
-                    />
-
-                  </div>
-
-                </div>
-
-              </div>
+                {schoolType.map((item) => (
+                  <option
+                    key={item}
+                    value={item}
+                  >
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
 
-          {/* ACADEMIC */}
-
-          <div className="col-12 col-md-5 col-lg-5">
-
-            <div className="card bg-white shadow rounded-3 p-3 h-100">
-
-              <div className="card-header bg-white border-0">
-
-                <span className="p-1 rounded-5 bg-primary me-2">
-
-                  <HiAcademicCap
-                    size={20}
-                    className="text-white"
-                  />
-
-                </span>
-
-                <strong>
-                  Academic Information
-                </strong>
-
-              </div>
-
-              <div className="card-body">
-
-                <div className="row">
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Academic Sess Start Month{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="academicSessionStartMonth"
-                      value={
-                        formData.academicSessionStartMonth
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select start month
-                      </option>
-
-                      <option value="JANUARY">
-                        January
-                      </option>
-
-                      <option value="APRIL">
-                        April
-                      </option>
-
-                      <option value="JUNE">
-                        June
-                      </option>
-
-                      <option value="JULY">
-                        July
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Academic Session Format{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="academicSessionFormat"
-                      value={
-                        formData.academicSessionFormat
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select format
-                      </option>
-
-                      <option value="YYYY-YYYY">
-                        2026-2027
-                      </option>
-
-                      <option value="YYYY-YY">
-                        2026-27
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                </div>
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Default Language{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="defaultLanguage"
-                      value={
-                        formData.defaultLanguage
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select language
-                      </option>
-
-                      <option value="ENGLISH">
-                        English
-                      </option>
-
-                      <option value="HINDI">
-                        Hindi
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Currency{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="currency"
-                      value={
-                        formData.currency
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select currency
-                      </option>
-
-                      <option value="INR">
-                        Indian Rupee (₹)
-                      </option>
-
-                      <option value="USD">
-                        US Dollar ($)
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                </div>
-
-              </div>
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                School Category
+                <span>*</span>
+              </label>
+
+              <select
+                name="schoolCategory"
+                value={formData.schoolCategory}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select category
+                </option>
+
+                {schoolCategory.map((item) => (
+                  <option
+                    key={item}
+                    value={item}
+                  >
+                    {item}
+                  </option>
+                ))}
+              </select>
             </div>
-          </div>
 
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Affiliation Board
+                <span>*</span>
+              </label>
+
+              <select
+                name="affiliationBoard"
+                value={
+                  formData.affiliationBoard
+                }
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select affiliation
+                </option>
+
+                {affiliationBoard.map((item) => (
+                  <option
+                    key={item}
+                    value={item}
+                  >
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Established Year
+                <span>*</span>
+              </label>
+
+              <select
+                name="establishedYear"
+                value={
+                  formData.establishedYear
+                }
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="">
+                  Select year
+                </option>
+
+                {Array.from(
+                  {
+                    length:
+                      new Date().getFullYear() -
+                      1980 +
+                      1,
+                  },
+                  (_, i) =>
+                    new Date().getFullYear() - i
+                ).map((year) => (
+                  <option
+                    key={year}
+                    value={year}
+                  >
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Total Classes
+              </label>
+
+              <input
+                type="number"
+                name="totalClasses"
+                value={formData.totalClasses}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter total classes"
+              />
+            </div>
+
+            <div className="col-12 col-md-4">
+              <label className="field-label">
+                Total Students
+              </label>
+
+              <input
+                type="number"
+                name="totalStudents"
+                value={formData.totalStudents}
+                onChange={handleChange}
+                className="form-control theme-input"
+                placeholder="Enter total students"
+              />
+            </div>
+
+            <div className="col-12">
+              <label className="field-label">
+                Description
+              </label>
+
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="form-control theme-input"
+                rows="4"
+                placeholder="Enter school description"
+              />
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* =====================================================
-          OTHER INFORMATION + SETTINGS
+          SETTINGS
       ====================================================== */}
 
-      <div className="ms-2 me-2 mt-2 p-1">
+      <div className="form-card mt-3">
 
-        <div className="row g-3 align-items-stretch">
+        <SectionHeader
+          icon={
+            <IoMdSettings size={21} />
+          }
+          title="Status & Settings"
+          description="Manage school access and preferences"
+        />
 
-          {/* OTHER INFORMATION */}
+        <div className="form-card-body">
 
-          <div className="col-12 col-md-7 col-lg-7">
+          <div className="row g-4">
 
-            <div className="card bg-white shadow rounded-3 p-2 h-100">
+            <div className="col-12 col-md-4">
+              <div className="setting-item">
 
-              <div className="card-header bg-white border-0">
+                <div>
+                  <h6>
+                    School Status
+                  </h6>
 
-                <strong>
-
-                  <span className="p-1 rounded-5 bg-primary me-2">
-
-                    <MdErrorOutline
-                      size={20}
-                      className="text-white"
-                    />
-
-                  </span>
-
-                  Other Information
-
-                </strong>
-
-              </div>
-
-              <div className="card-body">
-
-                <div className="row">
-
-                  {/* SCHOOL TYPE */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        School Type{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="schoolType"
-                      value={
-                        formData.schoolType
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select Type
-                      </option>
-
-                      {schoolType.map(
-                        (item) => (
-                          <option
-                            key={item}
-                            value={item}
-                          >
-                            {item}
-                          </option>
-                        )
-                      )}
-
-                    </select>
-
-                  </div>
-
-                  {/* CATEGORY */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        School Category{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="schoolCategory"
-                      value={
-                        formData.schoolCategory
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select Category
-                      </option>
-
-                      {schoolCategory.map(
-                        (item) => (
-                          <option
-                            key={item}
-                            value={item}
-                          >
-                            {item}
-                          </option>
-                        )
-                      )}
-
-                    </select>
-
-                  </div>
-
-                  {/* BOARD */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Affiliation Board{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="affiliationBoard"
-                      value={
-                        formData.affiliationBoard
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select Affiliation
-                      </option>
-
-                      {affiliationBoard.map(
-                        (item) => (
-                          <option
-                            key={item}
-                            value={item}
-                          >
-                            {item}
-                          </option>
-                        )
-                      )}
-
-                    </select>
-
-                  </div>
-
+                  <small>
+                    Enable or disable school
+                  </small>
                 </div>
 
-                {/* ROW 2 */}
-
-                <div className="row mt-3">
-
-                  {/* YEAR */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Established Year{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <select
-                      name="establishedYear"
-                      value={
-                        formData.establishedYear
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="">
-                        Select Established Year
-                      </option>
-
-                      {Array.from(
-                        {
-                          length:
-                            new Date().getFullYear() -
-                            1980 +
-                            1,
-                        },
-                        (_, i) =>
-                          new Date().getFullYear() -
-                          i
-                      ).map((year) => (
-                        <option
-                          key={year}
-                          value={year}
-                        >
-                          {year}
-                        </option>
-                      ))}
-
-                    </select>
-
-                  </div>
-
-                  {/* TOTAL CLASSES */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Total Classes (approx)
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="number"
-                      name="totalClasses"
-                      value={
-                        formData.totalClasses
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter total classes"
-                    />
-
-                  </div>
-
-                  {/* TOTAL STUDENTS */}
-
-                  <div className="col-12 col-md-4">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Total Students (approx)
-                      </h6>
-
-                    </label>
-
-                    <input
-                      type="number"
-                      name="totalStudents"
-                      value={
-                        formData.totalStudents
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter total students"
-                    />
-
-                  </div>
-
-                </div>
-
-                {/* DESCRIPTION */}
-
-                <div className="row mt-3">
-
-                  <div className="col-12">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Description
-                      </h6>
-
-                    </label>
-
-                    <textarea
-                      name="description"
-                      value={
-                        formData.description
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-control"
-                      placeholder="Enter school description"
-                      rows="4"
-                    />
-
-                  </div>
-
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          {/* SETTINGS */}
-
-          <div className="col-12 col-md-5 col-lg-5">
-
-            <div className="card bg-white shadow rounded-3 p-3 h-100">
-
-              <div className="card-header bg-white border-0">
-
-                <span className="p-1 rounded-5 bg-primary me-2">
-
-                  <IoMdSettings
-                    size={20}
-                    className="text-white"
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input custom-switch"
+                    type="checkbox"
+                    name="status"
+                    checked={formData.status}
+                    onChange={
+                      handleSwitchChange
+                    }
                   />
+                </div>
 
+                <span
+                  className={
+                    formData.status
+                      ? "status-active"
+                      : "status-inactive"
+                  }
+                >
+                  {formData.status
+                    ? "Active"
+                    : "Inactive"}
                 </span>
 
-                <strong>
-                  Status & Settings
-                </strong>
-
               </div>
+            </div>
 
-              <div className="card-body">
+            <div className="col-12 col-md-4">
+              <div className="setting-item">
 
-                {/* STATUS */}
+                <div>
+                  <h6>
+                    Parent Login
+                  </h6>
 
-                <div className="row">
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Status{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <div className="d-flex align-items-center gap-2">
-
-                      <div className="form-check form-switch mb-0">
-
-                        <input
-                          className="form-check-input green-switch"
-                          type="checkbox"
-                          role="switch"
-                          id="schoolStatus"
-                          name="status"
-                          checked={
-                            formData.status
-                          }
-                          onChange={
-                            handleSwitchChange
-                          }
-                        />
-
-                      </div>
-
-                      <label
-                        htmlFor="schoolStatus"
-                        className="mb-0"
-                      >
-                        {formData.status
-                          ? "Active"
-                          : "Inactive"}
-                      </label>
-
-                    </div>
-
-                  </div>
-
-                  {/* PARENT */}
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Allow Parent Login{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <div className="d-flex align-items-center gap-2">
-
-                      <div className="form-check form-switch mb-0">
-
-                        <input
-                          className="form-check-input green-switch"
-                          type="checkbox"
-                          role="switch"
-                          id="allowParent"
-                          name="allowParentLogin"
-                          checked={
-                            formData.allowParentLogin
-                          }
-                          onChange={
-                            handleSwitchChange
-                          }
-                        />
-
-                      </div>
-
-                      <label
-                        htmlFor="allowParent"
-                        className="mb-0"
-                      >
-                        {formData.allowParentLogin
-                          ? "Yes"
-                          : "No"}
-                      </label>
-
-                    </div>
-
-                  </div>
-
+                  <small>
+                    Allow parents to login
+                  </small>
                 </div>
 
-                {/* STUDENT */}
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      <h6>
-                        Allow Student Login{" "}
-
-                        <span className="text-danger">
-                          *
-                        </span>
-
-                      </h6>
-
-                    </label>
-
-                    <div className="d-flex align-items-center gap-2">
-
-                      <div className="form-check form-switch mb-0">
-
-                        <input
-                          className="form-check-input green-switch"
-                          type="checkbox"
-                          role="switch"
-                          id="allowStudent"
-                          name="allowStudentLogin"
-                          checked={
-                            formData.allowStudentLogin
-                          }
-                          onChange={
-                            handleSwitchChange
-                          }
-                        />
-
-                      </div>
-
-                      <label
-                        htmlFor="allowStudent"
-                        className="mb-0"
-                      >
-                        {formData.allowStudentLogin
-                          ? "Yes"
-                          : "No"}
-                      </label>
-
-                    </div>
-
-                  </div>
-
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input custom-switch"
+                    type="checkbox"
+                    name="allowParentLogin"
+                    checked={
+                      formData.allowParentLogin
+                    }
+                    onChange={
+                      handleSwitchChange
+                    }
+                  />
                 </div>
 
-                {/* TIMEZONE + DATE */}
-
-                <div className="row mt-3">
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-
-                      Time Zone{" "}
-
-                      <span className="text-danger">
-                        *
-                      </span>
-
-                    </label>
-
-                    <select
-                      name="timeZone"
-                      value={
-                        formData.timeZone
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="Asia/Kolkata">
-                        India Standard Time (IST) — UTC +05:30
-                      </option>
-
-                      <option value="Asia/Dubai">
-                        Gulf Standard Time (GST) — UTC +04:00
-                      </option>
-
-                      <option value="Asia/Dhaka">
-                        Bangladesh Standard Time — UTC +06:00
-                      </option>
-
-                      <option value="Asia/Kathmandu">
-                        Nepal Time — UTC +05:45
-                      </option>
-
-                      <option value="Asia/Singapore">
-                        Singapore Time — UTC +08:00
-                      </option>
-
-                      <option value="Asia/Tokyo">
-                        Japan Standard Time — UTC +09:00
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                  <div className="col-12 col-md-6">
-
-                    <label className="form-label">
-                      Date Format
-                    </label>
-
-                    <select
-                      name="dateFormat"
-                      value={
-                        formData.dateFormat
-                      }
-                      onChange={
-                        handleChange
-                      }
-                      className="form-select"
-                    >
-
-                      <option value="dd-MM-yyyy">
-                        DD-MM-YYYY (23-08-2026)
-                      </option>
-
-                      <option value="dd/MM/yyyy">
-                        DD/MM/YYYY (23/08/2026)
-                      </option>
-
-                      <option value="yyyy-MM-dd">
-                        YYYY-MM-DD (2026-08-23)
-                      </option>
-
-                      <option value="MM/dd/yyyy">
-                        MM/DD/YYYY (08/23/2026)
-                      </option>
-
-                    </select>
-
-                  </div>
-
-                </div>
+                <span className="setting-value">
+                  {formData.allowParentLogin
+                    ? "Enabled"
+                    : "Disabled"}
+                </span>
 
               </div>
             </div>
+
+            <div className="col-12 col-md-4">
+              <div className="setting-item">
+
+                <div>
+                  <h6>
+                    Student Login
+                  </h6>
+
+                  <small>
+                    Allow students to login
+                  </small>
+                </div>
+
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input custom-switch"
+                    type="checkbox"
+                    name="allowStudentLogin"
+                    checked={
+                      formData.allowStudentLogin
+                    }
+                    onChange={
+                      handleSwitchChange
+                    }
+                  />
+                </div>
+
+                <span className="setting-value">
+                  {formData.allowStudentLogin
+                    ? "Enabled"
+                    : "Disabled"}
+                </span>
+
+              </div>
+            </div>
+
           </div>
 
+          <hr className="my-4" />
+
+          <div className="row g-3">
+
+            <div className="col-12 col-md-6">
+              <label className="field-label">
+                Time Zone
+                <span>*</span>
+              </label>
+
+              <select
+                name="timeZone"
+                value={formData.timeZone}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="Asia/Kolkata">
+                  India Standard Time (IST) — UTC +05:30
+                </option>
+
+                <option value="Asia/Dubai">
+                  Gulf Standard Time (GST) — UTC +04:00
+                </option>
+
+                <option value="Asia/Dhaka">
+                  Bangladesh Standard Time — UTC +06:00
+                </option>
+
+                <option value="Asia/Kathmandu">
+                  Nepal Time — UTC +05:45
+                </option>
+
+                <option value="Asia/Singapore">
+                  Singapore Time — UTC +08:00
+                </option>
+
+                <option value="Asia/Tokyo">
+                  Japan Standard Time — UTC +09:00
+                </option>
+              </select>
+            </div>
+
+            <div className="col-12 col-md-6">
+              <label className="field-label">
+                Date Format
+              </label>
+
+              <select
+                name="dateFormat"
+                value={formData.dateFormat}
+                onChange={handleChange}
+                className="form-select theme-input"
+              >
+                <option value="dd-MM-yyyy">
+                  DD-MM-YYYY (23-08-2026)
+                </option>
+
+                <option value="dd/MM/yyyy">
+                  DD/MM/YYYY (23/08/2026)
+                </option>
+
+                <option value="yyyy-MM-dd">
+                  YYYY-MM-DD (2026-08-23)
+                </option>
+
+                <option value="MM/dd/yyyy">
+                  MM/DD/YYYY (08/23/2026)
+                </option>
+              </select>
+            </div>
+
+          </div>
         </div>
       </div>
 
@@ -5561,95 +4023,495 @@ const SchoolAddForm = () => {
           ACTION BUTTONS
       ====================================================== */}
 
-      <div className="row mt-3 mx-2 mb-4">
+      <div className="action-card">
 
-        <div className="col-12 d-flex gap-3 justify-content-end">
+        <button
+          type="button"
+          className="btn btn-light cancel-btn"
+          onClick={handleReset}
+          disabled={saving}
+        >
+          Reset
+        </button>
 
-          <button
-            type="button"
-            className="btn btn-outline-primary"
-            onClick={handleReset}
-            disabled={saving}
-          >
-            Reset
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={handleSaveSchool}
-            disabled={
-              saving || loadingSchool
-            }
-          >
-
-            {saving
-              ? "Saving..."
-              : isEditMode
+        <button
+          type="button"
+          className="btn btn-primary save-btn"
+          onClick={handleSaveSchool}
+          disabled={
+            saving || loadingSchool
+          }
+        >
+          {saving ? (
+            <>
+              <span
+                className="spinner-border spinner-border-sm me-2"
+              />
+              Saving...
+            </>
+          ) : (
+            <>
+              <FaSave size={15} />
+              {isEditMode
                 ? "Update School"
                 : "Create School"}
+            </>
+          )}
+        </button>
 
-          </button>
-
-        </div>
       </div>
 
       {/* =====================================================
           CSS
       ====================================================== */}
 
-      <style>
-        {`
-          .custom-upload-box {
-            position: relative;
-            border: 2px dashed #ced4da;
-            border-radius: 10px;
-            min-height: 170px;
-            padding: 25px;
-            text-align: center;
-            background-color: #f8f9fa;
-            cursor: pointer;
+      <style>{`
 
-            display: flex;
+        .school-page {
+          padding: 10px;
+          // background: #f5f7fb;
+          min-height: 100vh;
+        }
+
+        /* PAGE HEADER */
+
+        .page-header-card {
+          background: #ffffff;
+          border: 1px solid #edf0f5;
+          border-radius: 10px;
+          padding: 18px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 15px;
+          margin-bottom: 15px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .page-title {
+          margin: 0 0 6px;
+          font-size: 18px;
+          font-weight: 600;
+          color: #212529;
+        }
+
+        .breadcrumb-wrapper {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 7px;
+          font-size: 12px;
+          color: #8a94a6;
+        }
+
+        .breadcrumb-link {
+          color: #0d6efd;
+          cursor: pointer;
+        }
+
+        .breadcrumb-link:hover {
+          text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+          color: #adb5bd;
+        }
+
+        .breadcrumb-active {
+          color: #495057;
+        }
+
+        .back-btn {
+          border: 1px solid #dbe2ea;
+          background: #fff;
+          color: #495057;
+          border-radius: 7px;
+          padding: 8px 13px;
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          transition: 0.2s;
+        }
+
+        .back-btn:hover {
+          background: #f8f9fa;
+          border-color: #0d6efd;
+          color: #0d6efd;
+        }
+
+        /* CARD */
+
+        .form-card {
+          background: #fff;
+          border: 1px solid #edf0f5;
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+          overflow: hidden;
+        }
+
+        .form-card-inner {
+          padding: 18px;
+        }
+
+        .form-card-body {
+          padding: 0 18px 20px;
+        }
+
+        /* SECTION HEADER */
+
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          padding: 16px 18px;
+          margin-bottom: 2px;
+        }
+
+        .section-icon {
+          width: 35px;
+          height: 35px;
+          min-width: 35px;
+          border-radius: 8px;
+          background: #eef5ff;
+          color: #0d6efd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .section-title {
+          margin: 0;
+          color: #252b33;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .section-description {
+          display: block;
+          margin-top: 2px;
+          color: #98a2b3;
+          font-size: 11px;
+        }
+
+        /* LABEL */
+
+        .field-label {
+          display: block;
+          margin-bottom: 7px;
+          color: #495057;
+          font-size: 12px;
+          font-weight: 600;
+        }
+
+        .field-label span {
+          color: #dc3545;
+          margin-left: 3px;
+        }
+
+        /* INPUT */
+
+        .theme-input {
+          min-height: 39px;
+          border: 1px solid #dfe4ea;
+          border-radius: 7px;
+          font-size: 13px;
+          color: #343a40;
+          box-shadow: none !important;
+          transition: 0.2s;
+        }
+
+        .theme-input:focus {
+          border-color: #86b7fe;
+          box-shadow: 0 0 0 0.15rem rgba(13,110,253,.08) !important;
+        }
+
+        .theme-input::placeholder {
+          color: #adb5bd;
+          font-size: 12px;
+        }
+
+        textarea.theme-input {
+          resize: vertical;
+        }
+
+        /* LOGO */
+
+        .logo-upload-wrapper {
+          padding: 0 2px 2px;
+        }
+
+        .current-logo {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 15px;
+        }
+
+        .current-logo img {
+          width: 85px;
+          height: 85px;
+          object-fit: contain;
+          border: 1px solid #e4e8ed;
+          border-radius: 8px;
+          padding: 5px;
+        }
+
+        .current-logo span {
+          margin-top: 6px;
+          color: #8a94a6;
+          font-size: 11px;
+        }
+
+        .upload-box {
+          position: relative;
+          min-height: 155px;
+          border: 1.5px dashed #cfd6df;
+          border-radius: 9px;
+          background: #fafbfc;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          overflow: hidden;
+          cursor: pointer;
+          transition: 0.2s;
+        }
+
+        .upload-box:hover {
+          border-color: #0d6efd;
+          background: #f7faff;
+        }
+
+        .upload-box input {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+
+        .upload-circle {
+          width: 45px;
+          height: 45px;
+          border-radius: 50%;
+          background: #eef5ff;
+          color: #0d6efd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 9px;
+        }
+
+        .upload-box h6 {
+          font-size: 12px;
+          margin: 0 0 5px;
+          font-weight: 500;
+          color: #59636e;
+        }
+
+        .upload-primary {
+          color: #0d6efd;
+          font-weight: 600;
+        }
+
+        .upload-box small {
+          display: block;
+          color: #98a2b3;
+          font-size: 10px;
+          line-height: 17px;
+        }
+
+        .selected-file {
+          margin-top: 8px;
+          padding: 7px 10px;
+          border-radius: 6px;
+          background: #f0fff5;
+          color: #198754;
+          font-size: 11px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          overflow: hidden;
+        }
+
+        .selected-file span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        /* SETTINGS */
+
+        .setting-item {
+          min-height: 75px;
+          border: 1px solid #edf0f4;
+          border-radius: 8px;
+          padding: 12px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #fbfcfe;
+        }
+
+        .setting-item > div:first-child {
+          flex: 1;
+        }
+
+        .setting-item h6 {
+          margin: 0;
+          font-size: 12px;
+          color: #343a40;
+          font-weight: 600;
+        }
+
+        .setting-item small {
+          display: block;
+          color: #98a2b3;
+          font-size: 10px;
+          margin-top: 3px;
+        }
+
+        .custom-switch {
+          width: 34px !important;
+          height: 18px !important;
+          cursor: pointer;
+        }
+
+        .custom-switch:checked {
+          background-color: #198754;
+          border-color: #198754;
+        }
+
+        .status-active {
+          color: #198754;
+          background: #eaf8f0;
+          padding: 3px 7px;
+          border-radius: 5px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .status-inactive {
+          color: #dc3545;
+          background: #fff0f1;
+          padding: 3px 7px;
+          border-radius: 5px;
+          font-size: 10px;
+          font-weight: 600;
+        }
+
+        .setting-value {
+          color: #6c757d;
+          font-size: 10px;
+          white-space: nowrap;
+        }
+
+        /* ACTION */
+
+        .action-card {
+          margin-top: 15px;
+          margin-bottom: 25px;
+          background: #fff;
+          border: 1px solid #edf0f5;
+          border-radius: 10px;
+          padding: 14px 18px;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          gap: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .cancel-btn {
+          min-width: 90px;
+          border: 1px solid #dfe4ea;
+          color: #59636e;
+          font-size: 13px;
+          border-radius: 7px;
+        }
+
+        .save-btn {
+          min-width: 145px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 7px;
+          font-size: 13px;
+          border-radius: 7px;
+        }
+
+        /* LOADING */
+
+        .school-loading {
+          min-height: 500px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background: #fff;
+          border-radius: 10px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 768px) {
+
+          .school-page {
+            padding: 7px;
+          }
+
+          .page-header-card {
+            padding: 14px;
+            align-items: flex-start;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            transition: all 0.2s ease;
           }
 
-          .custom-upload-box:hover {
-            border-color: #0d6efd;
-            background-color: #f1f6ff;
-          }
-
-          .upload-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-          }
-
-          .custom-file-input {
-            position: absolute;
-            inset: 0;
+          .back-btn {
             width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            justify-content: center;
           }
 
-          .green-switch:checked {
-            background-color: #198754;
-            border-color: #198754;
+          .section-header {
+            padding: 14px;
           }
 
-          .green-switch {
-            width: 35px !important;
-            height: 20px !important;
-            cursor: pointer;
+          .form-card-body {
+            padding: 0 14px 16px;
           }
-        `}
-      </style>
-    </>
+
+          .setting-item {
+            min-height: 65px;
+          }
+
+          .action-card {
+            position: sticky;
+            bottom: 8px;
+            z-index: 20;
+          }
+        }
+
+        @media (max-width: 576px) {
+
+          .breadcrumb-wrapper {
+            line-height: 20px;
+          }
+
+          .action-card {
+            flex-direction: column-reverse;
+          }
+
+          .cancel-btn,
+          .save-btn {
+            width: 100%;
+          }
+
+        }
+
+      `}</style>
+    </div>
   );
 };
 

@@ -92,12 +92,12 @@ const StudentAttendanceNotice = () => {
               {/* Student Class Wise */}
 
               <div className="col-md-6">
-                <div className="card border-0 shadow rounded h-100">
+                <div className="card border-0 shadow rounded-4 h-100">
                   <div className="card-header bg-white border-0 pt-3">
                     <div className="d-flex justify-content-between align-items-center">
                       <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
                         <span
-                          className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                          className="d-inline-flex align-items-center justify-content-center rounded-4-circle bg-primary-subtle text-primary"
                           style={{
                             width: "40px",
                             height: "40px",
@@ -105,14 +105,16 @@ const StudentAttendanceNotice = () => {
                         >
                           <LuSchool size={22} />
                         </span>
-                        School Overview
+                        Student Overview
                       </h6>
 
                       <select
                         className="form-select form-select-sm "
-
-                        style={{ width: "120px" ,borderColor: "#0d6efd",
-    outlineColor: "#0d6efd",}}
+                        style={{
+                          width: "120px",
+                          borderColor: "#0d6efd",
+                          outlineColor: "#0d6efd",
+                        }}
                         value={selectedClass}
                         onChange={(e) => setSelectedClass(e.target.value)}
                       >
@@ -139,11 +141,11 @@ const StudentAttendanceNotice = () => {
               {/* Attendance */}
 
               <div className="col-md-6">
-                <div className="card border-0 shadow rounded h-100">
+                <div className="card border-0 shadow rounded-4 h-100">
                   <div className="card-header bg-white border-0 pt-3">
                     <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
                       <span
-                        className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                        className="d-inline-flex align-items-center justify-content-center rounded-4-circle bg-primary-subtle text-primary"
                         style={{
                           width: "40px",
                           height: "40px",
@@ -166,12 +168,12 @@ const StudentAttendanceNotice = () => {
           {/* ================= NOTICE BOARD ================= */}
 
           <div className="col-lg-4">
-            <div className="card border-0 shadow rounded h-100">
+            <div className="card border-0 shadow rounded-4 h-100">
               <div className="card-header bg-white border-0">
                 <div className="d-flex justify-content-between align-items-center">
                   <h6 className="fw-bold mb-0 d-flex align-items-center gap-2">
                     <span
-                      className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle text-primary"
+                      className="d-inline-flex align-items-center justify-content-center rounded-4-circle bg-primary-subtle text-primary"
                       style={{
                         width: "40px",
                         height: "40px",
