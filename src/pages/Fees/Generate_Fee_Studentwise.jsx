@@ -13,7 +13,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import { MdMoney, MdOutlineSchool, MdPayments } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
-import { FaMoneyBills } from "react-icons/fa6";
+import { FaMoneyBills, FaMoneyBillTrendUp } from "react-icons/fa6";
+import { ImUndo2 } from "react-icons/im";
 
 const months = [
   "April",
@@ -156,6 +157,7 @@ const Generate_Fee_Studentwise = () => {
     }
   };
 
+  console.log("curent schedule",currentSchedule);
   if (loading) {
     return (
       <div className="text-center mt-5">
@@ -581,231 +583,349 @@ const Generate_Fee_Studentwise = () => {
             </div>
           </div>
         </div>
-
-        {/* Fine */}
       </div>
 
-      <div className="card shadow border-0 mb-4 rounded-4">
-        <div className="card-header bg-white  py-3 d-flex justify-content-between align-items-center">
-          <h6 className="mb-0 fw-semibold">
-            <FaMoneyBills />
-            Current Schedule
-          </h6>
+      <div className="px-2">
+        <div className="card shadow border-0 mb-4 rounded-4 ">
+          <div className="card-header bg-white  py-3 d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center">
+              <div
+                className="d-flex align-items-center justify-content-center rounded-3"
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                  color: "#fff",
+                  boxShadow: "0 8px 20px rgba(37,99,235,.22)",
+                }}
+              >
+                <FaMoneyBills size={27} />
+              </div>
+              <div className="d-flex flex-column ms-2">
+                <h6 className="mb-0 lh-1">Current Schedule</h6>
+                <small className="lh-1 text-muted">
+                  student current fee details
+                </small>
+              </div>
+            </div>
 
-          <span className="badge bg-light text-primary">
-            {currentSchedule.length} Records
-          </span>
-        </div>
+            <span className="badge bg-info text-white">
+              {currentSchedule.length} Records
+            </span>
+          </div>
 
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table  align-middle mb-0">
-              <thead className="table-primary">
-                <tr>
-                  <th width="70">Undo</th>
-                  <th>Month</th>
-                  <th>Fee Code</th>
-                  <th>Fee Name</th>
-                  <th>Amount</th>
-                  <th>Paid</th>
-                  <th>Due</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {currentSchedule.length === 0 ? (
+          <div className="card-body px-0">
+            <div className="table-responsive">
+              <table className="table  align-middle mb-0">
+                <thead className=" small text-center">
                   <tr>
-                    <td colSpan="8" className="text-center text-danger py-4">
-                      No Fee Generated
-                    </td>
+                    <th width="70">
+                      <ImUndo2 className="text-primary " size={20} />
+                    </th>
+                    <th>Month</th>
+                    <th>Fee Code</th>
+                    <th>Fee Name</th>
+                    <th>Amount</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                    <th>Status</th>
                   </tr>
-                ) : (
-                  currentSchedule.map((fee) => (
-                    <tr key={fee.id}>
-                      <td className="text-center">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={undoSchedule.includes(fee.id)}
-                          onChange={() => handleUndoSelection(fee.id)}
-                        />
-                      </td>
+                </thead>
 
-                      <td>{fee.month}</td>
-
-                      <td className="fw-semibold">{fee.feeCode}</td>
-
-                      <td>{fee.feeName}</td>
-
-                      <td>₹ {Number(fee.amount || 0).toFixed(2)}</td>
-
-                      <td className="text-success fw-semibold">
-                        ₹ {Number(fee.paidAmount || 0).toFixed(2)}
-                      </td>
-
-                      <td className="text-danger fw-semibold">
-                        ₹ {Number(fee.dueAmount || 0).toFixed(2)}
-                      </td>
-
-                      <td>
-                        <span
-                          className={`badge ${
-                            fee.status === "PAID"
-                              ? "bg-success"
-                              : fee.status === "PARTIAL"
-                                ? "bg-warning text-dark"
-                                : "bg-danger"
-                          }`}
-                        >
-                          {fee.status}
-                        </span>
+                <tbody className="text-center small">
+                  {currentSchedule.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="text-center text-danger py-4">
+                        No Fee Generated
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-
-              {currentSchedule.length > 0 && (
-                <tfoot className="table-light">
-                  <tr>
-                    <th colSpan="4" className="text-end">
-                      Total
-                    </th>
-
-                    <th>₹ {totalCurrentFee.toFixed(2)}</th>
-
-                    <th className="text-success">₹ {totalPaid.toFixed(2)}</th>
-
-                    <th className="text-danger">₹ {totalDue.toFixed(2)}</th>
-
-                    <th></th>
-                  </tr>
-                </tfoot>
-              )}
-            </table>
-          </div>
-
-          <div className="text-end mt-3">
-            <button
-              className="btn btn-danger"
-              disabled={undoSchedule.length === 0 || undoing}
-              onClick={handleUndoFee}
-            >
-              {undoing ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                  Undoing...
-                </>
-              ) : (
-                <>
-                  <TbArrowBackUp className="me-2" />
-                  Undo Selected
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="card shadow border-0 mb-5">
-        <div className="card-header bg-white  py-3 d-flex justify-content-between align-items-center">
-          <h6 className="mb-0 fw-semibold">New Fee Schedule</h6>
-
-          <span className="badge bg-light text-primary">
-            {selectedSchedule.length} Selected
-          </span>
-        </div>
-
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-bordered table-hover align-middle mb-0">
-              <thead className="table-primary">
-                <tr>
-                  <th width="70">Select</th>
-                  <th>Month</th>
-                  <th>Fee Code</th>
-                  <th>Fee Name</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {availableMonths.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center text-success py-4">
-                      All Months Fee Already Generated
-                    </td>
-                  </tr>
-                ) : assignedFees.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center text-danger py-4">
-                      No Assigned Fee Found
-                    </td>
-                  </tr>
-                ) : (
-                  availableMonths.flatMap((month) =>
-                    assignedFees.map((fee) => (
-                      <tr key={`${month}-${fee.id}`}>
+                  ) : (
+                    currentSchedule.map((fee) => (
+                      <tr key={fee.id}>
+                        {/* SELECT */}
                         <td className="text-center">
                           <input
                             type="checkbox"
                             className="form-check-input"
-                            checked={selectedSchedule.some(
-                              (item) =>
-                                item.month === month &&
-                                item.feeMasterId === fee.feeMasterId,
-                            )}
-                            onChange={() => handleScheduleSelection(month, fee)}
+                            checked={undoSchedule.includes(fee.id)}
+                            onChange={() => handleUndoSelection(fee.id)}
                           />
                         </td>
 
+                        {/* MONTH */}
+                        <td>{fee.month}</td>
+
+                        {/* FEE CODE */}
+                        <td className="fw-semibold">{fee.feeCode}</td>
+
+                        {/* FEE NAME */}
+                        <td>{fee.feeName}</td>
+
+                        {/* AMOUNT */}
+                        <td>₹ {Number(fee.amount || 0).toFixed(2)}</td>
+
+                        {/* PAID AMOUNT */}
                         <td>
-                          <span className="badge bg-light text-dark border">
-                            {month}
+                          <span
+                            className="badge fw-semibold px-2 py-1"
+                            style={{
+                              backgroundColor: "#b9ffb8",
+                              color: "#198754",
+                            }}
+                          >
+                            ₹ {Number(fee.paidAmount || 0).toFixed(2)}
                           </span>
                         </td>
 
-                        <td className="fw-semibold">{fee.feeCode}</td>
+                        {/* DUE AMOUNT */}
+                        <td>
+                          <span
+                            className="badge fw-semibold px-2 py-1"
+                            style={{
+                              backgroundColor: "#ffe5e5",
+                              color: "#dc3545",
+                            }}
+                          >
+                            ₹ {Number(fee.dueAmount || 0).toFixed(2)}
+                          </span>
+                        </td>
 
-                        <td>{fee.feeName}</td>
-
-                        <td className="fw-semibold">
-                          ₹ {Number(fee.amount || 0).toFixed(2)}
+                        {/* STATUS */}
+                        <td>
+                          <span
+                            className={`badge ${
+                              fee.status === "PAID"
+                                ? "bg-success"
+                                : fee.status === "PARTIAL"
+                                  ? "bg-warning text-dark"
+                                  : "bg-danger"
+                            }`}
+                          >
+                            {fee.status}
+                          </span>
                         </td>
                       </tr>
-                    )),
-                  )
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ))
+                  )}
+                </tbody>
 
-          <div className="d-flex justify-content-end align-items-center mt-4">
-            <div className="me-3 text-muted">
-              Selected:{" "}
-              <strong className="text-primary">
-                {selectedSchedule.length}
-              </strong>
+                {currentSchedule.length > 0 && (
+                  <tfoot className="table-light">
+                    <tr>
+                      {/* TOTAL LABEL */}
+                      <th colSpan="4" className="text-end">
+                        Total
+                      </th>
+
+                      {/* TOTAL FEE */}
+                      <th className="fw-bold">
+                        ₹ {totalCurrentFee.toFixed(2)}
+                      </th>
+
+                      {/* TOTAL PAID */}
+                      <th>
+                        <span
+                          className="badge fw-semibold px-2 py-1"
+                          style={{
+                            backgroundColor: "#b9ffb8",
+                            color: "#198754",
+                          }}
+                        >
+                          ₹ {totalPaid.toFixed(2)}
+                        </span>
+                      </th>
+
+                      {/* TOTAL DUE */}
+                      <th>
+                        <span
+                          className="badge fw-semibold px-2 py-1"
+                          style={{
+                            backgroundColor: "#ffe5e5",
+                            color: "#dc3545",
+                          }}
+                        >
+                          ₹ {totalDue.toFixed(2)}
+                        </span>
+                      </th>
+
+                      {/* STATUS / ACTION EMPTY */}
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                )}
+              </table>
             </div>
 
-            <button
-              className="btn btn-success btn-lg"
-              disabled={selectedSchedule.length === 0 || generating}
-              onClick={handleGenerateFee}
-            >
-              {generating ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <TiTick className="me-2 fs-5" />
-                  Generate Fee
-                </>
-              )}
-            </button>
+            <div className="text-end mt-3 d-flex justify-content-between ">
+              <h6 className="ms-2">
+                {" "}
+                <span className="badge text-white bg-danger">
+                  {undoSchedule.length}
+                </span>
+              </h6>
+              <button
+                className="btn btn-danger me-2"
+                disabled={undoSchedule.length === 0 || undoing}
+                onClick={handleUndoFee}
+              >
+                {undoing ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                    Undoing...
+                  </>
+                ) : (
+                  <>
+                    <ImUndo2 className="me-2" size={20} />
+                    Undo Selected
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-2">
+        <div className="card shadow border-0 mb-5 rounded-4 ">
+          <div className="card-header bg-white  py-3 d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center">
+              <div
+                className="d-flex align-items-center justify-content-center rounded-3"
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                  color: "#fff",
+                  boxShadow: "0 8px 20px rgba(37,99,235,.22)",
+                }}
+              >
+                <FaMoneyBillTrendUp size={27} />
+              </div>
+              <div className="d-flex flex-column ms-2">
+                <h6 className="mb-0 lh-1">New Fee Schedule</h6>
+                <small className="lh-1 text-muted">
+                  New fee generate from here
+                </small>
+              </div>
+            </div>
+
+            <span className="badge bg-info text-white">
+              {selectedSchedule.length} Records
+            </span>
+          </div>
+
+          <div className="card-body px-0">
+            <div className="table-responsive">
+              <table className="table align-middle mb-0">
+                <thead className="small text-center">
+                  <tr>
+                    <th width="70">Select</th>
+                    <th>Month</th>
+                    <th>Fee Code</th>
+                    <th>Fee Name</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+
+                <tbody className="text-center small">
+                  {availableMonths.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center text-success py-4">
+                        All Months Fee Already Generated
+                      </td>
+                    </tr>
+                  ) : assignedFees.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center text-danger py-4">
+                        No Assigned Fee Found
+                      </td>
+                    </tr>
+                  ) : (
+                    availableMonths.flatMap((month) =>
+                      assignedFees.map((fee) => (
+                        <tr key={`${month}-${fee.id}`}>
+                          <td className="text-center">
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={selectedSchedule.some(
+                                (item) =>
+                                  item.month === month &&
+                                  item.feeMasterId === fee.feeMasterId,
+                              )}
+                              onChange={() =>
+                                handleScheduleSelection(month, fee)
+                              }
+                            />
+                          </td>
+
+                          <td>
+                            <span className="badge bg-light text-dark border">
+                              {month}
+                            </span>
+                          </td>
+
+                          <td>
+                            <span
+                              className="badge fw-semibold px-2 py-1"
+                              style={{
+                                backgroundColor: "#8fb2ff",
+                                color: "black",
+                              }}
+                            >
+                              {" "}
+                              {fee.feeCode}
+                            </span>
+                          </td>
+
+                          <td>{fee.feeName}</td>
+
+                          <td>
+                            <span
+                              className="badge fw-semibold px-2 py-1"
+                              style={{
+                                backgroundColor: "#b9ffb8",
+                                color: "black",
+                              }}
+                            >
+                              {" "}
+                              ₹ {Number(fee.amount || 0).toFixed(2)}
+                            </span>
+                          </td>
+                        </tr>
+                      )),
+                    )
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="d-flex justify-content-between align-items-center mt-4">
+              <div className="me-3 text-muted ms-2">
+                Selected:{" "}
+                <strong className="text-primary">
+                  {selectedSchedule.length}
+                </strong>
+              </div>
+
+              <button
+                className="btn btn-success me-2"
+                disabled={selectedSchedule.length === 0 || generating}
+                onClick={handleGenerateFee}
+              >
+                {generating ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2"></span>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <TiTick className="me-2 fs-5" />
+                    Generate Fee
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -174,6 +174,401 @@
 // }
 
 
+// import React, { useEffect, useState } from "react";
+// import {
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+//   Tooltip,
+// } from "recharts";
+
+// import axiosInstance from "../../../api/axiosInstance";
+
+// const COLORS = {
+//   PRESENT: "#22c55e",
+//   ABSENT: "#ef4444",
+//   LEAVE: "#f59e0b",
+//   HALF_DAY: "#8b5cf6",
+// };
+
+// const AttendanceChart = () => {
+//   const [attendance, setAttendance] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   const [summary, setSummary] = useState({
+//     present: 0,
+//     absent: 0,
+//     leave: 0,
+//     halfDay: 0,
+//     total: 0,
+//   });
+
+//   useEffect(() => {
+//     const fetchAttendance = async () => {
+//       try {
+//         const user = JSON.parse(localStorage.getItem("user"));
+//         const schoolId = user?.schoolId;
+//         const token = localStorage.getItem("token");
+
+//         if (!schoolId) {
+//           console.error("School ID not found");
+//           return;
+//         }
+
+//         const response = await axiosInstance.get(
+//           "/api/student/attendance/school",
+//           {
+//             params: {
+//               schoolId,
+//             },
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+
+//         console.log("Attendance:", response.data);
+
+//         const list = Array.isArray(response.data)
+//           ? response.data
+//           : [];
+
+//         setAttendance(list);
+
+//         // Today's date
+//         const today = new Date().toISOString().split("T")[0];
+
+//         console.log("Today:", today);
+
+//         // Only today's attendance
+//         const todayAttendance = list.filter(
+//           (item) => item.attendanceDate === today
+//         );
+
+//         console.log("Today's Attendance:", todayAttendance);
+
+//         const present = todayAttendance.filter(
+//           (item) => item.status === "PRESENT"
+//         ).length;
+
+//         const absent = todayAttendance.filter(
+//           (item) => item.status === "ABSENT"
+//         ).length;
+
+//         const leave = todayAttendance.filter(
+//           (item) => item.status === "LEAVE"
+//         ).length;
+
+//         const halfDay = todayAttendance.filter(
+//           (item) => item.status === "HALF_DAY"
+//         ).length;
+
+//         const total = todayAttendance.length;
+
+//         setSummary({
+//           present,
+//           absent,
+//           leave,
+//           halfDay,
+//           total,
+//         });
+//       } catch (error) {
+//         console.error(
+//           "Attendance API Error:",
+//           error.response?.data || error.message
+//         );
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchAttendance();
+//   }, []);
+
+//   // ---------------- Percentage ----------------
+
+//   const getPercentage = (count) => {
+//     if (!summary.total) return 0;
+
+//     return ((count / summary.total) * 100).toFixed(1);
+//   };
+
+//   const presentPercentage = getPercentage(summary.present);
+//   const absentPercentage = getPercentage(summary.absent);
+//   const leavePercentage = getPercentage(summary.leave);
+//   const halfDayPercentage = getPercentage(summary.halfDay);
+
+//   // ---------------- Chart Data ----------------
+
+//   const chartData = [
+//     {
+//       name: "Present",
+//       value: summary.present,
+//       percentage: presentPercentage,
+//       color: COLORS.PRESENT,
+//     },
+//     {
+//       name: "Absent",
+//       value: summary.absent,
+//       percentage: absentPercentage,
+//       color: COLORS.ABSENT,
+//     },
+//     {
+//       name: "Leave",
+//       value: summary.leave,
+//       percentage: leavePercentage,
+//       color: COLORS.LEAVE,
+//     },
+//     {
+//       name: "Half Day",
+//       value: summary.halfDay,
+//       percentage: halfDayPercentage,
+//       color: COLORS.HALF_DAY,
+//     },
+//   ].filter((item) => item.value > 0);
+
+//   // ---------------- Loading ----------------
+
+//   if (loading) {
+//     return (
+//       <div
+//         className="d-flex justify-content-center align-items-center"
+//         style={{ height: 230 }}
+//       >
+//         <div
+//           className="spinner-border spinner-border-sm text-primary"
+//           role="status"
+//         />
+//       </div>
+//     );
+//   }
+
+//   // ---------------- No Attendance ----------------
+
+//   if (summary.total === 0) {
+//     return (
+//       <div
+//         className="d-flex flex-column justify-content-center align-items-center text-center"
+//         style={{ height: 230 }}
+//       >
+//         <div
+//           className="rounded-circle d-flex align-items-center justify-content-center mb-2"
+//           style={{
+//             width: 55,
+//             height: 55,
+//             background: "#f3f4f6",
+//             fontSize: 24,
+//           }}
+//         >
+//           📅
+//         </div>
+
+//         <h6 className="fw-semibold mb-1">
+//           No Attendance Today
+//         </h6>
+
+//         <small className="text-muted">
+//           Attendance has not been marked for today.
+//         </small>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="row align-items-center h-100">
+
+//       {/* ================= DONUT ================= */}
+
+//       <div className="col-6">
+//         <ResponsiveContainer width="100%" height={230}>
+//           <PieChart>
+//             <Pie
+//               data={chartData}
+//               dataKey="value"
+//               nameKey="name"
+//               innerRadius={58}
+//               outerRadius={84}
+//               paddingAngle={3}
+//               stroke="#fff"
+//               strokeWidth={3}
+//             >
+//               {chartData.map((item, index) => (
+//                 <Cell
+//                   key={`cell-${index}`}
+//                   fill={item.color}
+//                 />
+//               ))}
+//             </Pie>
+
+//             <Tooltip
+//               formatter={(value, name) => [
+//                 `${value} students`,
+//                 name,
+//               ]}
+//             />
+
+//             {/* Center Percentage */}
+//             <text
+//               x="50%"
+//               y="47%"
+//               textAnchor="middle"
+//               dominantBaseline="middle"
+//               style={{
+//                 fontSize: 23,
+//                 fontWeight: 700,
+//                 fill: "#111827",
+//               }}
+//             >
+//               {presentPercentage}%
+//             </text>
+
+//             <text
+//               x="50%"
+//               y="60%"
+//               textAnchor="middle"
+//               dominantBaseline="middle"
+//               style={{
+//                 fontSize: 12,
+//                 fill: "#6b7280",
+//               }}
+//             >
+//               Present
+//             </text>
+//           </PieChart>
+//         </ResponsiveContainer>
+//       </div>
+
+//       {/* ================= LEGEND ================= */}
+
+//       <div className="col-6">
+
+//         {/* Present */}
+//         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-success p-1">
+//           <div className="d-flex align-items-center">
+//             <span
+//               style={{
+//                 width: 10,
+//                 height: 10,
+//                 borderRadius: "50%",
+//                 background: COLORS.PRESENT,
+//                 marginRight: 8,
+//               }}
+//             />
+
+//             <span className="small">
+//               Present
+//             </span>
+//           </div>
+
+//           <div className="text-end">
+//             <div className="fw-semibold">
+//               {presentPercentage}%
+//             </div>
+
+//             <small className="text-muted">
+//               {summary.present}
+//             </small>
+//           </div>
+//         </div>
+
+//         {/* Absent */}
+//         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-danger p-1">
+//           <div className="d-flex align-items-center">
+//             <span
+//               style={{
+//                 width: 10,
+//                 height: 10,
+//                 borderRadius: "50%",
+//                 background: COLORS.ABSENT,
+//                 marginRight: 8,
+//               }}
+//             />
+
+//             <span className="small">
+//               Absent
+//             </span>
+//           </div>
+
+//           <div className="text-end">
+//             <div className="fw-semibold">
+//               {absentPercentage}%
+//             </div>
+
+//             <small className="text-muted">
+//               {summary.absent}
+//             </small>
+//           </div>
+//         </div>
+
+//         {/* Leave */}
+//         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-warning p-1">
+//           <div className="d-flex align-items-center">
+//             <span
+//               style={{
+//                 width: 10,
+//                 height: 10,
+//                 borderRadius: "50%",
+//                 background: COLORS.LEAVE,
+//                 marginRight: 8,
+//               }}
+//             />
+
+//             <span className="small">
+//               Leave
+//             </span>
+//           </div>
+
+//           <div className="text-end">
+//             <div className="fw-semibold">
+//               {leavePercentage}%
+//             </div>
+
+//             <small className="text-muted">
+//               {summary.leave}
+//             </small>
+//           </div>
+//         </div>
+
+//         {/* Half Day */}
+//         {summary.halfDay > 0 && (
+//           <div className="d-flex justify-content-between align-items-center">
+//             <div className="d-flex align-items-center">
+//               <span
+//                 style={{
+//                   width: 10,
+//                   height: 10,
+//                   borderRadius: "50%",
+//                   background: COLORS.HALF_DAY,
+//                   marginRight: 8,
+//                 }}
+//               />
+
+//               <span className="small">
+//                 Half Day
+//               </span>
+//             </div>
+
+//             <div className="text-end">
+//               <div className="fw-semibold">
+//                 {halfDayPercentage}%
+//               </div>
+
+//               <small className="text-muted">
+//                 {summary.halfDay}
+//               </small>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default AttendanceChart;
+
+
+
 import React, { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
@@ -192,7 +587,10 @@ const COLORS = {
   HALF_DAY: "#8b5cf6",
 };
 
-const AttendanceChart = () => {
+const AttendanceChart = ({
+  schoolId,
+  studentClass = "",
+}) => {
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -204,23 +602,35 @@ const AttendanceChart = () => {
     total: 0,
   });
 
+  // =========================================================
+  // FETCH TODAY'S ATTENDANCE
+  // =========================================================
+
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
+        setLoading(true);
+
         const user = JSON.parse(localStorage.getItem("user"));
-        const schoolId = user?.schoolId;
         const token = localStorage.getItem("token");
 
-        if (!schoolId) {
+        const currentSchoolId = schoolId || user?.schoolId;
+
+        if (!currentSchoolId) {
           console.error("School ID not found");
+          setLoading(false);
           return;
         }
+
+        // ---------------------------------------------------
+        // Attendance API
+        // ---------------------------------------------------
 
         const response = await axiosInstance.get(
           "/api/student/attendance/school",
           {
             params: {
-              schoolId,
+              schoolId: currentSchoolId,
             },
             headers: {
               Authorization: `Bearer ${token}`,
@@ -228,7 +638,7 @@ const AttendanceChart = () => {
           }
         );
 
-        console.log("Attendance:", response.data);
+        console.log("Attendance API:", response.data);
 
         const list = Array.isArray(response.data)
           ? response.data
@@ -236,17 +646,43 @@ const AttendanceChart = () => {
 
         setAttendance(list);
 
-        // Today's date
-        const today = new Date().toISOString().split("T")[0];
+        // ===================================================
+        // TODAY
+        // ===================================================
+
+        const today = new Date()
+          .toISOString()
+          .split("T")[0];
 
         console.log("Today:", today);
 
-        // Only today's attendance
-        const todayAttendance = list.filter(
+        // ===================================================
+        // TODAY'S ATTENDANCE
+        // ===================================================
+
+        let todayAttendance = list.filter(
           (item) => item.attendanceDate === today
         );
 
-        console.log("Today's Attendance:", todayAttendance);
+        // ===================================================
+        // CLASS FILTER
+        // ===================================================
+
+        if (studentClass) {
+          todayAttendance = todayAttendance.filter(
+            (item) =>
+              item.studentClass === studentClass
+          );
+        }
+
+        console.log(
+          "Filtered Today's Attendance:",
+          todayAttendance
+        );
+
+        // ===================================================
+        // SUMMARY
+        // ===================================================
 
         const present = todayAttendance.filter(
           (item) => item.status === "PRESENT"
@@ -273,33 +709,60 @@ const AttendanceChart = () => {
           halfDay,
           total,
         });
+
       } catch (error) {
         console.error(
           "Attendance API Error:",
-          error.response?.data || error.message
+          error.response?.data ||
+            error.message
         );
+
+        setAttendance([]);
+
+        setSummary({
+          present: 0,
+          absent: 0,
+          leave: 0,
+          halfDay: 0,
+          total: 0,
+        });
+
       } finally {
         setLoading(false);
       }
     };
 
     fetchAttendance();
-  }, []);
+  }, [schoolId, studentClass]);
 
-  // ---------------- Percentage ----------------
+  // =========================================================
+  // PERCENTAGE
+  // =========================================================
 
   const getPercentage = (count) => {
-    if (!summary.total) return 0;
+    if (!summary.total) return "0.0";
 
-    return ((count / summary.total) * 100).toFixed(1);
+    return (
+      (count / summary.total) *
+      100
+    ).toFixed(1);
   };
 
-  const presentPercentage = getPercentage(summary.present);
-  const absentPercentage = getPercentage(summary.absent);
-  const leavePercentage = getPercentage(summary.leave);
-  const halfDayPercentage = getPercentage(summary.halfDay);
+  const presentPercentage =
+    getPercentage(summary.present);
 
-  // ---------------- Chart Data ----------------
+  const absentPercentage =
+    getPercentage(summary.absent);
+
+  const leavePercentage =
+    getPercentage(summary.leave);
+
+  const halfDayPercentage =
+    getPercentage(summary.halfDay);
+
+  // =========================================================
+  // CHART DATA
+  // =========================================================
 
   const chartData = [
     {
@@ -326,9 +789,13 @@ const AttendanceChart = () => {
       percentage: halfDayPercentage,
       color: COLORS.HALF_DAY,
     },
-  ].filter((item) => item.value > 0);
+  ].filter(
+    (item) => item.value > 0
+  );
 
-  // ---------------- Loading ----------------
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
     return (
@@ -344,7 +811,9 @@ const AttendanceChart = () => {
     );
   }
 
-  // ---------------- No Attendance ----------------
+  // =========================================================
+  // NO ATTENDANCE
+  // =========================================================
 
   if (summary.total === 0) {
     return (
@@ -369,20 +838,33 @@ const AttendanceChart = () => {
         </h6>
 
         <small className="text-muted">
-          Attendance has not been marked for today.
+          {studentClass
+            ? `No attendance marked for ${studentClass} today.`
+            : "Attendance has not been marked for today."}
         </small>
       </div>
     );
   }
 
+  // =========================================================
+  // UI
+  // =========================================================
+
   return (
     <div className="row align-items-center h-100">
 
-      {/* ================= DONUT ================= */}
+      {/* =====================================================
+          DONUT
+      ===================================================== */}
 
       <div className="col-6">
-        <ResponsiveContainer width="100%" height={230}>
+
+        <ResponsiveContainer
+          width="100%"
+          height={230}
+        >
           <PieChart>
+
             <Pie
               data={chartData}
               dataKey="value"
@@ -393,22 +875,30 @@ const AttendanceChart = () => {
               stroke="#fff"
               strokeWidth={3}
             >
-              {chartData.map((item, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={item.color}
-                />
-              ))}
+
+              {chartData.map(
+                (item, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={item.color}
+                  />
+                )
+              )}
+
             </Pie>
 
             <Tooltip
-              formatter={(value, name) => [
+              formatter={(
+                value,
+                name
+              ) => [
                 `${value} students`,
                 name,
               ]}
             />
 
-            {/* Center Percentage */}
+            {/* CENTER PERCENTAGE */}
+
             <text
               x="50%"
               y="47%"
@@ -435,23 +925,31 @@ const AttendanceChart = () => {
             >
               Present
             </text>
+
           </PieChart>
         </ResponsiveContainer>
+
       </div>
 
-      {/* ================= LEGEND ================= */}
+      {/* =====================================================
+          LEGEND
+      ===================================================== */}
 
       <div className="col-6">
 
-        {/* Present */}
+        {/* PRESENT */}
+
         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-success p-1">
+
           <div className="d-flex align-items-center">
+
             <span
               style={{
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                background: COLORS.PRESENT,
+                background:
+                  COLORS.PRESENT,
                 marginRight: 8,
               }}
             />
@@ -459,9 +957,11 @@ const AttendanceChart = () => {
             <span className="small">
               Present
             </span>
+
           </div>
 
           <div className="text-end">
+
             <div className="fw-semibold">
               {presentPercentage}%
             </div>
@@ -469,18 +969,24 @@ const AttendanceChart = () => {
             <small className="text-muted">
               {summary.present}
             </small>
+
           </div>
+
         </div>
 
-        {/* Absent */}
+        {/* ABSENT */}
+
         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-danger p-1">
+
           <div className="d-flex align-items-center">
+
             <span
               style={{
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                background: COLORS.ABSENT,
+                background:
+                  COLORS.ABSENT,
                 marginRight: 8,
               }}
             />
@@ -488,9 +994,11 @@ const AttendanceChart = () => {
             <span className="small">
               Absent
             </span>
+
           </div>
 
           <div className="text-end">
+
             <div className="fw-semibold">
               {absentPercentage}%
             </div>
@@ -498,18 +1006,24 @@ const AttendanceChart = () => {
             <small className="text-muted">
               {summary.absent}
             </small>
+
           </div>
+
         </div>
 
-        {/* Leave */}
+        {/* LEAVE */}
+
         <div className="d-flex justify-content-between align-items-center mb-3 alert alert-warning p-1">
+
           <div className="d-flex align-items-center">
+
             <span
               style={{
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                background: COLORS.LEAVE,
+                background:
+                  COLORS.LEAVE,
                 marginRight: 8,
               }}
             />
@@ -517,9 +1031,11 @@ const AttendanceChart = () => {
             <span className="small">
               Leave
             </span>
+
           </div>
 
           <div className="text-end">
+
             <div className="fw-semibold">
               {leavePercentage}%
             </div>
@@ -527,19 +1043,25 @@ const AttendanceChart = () => {
             <small className="text-muted">
               {summary.leave}
             </small>
+
           </div>
+
         </div>
 
-        {/* Half Day */}
+        {/* HALF DAY */}
+
         {summary.halfDay > 0 && (
           <div className="d-flex justify-content-between align-items-center">
+
             <div className="d-flex align-items-center">
+
               <span
                 style={{
                   width: 10,
                   height: 10,
                   borderRadius: "50%",
-                  background: COLORS.HALF_DAY,
+                  background:
+                    COLORS.HALF_DAY,
                   marginRight: 8,
                 }}
               />
@@ -547,9 +1069,11 @@ const AttendanceChart = () => {
               <span className="small">
                 Half Day
               </span>
+
             </div>
 
             <div className="text-end">
+
               <div className="fw-semibold">
                 {halfDayPercentage}%
               </div>
@@ -557,12 +1081,17 @@ const AttendanceChart = () => {
               <small className="text-muted">
                 {summary.halfDay}
               </small>
+
             </div>
+
           </div>
         )}
+
       </div>
+
     </div>
   );
 };
 
 export default AttendanceChart;
+

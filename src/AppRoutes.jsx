@@ -36,7 +36,7 @@
 // import SchoolMapping from "./pages/AdminDashboard/SchoolMapping/SchoolMapping";
 // import ModuleList from "./pages/AdminDashboard/ModuleList/ModuleList";
 // import Create_Fee_Structure from "./pages/Fees/Create_Fee_Structure";
-// import Create_Fee_Master from "./pages/Fees/CreateFeeMaster";
+
 // import Generate_Fee_Studentwise from "./pages/Fees/Generate_Fee_StudentWise";
 // import Assign_Fee_Student from "./pages/Fees/Assign_Fee_Student";
 // import Generate_Fee from "./pages/Fees/Generate_Fee";
@@ -334,7 +334,6 @@
 
 // export default AppRoutes;
 
-
 import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
@@ -351,281 +350,214 @@ const Dashboard = lazy(() => import("./pages/AdminDashboard/Dashboard"));
 const SuperDashboard = lazy(() => import("./pages/Dashboard/SuperDashboard"));
 
 // Admin / School
-const SchoolAddForm = lazy(() =>
-  import("./pages/AdminDashboard/SchoolAddForm")
+const SchoolAddForm = lazy(
+  () => import("./pages/AdminDashboard/SchoolAddForm"),
 );
 const Schools = lazy(() => import("./pages/AdminDashboard/Schools"));
 const SchoolList = lazy(() => import("./pages/AdminDashboard/SchoolList"));
 const SchoolView = lazy(() => import("./pages/SchoolView"));
-const SchoolDetails = lazy(() =>
-  import("./pages/AdminDashboard/SchoolDetails")
+const SchoolDetails = lazy(
+  () => import("./pages/AdminDashboard/SchoolDetails"),
 );
-const StudentSchoolList = lazy(() =>
-  import("./pages/AdminDashboard/StudentSchoolList")
+const StudentSchoolList = lazy(
+  () => import("./pages/AdminDashboard/StudentSchoolList"),
 );
 
 // Super Admin
-const SuperAdminCreation = lazy(() =>
-  import("./pages/AdminDashboard/SuperAdminCreation")
+const SuperAdminCreation = lazy(
+  () => import("./pages/AdminDashboard/SuperAdminCreation"),
 );
-const SuperAdminList = lazy(() =>
-  import("./pages/AdminDashboard/SuperAdminList")
+const SuperAdminList = lazy(
+  () => import("./pages/AdminDashboard/SuperAdminList"),
 );
 
 // Modules
-const ModulesCreation = lazy(() =>
-  import("./pages/AdminDashboard/ModuleCreation/ModulesCreation")
+const ModulesCreation = lazy(
+  () => import("./pages/AdminDashboard/ModuleCreation/ModulesCreation"),
 );
-const ModuleList = lazy(() =>
-  import("./pages/AdminDashboard/ModuleList/ModuleList")
+const ModuleList = lazy(
+  () => import("./pages/AdminDashboard/ModuleList/ModuleList"),
 );
 
 // Menus
-const MenuCreation = lazy(() =>
-  import("./pages/AdminDashboard/Menus/MenuCreation")
+const MenuCreation = lazy(
+  () => import("./pages/AdminDashboard/Menus/MenuCreation"),
 );
-const MenuList = lazy(() =>
-  import("./pages/AdminDashboard/Menus/MenuList")
-);
+const MenuList = lazy(() => import("./pages/AdminDashboard/Menus/MenuList"));
 
 // User Groups
-const UserGroupMapping = lazy(() =>
-  import("./pages/AdminDashboard/UserGroupMapping/UserGroupMapping")
+const UserGroupMapping = lazy(
+  () => import("./pages/AdminDashboard/UserGroupMapping/UserGroupMapping"),
 );
-const UserGroupList = lazy(() =>
-  import("./pages/AdminDashboard/UserGroupMapping/UserGroupList")
+const UserGroupList = lazy(
+  () => import("./pages/AdminDashboard/UserGroupMapping/UserGroupList"),
 );
-const UserGroupCreation = lazy(() =>
-  import("./pages/AdminDashboard/UserGroupMapping/UserGroupCreation")
+const UserGroupCreation = lazy(
+  () => import("./pages/AdminDashboard/UserGroupMapping/UserGroupCreation"),
 );
 
 // School Mapping
-const SchoolMapping = lazy(() =>
-  import("./pages/AdminDashboard/SchoolMapping/SchoolMapping")
+const SchoolMapping = lazy(
+  () => import("./pages/AdminDashboard/SchoolMapping/SchoolMapping"),
 );
-const SchoolModuleMappingList = lazy(() =>
-  import(
-    "./pages/AdminDashboard/SchoolMapping/SchoolModuleMappingList"
-  )
+const SchoolModuleMappingList = lazy(
+  () => import("./pages/AdminDashboard/SchoolMapping/SchoolModuleMappingList"),
 );
 
 // Audit
-const AuditLogList = lazy(() =>
-  import("./pages/AdminDashboard/SystemLog/AuditLogList")
+const AuditLogList = lazy(
+  () => import("./pages/AdminDashboard/SystemLog/AuditLogList"),
 );
 
 // Admission
-const NewAdmission = lazy(() =>
-  import("./pages/Admission/NewAdmission")
+const NewAdmission = lazy(() => import("./pages/Admission/NewAdmission"));
+const AdmissionForm = lazy(() => import("./pages/Admission/AdmissionForm"));
+const AdmissionEdit = lazy(() => import("./pages/Admission/AdmissionEdit"));
+const AdmissionList = lazy(() => import("./pages/Admission/AdmissionList"));
+const Documents = lazy(() => import("./pages/Admission/Documents"));
+const DocumentList = lazy(() => import("./pages/Admission/DocumentList"));
+const Admission_Fee_Setup = lazy(
+  () => import("./pages/Setup/Admission_Fee_Setup"),
 );
-const AdmissionForm = lazy(() =>
-  import("./pages/Admission/AdmissionForm")
+const AdmissionFeePayment = lazy(
+  () => import("./pages/Admission/AdmissionFeePayment"),
 );
-const AdmissionEdit = lazy(() =>
-  import("./pages/Admission/AdmissionEdit")
+const Admission_Fee = lazy(() => import("./pages/Admission/AdmissionFee"));
+const AdmissionFeeReceipt = lazy(
+  () => import("./pages/Admission/AdmissionFeeReceipt"),
 );
-const AdmissionList = lazy(() =>
-  import("./pages/Admission/AdmissionList")
+const CreateAccounts = lazy(() => import("./pages/Admission/CreateAccounts"));
+const AdmissionNewAccounts = lazy(
+  () => import("./pages/Admission/AdmissionNewAccounts"),
 );
-const Documents = lazy(() =>
-  import("./pages/Admission/Documents")
+const ConfirmAdmissionReport = lazy(
+  () => import("./pages/Admission/ConfirmAdmissionReport"),
 );
-const DocumentList = lazy(() =>
-  import("./pages/Admission/DocumentList")
-);
-const Admission_Fee_Setup = lazy(() =>
-  import("./pages/Setup/Admission_Fee_Setup")
-);
-const AdmissionFeePayment = lazy(() =>
-  import("./pages/Admission/AdmissionFeePayment")
-);
-const Admission_Fee = lazy(() =>
-  import("./pages/Admission/AdmissionFee")
-);
-const AdmissionFeeReceipt = lazy(() =>
-  import("./pages/Admission/AdmissionFeeReceipt")
-);
-const CreateAccounts = lazy(() =>
-  import("./pages/Admission/CreateAccounts")
-);
-const AdmissionNewAccounts = lazy(() =>
-  import("./pages/Admission/AdmissionNewAccounts")
-);
-const ConfirmAdmissionReport = lazy(() =>
-  import("./pages/Admission/ConfirmAdmissionReport")
-);
-const ManageAdmission = lazy(() =>
-  import("./pages/Admission/ManageAdmission")
-);
+const ManageAdmission = lazy(() => import("./pages/Admission/ManageAdmission"));
 
 // Student
-const Students = lazy(() =>
-  import("./pages/Student/Student")
-);
-const StudentDetails = lazy(() =>
-  import("./pages/Student/StudentDetails")
-);
+const Students = lazy(() => import("./pages/Student/Student"));
+const StudentDetails = lazy(() => import("./pages/Student/StudentDetails"));
 
 // Teacher
-const Teacher = lazy(() =>
-  import("./pages/Teacher/Teacher")
+const Teacher = lazy(() => import("./pages/Teacher/Teacher"));
+const AddTeacher = lazy(() => import("./pages/Teacher/AddTeacher"));
+const TeacherDetails = lazy(() => import("./pages/Teacher/TeacherDetails"));
+const TeacherAttendance = lazy(
+  () => import("./pages/Teacher/TeacherAttendance"),
 );
-const AddTeacher = lazy(() =>
-  import("./pages/Teacher/AddTeacher")
-);
-const TeacherDetails = lazy(() =>
-  import("./pages/Teacher/TeacherDetails")
-);
-const TeacherAttendance = lazy(() =>
-  import("./pages/Teacher/TeacherAttendance")
-);
-const TeacherAttendanceReport = lazy(() =>
-  import("./pages/Teacher/TeacherAttendanceReport")
+const TeacherAttendanceReport = lazy(
+  () => import("./pages/Teacher/TeacherAttendanceReport"),
 );
 
 // Search
-const StudentSearch = lazy(() =>
-  import("./pages/Search/StudentSearch")
-);
-const TeacherSearch = lazy(() =>
-  import("./pages/Search/TeacherSearch")
-);
+const StudentSearch = lazy(() => import("./pages/Search/StudentSearch"));
+const TeacherSearch = lazy(() => import("./pages/Search/TeacherSearch"));
 
 // Attendance
-const MarkAttendance = lazy(() =>
-  import("./pages/Attendance/Student/MarkAttendance")
+const MarkAttendance = lazy(
+  () => import("./pages/Attendance/Student/MarkAttendance"),
 );
-const AttendanceView = lazy(() =>
-  import("./pages/Attendance/Student/AttendanceView")
+const AttendanceView = lazy(
+  () => import("./pages/Attendance/Student/AttendanceView"),
 );
-const DailyAttendanceReport = lazy(() =>
-  import("./pages/Attendance/Student/DailyAttendanceReport")
+const DailyAttendanceReport = lazy(
+  () => import("./pages/Attendance/Student/DailyAttendanceReport"),
 );
-const MonthlyAttendanceReport = lazy(() =>
-  import("./pages/Attendance/Student/MonthlyAttendanceReport")
+const MonthlyAttendanceReport = lazy(
+  () => import("./pages/Attendance/Student/MonthlyAttendanceReport"),
 );
 
 // Setup
-const SectionAssign = lazy(() =>
-  import("./pages/Setup/SectionAssign")
+const SectionAssign = lazy(() => import("./pages/Setup/SectionAssign"));
+const SectionShuffling = lazy(() => import("./pages/Setup/SectionShuffling"));
+const RollNoGeneration = lazy(() => import("./pages/Setup/RollNoGeneration"));
+const DiscontinueStudent = lazy(
+  () => import("./pages/Setup/DiscontinueStudent"),
 );
-const SectionShuffling = lazy(() =>
-  import("./pages/Setup/SectionShuffling")
-);
-const RollNoGeneration = lazy(() =>
-  import("./pages/Setup/RollNoGeneration")
-);
-const DiscontinueStudent = lazy(() =>
-  import("./pages/Setup/DiscontinueStudent")
-);
-const PromotedStudent = lazy(() =>
-  import("./pages/Setup/PromotedStudent")
-);
+const PromotedStudent = lazy(() => import("./pages/Setup/PromotedStudent"));
 
 // Fees
-const Create_Fee_Structure = lazy(() =>
-  import("./pages/Fees/Create_Fee_Structure")
+const Create_Fee_Structure = lazy(
+  () => import("./pages/Fees/Create_Fee_Structure"),
 );
-const Create_Fee_Master = lazy(() =>
-  import("./pages/Fees/CreateFeeMaster")
+
+const Generate_Fee_Studentwise = lazy(
+  () => import("./pages/Fees/Generate_Fee_StudentWise"),
 );
-const Generate_Fee_Studentwise = lazy(() =>
-  import("./pages/Fees/Generate_Fee_StudentWise")
+const Assign_Fee_Student = lazy(
+  () => import("./pages/Fees/Assign_Fee_Student"),
 );
-const Assign_Fee_Student = lazy(() =>
-  import("./pages/Fees/Assign_Fee_Student")
+const Generate_Fee = lazy(() => import("./pages/Fees/Generate_Fee"));
+const StudentFeeAssignment = lazy(
+  () => import("./pages/Fees/StudentFeeAssignment"),
 );
-const Generate_Fee = lazy(() =>
-  import("./pages/Fees/Generate_Fee")
+const FeeLedger = lazy(() => import("./pages/Fees/FeeLedger"));
+const Fee_LedgerDetails = lazy(() => import("./pages/Fees/Fee_LedgerDetails"));
+const FeeCollectionSearch = lazy(
+  () => import("./pages/Fees/FeeCollectionSearch"),
 );
-const StudentFeeAssignment = lazy(() =>
-  import("./pages/Fees/StudentFeeAssignment")
+const FeeCollection = lazy(() => import("./pages/Fees/FeeCollection"));
+const FeeReceipt = lazy(() => import("./pages/Fees/FeeReceipt"));
+const DeleteFeeReceipt = lazy(() => import("./pages/Fees/DeleteFeeReceipt"));
+const DailyFeeCollection = lazy(
+  () => import("./pages/Fees/Reports/DailyFeeCollection"),
 );
-const FeeLedger = lazy(() =>
-  import("./pages/Fees/FeeLedger")
-);
-const Fee_LedgerDetails = lazy(() =>
-  import("./pages/Fees/Fee_LedgerDetails")
-);
-const FeeCollectionSearch = lazy(() =>
-  import("./pages/Fees/FeeCollectionSearch")
-);
-const FeeCollection = lazy(() =>
-  import("./pages/Fees/FeeCollection")
-);
-const FeeReceipt = lazy(() =>
-  import("./pages/Fees/FeeReceipt")
-);
-const DeleteFeeReceipt = lazy(() =>
-  import("./pages/Fees/DeleteFeeReceipt")
-);
-const DailyFeeCollection = lazy(() =>
-  import("./pages/Fees/Reports/DailyFeeCollection")
-);
-const MonthlyFeeCollection = lazy(() =>
-  import("./pages/Fees/Reports/MonthlyFeeCollection")
+const MonthlyFeeCollection = lazy(
+  () => import("./pages/Fees/Reports/MonthlyFeeCollection"),
 );
 
 // Assessment
-const AssessmentSetup = lazy(() =>
-  import("./pages/Assessment/AssessmentSetup")
+const AssessmentSetup = lazy(
+  () => import("./pages/Assessment/AssessmentSetup"),
 );
-const AddAssessmentType = lazy(() =>
-  import("./pages/Assessment/AddAssessmentType")
+const AddAssessmentType = lazy(
+  () => import("./pages/Assessment/AddAssessmentType"),
 );
-const AssessmentType = lazy(() =>
-  import("./pages/Assessment/AssessmentType")
+const AssessmentType = lazy(() => import("./pages/Assessment/AssessmentType"));
+const AssessmentNature = lazy(
+  () => import("./pages/Assessment/AssessmentNature"),
 );
-const AssessmentNature = lazy(() =>
-  import("./pages/Assessment/AssessmentNature")
+const AssessmentCategory = lazy(
+  () => import("./pages/Assessment/AssessmentCategory"),
 );
-const AssessmentCategory = lazy(() =>
-  import("./pages/Assessment/AssessmentCategory")
+const AddAssessmentCategory = lazy(
+  () => import("./pages/Assessment/AddAssessmentCategory"),
 );
-const AddAssessmentCategory = lazy(() =>
-  import("./pages/Assessment/AddAssessmentCategory")
+const AddAssessmentExam = lazy(
+  () => import("./pages/Assessment/AddAssessmentExam"),
 );
-const AddAssessmentExam = lazy(() =>
-  import("./pages/Assessment/AddAssessmentExam")
+const ExamTermManagement = lazy(
+  () => import("./pages/Assessment/ExamTermManagement"),
 );
-const ExamTermManagement = lazy(() =>
-  import("./pages/Assessment/ExamTermManagement")
+const SubjectMaster = lazy(
+  () => import("./pages/Assessment/SubjectManagement/SubjectMaster"),
 );
-const SubjectMaster = lazy(() =>
-  import("./pages/Assessment/SubjectManagement/SubjectMaster")
+const ClassSubjectMapping = lazy(
+  () => import("./pages/Assessment/SubjectManagement/ClassSubjectMapping"),
 );
-const ClassSubjectMapping = lazy(() =>
-  import("./pages/Assessment/SubjectManagement/ClassSubjectMapping")
+const AddAssessmentStructure = lazy(
+  () => import("./pages/Assessment/AssessmentStructure/AddAssessmentStructure"),
 );
-const AddAssessmentStructure = lazy(() =>
-  import("./pages/Assessment/AssessmentStructure/AddAssessmentStructure")
+const ViewAssessmentStructure = lazy(
+  () =>
+    import("./pages/Assessment/AssessmentStructure/ViewAssessmentStructure"),
 );
-const ViewAssessmentStructure = lazy(() =>
-  import("./pages/Assessment/AssessmentStructure/ViewAssessmentStructure")
+const GradeManagement = lazy(
+  () => import("./pages/Assessment/GradeManagement"),
 );
-const GradeManagement = lazy(() =>
-  import("./pages/Assessment/GradeManagement")
+const MarksEntry = lazy(() => import("./pages/Assessment/MarksEntry"));
+const MarksVerification = lazy(
+  () => import("./pages/Assessment/MarksVerification"),
 );
-const MarksEntry = lazy(() =>
-  import("./pages/Assessment/MarksEntry")
+const ReportCardVerification = lazy(
+  () => import("./pages/Assessment/ReportCardVerification"),
 );
-const MarksVerification = lazy(() =>
-  import("./pages/Assessment/MarksVerification")
-);
-const ReportCardVerification = lazy(() =>
-  import("./pages/Assessment/ReportCardVerification")
-);
-const ResultPublish = lazy(() =>
-  import("./pages/Assessment/ResultPublish")
-);
+const ResultPublish = lazy(() => import("./pages/Assessment/ResultPublish"));
 
 // Results
-const Results = lazy(() =>
-  import("./pages/Results/Results")
-);
-const StudentResult = lazy(() =>
-  import("./pages/Results/StudentResult")
-);
+const Results = lazy(() => import("./pages/Results/Results"));
+const StudentResult = lazy(() => import("./pages/Results/StudentResult"));
 
 // Existing components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -643,8 +575,22 @@ import StudentLeaveLetter from "./pages/Student/StudentLeaveLetter";
 import StudentDocuments from "./pages/Student/StudentDocuments";
 import StudentPTM from "./pages/Student/StudentPTM";
 import AddPTM from "./pages/Setup/AddPTM";
-
-
+import PendingAdmission from "./pages/Admission/PendingAdmission";
+import AdmissionCancel from "./pages/Admission/AdmissionCancel";
+import AdmissionCancelReport from "./pages/Admission/AdmissionCancelReport";
+import AdmissionEnquiry from "./pages/Admission/Enquiry/AdmissionEnquiry";
+import AddEnquiry from "./pages/Admission/Enquiry/AddEnquiry";
+import FeeScheduleStudentwise from "./pages/Fees/FeeScheduleStudentwise";
+import CreateFeeMaster from "./pages/Fees/CreateFeeMaster";
+import MyProfile from "./pages/StudentDashboard/MyProfile";
+import MyFee from "./pages/StudentDashboard/MyFee";
+import StudentAttendance from "./pages/StudentDashboard/StudentAttendance";
+import VehicleManagement from "./pages/Transport/VehicleManagement";
+import RouteManagement from "./pages/Transport/RouteManagement";
+import StopManagement from "./pages/Transport/StopManagement";
+import AssignRouteVehicle from "./pages/Transport/AssignRouteVehicle";
+import DriverManagement from "./pages/Transport/DriverManagement";
+import StudentTransportAllocation from "./pages/Transport/StudentTransportAllocation";
 
 // =====================================================
 // LOADING COMPONENT
@@ -666,19 +612,14 @@ const PageLoader = () => {
           role="status"
           style={{ width: "2.5rem", height: "2.5rem" }}
         >
-          <span className="visually-hidden">
-            Loading...
-          </span>
+          <span className="visually-hidden">Loading...</span>
         </div>
 
-        <div className="mt-2 text-muted">
-          Loading page...
-        </div>
+        <div className="mt-2 text-muted">Loading page...</div>
       </div>
     </div>
   );
 };
-
 
 // =====================================================
 // ROUTES
@@ -688,157 +629,88 @@ const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-
         {/* =================================================
             PUBLIC
         ================================================= */}
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-
+        <Route path="/register" element={<Register />} />
 
         {/* =================================================
             HOME
         ================================================= */}
 
-        <Route
-          path="/"
-          element={<HomeRedirect />}
-        />
-
+        <Route path="/" element={<HomeRedirect />} />
 
         {/* =================================================
             SETUP
         ================================================= */}
 
+        <Route path="/setup/admission_fee" element={<Admission_Fee_Setup />} />
+
+        <Route path="/setup/section_assign" element={<SectionAssign />} />
+
+        <Route path="/setup/discontinue" element={<DiscontinueStudent />} />
+        <Route path="/setup/promoted_student" element={<PromotedStudent />} />
+
+        <Route path="/setup/section_shuffling" element={<SectionShuffling />} />
+
+        <Route path="/setup/roll-no" element={<RollNoGeneration />} />
+
+        <Route path="/setup/school-info" element={<SchoolInfo />} />
+
         <Route
-          path="/setup/admission_fee"
-          element={<Admission_Fee_Setup />}
+          path="/setup/leave_year_calendar"
+          element={<LeaveYearCalendar />}
         />
 
-        <Route
-          path="/setup/section_assign"
-          element={<SectionAssign />}
-        />
+        <Route path="/setup/account_creations" element={<AccountCreate />} />
 
-        <Route
-          path="/setup/discontinue"
-          element={<DiscontinueStudent />}
-        />
-        <Route
-          path="/setup/promoted_student"
-          element={<PromotedStudent />}
-        />
+        <Route path="/setup/hr_payroll" element={<HRPayroll />} />
 
-        <Route
-          path="/setup/section_shuffling"
-          element={<SectionShuffling />}
-        />
+        <Route path="/setup/hr_payroll/employees" element={<EmployeeList />} />
 
-        <Route
-          path="/setup/roll-no"
-          element={<RollNoGeneration />}
-        />
+        <Route path="/setup/time_table_add" element={<AddTimeTable />} />
 
-        <Route
-  path="/setup/school-info"
-  element={<SchoolInfo />}
-/>
+        <Route path="/setup/time_table_show" element={<TimeTableList />} />
 
-        <Route
-  path="/setup/leave_year_calendar"
-  element={<LeaveYearCalendar />}
-/>
-
- <Route
-  path="/setup/account_creations"
-  element={<AccountCreate />}
-/>
-
- <Route
-  path="/setup/hr_payroll"
-  element={<HRPayroll />}
-/>
-
- <Route
-  path="/setup/hr_payroll/employees"
-  element={<EmployeeList />}
-/>
-
-<Route
-  path="/setup/time_table_add"
-  element={<AddTimeTable />}
-/>
-
-<Route
-  path="/setup/time_table_show"
-  element={<TimeTableList />}
-/>
-
-
-<Route
-  path="/setup/add/ptm"
-  element={<AddPTM />}
-/>
+        <Route path="/setup/add/ptm" element={<AddPTM />} />
 
         {/* =================================================
             ADMISSION
         ================================================= */}
 
-        <Route
-          path="/admission/new_admission"
-          element={<NewAdmission />}
-        />
+        <Route path="/admission/new_admission" element={<NewAdmission />} />
 
         <Route
           path="/admission/new_admission/add"
           element={<AdmissionForm />}
         />
 
-        <Route
-          path="/admission/edit/:id"
-          element={<AdmissionEdit />}
-        />
+        <Route path="/admission/edit/:id" element={<AdmissionEdit />} />
 
-        <Route
-          path="/admission/list"
-          element={<AdmissionList />}
-        />
+        <Route path="/admission/list" element={<AdmissionList />} />
 
-        <Route
-          path="/admission/manage"
-          element={<ManageAdmission />}
-        />
+        <Route path="/admission/manage" element={<ManageAdmission />} />
 
-        <Route
-          path="/admission/document_view_upload"
-          element={<Documents />}
-        />
+        <Route path="/admission/document_view_upload" element={<Documents />} />
 
-        <Route
-          path="/admission/documents"
-          element={<DocumentList />}
-        />
+        <Route path="/admission/documents" element={<DocumentList />} />
 
         <Route
           path="/admission/fee_payment"
           element={<AdmissionFeePayment />}
         />
 
-          <Route
+        <Route
           path="/admission/payment_list"
           element={<AdmissionFeePaymentList />}
         />
+        <Route path="/admission/fee/:id" element={<Admission_Fee />} />
         <Route
-          path="/admission/fee/:id"
-          element={<Admission_Fee />}
+          path="/admission/pending_admission"
+          element={<PendingAdmission />}
         />
 
         <Route
@@ -846,9 +718,11 @@ const AppRoutes = () => {
           element={<AdmissionFeeReceipt />}
         />
 
+        <Route path="/admission/create_accounts" element={<CreateAccounts />} />
+        <Route path="/admission/cancel" element={<AdmissionCancel />} />
         <Route
-          path="/admission/create_accounts"
-          element={<CreateAccounts />}
+          path="/admission/cancel/report"
+          element={<AdmissionCancelReport />}
         />
 
         <Route
@@ -861,6 +735,14 @@ const AppRoutes = () => {
           element={<ConfirmAdmissionReport />}
         />
 
+        <Route
+          path="/admission/enquiry"
+          element={<AdmissionEnquiry />}
+        />
+        <Route
+          path="/admission/enquiry/new"
+          element={<AddEnquiry />}
+        />
 
         {/* =================================================
             FEES
@@ -871,60 +753,45 @@ const AppRoutes = () => {
           element={<Create_Fee_Structure />}
         />
 
-        <Route
-          path="/fee/setup/fee_structure/fee-types"
-          element={<Create_Fee_Master />}
-        />
+       
 
         <Route
           path="/fee/generate_fee/:admissionNumber"
           element={<Generate_Fee_Studentwise />}
         />
 
-        <Route
-          path="/fee/generate_fee"
-          element={<Generate_Fee />}
-        />
+        <Route path="/fee/generate_fee" element={<Generate_Fee />} />
 
         <Route
           path="/fee/assignment/students"
           element={<Assign_Fee_Student />}
         />
 
+        
         <Route
-          path="/fee-assignment"
-          element={<StudentFeeAssignment />}
+          path="/fee/fee-schedule"
+          element={<FeeScheduleStudentwise />}
         />
 
-        <Route
-          path="/fee/feeledger"
-          element={<FeeLedger />}
-        />
+        <Route path="/fee-assignment" element={<StudentFeeAssignment />} />
+
+        <Route path="/fee/feeledger" element={<FeeLedger />} />
 
         <Route
           path="/fee/feeledger/:admissionNumber"
           element={<Fee_LedgerDetails />}
         />
 
-        <Route
-          path="/fee/feeCollection"
-          element={<FeeCollectionSearch />}
-        />
+        <Route path="/fee/feeCollection" element={<FeeCollectionSearch />} />
 
         <Route
           path="/fee/feeCollection/:admissionNumber"
           element={<FeeCollection />}
         />
 
-        <Route
-          path="/fee/delete_fee_receipt"
-          element={<DeleteFeeReceipt />}
-        />
+        <Route path="/fee/delete_fee_receipt" element={<DeleteFeeReceipt />} />
 
-        <Route
-          path="/fee/receipt/:receiptNo"
-          element={<FeeReceipt />}
-        />
+        <Route path="/fee/receipt/:receiptNo" element={<FeeReceipt />} />
 
         <Route
           path="/fee/reports/daily_collection"
@@ -935,105 +802,68 @@ const AppRoutes = () => {
           path="/fee/reports/monthly_collection"
           element={<MonthlyFeeCollection />}
         />
-
+         <Route
+          path="/fee/fee-master"
+          element={<CreateFeeMaster />}
+        />
 
         {/* =================================================
             STUDENT
         ================================================= */}
 
-        <Route
-          path="/student/list"
-          element={<Students />}
-        />
+        <Route path="/student/list" element={<Students />} />
 
         <Route
           path="/student/view/:admissionNumber"
           element={<StudentDetails />}
         />
-         <Route
-          path="/student/id"
-          element={<StudentIdCards />}
-        />
+        <Route path="/student/id" element={<StudentIdCards />} />
 
-         <Route
-          path="/student/leave_letter"
-          element={<StudentLeaveLetter />}
-        />
+        <Route path="/student/leave_letter" element={<StudentLeaveLetter />} />
 
-         <Route
-          path="/student/documents"
-          element={<StudentDocuments />}
-        />
-        <Route
-          path="/student/ptm"
-          element={<StudentPTM />}
-        />
-
-
+        <Route path="/student/documents" element={<StudentDocuments />} />
+        <Route path="/student/ptm" element={<StudentPTM />} />
 
         {/* =================================================
             TEACHER
         ================================================= */}
 
-        <Route
-          path="/teacher/list"
-          element={<Teacher />}
-        />
+        <Route path="/teacher/list" element={<Teacher />} />
 
         <Route
           path="/teacher/profile/:employeeId"
           element={<TeacherDetails />}
         />
 
-        <Route
-          path="/teacher/add"
-          element={<AddTeacher />}
-        />
+        <Route path="/teacher/add" element={<AddTeacher />} />
 
         <Route
           path="/teacher/edit-teacher/:employeeId"
           element={<AddTeacher />}
         />
 
-        <Route
-          path="/teacher/attendance"
-          element={<TeacherAttendance />}
-        />
+        <Route path="/teacher/attendance" element={<TeacherAttendance />} />
 
         <Route
           path="/teacher/attendance_report"
           element={<TeacherAttendanceReport />}
         />
 
-
         {/* =================================================
             SEARCH
         ================================================= */}
 
-        <Route
-          path="/search/students"
-          element={<StudentSearch />}
-        />
+        <Route path="/search/students" element={<StudentSearch />} />
 
-        <Route
-          path="/search/teachers"
-          element={<TeacherSearch />}
-        />
-
+        <Route path="/search/teachers" element={<TeacherSearch />} />
 
         {/* =================================================
             STUDENT ATTENDANCE
         ================================================= */}
 
-        <Route
-          path="/attendance/student/mark"
-          element={<MarkAttendance />}
-        />
+        <Route path="/attendance/student/mark" element={<MarkAttendance />} />
 
-        <Route
-          path="/attendance/student/view"
-          element={<AttendanceView />}
-        />
+        <Route path="/attendance/student/view" element={<AttendanceView />} />
 
         <Route
           path="/attendance/student/daily_attendance"
@@ -1045,50 +875,28 @@ const AppRoutes = () => {
           element={<MonthlyAttendanceReport />}
         />
 
-
         {/* =================================================
             ASSESSMENT
         ================================================= */}
 
-        <Route
-          path="/assessment/setup"
-          element={<AssessmentSetup />}
-        />
+        <Route path="/assessment/setup" element={<AssessmentSetup />} />
 
-        <Route
-          path="/assessment/type"
-          element={<AssessmentType />}
-        />
+        <Route path="/assessment/type" element={<AssessmentType />} />
 
-        <Route
-          path="/assessment/add/type"
-          element={<AddAssessmentType />}
-        />
+        <Route path="/assessment/add/type" element={<AddAssessmentType />} />
 
-        <Route
-          path="/assessment/nature"
-          element={<AssessmentNature />}
-        />
+        <Route path="/assessment/nature" element={<AssessmentNature />} />
 
-        <Route
-          path="/assessment/category"
-          element={<AssessmentCategory />}
-        />
+        <Route path="/assessment/category" element={<AssessmentCategory />} />
 
         <Route
           path="/assessment/add/category"
           element={<AddAssessmentCategory />}
         />
 
-        <Route
-          path="/assessment/exam-term"
-          element={<ExamTermManagement />}
-        />
+        <Route path="/assessment/exam-term" element={<ExamTermManagement />} />
 
-        <Route
-          path="/assessment/add/exam"
-          element={<AddAssessmentExam />}
-        />
+        <Route path="/assessment/add/exam" element={<AddAssessmentExam />} />
 
         <Route
           path="/assessment/subject-management/master"
@@ -1110,10 +918,7 @@ const AppRoutes = () => {
           element={<ViewAssessmentStructure />}
         />
 
-        <Route
-          path="/assessment/marks-entry"
-          element={<MarksEntry />}
-        />
+        <Route path="/assessment/marks-entry" element={<MarksEntry />} />
 
         <Route
           path="/assessment/marks/verification"
@@ -1125,32 +930,37 @@ const AppRoutes = () => {
           element={<ReportCardVerification />}
         />
 
-        <Route
-          path="/assessment/result-publish"
-          element={<ResultPublish />}
-        />
+        <Route path="/assessment/result-publish" element={<ResultPublish />} />
 
         <Route
           path="/assessment/grade-management"
           element={<GradeManagement />}
         />
+        {/* =================================================
+            TRANSPORT
+        ================================================= */}
 
+        <Route path="/transport/vehicle-management" element={<VehicleManagement />} />
+        <Route path="/transport/route-management" element={<RouteManagement />} />
+        <Route path="/transport/stop-management" element={<StopManagement />} />
+        <Route path="/transport/assign-route" element={<AssignRouteVehicle />} />
+        <Route path="/transport/driver-management" element={<DriverManagement />} />
+        <Route path="/transport/student-allocation" element={<StudentTransportAllocation />} />
 
         {/* =================================================
             RESULTS
         ================================================= */}
 
-        <Route
-          path="/results"
-          element={<Results />}
-        />
+        <Route path="/results" element={<Results />} />
 
-        <Route
-          path="/result"
-          element={<StudentResult />}
-        />
+        <Route path="/result" element={<StudentResult />} />
 
-
+        {/* ====================================================
+            STUDENT DASHBOARD
+        ==================================================== */}
+        <Route path="/my-profile" element={<MyProfile />} />
+        <Route path="/fee" element={<MyFee />} />
+         <Route path="/attendance" element={<StudentAttendance />} />
         {/* =================================================
             ADMIN DASHBOARD
         ================================================= */}
@@ -1163,81 +973,42 @@ const AppRoutes = () => {
           }
         />
 
-        <Route
-          path="/schools"
-          element={<Schools />}
-        />
+        <Route path="/schools" element={<Schools />} />
 
-        <Route
-          path="/add/schools"
-          element={<SchoolAddForm />}
-        />
+        <Route path="/add/schools" element={<SchoolAddForm />} />
 
-        <Route
-          path="/school-list"
-          element={<SchoolList />}
-        />
+        <Route path="/school-list" element={<SchoolList />} />
 
         <Route
           path="/admin/school-details/:schoolId"
           element={<SchoolDetails />}
         />
 
-        <Route
-          path="/admin/student-list"
-          element={<StudentSchoolList />}
-        />
+        <Route path="/admin/student-list" element={<StudentSchoolList />} />
 
-        <Route
-          path="/school/view/:id"
-          element={<SchoolView />}
-        />
+        <Route path="/school/view/:id" element={<SchoolView />} />
 
-        <Route
-          path="/school-edit/:schoolId"
-          element={<SchoolAddForm />}
-        />
+        <Route path="/school-edit/:schoolId" element={<SchoolAddForm />} />
 
         {/* Modules */}
 
-        <Route
-          path="/admin/add-modules"
-          element={<ModulesCreation />}
-        />
+        <Route path="/admin/add-modules" element={<ModulesCreation />} />
 
-        <Route
-          path="/admin/modules/edit/:id"
-          element={<ModulesCreation />}
-        />
+        <Route path="/admin/modules/edit/:id" element={<ModulesCreation />} />
 
         {/* Menus */}
 
-        <Route
-  path="/admin/menus/creation"
-  element={<MenuCreation />}
-/>
+        <Route path="/admin/menus/creation" element={<MenuCreation />} />
 
-<Route
-  path="/admin/menus/edit/:id"
-  element={<MenuCreation />}
-/>
+        <Route path="/admin/menus/edit/:id" element={<MenuCreation />} />
 
-        <Route
-          path="/admin/menus/all"
-          element={<MenuList />}
-        />
+        <Route path="/admin/menus/all" element={<MenuList />} />
 
         {/* User Groups */}
 
-        <Route
-          path="/admin/userGroupmapping/"
-          element={<UserGroupMapping />}
-        />
+        <Route path="/admin/userGroupmapping/" element={<UserGroupMapping />} />
 
-        <Route
-          path="/admin/user-group/list/"
-          element={<UserGroupList />}
-        />
+        <Route path="/admin/user-group/list/" element={<UserGroupList />} />
 
         <Route
           path="/admin/user-group/create/"
@@ -1246,39 +1017,24 @@ const AppRoutes = () => {
 
         {/* School Mapping */}
 
-        <Route
-          path="/admin/schoolMapping/"
-          element={<SchoolMapping />}
-        />
+        <Route path="/admin/schoolMapping/" element={<SchoolMapping />} />
 
         <Route
           path="/admin/module-mapping/list/"
           element={<SchoolModuleMappingList />}
         />
 
-        <Route
-          path="/admin/moduleList/"
-          element={<ModuleList />}
-        />
+        <Route path="/admin/moduleList/" element={<ModuleList />} />
 
         {/* Super Admin */}
 
-        <Route
-          path="/add/superadmins"
-          element={<SuperAdminCreation />}
-        />
+        <Route path="/add/superadmins" element={<SuperAdminCreation />} />
 
-        <Route
-          path="/superadmin-list"
-          element={<SuperAdminList />}
-        />
+        <Route path="/superadmin-list" element={<SuperAdminList />} />
 
         {/* Audit */}
 
-        <Route
-          path="/settings/system-log/"
-          element={<AuditLogList />}
-        />
+        <Route path="/settings/system-log/" element={<AuditLogList />} />
 
         {/* Create School */}
 
@@ -1290,7 +1046,6 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </Suspense>
   );

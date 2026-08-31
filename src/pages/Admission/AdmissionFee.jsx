@@ -113,7 +113,7 @@ const Admission_Fee = () => {
   const [paymentError, setPaymentError] = useState("");
 
   const [formData, setFormData] = useState({
-    session: "",
+    session: admissionStudents.academicYear || "",
     standard: "",
 
     tuitionFee: {},

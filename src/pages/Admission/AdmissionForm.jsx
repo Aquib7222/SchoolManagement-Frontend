@@ -6227,19 +6227,19 @@ const AdmissionForm = () => {
                       Select Academic Year
                     </option>
 
-                    <option value="2026-27">
+                    <option value="2026-2027">
                       2026-2027
                     </option>
 
-                    <option value="2025-26">
+                    <option value="2025-2026">
                       2025-2026
                     </option>
 
-                    <option value="2024-25">
+                    <option value="2024-2025">
                       2024-2025
                     </option>
 
-                    <option value="2023-24">
+                    <option value="2023-2024">
                       2023-2024
                     </option>
 
