@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LuBus,
   LuRoute,
@@ -13,88 +13,26 @@ import {
   LuMapPin,
 } from "react-icons/lu";
 import { FaBus } from "react-icons/fa";
+import axiosInstance from "../../api/axiosInstance";
 
 const AssignRouteVehicle = () => {
-  // ================= VEHICLES =================
+  const schoolId = localStorage.getItem("schoolId");
 
-  const [vehicles] = useState([
-    {
-      id: 1,
-      vehicleNumber: "BR06PA1234",
-      vehicleType: "School Bus",
-    },
-    {
-      id: 2,
-      vehicleNumber: "BR06PB5678",
-      vehicleType: "School Bus",
-    },
-    {
-      id: 3,
-      vehicleNumber: "BR06PC9012",
-      vehicleType: "Van",
-    },
-    {
-      id: 4,
-      vehicleNumber: "BR06PD3456",
-      vehicleType: "School Bus",
-    },
-  ]);
+  // =====================================================
+  // STATE
+  // =====================================================
 
-  // ================= ROUTES =================
+  const [vehicles, setVehicles] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [assignments, setAssignments] = useState([]);
 
-  const [routes] = useState([
-    {
-      id: 1,
-      routeName: "Route 01",
-      startLocation: "Muzaffarpur",
-      endLocation: "School Campus",
-      stops: "Kalyani, Mithanpura, Ramna, Aghoria Bazar",
-    },
-    {
-      id: 2,
-      routeName: "Route 02",
-      startLocation: "Brahmpura",
-      endLocation: "School Campus",
-      stops: "Brahmpura, Company Bagh, Imli Chatti, Akharaghat",
-    },
-    {
-      id: 3,
-      routeName: "Route 03",
-      startLocation: "Ahiyapur",
-      endLocation: "School Campus",
-      stops: "Ahiyapur, Zero Mile, Chandwara, Motijheel",
-    },
-    {
-      id: 4,
-      routeName: "Route 04",
-      startLocation: "Kanti",
-      endLocation: "School Campus",
-      stops: "Kanti, Medical Chowk, Bhagwanpur, MIT",
-    },
-  ]);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // ================= ASSIGNMENTS =================
+  const [search, setSearch] = useState("");
 
-  const [assignments, setAssignments] = useState([
-    {
-      id: 1,
-      vehicleId: 1,
-      routeId: 1,
-      status: "ACTIVE",
-    },
-    {
-      id: 2,
-      vehicleId: 2,
-      routeId: 2,
-      status: "ACTIVE",
-    },
-    {
-      id: 3,
-      vehicleId: 3,
-      routeId: 3,
-      status: "ACTIVE",
-    },
-  ]);
+  const [showModal, setShowModal] = useState(false);
+  const [editAssignment, setEditAssignment] = useState(null);
 
   const emptyForm = {
     vehicleId: "",
@@ -103,37 +41,163 @@ const AssignRouteVehicle = () => {
   };
 
   const [formData, setFormData] = useState(emptyForm);
-  const [showModal, setShowModal] = useState(false);
-  const [editAssignment, setEditAssignment] = useState(null);
-  const [search, setSearch] = useState("");
 
-  // ================= FILTER =================
+  // =====================================================
+  // API BASE
+  // =====================================================
+
+  const BASE_URL = "/api/transport/vehicle-routes";
+
+  // =====================================================
+  // FETCH VEHICLES
+  // =====================================================
+
+  const fetchVehicles = async () => {
+    if (!schoolId) return;
+
+    try {
+      const response = await axiosInstance.get(
+        `/api/transport/vehicles?schoolId=${schoolId}`
+      );
+
+      setVehicles(response.data || []);
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Failed to load vehicles."
+      );
+    }
+  };
+
+  // =====================================================
+  // FETCH ROUTES
+  // =====================================================
+
+  const fetchRoutes = async () => {
+    if (!schoolId) return;
+
+    try {
+      const response = await axiosInstance.get(
+        `/api/transport/routes?schoolId=${schoolId}`
+      );
+
+      setRoutes(response.data || []);
+    } catch (error) {
+      console.error("Error fetching routes:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Failed to load routes."
+      );
+    }
+  };
+
+  // =====================================================
+  // FETCH ASSIGNMENTS
+  // =====================================================
+
+  const fetchAssignments = async () => {
+    if (!schoolId) return;
+
+    try {
+      setLoading(true);
+
+      const response = await axiosInstance.get(
+        `${BASE_URL}?schoolId=${schoolId}`
+      );
+
+      setAssignments(response.data || []);
+    } catch (error) {
+      console.error("Error fetching assignments:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Failed to load route assignments."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
+  useEffect(() => {
+    if (!schoolId) return;
+
+    const loadData = async () => {
+      await Promise.all([
+        fetchVehicles(),
+        fetchRoutes(),
+        fetchAssignments(),
+      ]);
+    };
+
+    loadData();
+  }, [schoolId]);
+
+  // =====================================================
+  // GET VEHICLE
+  // =====================================================
+
+  const getVehicle = (vehicleId) => {
+    return vehicles.find(
+      (vehicle) => Number(vehicle.id) === Number(vehicleId)
+    );
+  };
+
+  // =====================================================
+  // GET ROUTE
+  // =====================================================
+
+  const getRoute = (routeId) => {
+    return routes.find(
+      (route) => Number(route.id) === Number(routeId)
+    );
+  };
+
+  // =====================================================
+  // FILTER
+  // =====================================================
 
   const filteredAssignments = useMemo(() => {
     const searchText = search.toLowerCase().trim();
 
     return assignments.filter((assignment) => {
-      const vehicle = vehicles.find(
-        (item) => item.id === assignment.vehicleId
-      );
+      const vehicle = getVehicle(assignment.vehicleId);
+      const route = getRoute(assignment.routeId);
 
-      const route = routes.find(
-        (item) => item.id === assignment.routeId
-      );
+      const vehicleNumber =
+        vehicle?.vehicleNumber?.toLowerCase() || "";
 
-      const vehicleNumber = vehicle?.vehicleNumber?.toLowerCase() || "";
-      const vehicleType = vehicle?.vehicleType?.toLowerCase() || "";
-      const routeName = route?.routeName?.toLowerCase() || "";
+      const vehicleType =
+        vehicle?.vehicleType?.toLowerCase() || "";
+
+      const routeName =
+        route?.routeName?.toLowerCase() || "";
+
+      const startLocation =
+        route?.startLocation?.toLowerCase() || "";
+
+      const endLocation =
+        route?.endLocation?.toLowerCase() || "";
 
       return (
         vehicleNumber.includes(searchText) ||
         vehicleType.includes(searchText) ||
-        routeName.includes(searchText)
+        routeName.includes(searchText) ||
+        startLocation.includes(searchText) ||
+        endLocation.includes(searchText)
       );
     });
   }, [assignments, vehicles, routes, search]);
 
-  // ================= FORM =================
+  // =====================================================
+  // FORM CHANGE
+  // =====================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -144,11 +208,19 @@ const AssignRouteVehicle = () => {
     }));
   };
 
+  // =====================================================
+  // OPEN ADD MODAL
+  // =====================================================
+
   const openAddModal = () => {
     setEditAssignment(null);
     setFormData(emptyForm);
     setShowModal(true);
   };
+
+  // =====================================================
+  // OPEN EDIT MODAL
+  // =====================================================
 
   const openEditModal = (assignment) => {
     setEditAssignment(assignment);
@@ -156,37 +228,60 @@ const AssignRouteVehicle = () => {
     setFormData({
       vehicleId: String(assignment.vehicleId),
       routeId: String(assignment.routeId),
-      status: assignment.status,
+      status: assignment.status || "ACTIVE",
     });
 
     setShowModal(true);
   };
 
-  // ================= SUBMIT =================
+  // =====================================================
+  // CLOSE MODAL
+  // =====================================================
 
-  const handleSubmit = (e) => {
+  const closeModal = () => {
+    setShowModal(false);
+    setEditAssignment(null);
+    setFormData(emptyForm);
+  };
+
+  // =====================================================
+  // CREATE / UPDATE
+  // =====================================================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.vehicleId || !formData.routeId) {
+    if (!schoolId) {
+      alert("School ID not found.");
       return;
     }
 
-    // Prevent same vehicle from being assigned to another route
-    const duplicate = assignments.find(
+    if (!formData.vehicleId || !formData.routeId) {
+      alert("Please select vehicle and route.");
+      return;
+    }
+
+    const vehicleId = Number(formData.vehicleId);
+    const routeId = Number(formData.routeId);
+
+    // =================================================
+    // FRONTEND DUPLICATE CHECK
+    // =================================================
+
+    const vehicleDuplicate = assignments.find(
       (item) =>
-        item.vehicleId === Number(formData.vehicleId) &&
+        Number(item.vehicleId) === vehicleId &&
         item.id !== editAssignment?.id
     );
 
-    if (duplicate) {
+    if (vehicleDuplicate) {
       alert("This vehicle is already assigned to a route.");
       return;
     }
 
-    // Prevent same route from being assigned to another vehicle
     const routeDuplicate = assignments.find(
       (item) =>
-        item.routeId === Number(formData.routeId) &&
+        Number(item.routeId) === routeId &&
         item.id !== editAssignment?.id
     );
 
@@ -195,74 +290,158 @@ const AssignRouteVehicle = () => {
       return;
     }
 
-    if (editAssignment) {
-      setAssignments((prev) =>
-        prev.map((item) =>
-          item.id === editAssignment.id
-            ? {
-                ...item,
-                vehicleId: Number(formData.vehicleId),
-                routeId: Number(formData.routeId),
-                status: formData.status,
-              }
-            : item
-        )
+    const payload = {
+      vehicleId,
+      routeId,
+      status: formData.status,
+    };
+
+    try {
+      setSaving(true);
+
+      // =================================================
+      // UPDATE
+      // =================================================
+
+      if (editAssignment) {
+        const response = await axiosInstance.put(
+          `${BASE_URL}/${editAssignment.id}?schoolId=${schoolId}`,
+          payload
+        );
+
+        const updatedAssignment = response.data;
+
+        setAssignments((prev) =>
+          prev.map((item) =>
+            item.id === editAssignment.id
+              ? updatedAssignment
+              : item
+          )
+        );
+
+        alert("Route assignment updated successfully.");
+      }
+
+      // =================================================
+      // CREATE
+      // =================================================
+
+      else {
+        const response = await axiosInstance.post(
+          `${BASE_URL}?schoolId=${schoolId}`,
+          payload
+        );
+
+        const newAssignment = response.data;
+
+        setAssignments((prev) => [
+          newAssignment,
+          ...prev,
+        ]);
+
+        alert("Route assigned to vehicle successfully.");
+      }
+
+      closeModal();
+    } catch (error) {
+      console.error("Error saving assignment:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          error?.response?.data ||
+          "Failed to save route assignment."
       );
-    } else {
-      const newAssignment = {
-        id: Date.now(),
-        vehicleId: Number(formData.vehicleId),
-        routeId: Number(formData.routeId),
-        status: formData.status,
-      };
-
-      setAssignments((prev) => [newAssignment, ...prev]);
+    } finally {
+      setSaving(false);
     }
-
-    closeModal();
   };
 
-  // ================= DELETE =================
+  // =====================================================
+  // DELETE
+  // =====================================================
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to remove this route assignment?"
     );
 
     if (!confirmDelete) return;
 
-    setAssignments((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
+    try {
+      setLoading(true);
+
+      await axiosInstance.delete(
+        `${BASE_URL}/${id}?schoolId=${schoolId}`
+      );
+
+      setAssignments((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
+
+      alert("Route assignment removed successfully.");
+    } catch (error) {
+      console.error("Error deleting assignment:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Failed to remove route assignment."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ================= STATUS =================
+  // =====================================================
+  // TOGGLE STATUS
+  // =====================================================
 
-  const toggleStatus = (id) => {
-    setAssignments((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status:
-                item.status === "ACTIVE"
-                  ? "INACTIVE"
-                  : "ACTIVE",
-            }
-          : item
-      )
-    );
+  const toggleStatus = async (assignment) => {
+    if (!schoolId) return;
+
+    const newStatus =
+      assignment.status === "ACTIVE"
+        ? "INACTIVE"
+        : "ACTIVE";
+
+    const vehicleId = Number(assignment.vehicleId);
+    const routeId = Number(assignment.routeId);
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        vehicleId,
+        routeId,
+        status: newStatus,
+      };
+
+      const response = await axiosInstance.put(
+        `${BASE_URL}/${assignment.id}?schoolId=${schoolId}`,
+        payload
+      );
+
+      setAssignments((prev) =>
+        prev.map((item) =>
+          item.id === assignment.id
+            ? response.data
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Error changing assignment status:", error);
+
+      alert(
+        error?.response?.data?.message ||
+          "Failed to change assignment status."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ================= MODAL CLOSE =================
-
-  const closeModal = () => {
-    setShowModal(false);
-    setEditAssignment(null);
-    setFormData(emptyForm);
-  };
-
-  // ================= STATS =================
+  // =====================================================
+  // STATS
+  // =====================================================
 
   const totalAssignments = assignments.length;
 
@@ -277,9 +456,14 @@ const AssignRouteVehicle = () => {
   const unassignedVehicles = vehicles.filter(
     (vehicle) =>
       !assignments.some(
-        (item) => item.vehicleId === vehicle.id
+        (item) =>
+          Number(item.vehicleId) === Number(vehicle.id)
       )
   ).length;
+
+  // =====================================================
+  // UI
+  // =====================================================
 
   return (
     <>
@@ -329,6 +513,7 @@ const AssignRouteVehicle = () => {
               <button
                 className="btn btn-primary rounded-4 btn-sm px-3"
                 onClick={openAddModal}
+                disabled={loading}
               >
                 <LuPlus size={19} className="me-1" />
                 Assign Route
@@ -477,7 +662,7 @@ const AssignRouteVehicle = () => {
 
           </div>
 
-          {/* ================= TABLE ================= */}
+          {/* TABLE */}
 
           <div className="card-body p-0">
 
@@ -503,24 +688,36 @@ const AssignRouteVehicle = () => {
 
                 <tbody>
 
-                  {filteredAssignments.length > 0 ? (
+                  {loading ? (
+
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="text-center py-5"
+                      >
+                        <div
+                          className="spinner-border text-primary"
+                          role="status"
+                        />
+
+                        <div className="text-muted mt-2">
+                          Loading...
+                        </div>
+                      </td>
+                    </tr>
+
+                  ) : filteredAssignments.length > 0 ? (
 
                     filteredAssignments.map(
                       (assignment, index) => {
 
-                        const vehicle =
-                          vehicles.find(
-                            (item) =>
-                              item.id ===
-                              assignment.vehicleId
-                          );
+                        const vehicle = getVehicle(
+                          assignment.vehicleId
+                        );
 
-                        const route =
-                          routes.find(
-                            (item) =>
-                              item.id ===
-                              assignment.routeId
-                          );
+                        const route = getRoute(
+                          assignment.routeId
+                        );
 
                         return (
                           <tr key={assignment.id}>
@@ -550,13 +747,11 @@ const AssignRouteVehicle = () => {
                                 <div>
 
                                   <div className="fw-semibold">
-                                    {vehicle?.vehicleNumber ||
-                                      "—"}
+                                    {vehicle?.vehicleNumber || "—"}
                                   </div>
 
                                   <small className="text-muted">
-                                    {vehicle?.vehicleType ||
-                                      "—"}
+                                    {vehicle?.vehicleType || "—"}
                                   </small>
 
                                 </div>
@@ -589,18 +784,18 @@ const AssignRouteVehicle = () => {
                               <div className="small">
 
                                 <div className="fw-semibold">
+
                                   <LuMapPin
                                     size={13}
                                     className="me-1 text-success"
                                   />
-                                  {route?.startLocation ||
-                                    "—"}
+
+                                  {route?.startLocation || "—"}
+
                                 </div>
 
                                 <div className="text-muted mt-1">
-                                  ↓{" "}
-                                  {route?.endLocation ||
-                                    "—"}
+                                  ↓ {route?.endLocation || "—"}
                                 </div>
 
                               </div>
@@ -612,7 +807,11 @@ const AssignRouteVehicle = () => {
                             <td style={{ minWidth: "220px" }}>
 
                               <small className="text-muted">
-                                {route?.stops || "—"}
+
+                                {Array.isArray(route?.stops)
+                                  ? route.stops.join(", ")
+                                  : route?.stops || "—"}
+
                               </small>
 
                             </td>
@@ -621,8 +820,7 @@ const AssignRouteVehicle = () => {
 
                             <td>
 
-                              {assignment.status ===
-                              "ACTIVE" ? (
+                              {assignment.status === "ACTIVE" ? (
 
                                 <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
 
@@ -687,7 +885,7 @@ const AssignRouteVehicle = () => {
                                   }
                                   onClick={() =>
                                     toggleStatus(
-                                      assignment.id
+                                      assignment
                                     )
                                   }
                                 >
@@ -744,8 +942,7 @@ const AssignRouteVehicle = () => {
                           </div>
 
                           <small>
-                            Try changing your search or
-                            assign a new route.
+                            Try changing your search or assign a new route.
                           </small>
 
                         </div>
@@ -824,8 +1021,7 @@ const AssignRouteVehicle = () => {
                   </h5>
 
                   <small className="text-muted">
-                    Select a vehicle and route to
-                    create mapping.
+                    Select a vehicle and route to create mapping.
                   </small>
 
                 </div>
@@ -853,12 +1049,8 @@ const AssignRouteVehicle = () => {
                     <div className="col-12">
 
                       <label className="form-label fw-semibold">
-
                         Vehicle
-                        <span className="text-danger">
-                          *
-                        </span>
-
+                        <span className="text-danger">*</span>
                       </label>
 
                       <select
@@ -878,28 +1070,30 @@ const AssignRouteVehicle = () => {
                           const alreadyAssigned =
                             assignments.some(
                               (item) =>
-                                item.vehicleId ===
-                                  vehicle.id &&
+                                Number(item.vehicleId) ===
+                                  Number(vehicle.id) &&
                                 item.id !==
                                   editAssignment?.id
                             );
 
                           return (
+
                             <option
                               key={vehicle.id}
                               value={vehicle.id}
-                              disabled={
-                                alreadyAssigned
-                              }
+                              disabled={alreadyAssigned}
                             >
+
                               {vehicle.vehicleNumber} —{" "}
                               {vehicle.vehicleType}
+
                               {alreadyAssigned
                                 ? " (Already Assigned)"
                                 : ""}
-                            </option>
-                          );
 
+                            </option>
+
+                          );
                         })}
 
                       </select>
@@ -911,12 +1105,8 @@ const AssignRouteVehicle = () => {
                     <div className="col-12">
 
                       <label className="form-label fw-semibold">
-
                         Route
-                        <span className="text-danger">
-                          *
-                        </span>
-
+                        <span className="text-danger">*</span>
                       </label>
 
                       <select
@@ -936,29 +1126,31 @@ const AssignRouteVehicle = () => {
                           const alreadyAssigned =
                             assignments.some(
                               (item) =>
-                                item.routeId ===
-                                  route.id &&
+                                Number(item.routeId) ===
+                                  Number(route.id) &&
                                 item.id !==
                                   editAssignment?.id
                             );
 
                           return (
+
                             <option
                               key={route.id}
                               value={route.id}
-                              disabled={
-                                alreadyAssigned
-                              }
+                              disabled={alreadyAssigned}
                             >
+
                               {route.routeName} —{" "}
                               {route.startLocation} →{" "}
                               {route.endLocation}
+
                               {alreadyAssigned
                                 ? " (Already Assigned)"
                                 : ""}
-                            </option>
-                          );
 
+                            </option>
+
+                          );
                         })}
 
                       </select>
@@ -1004,6 +1196,7 @@ const AssignRouteVehicle = () => {
                     type="button"
                     className="btn btn-light rounded-3 px-4"
                     onClick={closeModal}
+                    disabled={saving}
                   >
                     Cancel
                   </button>
@@ -1011,11 +1204,21 @@ const AssignRouteVehicle = () => {
                   <button
                     type="submit"
                     className="btn btn-primary rounded-3 px-4"
+                    disabled={saving}
                   >
 
-                    {editAssignment
-                      ? "Update Assignment"
-                      : "Assign Route"}
+                    {saving ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                        />
+                        Saving...
+                      </>
+                    ) : (
+                      editAssignment
+                        ? "Update Assignment"
+                        : "Assign Route"
+                    )}
 
                   </button>
 
@@ -1036,4 +1239,3 @@ const AssignRouteVehicle = () => {
 };
 
 export default AssignRouteVehicle;
-

@@ -1,5 +1,6 @@
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import {
   LuUserRound,
   LuPlus,
@@ -10,92 +11,79 @@ import {
   LuCircleX,
   LuX,
   LuPhone,
-  LuMapPin,
   LuCreditCard,
   LuCalendarDays,
 } from "react-icons/lu";
 import { FaBus } from "react-icons/fa";
 
 const DriverManagement = () => {
-  // ================= VEHICLES =================
+  // =====================================================
+  // CONFIG
+  // =====================================================
 
-  const [vehicles] = useState([
-    {
-      id: 1,
-      vehicleNumber: "BR06PA1234",
-      vehicleType: "School Bus",
-    },
-    {
-      id: 2,
-      vehicleNumber: "BR06PB5678",
-      vehicleType: "School Bus",
-    },
-    {
-      id: 3,
-      vehicleNumber: "BR06PC9012",
-      vehicleType: "Van",
-    },
-    {
-      id: 4,
-      vehicleNumber: "BR06PD3456",
-      vehicleType: "School Bus",
-    },
-  ]);
+  const token = localStorage.getItem("token");
+  const schoolId = localStorage.getItem("schoolId");
 
-  // ================= DRIVERS =================
+  const API_URL = "http://localhost:8080/api/transport/drivers";
+  const VEHICLE_API_URL = "http://localhost:8080/api/transport/vehicles";
 
-  const [drivers, setDrivers] = useState([
-    {
-      id: 1,
-      driverName: "Rahul Kumar",
-      mobileNumber: "9876543210",
-      alternateMobile: "9123456780",
-      licenseNumber: "BR20240012345",
-      licenseType: "LMV",
-      licenseExpiryDate: "2028-08-15",
-      address: "Kalyani, Muzaffarpur",
-      vehicleId: 1,
-      status: "ACTIVE",
+  const authConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-    {
-      id: 2,
-      driverName: "Amit Kumar",
-      mobileNumber: "9876543211",
-      alternateMobile: "9123456781",
-      licenseNumber: "BR20230056789",
-      licenseType: "HMV",
-      licenseExpiryDate: "2027-05-20",
-      address: "Brahmpura, Muzaffarpur",
-      vehicleId: 2,
-      status: "ACTIVE",
-    },
-    {
-      id: 3,
-      driverName: "Rakesh Singh",
-      mobileNumber: "9876543212",
-      alternateMobile: "",
-      licenseNumber: "BR20220098765",
-      licenseType: "HMV",
-      licenseExpiryDate: "2026-12-10",
-      address: "Ahiyapur, Muzaffarpur",
-      vehicleId: 3,
-      status: "ACTIVE",
-    },
-    {
-      id: 4,
-      driverName: "Sanjay Kumar",
-      mobileNumber: "9876543213",
-      alternateMobile: "9123456783",
-      licenseNumber: "BR20250045678",
-      licenseType: "LMV",
-      licenseExpiryDate: "2029-02-25",
-      address: "Kanti, Muzaffarpur",
-      vehicleId: null,
-      status: "INACTIVE",
-    },
-  ]);
+  };
 
-  // ================= FORM =================
+  // =====================================================
+  // SAFE ARRAY EXTRACTOR
+  // =====================================================
+
+  const extractArray = (response) => {
+    const data = response?.data;
+
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (Array.isArray(data?.data)) {
+      return data.data;
+    }
+
+    if (Array.isArray(data?.content)) {
+      return data.content;
+    }
+
+    if (Array.isArray(data?.drivers)) {
+      return data.drivers;
+    }
+
+    if (Array.isArray(data?.vehicles)) {
+      return data.vehicles;
+    }
+
+    return [];
+  };
+
+  // =====================================================
+  // VEHICLES
+  // =====================================================
+
+  const [vehicles, setVehicles] = useState([]);
+
+  const [loadingVehicles, setLoadingVehicles] = useState(false);
+
+  // =====================================================
+  // DRIVERS
+  // =====================================================
+
+  const [drivers, setDrivers] = useState([]);
+
+  const [loadingDrivers, setLoadingDrivers] = useState(false);
+
+  const [saving, setSaving] = useState(false);
+
+  // =====================================================
+  // FORM
+  // =====================================================
 
   const emptyForm = {
     driverName: "",
@@ -110,41 +98,202 @@ const DriverManagement = () => {
   };
 
   const [formData, setFormData] = useState(emptyForm);
+
   const [showModal, setShowModal] = useState(false);
+
   const [editDriver, setEditDriver] = useState(null);
+
   const [search, setSearch] = useState("");
 
-  // ================= FILTER =================
+  // =====================================================
+  // GET VEHICLES
+  // =====================================================
 
-  const filteredDrivers = useMemo(() => {
-    const searchText = search.toLowerCase().trim();
+  const fetchVehicles = async () => {
+    if (!schoolId) {
+      console.warn("schoolId not found in localStorage");
+      setVehicles([]);
+      return;
+    }
 
-    return drivers.filter((driver) => {
-      const vehicle = vehicles.find(
-        (item) => item.id === driver.vehicleId
+    try {
+      setLoadingVehicles(true);
+
+      const response = await axios.get(
+        VEHICLE_API_URL,
+        {
+          params: {
+            schoolId: schoolId,
+          },
+          ...authConfig,
+        }
       );
 
+      const vehicleList = extractArray(response);
+
+      setVehicles(vehicleList);
+    } catch (error) {
+      console.error(
+        "Error loading vehicles:",
+        error
+      );
+
+      setVehicles([]);
+
+      const message =
+        error?.response?.data?.message ||
+        "Failed to load vehicles.";
+
+      console.error(message);
+    } finally {
+      setLoadingVehicles(false);
+    }
+  };
+console.log("Vehicles:", vehicles);
+  // =====================================================
+  // GET DRIVERS
+  // =====================================================
+
+  const fetchDrivers = async () => {
+    if (!schoolId) {
+      console.warn("schoolId not found in localStorage");
+      setDrivers([]);
+      return;
+    }
+
+    try {
+      setLoadingDrivers(true);
+
+      const response = await axios.get(
+        API_URL,
+        {
+          params: {
+            schoolId: schoolId,
+          },
+          ...authConfig,
+        }
+      );
+
+      console.log(
+        "Driver API response:",
+        response.data
+      );
+
+      const driverList = extractArray(response);
+
+      setDrivers(driverList);
+    } catch (error) {
+      console.error(
+        "Error loading drivers:",
+        error
+      );
+
+      setDrivers([]);
+
+      const message =
+        error?.response?.data?.message ||
+        "Failed to load drivers.";
+
+      alert(message);
+    } finally {
+      setLoadingDrivers(false);
+    }
+  };
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
+  useEffect(() => {
+    if (schoolId) {
+      fetchVehicles();
+      fetchDrivers();
+    }
+  }, [schoolId]);
+
+  // =====================================================
+  // VEHICLE ID NORMALIZER
+  // =====================================================
+
+  const getVehicleId = (driver) => {
+    if (!driver) return null;
+
+    return (
+      driver.vehicleId ??
+      driver.vehicle?.id ??
+      null
+    );
+  };
+
+  // =====================================================
+  // VEHICLE FIND
+  // =====================================================
+
+  const getVehicle = (vehicleId) => {
+    if (!vehicleId) return null;
+
+    return vehicles.find(
+      (vehicle) =>
+        Number(vehicle.id) === Number(vehicleId)
+    );
+  };
+
+  // =====================================================
+  // FILTER
+  // =====================================================
+
+  const filteredDrivers = useMemo(() => {
+    // Safety check
+    if (!Array.isArray(drivers)) {
+      return [];
+    }
+
+    const searchText =
+      search.toLowerCase().trim();
+
+    if (!searchText) {
+      return drivers;
+    }
+
+    return drivers.filter((driver) => {
+      const vehicleId =
+        getVehicleId(driver);
+
+      const vehicle =
+        getVehicle(vehicleId);
+
       const driverName =
-        driver.driverName?.toLowerCase() || "";
+        driver?.driverName
+          ?.toLowerCase() || "";
 
       const mobileNumber =
-        driver.mobileNumber?.toLowerCase() || "";
+        driver?.mobileNumber
+          ?.toLowerCase() || "";
+
+      const alternateMobile =
+        driver?.alternateMobile
+          ?.toLowerCase() || "";
 
       const licenseNumber =
-        driver.licenseNumber?.toLowerCase() || "";
+        driver?.licenseNumber
+          ?.toLowerCase() || "";
 
       const licenseType =
-        driver.licenseType?.toLowerCase() || "";
+        driver?.licenseType
+          ?.toLowerCase() || "";
 
       const address =
-        driver.address?.toLowerCase() || "";
+        driver?.address
+          ?.toLowerCase() || "";
 
       const vehicleNumber =
-        vehicle?.vehicleNumber?.toLowerCase() || "";
+        vehicle?.vehicleNumber
+          ?.toLowerCase() || "";
 
       return (
         driverName.includes(searchText) ||
         mobileNumber.includes(searchText) ||
+        alternateMobile.includes(searchText) ||
         licenseNumber.includes(searchText) ||
         licenseType.includes(searchText) ||
         address.includes(searchText) ||
@@ -153,7 +302,9 @@ const DriverManagement = () => {
     });
   }, [drivers, vehicles, search]);
 
-  // ================= FORM CHANGE =================
+  // =====================================================
+  // FORM CHANGE
+  // =====================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -164,186 +315,471 @@ const DriverManagement = () => {
     }));
   };
 
-  // ================= ADD =================
+  // =====================================================
+  // ADD MODAL
+  // =====================================================
 
   const openAddModal = () => {
     setEditDriver(null);
-    setFormData(emptyForm);
-    setShowModal(true);
-  };
-
-  // ================= EDIT =================
-
-  const openEditModal = (driver) => {
-    setEditDriver(driver);
-
     setFormData({
-      driverName: driver.driverName || "",
-      mobileNumber: driver.mobileNumber || "",
-      alternateMobile: driver.alternateMobile || "",
-      licenseNumber: driver.licenseNumber || "",
-      licenseType: driver.licenseType || "HMV",
-      licenseExpiryDate: driver.licenseExpiryDate || "",
-      address: driver.address || "",
-      vehicleId: driver.vehicleId
-        ? String(driver.vehicleId)
-        : "",
-      status: driver.status || "ACTIVE",
+      ...emptyForm,
     });
 
     setShowModal(true);
   };
 
-  // ================= SUBMIT =================
+  // =====================================================
+  // EDIT MODAL
+  // =====================================================
 
-  const handleSubmit = (e) => {
+  const openEditModal = (driver) => {
+    setEditDriver(driver);
+
+    setFormData({
+      driverName:
+        driver?.driverName || "",
+
+      mobileNumber:
+        driver?.mobileNumber || "",
+
+      alternateMobile:
+        driver?.alternateMobile || "",
+
+      licenseNumber:
+        driver?.licenseNumber || "",
+
+      licenseType:
+        driver?.licenseType || "HMV",
+
+      licenseExpiryDate:
+        driver?.licenseExpiryDate || "",
+
+      address:
+        driver?.address || "",
+
+      vehicleId:
+        getVehicleId(driver)
+          ? String(getVehicleId(driver))
+          : "",
+
+      status:
+        driver?.status || "ACTIVE",
+    });
+
+    setShowModal(true);
+  };
+
+  // =====================================================
+  // SUBMIT
+  // =====================================================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!schoolId) {
+      alert("School ID not found.");
+      return;
+    }
+
     if (
-      !formData.driverName ||
-      !formData.mobileNumber ||
-      !formData.licenseNumber
+      !formData.driverName.trim() ||
+      !formData.mobileNumber.trim() ||
+      !formData.licenseNumber.trim() ||
+      !formData.licenseExpiryDate
     ) {
-      return;
-    }
-
-    // Prevent duplicate license number
-
-    const duplicateLicense = drivers.find(
-      (item) =>
-        item.licenseNumber.toLowerCase() ===
-          formData.licenseNumber.toLowerCase() &&
-        item.id !== editDriver?.id
-    );
-
-    if (duplicateLicense) {
-      alert("This license number is already registered.");
-      return;
-    }
-
-    // Prevent same vehicle assigned to multiple drivers
-
-    if (formData.vehicleId) {
-      const duplicateVehicle = drivers.find(
-        (item) =>
-          item.vehicleId === Number(formData.vehicleId) &&
-          item.id !== editDriver?.id
+      alert(
+        "Please fill all required fields."
       );
 
+      return;
+    }
+
+    // =================================================
+    // DUPLICATE LICENSE
+    // =================================================
+
+    const duplicateLicense =
+      drivers.find(
+        (item) =>
+          item?.licenseNumber
+            ?.toLowerCase()
+            .trim() ===
+            formData.licenseNumber
+              .toLowerCase()
+              .trim() &&
+          Number(item.id) !==
+            Number(editDriver?.id)
+      );
+
+    if (duplicateLicense) {
+      alert(
+        "This license number is already registered."
+      );
+
+      return;
+    }
+
+    // =================================================
+    // DUPLICATE VEHICLE
+    // =================================================
+
+    if (formData.vehicleId) {
+      const duplicateVehicle =
+        drivers.find((item) => {
+          const itemVehicleId =
+            getVehicleId(item);
+
+          return (
+            Number(itemVehicleId) ===
+              Number(formData.vehicleId) &&
+            Number(item.id) !==
+              Number(editDriver?.id)
+          );
+        });
+
       if (duplicateVehicle) {
-        alert("This vehicle is already assigned to another driver.");
+        alert(
+          "This vehicle is already assigned to another driver."
+        );
+
         return;
       }
     }
 
-    if (editDriver) {
-      setDrivers((prev) =>
-        prev.map((item) =>
-          item.id === editDriver.id
-            ? {
-                ...item,
-                ...formData,
-                vehicleId: formData.vehicleId
-                  ? Number(formData.vehicleId)
-                  : null,
-              }
-            : item
-        )
-      );
-    } else {
-      const newDriver = {
-        id: Date.now(),
-        ...formData,
-        vehicleId: formData.vehicleId
+    // =================================================
+    // PAYLOAD
+    // =================================================
+
+    const payload = {
+      schoolId: Number(schoolId),
+
+      driverName:
+        formData.driverName.trim(),
+
+      mobileNumber:
+        formData.mobileNumber.trim(),
+
+      alternateMobile:
+        formData.alternateMobile.trim() ||
+        null,
+
+      licenseNumber:
+        formData.licenseNumber.trim(),
+
+      licenseType:
+        formData.licenseType,
+
+      licenseExpiryDate:
+        formData.licenseExpiryDate,
+
+      address:
+        formData.address.trim() || null,
+
+      vehicleId:
+        formData.vehicleId
           ? Number(formData.vehicleId)
           : null,
-      };
 
-      setDrivers((prev) => [newDriver, ...prev]);
+      status:
+        formData.status,
+    };
+
+    try {
+      setSaving(true);
+
+      // =================================================
+      // UPDATE
+      // =================================================
+
+      if (editDriver) {
+        const response =
+          await axios.put(
+            `${API_URL}/${editDriver.id}`,
+            payload,
+            authConfig
+          );
+
+        console.log(
+          "Driver updated:",
+          response.data
+        );
+
+        alert(
+          "Driver updated successfully."
+        );
+      }
+
+      // =================================================
+      // CREATE
+      // =================================================
+
+      else {
+        const response =
+          await axios.post(
+            API_URL,
+            payload,
+            authConfig
+          );
+
+        console.log(
+          "Driver created:",
+          response.data
+        );
+
+        alert(
+          "Driver added successfully."
+        );
+      }
+
+      closeModal();
+
+      await fetchDrivers();
+    } catch (error) {
+      console.error(
+        "Error saving driver:",
+        error
+      );
+
+      console.error(
+        "Response:",
+        error?.response?.data
+      );
+
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to save driver.";
+
+      alert(message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // =====================================================
+  // DELETE
+  // =====================================================
+
+  const handleDelete = async (id) => {
+    const confirmDelete =
+      window.confirm(
+        "Are you sure you want to delete this driver?"
+      );
+
+    if (!confirmDelete) {
+      return;
     }
 
-    closeModal();
+    try {
+      setSaving(true);
+
+      await axios.delete(
+        `${API_URL}/${id}`,
+        {
+          params: {
+            schoolId: schoolId,
+          },
+          ...authConfig,
+        }
+      );
+
+      alert(
+        "Driver deleted successfully."
+      );
+
+      await fetchDrivers();
+    } catch (error) {
+      console.error(
+        "Error deleting driver:",
+        error
+      );
+
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to delete driver.";
+
+      alert(message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // ================= DELETE =================
+  // =====================================================
+  // TOGGLE STATUS
+  // =====================================================
 
-  const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this driver?"
-    );
+  const toggleStatus = async (driver) => {
+    if (!driver?.id) {
+      return;
+    }
 
-    if (!confirmDelete) return;
+    const newStatus =
+      driver.status === "ACTIVE"
+        ? "INACTIVE"
+        : "ACTIVE";
 
-    setDrivers((prev) =>
-      prev.filter((item) => item.id !== id)
-    );
+    try {
+      setSaving(true);
+
+      const payload = {
+        schoolId: Number(schoolId),
+
+        driverName:
+          driver.driverName,
+
+        mobileNumber:
+          driver.mobileNumber,
+
+        alternateMobile:
+          driver.alternateMobile || null,
+
+        licenseNumber:
+          driver.licenseNumber,
+
+        licenseType:
+          driver.licenseType,
+
+        licenseExpiryDate:
+          driver.licenseExpiryDate,
+
+        address:
+          driver.address || null,
+
+        vehicleId:
+          getVehicleId(driver),
+
+        status:
+          newStatus,
+      };
+
+      await axios.put(
+        `${API_URL}/${driver.id}`,
+        payload,
+        authConfig
+      );
+
+      await fetchDrivers();
+    } catch (error) {
+      console.error(
+        "Error changing driver status:",
+        error
+      );
+
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Failed to update driver status.";
+
+      alert(message);
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // ================= STATUS =================
-
-  const toggleStatus = (id) => {
-    setDrivers((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status:
-                item.status === "ACTIVE"
-                  ? "INACTIVE"
-                  : "ACTIVE",
-            }
-          : item
-      )
-    );
-  };
-
-  // ================= CLOSE MODAL =================
+  // =====================================================
+  // CLOSE MODAL
+  // =====================================================
 
   const closeModal = () => {
     setShowModal(false);
+
     setEditDriver(null);
-    setFormData(emptyForm);
+
+    setFormData({
+      ...emptyForm,
+    });
   };
 
-  // ================= STATS =================
+  // =====================================================
+  // STATS
+  // =====================================================
 
-  const totalDrivers = drivers.length;
+  const totalDrivers =
+    Array.isArray(drivers)
+      ? drivers.length
+      : 0;
 
-  const activeDrivers = drivers.filter(
-    (item) => item.status === "ACTIVE"
-  ).length;
+  const activeDrivers =
+    Array.isArray(drivers)
+      ? drivers.filter(
+          (item) =>
+            item?.status === "ACTIVE"
+        ).length
+      : 0;
 
-  const inactiveDrivers = drivers.filter(
-    (item) => item.status === "INACTIVE"
-  ).length;
+  const inactiveDrivers =
+    Array.isArray(drivers)
+      ? drivers.filter(
+          (item) =>
+            item?.status === "INACTIVE"
+        ).length
+      : 0;
 
-  const assignedDrivers = drivers.filter(
-    (item) => item.vehicleId
-  ).length;
+  const assignedDrivers =
+    Array.isArray(drivers)
+      ? drivers.filter(
+          (item) =>
+            getVehicleId(item)
+        ).length
+      : 0;
 
   const unassignedDrivers =
     totalDrivers - assignedDrivers;
 
-  // ================= LICENSE EXPIRY =================
+  // =====================================================
+  // LICENSE EXPIRY
+  // =====================================================
 
-  const getLicenseExpiryStatus = (date) => {
-    if (!date) return "normal";
+  const getLicenseExpiryStatus = (
+    date
+  ) => {
+    if (!date) {
+      return "normal";
+    }
 
     const today = new Date();
+
+    today.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
     const expiry = new Date(date);
 
-    const diff =
-      (expiry - today) / (1000 * 60 * 60 * 24);
+    expiry.setHours(
+      0,
+      0,
+      0,
+      0
+    );
 
-    if (diff < 0) return "expired";
-    if (diff <= 30) return "warning";
+    const diff =
+      (expiry - today) /
+      (1000 * 60 * 60 * 24);
+
+    if (diff < 0) {
+      return "expired";
+    }
+
+    if (diff <= 30) {
+      return "warning";
+    }
 
     return "normal";
   };
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <>
-      {/* ================= HEADER ================= */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <div className="mx-2 mt-2 mb-3">
         <div
@@ -351,12 +787,15 @@ const DriverManagement = () => {
           style={{
             background:
               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
-            border: "1px solid #dbeafe",
+            border:
+              "1px solid #dbeafe",
           }}
         >
           <div className="p-3 p-md-4">
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
               <div className="d-flex align-items-center gap-3">
+
                 <div
                   className="d-flex align-items-center justify-content-center rounded-3"
                   style={{
@@ -369,7 +808,9 @@ const DriverManagement = () => {
                       "0 8px 20px rgba(37,99,235,.22)",
                   }}
                 >
-                  <LuUserRound size={28} />
+                  <LuUserRound
+                    size={28}
+                  />
                 </div>
 
                 <div>
@@ -378,30 +819,44 @@ const DriverManagement = () => {
                   </h5>
 
                   <div className="text-muted small">
-                    Transport &nbsp;/&nbsp; Driver Management
+                    Transport &nbsp;/&nbsp;
+                    Driver Management
                   </div>
                 </div>
+
               </div>
 
               <button
                 className="btn btn-primary rounded-4 btn-sm px-3"
-                onClick={openAddModal}
+                onClick={
+                  openAddModal
+                }
+                disabled={saving}
               >
-                <LuPlus size={19} className="me-1" />
+                <LuPlus
+                  size={19}
+                  className="me-1"
+                />
+
                 Add Driver
               </button>
+
             </div>
           </div>
 
           <div
             className="px-4 py-2"
             style={{
-              backgroundColor: "rgba(239,246,255,.75)",
-              borderTop: "1px solid #e0ecff",
+              backgroundColor:
+                "rgba(239,246,255,.75)",
+              borderTop:
+                "1px solid #e0ecff",
             }}
           >
             <small className="text-muted">
-              Home &nbsp;›&nbsp; Transport &nbsp;›&nbsp;
+              Home &nbsp;›&nbsp;
+              Transport &nbsp;›&nbsp;
+
               <span className="text-primary fw-semibold">
                 Driver Management
               </span>
@@ -410,11 +865,12 @@ const DriverManagement = () => {
         </div>
       </div>
 
-      {/* ================= STATS ================= */}
+      {/* =================================================
+          STATS
+      ================================================= */}
 
       <div className="px-2">
         <div className="row g-3 mb-4 mt-2">
-          {/* TOTAL */}
 
           <div className="col-xl-3 col-md-6">
             <div className="premium-stat-card stat-blue shadow">
@@ -423,14 +879,20 @@ const DriverManagement = () => {
               </div>
 
               <div className="stat-content">
-                <span>Total Drivers</span>
-                <h3>{totalDrivers}</h3>
-                <small>Registered drivers</small>
+                <span>
+                  Total Drivers
+                </span>
+
+                <h3>
+                  {totalDrivers}
+                </h3>
+
+                <small>
+                  Registered drivers
+                </small>
               </div>
             </div>
           </div>
-
-          {/* ACTIVE */}
 
           <div className="col-xl-3 col-md-6">
             <div className="premium-stat-card stat-green shadow">
@@ -439,14 +901,20 @@ const DriverManagement = () => {
               </div>
 
               <div className="stat-content">
-                <span>Active Drivers</span>
-                <h3>{activeDrivers}</h3>
-                <small>Currently active</small>
+                <span>
+                  Active Drivers
+                </span>
+
+                <h3>
+                  {activeDrivers}
+                </h3>
+
+                <small>
+                  Currently active
+                </small>
               </div>
             </div>
           </div>
-
-          {/* INACTIVE */}
 
           <div className="col-xl-3 col-md-6">
             <div className="premium-stat-card stat-orange shadow">
@@ -455,14 +923,20 @@ const DriverManagement = () => {
               </div>
 
               <div className="stat-content">
-                <span>Inactive Drivers</span>
-                <h3>{inactiveDrivers}</h3>
-                <small>Currently inactive</small>
+                <span>
+                  Inactive Drivers
+                </span>
+
+                <h3>
+                  {inactiveDrivers}
+                </h3>
+
+                <small>
+                  Currently inactive
+                </small>
               </div>
             </div>
           </div>
-
-          {/* ASSIGNED */}
 
           <div className="col-xl-3 col-md-6">
             <div className="premium-stat-card stat-red shadow">
@@ -471,35 +945,53 @@ const DriverManagement = () => {
               </div>
 
               <div className="stat-content">
-                <span>Vehicle Assigned</span>
-                <h3>{assignedDrivers}</h3>
+                <span>
+                  Vehicle Assigned
+                </span>
+
+                <h3>
+                  {assignedDrivers}
+                </h3>
+
                 <small>
                   {unassignedDrivers} driver
-                  {unassignedDrivers !== 1 ? "s" : ""} unassigned
+                  {unassignedDrivers !== 1
+                    ? "s"
+                    : ""}{" "}
+                  unassigned
                 </small>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* ================= MAIN CARD ================= */}
+      {/* =================================================
+          MAIN CARD
+      ================================================= */}
 
       <div className="px-2">
         <div className="card border-0 shadow px-2 rounded-4">
+
           {/* TOOLBAR */}
 
           <div className="card-header bg-white border-0 p-3">
+
             <div className="row g-2 align-items-center">
+
               <div className="col-lg-7 col-md-7">
+
                 <div className="position-relative">
+
                   <LuSearch
                     size={18}
                     className="position-absolute text-muted"
                     style={{
                       left: 12,
                       top: "50%",
-                      transform: "translateY(-50%)",
+                      transform:
+                        "translateY(-50%)",
                     }}
                   />
 
@@ -509,63 +1001,131 @@ const DriverManagement = () => {
                     placeholder="Search driver, mobile, license or vehicle..."
                     value={search}
                     onChange={(e) =>
-                      setSearch(e.target.value)
+                      setSearch(
+                        e.target.value
+                      )
                     }
                   />
+
                 </div>
+
               </div>
 
               <div className="col-lg-5 col-md-5 text-md-end">
+
                 <span className="text-muted small">
+
                   Showing{" "}
+
                   <strong>
-                    {filteredDrivers.length}
+                    {
+                      filteredDrivers.length
+                    }
                   </strong>{" "}
+
                   of{" "}
-                  <strong>{drivers.length}</strong>{" "}
+
+                  <strong>
+                    {totalDrivers}
+                  </strong>{" "}
+
                   drivers
+
                 </span>
+
               </div>
+
             </div>
+
           </div>
 
-          {/* ================= TABLE ================= */}
+          {/* TABLE */}
 
           <div className="card-body p-0">
+
             <div className="table-responsive">
+
               <table className="table align-middle mb-0">
+
                 <thead className="table-light">
+
                   <tr>
-                    <th className="px-3">#</th>
-                    <th>Driver</th>
-                    <th>Contact</th>
-                    <th>License</th>
-                    <th>Vehicle</th>
-                    <th>Status</th>
+                    <th className="px-3">
+                      #
+                    </th>
+
+                    <th>
+                      Driver
+                    </th>
+
+                    <th>
+                      Contact
+                    </th>
+
+                    <th>
+                      License
+                    </th>
+
+                    <th>
+                      Vehicle
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
                     <th className="text-center">
                       Action
                     </th>
                   </tr>
+
                 </thead>
 
                 <tbody>
-                  {filteredDrivers.length > 0 ? (
+
+                  {loadingDrivers ? (
+
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="text-center py-5"
+                      >
+                        <div className="spinner-border text-primary" />
+                        <div className="small text-muted mt-2">
+                          Loading drivers...
+                        </div>
+                      </td>
+                    </tr>
+
+                  ) : filteredDrivers.length >
+                    0 ? (
+
                     filteredDrivers.map(
                       (driver, index) => {
+
+                        const vehicleId =
+                          getVehicleId(
+                            driver
+                          );
+
                         const vehicle =
-                          vehicles.find(
-                            (item) =>
-                              item.id ===
-                              driver.vehicleId
+                          getVehicle(
+                            vehicleId
                           );
 
                         const expiryStatus =
                           getLicenseExpiryStatus(
-                            driver.licenseExpiryDate
+                            driver?.licenseExpiryDate
                           );
 
                         return (
-                          <tr key={driver.id}>
+                          <tr
+                            key={
+                              driver?.id ||
+                              index
+                            }
+                          >
+
                             {/* NUMBER */}
 
                             <td className="px-3 text-muted">
@@ -575,7 +1135,9 @@ const DriverManagement = () => {
                             {/* DRIVER */}
 
                             <td>
+
                               <div className="d-flex align-items-center gap-2">
+
                                 <div
                                   className="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
                                   style={{
@@ -589,31 +1151,48 @@ const DriverManagement = () => {
                                 </div>
 
                                 <div>
+
                                   <div className="fw-semibold">
-                                    {driver.driverName}
+                                    {
+                                      driver?.driverName ||
+                                      "—"
+                                    }
                                   </div>
 
                                   <small className="text-muted">
-                                    {driver.address ||
-                                      "Address not available"}
+                                    {
+                                      driver?.address ||
+                                      "Address not available"
+                                    }
                                   </small>
+
                                 </div>
+
                               </div>
+
                             </td>
 
                             {/* CONTACT */}
 
                             <td>
+
                               <div className="small">
+
                                 <div className="fw-semibold">
+
                                   <LuPhone
                                     size={13}
                                     className="me-1 text-primary"
                                   />
-                                  {driver.mobileNumber}
+
+                                  {
+                                    driver?.mobileNumber ||
+                                    "—"
+                                  }
+
                                 </div>
 
-                                {driver.alternateMobile && (
+                                {driver?.alternateMobile && (
                                   <div className="text-muted mt-1">
                                     Alt:{" "}
                                     {
@@ -621,25 +1200,42 @@ const DriverManagement = () => {
                                     }
                                   </div>
                                 )}
+
                               </div>
+
                             </td>
 
                             {/* LICENSE */}
 
                             <td>
+
                               <div className="small">
+
                                 <div className="fw-semibold">
+
                                   <LuCreditCard
                                     size={13}
                                     className="me-1 text-primary"
                                   />
-                                  {driver.licenseNumber}
+
+                                  {
+                                    driver?.licenseNumber ||
+                                    "—"
+                                  }
+
                                 </div>
 
                                 <div className="mt-1">
+
                                   <span className="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-1">
-                                    {driver.licenseType}
+
+                                    {
+                                      driver?.licenseType ||
+                                      "—"
+                                    }
+
                                   </span>
+
                                 </div>
 
                                 <div
@@ -653,13 +1249,17 @@ const DriverManagement = () => {
                                       : "text-muted"
                                   }`}
                                 >
+
                                   <LuCalendarDays
                                     size={12}
                                     className="me-1"
                                   />
+
                                   Exp:{" "}
+
                                   {
-                                    driver.licenseExpiryDate
+                                    driver?.licenseExpiryDate ||
+                                    "—"
                                   }
 
                                   {expiryStatus ===
@@ -675,15 +1275,21 @@ const DriverManagement = () => {
                                       Expiring Soon
                                     </span>
                                   )}
+
                                 </div>
+
                               </div>
+
                             </td>
 
                             {/* VEHICLE */}
 
                             <td>
+
                               {vehicle ? (
+
                                 <div className="d-flex align-items-center gap-2">
+
                                   <div
                                     className="rounded-3 bg-success-subtle text-success d-flex align-items-center justify-content-center"
                                     style={{
@@ -691,10 +1297,13 @@ const DriverManagement = () => {
                                       height: 40,
                                     }}
                                   >
-                                    <FaBus size={17} />
+                                    <FaBus
+                                      size={17}
+                                    />
                                   </div>
 
                                   <div>
+
                                     <div className="fw-semibold">
                                       {
                                         vehicle.vehicleNumber
@@ -706,42 +1315,62 @@ const DriverManagement = () => {
                                         vehicle.vehicleType
                                       }
                                     </small>
+
                                   </div>
+
                                 </div>
+
                               ) : (
+
                                 <span className="badge bg-warning-subtle text-warning rounded-pill px-3 py-2">
                                   Not Assigned
                                 </span>
+
                               )}
+
                             </td>
 
                             {/* STATUS */}
 
                             <td>
-                              {driver.status ===
+
+                              {driver?.status ===
                               "ACTIVE" ? (
+
                                 <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+
                                   <LuCircleCheck
                                     size={13}
                                     className="me-1"
                                   />
+
                                   Active
+
                                 </span>
+
                               ) : (
+
                                 <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
+
                                   <LuCircleX
                                     size={13}
                                     className="me-1"
                                   />
+
                                   Inactive
+
                                 </span>
+
                               )}
+
                             </td>
 
                             {/* ACTION */}
 
                             <td>
+
                               <div className="d-flex justify-content-center gap-1">
+
                                 <button
                                   type="button"
                                   className="btn btn-sm btn-light text-primary rounded-3"
@@ -751,31 +1380,35 @@ const DriverManagement = () => {
                                       driver
                                     )
                                   }
+                                  disabled={saving}
                                 >
-                                  <LuPencil size={16} />
+                                  <LuPencil
+                                    size={16}
+                                  />
                                 </button>
 
                                 <button
                                   type="button"
                                   className={`btn btn-sm rounded-3 ${
-                                    driver.status ===
+                                    driver?.status ===
                                     "ACTIVE"
                                       ? "btn-light text-danger"
                                       : "btn-light text-success"
                                   }`}
                                   title={
-                                    driver.status ===
+                                    driver?.status ===
                                     "ACTIVE"
                                       ? "Deactivate"
                                       : "Activate"
                                   }
                                   onClick={() =>
                                     toggleStatus(
-                                      driver.id
+                                      driver
                                     )
                                   }
+                                  disabled={saving}
                                 >
-                                  {driver.status ===
+                                  {driver?.status ===
                                   "ACTIVE" ? (
                                     <LuCircleX
                                       size={16}
@@ -796,22 +1429,33 @@ const DriverManagement = () => {
                                       driver.id
                                     )
                                   }
+                                  disabled={saving}
                                 >
-                                  <LuTrash2 size={16} />
+                                  <LuTrash2
+                                    size={16}
+                                  />
                                 </button>
+
                               </div>
+
                             </td>
+
                           </tr>
                         );
                       }
                     )
+
                   ) : (
+
                     <tr>
+
                       <td
                         colSpan="7"
                         className="text-center py-5"
                       >
+
                         <div className="text-muted">
+
                           <LuUserRound
                             size={42}
                             className="mb-2 opacity-50"
@@ -822,87 +1466,141 @@ const DriverManagement = () => {
                           </div>
 
                           <small>
-                            Try changing your search or
-                            add a new driver.
+                            Try changing your
+                            search or add a
+                            new driver.
                           </small>
+
                         </div>
+
                       </td>
+
                     </tr>
+
                   )}
+
                 </tbody>
+
               </table>
+
             </div>
+
           </div>
 
           {/* FOOTER */}
 
           <div className="card-footer bg-white border-0 p-3">
+
             <div className="d-flex justify-content-between align-items-center">
+
               <small className="text-muted">
+
                 Total{" "}
-                <strong>{drivers.length}</strong>{" "}
+
+                <strong>
+                  {totalDrivers}
+                </strong>{" "}
+
                 drivers
+
               </small>
 
               <small className="text-muted">
-                <strong>{assignedDrivers}</strong>{" "}
+
+                <strong>
+                  {assignedDrivers}
+                </strong>{" "}
+
                 vehicles assigned
+
               </small>
+
             </div>
+
           </div>
+
         </div>
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* =================================================
+          MODAL
+      ================================================= */}
 
       {showModal && (
+
         <div
-          className="modal d-block"
+          className="modal d-block mt-4"
           tabIndex="-1"
           style={{
-            background: "rgba(0,0,0,0.45)",
+            background:
+              "rgba(0,0,0,0.45)",
           }}
         >
+
           <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
             <div className="modal-content border-0 rounded-4 shadow">
+
               {/* HEADER */}
 
-              <div className="modal-header border-0 px-4 pt-4">
+              <div className="modal-header border-0 px-4 pt-4 d-flex justify-content-between align-items-center">
+
                 <div>
+
                   <h5 className="fw-bold mb-1">
+
                     {editDriver
                       ? "Edit Driver"
                       : "Add Driver"}
+
                   </h5>
 
                   <small className="text-muted">
-                    Add driver details and assign a
-                    vehicle.
+                    Add driver details and
+                    assign a vehicle.
                   </small>
+
                 </div>
 
                 <button
                   type="button"
-                  className="btn btn-light rounded-3"
-                  onClick={closeModal}
+                  className="btn btn-light rounded-3 align-self-start px-3 py-2 ms-2 "
+                  onClick={
+                    closeModal
+                  }
+                  disabled={saving}
                 >
-                  <LuX size={18} />
+                  <LuX
+                    size={18}
+                  />
                 </button>
+
               </div>
 
               {/* FORM */}
 
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={
+                  handleSubmit
+                }
+              >
+
                 <div className="modal-body px-4">
+
                   <div className="row g-3">
+
                     {/* DRIVER NAME */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
+
                         Driver Name
+
                         <span className="text-danger">
                           *
                         </span>
+
                       </label>
 
                       <input
@@ -910,20 +1608,29 @@ const DriverManagement = () => {
                         name="driverName"
                         className="form-control rounded-3"
                         placeholder="Enter driver name"
-                        value={formData.driverName}
-                        onChange={handleChange}
+                        value={
+                          formData.driverName
+                        }
+                        onChange={
+                          handleChange
+                        }
                         required
                       />
+
                     </div>
 
                     {/* MOBILE */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
+
                         Mobile Number
+
                         <span className="text-danger">
                           *
                         </span>
+
                       </label>
 
                       <input
@@ -931,16 +1638,22 @@ const DriverManagement = () => {
                         name="mobileNumber"
                         className="form-control rounded-3"
                         placeholder="Enter mobile number"
-                        value={formData.mobileNumber}
-                        onChange={handleChange}
+                        value={
+                          formData.mobileNumber
+                        }
+                        onChange={
+                          handleChange
+                        }
                         maxLength="10"
                         required
                       />
+
                     </div>
 
-                    {/* ALTERNATE MOBILE */}
+                    {/* ALTERNATE */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
                         Alternate Mobile
                       </label>
@@ -953,19 +1666,26 @@ const DriverManagement = () => {
                         value={
                           formData.alternateMobile
                         }
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         maxLength="10"
                       />
+
                     </div>
 
-                    {/* LICENSE NUMBER */}
+                    {/* LICENSE */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
+
                         License Number
+
                         <span className="text-danger">
                           *
                         </span>
+
                       </label>
 
                       <input
@@ -976,19 +1696,26 @@ const DriverManagement = () => {
                         value={
                           formData.licenseNumber
                         }
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         required
                       />
+
                     </div>
 
                     {/* LICENSE TYPE */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
+
                         License Type
+
                         <span className="text-danger">
                           *
                         </span>
+
                       </label>
 
                       <select
@@ -997,9 +1724,12 @@ const DriverManagement = () => {
                         value={
                           formData.licenseType
                         }
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         required
                       >
+
                         <option value="">
                           Select License Type
                         </option>
@@ -1019,17 +1749,23 @@ const DriverManagement = () => {
                         <option value="OTHER">
                           Other
                         </option>
+
                       </select>
+
                     </div>
 
-                    {/* LICENSE EXPIRY */}
+                    {/* EXPIRY */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
+
                         License Expiry Date
+
                         <span className="text-danger">
                           *
                         </span>
+
                       </label>
 
                       <input
@@ -1039,14 +1775,18 @@ const DriverManagement = () => {
                         value={
                           formData.licenseExpiryDate
                         }
-                        onChange={handleChange}
+                        onChange={
+                          handleChange
+                        }
                         required
                       />
+
                     </div>
 
                     {/* VEHICLE */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
                         Assign Vehicle
                       </label>
@@ -1054,50 +1794,91 @@ const DriverManagement = () => {
                       <select
                         name="vehicleId"
                         className="form-select rounded-3"
-                        value={formData.vehicleId}
-                        onChange={handleChange}
+                        value={
+                          formData.vehicleId
+                        }
+                        onChange={
+                          handleChange
+                        }
+                        disabled={
+                          loadingVehicles
+                        }
                       >
+
                         <option value="">
                           No Vehicle / Later
                         </option>
 
-                        {vehicles.map((vehicle) => {
-                          const alreadyAssigned =
-                            drivers.some(
-                              (item) =>
-                                item.vehicleId ===
-                                  vehicle.id &&
-                                item.id !==
-                                  editDriver?.id
-                            );
+                        {vehicles.map(
+                          (vehicle) => {
 
-                          return (
-                            <option
-                              key={vehicle.id}
-                              value={vehicle.id}
-                              disabled={
-                                alreadyAssigned
-                              }
-                            >
-                              {vehicle.vehicleNumber} —{" "}
-                              {vehicle.vehicleType}
-                              {alreadyAssigned
-                                ? " (Already Assigned)"
-                                : ""}
-                            </option>
-                          );
-                        })}
+                            const alreadyAssigned =
+                              drivers.some(
+                                (item) =>
+                                  Number(
+                                    getVehicleId(
+                                      item
+                                    )
+                                  ) ===
+                                    Number(
+                                      vehicle.id
+                                    ) &&
+                                  Number(
+                                    item.id
+                                  ) !==
+                                    Number(
+                                      editDriver?.id
+                                    )
+                              );
+
+                            return (
+                              <option
+                                key={
+                                  vehicle.id
+                                }
+                                value={
+                                  vehicle.id
+                                }
+                                disabled={
+                                  alreadyAssigned
+                                }
+                              >
+
+                                {
+                                  vehicle.vehicleNumber
+                                }
+
+                                {" — "}
+
+                                {
+                                  vehicle.vehicleType
+                                }
+
+                                {alreadyAssigned
+                                  ? " (Already Assigned)"
+                                  : ""}
+
+                              </option>
+                            );
+                          }
+                        )}
+
                       </select>
 
                       <small className="text-muted">
-                        A vehicle can be assigned to
-                        only one driver.
+
+                        A vehicle can be
+                        assigned to only
+                        one driver.
+
                       </small>
+
                     </div>
 
                     {/* STATUS */}
 
                     <div className="col-md-6">
+
                       <label className="form-label fw-semibold">
                         Status
                       </label>
@@ -1105,9 +1886,14 @@ const DriverManagement = () => {
                       <select
                         name="status"
                         className="form-select rounded-3"
-                        value={formData.status}
-                        onChange={handleChange}
+                        value={
+                          formData.status
+                        }
+                        onChange={
+                          handleChange
+                        }
                       >
+
                         <option value="ACTIVE">
                           Active
                         </option>
@@ -1115,12 +1901,15 @@ const DriverManagement = () => {
                         <option value="INACTIVE">
                           Inactive
                         </option>
+
                       </select>
+
                     </div>
 
                     {/* ADDRESS */}
 
                     <div className="col-12">
+
                       <label className="form-label fw-semibold">
                         Address
                       </label>
@@ -1130,20 +1919,31 @@ const DriverManagement = () => {
                         className="form-control rounded-3"
                         rows="3"
                         placeholder="Enter driver address"
-                        value={formData.address}
-                        onChange={handleChange}
+                        value={
+                          formData.address
+                        }
+                        onChange={
+                          handleChange
+                        }
                       />
+
                     </div>
+
                   </div>
+
                 </div>
 
                 {/* FOOTER */}
 
                 <div className="modal-footer border-0 px-4 pb-4">
+
                   <button
                     type="button"
                     className="btn btn-light rounded-3 px-4"
-                    onClick={closeModal}
+                    onClick={
+                      closeModal
+                    }
+                    disabled={saving}
                   >
                     Cancel
                   </button>
@@ -1151,17 +1951,36 @@ const DriverManagement = () => {
                   <button
                     type="submit"
                     className="btn btn-primary rounded-3 px-4"
+                    disabled={saving}
                   >
-                    {editDriver
-                      ? "Update Driver"
-                      : "Add Driver"}
+
+                    {saving ? (
+                      <>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                        />
+                        Saving...
+                      </>
+                    ) : (
+                      editDriver
+                        ? "Update Driver"
+                        : "Add Driver"
+                    )}
+
                   </button>
+
                 </div>
+
               </form>
+
             </div>
+
           </div>
+
         </div>
+
       )}
+
     </>
   );
 };
