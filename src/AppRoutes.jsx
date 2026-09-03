@@ -591,6 +591,7 @@ import StopManagement from "./pages/Transport/StopManagement";
 import AssignRouteVehicle from "./pages/Transport/AssignRouteVehicle";
 import DriverManagement from "./pages/Transport/DriverManagement";
 import StudentTransportAllocation from "./pages/Transport/StudentTransportAllocation";
+import StudentBulkImport from "./pages/Setup/StudentBulkImport";
 
 // =====================================================
 // LOADING COMPONENT
@@ -676,6 +677,7 @@ const AppRoutes = () => {
         <Route path="/setup/time_table_show" element={<TimeTableList />} />
 
         <Route path="/setup/add/ptm" element={<AddPTM />} />
+        <Route path="/setup/student-bulk-import" element={<StudentBulkImport />} />
 
         {/* =================================================
             ADMISSION

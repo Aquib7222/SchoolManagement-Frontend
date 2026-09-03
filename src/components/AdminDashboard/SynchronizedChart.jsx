@@ -48,7 +48,7 @@ const data = [
 
 const SynchronizedChart = () => {
   return (
-    <div className="card shadow border-0">
+    <div className="card  border-0">
       <div className="card-body">
 
         <h6 className="fw-semibold mb-3">

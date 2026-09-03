@@ -1,406 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { BsThreeDotsVertical } from "react-icons/bs";
-
-// import {
-//   FaSchool,
-//   FaUserPlus,
-//   FaUserShield,
-//   FaPlusCircle,
-// } from "react-icons/fa";
-
-// import { MdOutlineUpdate, MdAssessment } from "react-icons/md";
-
-// import useDashboardData from "../../hooks/UserDashBoardData";
-// import axios from "axios";
-
-// const RecentSchoolActivitySummary = () => {
-//   const { schools = [] } = useDashboardData();
-
-//   const [audits, setAudits] = useState({
-//     content: [],
-//   });
-
-//   useEffect(() => {
-//     const fetchAudits = async () => {
-//       try {
-//         const response = await axios.get(
-//           "http://localhost:8080/api/audit-logs",
-//           {
-//             headers: {
-//               Authorization: `Bearer ${localStorage.getItem("token")}`,
-//             },
-//           },
-//         );
-//         console.log("audit response", response.data);
-//         setAudits(response.data);
-//       } catch (error) {
-//         console.error("Audit fetch failed:", error);
-//       }
-//     };
-
-//     fetchAudits();
-//   }, []);
-
-//   console.log("audit", audits);
-
-//   const [recentActivities, setRecentActivities] = useState([]);
-
-//   const [loadingActivities, setLoadingActivities] = useState(true);
-
-//   const schoolData = schools.slice(0, 4);
-
-//   useEffect(() => {
-//     const fetchRecentActivities = async () => {
-//       try {
-//         const token = localStorage.getItem("AdminToken");
-
-//         const response = await fetch(
-//           "http://localhost:8080/api/audit-logs",
-//           {
-//             method: "GET",
-
-//             headers: {
-//               "Content-Type": "application/json",
-
-//               Authorization: `Bearer ${token}`,
-//             },
-//           },
-//         );
-
-//         if (!response.ok) {
-//           throw new Error("Failed to fetch audit logs");
-//         }
-
-//         const data = await response.json();
-
-//         const logs = data.content || [];
-
-//         setRecentActivities(logs);
-//       } catch (error) {
-//         console.error("Recent activities error:", error);
-
-//         setRecentActivities([]);
-//       } finally {
-//         setLoadingActivities(false);
-//       }
-//     };
-
-//     fetchRecentActivities();
-//   }, []);
-
-//   console.log("recent activities", recentActivities);
-
-//   const getActivityIcon = (module, action) => {
-//     const moduleName = module?.toUpperCase();
-
-//     if (moduleName === "SCHOOL") {
-//       return <FaSchool />;
-//     }
-
-//     if (moduleName === "USER" || moduleName === "USER_MAPPING") {
-//       return <FaUserPlus />;
-//     }
-
-//     if (moduleName === "SUPERADMIN" || moduleName === "SUPER_ADMIN") {
-//       return <FaUserShield />;
-//     }
-
-//     if (moduleName === "MODULE" || moduleName === "MENU") {
-//       return <MdOutlineUpdate />;
-//     }
-
-//     return <FaPlusCircle />;
-//   };
-
-//   const getActivityColor = (module) => {
-//     const moduleName = module?.toUpperCase();
-
-//     if (moduleName === "SCHOOL") {
-//       return "text-primary";
-//     }
-
-//     if (moduleName === "USER") {
-//       return "text-success";
-//     }
-
-//     if (moduleName === "SUPERADMIN" || moduleName === "SUPER_ADMIN") {
-//       return "text-warning";
-//     }
-
-//     if (moduleName === "MODULE" || moduleName === "MENU") {
-//       return "text-info";
-//     }
-
-//     return "text-secondary";
-//   };
-
-//   const getTimeAgo = (date) => {
-//     if (!date) {
-//       return "";
-//     }
-
-//     const createdDate = new Date(date);
-
-//     const now = new Date();
-
-//     const difference = Math.floor((now - createdDate) / 1000);
-
-//     if (difference < 60) {
-//       return "Just now";
-//     }
-
-//     const minutes = Math.floor(difference / 60);
-
-//     if (minutes < 60) {
-//       return `${minutes} min ago`;
-//     }
-
-//     const hours = Math.floor(minutes / 60);
-
-//     if (hours < 24) {
-//       return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-//     }
-
-//     const days = Math.floor(hours / 24);
-
-//     return `${days} day${days > 1 ? "s" : ""} ago`;
-//   };
-
-//   const getSchoolName = (schoolId) => {
-//     if (!schoolId || !schools?.length) {
-//       return "-";
-//     }
-
-//     const school = schools.find(
-//       (school) => Number(school.id) === Number(schoolId),
-//     );
-
-//     return (
-//       school?.schoolName || school?.name || school?.organizationName || "-"
-//     );
-//   };
-
-//   return (
-//     <div className="container-fluid px-2 mt-3">
-//       <div className="row g-3">
-//         <div className="col-12 col-lg-5">
-//           <div className="card shadow h-100">
-//             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-//               <h6 className="mb-0">Recent School</h6>
-
-//               <button className="btn btn-sm btn-outline-primary">
-//                 View All
-//               </button>
-//             </div>
-
-//             <div className="card-body">
-//               <div className="table-responsive">
-//                 <table className="table align-middle mb-0">
-//                   <thead className="table-primary">
-//                     <tr>
-//                       <th>School Name</th>
-
-//                       <th>Created On</th>
-
-//                       <th>Status</th>
-
-//                       <th></th>
-//                     </tr>
-//                   </thead>
-
-//                   <tbody>
-//                     {audits?.content
-//                       ?.filter(
-//                         (audit) =>
-//                           audit.targetType === "SCHOOL" &&
-//                           audit.action === "CREATE",
-//                       )
-//                       .slice(0, 4)
-//                       .map((audit, idx) => (
-//                         <tr key={audit.id || idx}>
-//                           <td>
-//                             <div className="d-flex align-items-center gap-2">
-//                               <div
-//                                 className="bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center"
-//                                 style={{
-//                                   width: "36px",
-//                                   height: "36px",
-//                                 }}
-//                               >
-//                                 <FaSchool className="text-primary" />
-//                               </div>
-
-//                               <div>
-//                                 <div className="fw-semibold">
-//                                   {getSchoolName(audit.targetId)}
-//                                 </div>
-
-//                                 <small className="text-muted">
-//                                   ID: {audit.targetId}
-//                                 </small>
-//                               </div>
-//                             </div>
-//                           </td>
-
-//                           <td>
-//                             {audit.createdAt
-//                               ? new Date(audit.createdAt).toLocaleDateString(
-//                                   "en-IN",
-//                                   {
-//                                     day: "2-digit",
-//                                     month: "short",
-//                                     year: "numeric",
-//                                   },
-//                                 )
-//                               : "-"}
-//                           </td>
-
-//                           <td>
-//                             <span
-//                               className={`badge ${
-//                                 audit.status === "SUCCESS"
-//                                   ? "bg-success"
-//                                   : "bg-danger"
-//                               }`}
-//                             >
-//                               {audit.status}
-//                             </span>
-//                           </td>
-
-//                           <td>
-//                             <BsThreeDotsVertical size={20} />
-//                           </td>
-//                         </tr>
-//                       ))}
-//                   </tbody>
-//                 </table>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-12 col-md-6 col-lg-4">
-//           <div className="card shadow h-100">
-//             <div className="card-header bg-white d-flex justify-content-between align-items-center">
-//               <h6 className="mb-0">Recent Activities</h6>
-
-//               <button className="btn btn-sm btn-outline-primary">
-//                 View All
-//               </button>
-//             </div>
-
-//             <div className="card-body">
-//               {/* LOADING */}
-
-//               {loadingActivities && (
-//                 <div className="text-center text-muted py-4">
-//                   Loading activities...
-//                 </div>
-//               )}
-
-//               {/* NO ACTIVITIES */}
-
-//               {!loadingActivities && recentActivities.length === 0 && (
-//                 <div className="text-center text-muted py-4">
-//                   No recent activities
-//                 </div>
-//               )}
-
-//               {/* ACTIVITIES */}
-
-//               {!loadingActivities && recentActivities.length > 0 && (
-//                 <div className="d-flex flex-column gap-3">
-//                   {recentActivities.map((activity) => (
-//                     <div
-//                       key={activity.id}
-//                       className="d-flex align-items-center"
-//                     >
-//                       {/* ICON */}
-
-//                       <div
-//                         className={`bg-light rounded-circle p-2 me-3 ${getActivityColor(
-//                           activity.module,
-//                         )}`}
-//                       >
-//                         {getActivityIcon(activity.module, activity.action)}
-//                       </div>
-
-//                       {/* ACTIVITY */}
-
-//                       <div className="flex-grow-1">
-//                         <div className="fw-medium">
-//                           {activity.description ||
-//                             `${activity.action} ${activity.module}`}
-//                         </div>
-
-//                         <small className="text-muted">
-//                           {getTimeAgo(activity.createdAt)}
-//                         </small>
-//                       </div>
-//                     </div>
-//                   ))}
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="col-12 col-md-6 col-lg-3">
-//           <div className="card shadow h-100">
-//             <div className="card-header bg-white">
-//               <h6 className="mb-0">System Summary</h6>
-//             </div>
-
-//             <div className="card-body">
-//               <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-//                 <div>
-//                   <small className="text-muted">System Status</small>
-
-//                   <div className="fw-semibold text-success">Operational</div>
-//                 </div>
-
-//                 <span className="badge bg-success">Active</span>
-//               </div>
-
-//               <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-//                 <div>
-//                   <small className="text-muted">Last Backup</small>
-
-//                   <div className="fw-semibold">Today</div>
-//                 </div>
-
-//                 <MdAssessment size={25} className="text-primary" />
-//               </div>
-
-//               <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-//                 <div>
-//                   <small className="text-muted">Active Users</small>
-
-//                   <div className="fw-semibold">24</div>
-//                 </div>
-
-//                 <FaUserPlus size={22} className="text-info" />
-//               </div>
-
-//               <div className="d-flex justify-content-between align-items-center">
-//                 <div>
-//                   <small className="text-muted">Pending Tasks</small>
-
-//                   <div className="fw-semibold">5</div>
-//                 </div>
-
-//                 <FaPlusCircle size={22} className="text-warning" />
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RecentSchoolActivitySummary;
-
 
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -430,7 +27,7 @@ const RecentSchoolActivitySummary = () => {
   const [loadingActivities, setLoadingActivities] = useState(true);
 
   // =====================================================
-  // FETCH SCHOOLS + AUDIT LOGS TOGETHER
+  // FETCH SCHOOLS + AUDIT LOGS
   // =====================================================
 
   useEffect(() => {
@@ -509,9 +106,8 @@ const RecentSchoolActivitySummary = () => {
     fetchDashboardData();
   }, []);
 
-  console.log("recent activites",recentActivities);
   // =====================================================
-  // GET SCHOOL NAME BY ID
+  // GET SCHOOL NAME
   // =====================================================
 
   const getSchoolName = (schoolId) => {
@@ -536,7 +132,7 @@ const RecentSchoolActivitySummary = () => {
   // ACTIVITY ICON
   // =====================================================
 
-  const getActivityIcon = (module, action) => {
+  const getActivityIcon = (module) => {
     const moduleName = module?.toUpperCase();
 
     if (moduleName === "SCHOOL") {
@@ -568,35 +164,35 @@ const RecentSchoolActivitySummary = () => {
   };
 
   // =====================================================
-  // ACTIVITY COLOR
+  // ACTIVITY THEME
   // =====================================================
 
-  const getActivityColor = (module) => {
+  const getActivityTheme = (module) => {
     const moduleName = module?.toUpperCase();
 
     if (moduleName === "SCHOOL") {
-      return "text-primary";
+      return "activity-blue";
     }
 
     if (moduleName === "USER") {
-      return "text-success";
+      return "activity-green";
     }
 
     if (
       moduleName === "SUPERADMIN" ||
       moduleName === "SUPER_ADMIN"
     ) {
-      return "text-warning";
+      return "activity-orange";
     }
 
     if (
       moduleName === "MODULE" ||
       moduleName === "MENU"
     ) {
-      return "text-info";
+      return "activity-purple";
     }
 
-    return "text-secondary";
+    return "activity-gray";
   };
 
   // =====================================================
@@ -667,351 +263,976 @@ const RecentSchoolActivitySummary = () => {
   // =====================================================
 
   return (
-    <div className="container-fluid px-2 mt-3">
-      <div className="row g-3">
+    <>
+      <div className="container-fluid px-2 mt-3">
+        <div className="row g-3">
 
-        {/* ================================================= */}
-        {/* RECENT SCHOOL */}
-        {/* ================================================= */}
+          {/* =================================================
+              RECENT SCHOOL
+          ================================================= */}
 
-        <div className="col-12 col-lg-5">
-          <div className="card shadow h-100">
+          <div className="col-12 col-lg-5">
+            <div className="dashboard-card shadow h-100">
 
-            <div className="card-header bg-white d-flex justify-content-between align-items-center">
-              <h6 className="mb-0">
-                Recent School
-              </h6>
+              {/* HEADER */}
 
-              <button className="btn btn-sm btn-outline-primary">
-                View All
-              </button>
-            </div>
+              <div className="dashboard-card-header">
+                <div>
+                  <span className="dashboard-section-label">
+                    SCHOOL MANAGEMENT
+                  </span>
 
-            <div className="card-body">
-
-              {loading ? (
-                <div className="text-center text-muted py-4">
-                  Loading schools...
+                  <h6 className="dashboard-title">
+                    Recent Schools
+                  </h6>
                 </div>
-              ) : recentSchoolLogs.length === 0 ? (
-                <div className="text-center text-muted py-4">
-                  No recent school activity
-                </div>
-              ) : (
-                <div className="table-responsive">
-                  <table className="table align-middle mb-0">
 
-                    <thead className="table-primary">
-                      <tr>
-                        <th>School Name</th>
-                        <th>Created On</th>
-                        <th>Status</th>
-                        <th></th>
-                      </tr>
-                    </thead>
+                <button className="premium-outline-btn">
+                  View All
+                </button>
+              </div>
 
-                    <tbody>
-                      {recentSchoolLogs.map(
-                        (audit, idx) => (
-                          <tr
-                            key={
-                              audit.id || idx
-                            }
-                          >
+              {/* BODY */}
 
-                            {/* SCHOOL NAME */}
+              <div className="dashboard-card-body">
 
-                            <td>
-                              <div className="d-flex align-items-center gap-2">
+                {loading ? (
+                  <div className="empty-dashboard-state">
+                    <div className="dashboard-loader"></div>
 
-                                <div
-                                  className="bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center"
-                                  style={{
-                                    width: "36px",
-                                    height: "36px",
-                                  }}
-                                >
-                                  <FaSchool className="text-primary" />
-                                </div>
+                    <span>
+                      Loading schools...
+                    </span>
+                  </div>
+                ) : recentSchoolLogs.length === 0 ? (
+                  <div className="empty-dashboard-state">
+                    <div className="empty-icon">
+                      <FaSchool />
+                    </div>
 
-                                <div>
+                    <span>
+                      No recent school activity
+                    </span>
+                  </div>
+                ) : (
+                  <div className="table-responsive">
 
-                                  <div className="fw-semibold">
-                                    {getSchoolName(
-                                      audit.targetId
-                                    )}
+                    <table className="table premium-table align-middle mb-0">
+
+                      <thead>
+                        <tr>
+                          <th>School Name</th>
+                          <th>Created On</th>
+                          <th>Status</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {recentSchoolLogs.map(
+                          (audit, idx) => (
+                            <tr
+                              key={
+                                audit.id || idx
+                              }
+                            >
+
+                              {/* SCHOOL */}
+
+                              <td>
+                                <div className="d-flex align-items-center gap-2">
+
+                                  <div className="school-icon-box">
+                                    <FaSchool />
                                   </div>
 
-                                  <small className="text-muted">
-                                    ID:{" "}
-                                    {
-                                      audit.targetId
-                                    }
-                                  </small>
+                                  <div>
+                                    <div className="school-name">
+                                      {getSchoolName(
+                                        audit.targetId
+                                      )}
+                                    </div>
+
+                                    <small className="school-id">
+                                      ID:{" "}
+                                      {
+                                        audit.targetId
+                                      }
+                                    </small>
+                                  </div>
 
                                 </div>
+                              </td>
 
-                              </div>
-                            </td>
+                              {/* DATE */}
 
-                            {/* CREATED */}
+                              <td>
+                                <span className="date-text">
+                                  {audit.createdAt
+                                    ? new Date(
+                                        audit.createdAt
+                                      ).toLocaleDateString(
+                                        "en-IN",
+                                        {
+                                          day: "2-digit",
+                                          month: "short",
+                                          year: "numeric",
+                                        }
+                                      )
+                                    : "-"}
+                                </span>
+                              </td>
 
-                            <td>
-                              {audit.createdAt
-                                ? new Date(
-                                    audit.createdAt
-                                  ).toLocaleDateString(
-                                    "en-IN",
-                                    {
-                                      day: "2-digit",
-                                      month: "short",
-                                      year: "numeric",
-                                    }
-                                  )
-                                : "-"}
-                            </td>
+                              {/* STATUS */}
 
-                            {/* STATUS */}
+                              <td>
+                                <span
+                                  className={`status-pill ${
+                                    audit.status ===
+                                    "SUCCESS"
+                                      ? "status-success"
+                                      : "status-danger"
+                                  }`}
+                                >
+                                  <span className="status-dot"></span>
 
-                            <td>
-                              <span
-                                className={`badge ${
-                                  audit.status ===
-                                  "SUCCESS"
-                                    ? "bg-success"
-                                    : "bg-danger"
-                                }`}
-                              >
-                                {
-                                  audit.status
-                                }
-                              </span>
-                            </td>
+                                  {audit.status}
+                                </span>
+                              </td>
 
-                            {/* MENU */}
+                              {/* MENU */}
 
-                            <td>
-                              <BsThreeDotsVertical
-                                size={20}
-                              />
-                            </td>
+                              <td>
+                                <button className="more-btn">
+                                  <BsThreeDotsVertical />
+                                </button>
+                              </td>
 
-                          </tr>
-                        )
-                      )}
-                    </tbody>
+                            </tr>
+                          )
+                        )}
+                      </tbody>
 
-                  </table>
-                </div>
-              )}
+                    </table>
+
+                  </div>
+                )}
+              </div>
 
             </div>
           </div>
-        </div>
 
-        {/* ================================================= */}
-        {/* RECENT ACTIVITIES */}
-        {/* ================================================= */}
 
-        <div className="col-12 col-md-6 col-lg-4">
-          <div className="card shadow h-100">
+          {/* =================================================
+              RECENT ACTIVITIES
+          ================================================= */}
 
-            <div className="card-header bg-white d-flex justify-content-between align-items-center">
+          <div className="col-12 col-md-6 col-lg-4">
 
-              <h6 className="mb-0">
-                Recent Activities
-              </h6>
+            <div className="dashboard-card shadow h-100">
 
-              <button className="btn btn-sm btn-outline-primary">
-                View All
-              </button>
+              {/* HEADER */}
 
-            </div>
+              <div className="dashboard-card-header">
 
-            <div className="card-body">
+                <div>
+                  <span className="dashboard-section-label">
+                    SYSTEM LOG
+                  </span>
 
-              {loadingActivities && (
-                <div className="text-center text-muted py-4">
-                  Loading activities...
+                  <h6 className="dashboard-title">
+                    Recent Activities
+                  </h6>
                 </div>
-              )}
 
-              {!loadingActivities &&
-                recentActivities.length ===
-                  0 && (
-                  <div className="text-center text-muted py-4">
-                    No recent activities
+                <button className="premium-outline-btn">
+                  View All
+                </button>
+
+              </div>
+
+
+              {/* BODY */}
+
+              <div className="dashboard-card-body">
+
+                {loadingActivities && (
+                  <div className="empty-dashboard-state">
+
+                    <div className="dashboard-loader"></div>
+
+                    <span>
+                      Loading activities...
+                    </span>
+
                   </div>
                 )}
 
-              {!loadingActivities &&
-                recentActivities.length >
-                  0 && (
-                  <div className="d-flex flex-column gap-3">
+                {!loadingActivities &&
+                  recentActivities.length === 0 && (
+                    <div className="empty-dashboard-state">
 
-                    {recentActivities.map(
-                      (activity) => (
+                      <div className="empty-icon">
+                        <MdOutlineUpdate />
+                      </div>
 
-                        <div
-                          key={activity.id}
-                          className="d-flex align-items-center"
-                        >
+                      <span>
+                        No recent activities
+                      </span>
 
-                          {/* ICON */}
+                    </div>
+                  )}
+
+                {!loadingActivities &&
+                  recentActivities.length > 0 && (
+
+                    <div className="activity-list">
+
+                      {recentActivities.map(
+                        (activity, index) => (
 
                           <div
-                            className={`bg-light rounded-circle p-2 me-3 ${getActivityColor(
-                              activity.module
-                            )}`}
+                            key={activity.id}
+                            className="activity-item"
                           >
-                            {getActivityIcon(
-                              activity.module,
-                              activity.action
-                            )}
-                          </div>
 
-                          {/* ACTIVITY */}
+                            {/* TIMELINE */}
 
-                          <div className="flex-grow-1">
+                            <div className="activity-timeline">
 
-                            <div className="fw-medium d-flex justify-content-between">
+                              <div
+                                className={`activity-icon ${getActivityTheme(
+                                  activity.module
+                                )}`}
+                              >
+                                {getActivityIcon(
+                                  activity.module
+                                )}
+                              </div>
 
-                              {activity.description ||
-                                `${activity.action} ${activity.module}`}
-                               <small className="text-muted">
-                              {getTimeAgo(
-                                activity.createdAt
+                              {index !==
+                                recentActivities.length -
+                                  1 && (
+                                <div className="activity-line"></div>
                               )}
-                            </small>
 
                             </div>
 
-                            
-                            <small>
-                               {getSchoolName(
-                                      activity.targetId
-                                    )}
-                            </small>
 
-                           
+                            {/* CONTENT */}
+
+                            <div className="activity-content">
+
+                              <div className="activity-top">
+
+                                <div className="activity-description">
+                                  {activity.description ||
+                                    `${activity.action} ${activity.module}`}
+                                </div>
+
+                                <small className="activity-time">
+                                  {getTimeAgo(
+                                    activity.createdAt
+                                  )}
+                                </small>
+
+                              </div>
+
+                              <div className="activity-school">
+                                <FaSchool
+                                  size={10}
+                                  className="me-1"
+                                />
+
+                                {getSchoolName(
+                                  activity.targetId
+                                )}
+                              </div>
+
+                            </div>
+
                           </div>
+                        )
+                      )}
 
-                        </div>
-                      )
-                    )}
+                    </div>
+                  )}
 
-                  </div>
-                )}
+              </div>
 
             </div>
+
           </div>
-        </div>
 
-        {/* ================================================= */}
-        {/* SYSTEM SUMMARY */}
-        {/* ================================================= */}
 
-        <div className="col-12 col-md-6 col-lg-3">
-          <div className="card shadow h-100">
+          {/* =================================================
+              SYSTEM SUMMARY
+          ================================================= */}
 
-            <div className="card-header bg-white">
-              <h6 className="mb-0">
-                System Summary
-              </h6>
+          <div className="col-12 col-md-6 col-lg-3">
+
+            <div className="dashboard-card shadow h-100">
+
+              {/* HEADER */}
+
+              <div className="dashboard-card-header">
+
+                <div>
+                  <span className="dashboard-section-label">
+                    OVERVIEW
+                  </span>
+
+                  <h6 className="dashboard-title">
+                    System Summary
+                  </h6>
+                </div>
+
+              </div>
+
+
+              {/* BODY */}
+
+              <div className="dashboard-card-body">
+
+                {/* SYSTEM STATUS */}
+
+                <div className="summary-item">
+
+                  <div className="summary-left">
+
+                    <div className="summary-icon summary-green">
+                      <FaSchool />
+                    </div>
+
+                    <div>
+                      <small>
+                        System Status
+                      </small>
+
+                      <strong className="text-success">
+                        Operational
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <span className="status-pill status-success">
+                    <span className="status-dot"></span>
+                    Active
+                  </span>
+
+                </div>
+
+
+                {/* BACKUP */}
+
+                <div className="summary-item">
+
+                  <div className="summary-left">
+
+                    <div className="summary-icon summary-blue">
+                      <MdAssessment />
+                    </div>
+
+                    <div>
+                      <small>
+                        Last Backup
+                      </small>
+
+                      <strong>
+                        Today
+                      </strong>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {/* USERS */}
+
+                <div className="summary-item">
+
+                  <div className="summary-left">
+
+                    <div className="summary-icon summary-purple">
+                      <FaUserPlus />
+                    </div>
+
+                    <div>
+                      <small>
+                        Active Users
+                      </small>
+
+                      <strong>
+                        24
+                      </strong>
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {/* TASKS */}
+
+                <div className="summary-item border-0">
+
+                  <div className="summary-left">
+
+                    <div className="summary-icon summary-orange">
+                      <FaPlusCircle />
+                    </div>
+
+                    <div>
+                      <small>
+                        Pending Tasks
+                      </small>
+
+                      <strong>
+                        5
+                      </strong>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
             </div>
 
-            <div className="card-body">
-
-              {/* SYSTEM STATUS */}
-
-              <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-
-                <div>
-                  <small className="text-muted">
-                    System Status
-                  </small>
-
-                  <div className="fw-semibold text-success">
-                    Operational
-                  </div>
-                </div>
-
-                <span className="badge bg-success">
-                  Active
-                </span>
-
-              </div>
-
-              {/* LAST BACKUP */}
-
-              <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-
-                <div>
-                  <small className="text-muted">
-                    Last Backup
-                  </small>
-
-                  <div className="fw-semibold">
-                    Today
-                  </div>
-                </div>
-
-                <MdAssessment
-                  size={25}
-                  className="text-primary"
-                />
-
-              </div>
-
-              {/* ACTIVE USERS */}
-
-              <div className="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
-
-                <div>
-                  <small className="text-muted">
-                    Active Users
-                  </small>
-
-                  <div className="fw-semibold">
-                    24
-                  </div>
-                </div>
-
-                <FaUserPlus
-                  size={22}
-                  className="text-info"
-                />
-
-              </div>
-
-              {/* PENDING TASKS */}
-
-              <div className="d-flex justify-content-between align-items-center">
-
-                <div>
-                  <small className="text-muted">
-                    Pending Tasks
-                  </small>
-
-                  <div className="fw-semibold">
-                    5
-                  </div>
-                </div>
-
-                <FaPlusCircle
-                  size={22}
-                  className="text-warning"
-                />
-
-              </div>
-
-            </div>
           </div>
-        </div>
 
+        </div>
       </div>
-    </div>
+
+
+      {/* =====================================================
+          PREMIUM DASHBOARD CSS
+      ===================================================== */}
+
+      <style>
+        {`
+          /* ============================================
+             MAIN CARD
+          ============================================ */
+
+          .dashboard-card {
+            position: relative;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #edf0f5;
+            border-radius: 15px;
+            // box-shadow: 0 5px 18px rgba(0,0,0,.05);
+            transition: all .25s ease;
+          }
+
+          .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,.07);
+          }
+
+
+          /* ============================================
+             HEADER
+          ============================================ */
+
+          .dashboard-card-header {
+            min-height: 70px;
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid #edf0f5;
+            background: #ffffff;
+          }
+
+          .dashboard-section-label {
+            display: block;
+            margin-bottom: 3px;
+            color: #0d6efd;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .8px;
+          }
+
+          .dashboard-title {
+            margin: 0;
+            color: #212529;
+            font-size: 15px;
+            font-weight: 700;
+          }
+
+
+          /* ============================================
+             BODY
+          ============================================ */
+
+          .dashboard-card-body {
+            padding: 15px 18px;
+          }
+
+
+          /* ============================================
+             VIEW ALL BUTTON
+          ============================================ */
+
+          .premium-outline-btn {
+            border: 1px solid #dbe5f2;
+            background: #ffffff;
+            color: #0d6efd;
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all .2s ease;
+            white-space: nowrap;
+          }
+
+          .premium-outline-btn:hover {
+            background: #eaf2ff;
+            border-color: #bcd3f7;
+          }
+
+
+          /* ============================================
+             TABLE
+          ============================================ */
+
+          .premium-table {
+            min-width: 620px;
+          }
+
+          .premium-table thead th {
+            background: #f4f8ff;
+            color: #667085;
+            border-bottom: 1px solid #e3eaf3;
+            padding: 10px 9px;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+          }
+
+          .premium-table tbody td {
+            padding: 11px 9px;
+            border-bottom: 1px solid #f0f2f5;
+            color: #343a40;
+            font-size: 11px;
+          }
+
+          .premium-table tbody tr:last-child td {
+            border-bottom: none;
+          }
+
+          .premium-table tbody tr {
+            transition: background .2s ease;
+          }
+
+          .premium-table tbody tr:hover {
+            background: #fafcff;
+          }
+
+
+          /* ============================================
+             SCHOOL ICON
+          ============================================ */
+
+          .school-icon-box {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eaf2ff;
+            color: #0d6efd;
+            font-size: 15px;
+          }
+
+          .school-name {
+            color: #212529;
+            font-size: 11px;
+            font-weight: 700;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .school-id {
+            color: #9aa1aa;
+            font-size: 9px;
+          }
+
+          .date-text {
+            color: #667085;
+            font-size: 10px;
+            white-space: nowrap;
+          }
+
+
+          /* ============================================
+             STATUS
+          ============================================ */
+
+          .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+          }
+
+          .status-success {
+            background: #eaf8f0;
+            color: #198754;
+          }
+
+          .status-danger {
+            background: #ffeded;
+            color: #dc3545;
+          }
+
+          .status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+          }
+
+
+          /* ============================================
+             MORE BUTTON
+          ============================================ */
+
+          .more-btn {
+            border: none;
+            background: transparent;
+            color: #98a2b3;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s ease;
+          }
+
+          .more-btn:hover {
+            background: #f2f4f7;
+            color: #344054;
+          }
+
+
+          /* ============================================
+             ACTIVITY
+          ============================================ */
+
+          .activity-list {
+            display: flex;
+            flex-direction: column;
+          }
+
+          .activity-item {
+            display: flex;
+            gap: 11px;
+            min-height: 62px;
+          }
+
+          .activity-timeline {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            width: 35px;
+            min-width: 35px;
+          }
+
+          .activity-icon {
+            position: relative;
+            z-index: 2;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+          }
+
+          .activity-blue {
+            background: #eaf2ff;
+            color: #0d6efd;
+          }
+
+          .activity-green {
+            background: #eaf8f0;
+            color: #198754;
+          }
+
+          .activity-orange {
+            background: #fff8df;
+            color: #d99a00;
+          }
+
+          .activity-purple {
+            background: #f1eaff;
+            color: #7950f2;
+          }
+
+          .activity-gray {
+            background: #f2f4f7;
+            color: #667085;
+          }
+
+          .activity-line {
+            position: absolute;
+            top: 34px;
+            bottom: -12px;
+            width: 1px;
+            background: #e7ebf0;
+          }
+
+          .activity-content {
+            flex-grow: 1;
+            min-width: 0;
+            padding-top: 1px;
+            padding-bottom: 10px;
+          }
+
+          .activity-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+          }
+
+          .activity-description {
+            color: #344054;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+          }
+
+          .activity-time {
+            color: #98a2b3;
+            font-size: 9px;
+            white-space: nowrap;
+          }
+
+          .activity-school {
+            margin-top: 4px;
+            color: #98a2b3;
+            font-size: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+
+          /* ============================================
+             SYSTEM SUMMARY
+          ============================================ */
+
+          .summary-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf0f5;
+          }
+
+          .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+          }
+
+          .summary-left > div:last-child {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+          }
+
+          .summary-left small {
+            color: #98a2b3;
+            font-size: 9px;
+            margin-bottom: 2px;
+          }
+
+          .summary-left strong {
+            color: #344054;
+            font-size: 11px;
+            font-weight: 700;
+          }
+
+          .summary-icon {
+            width: 35px;
+            height: 35px;
+            min-width: 35px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+          }
+
+          .summary-green {
+            background: #eaf8f0;
+            color: #198754;
+          }
+
+          .summary-blue {
+            background: #eaf2ff;
+            color: #0d6efd;
+          }
+
+          .summary-purple {
+            background: #f1eaff;
+            color: #7950f2;
+          }
+
+          .summary-orange {
+            background: #fff8df;
+            color: #d99a00;
+          }
+
+
+          /* ============================================
+             EMPTY STATE
+          ============================================ */
+
+          .empty-dashboard-state {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #98a2b3;
+            font-size: 11px;
+          }
+
+          .empty-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f4f8ff;
+            color: #0d6efd;
+            font-size: 17px;
+          }
+
+          .dashboard-loader {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 3px solid #e8eef7;
+            border-top-color: #0d6efd;
+            animation: dashboardSpin .8s linear infinite;
+          }
+
+          @keyframes dashboardSpin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+
+
+          /* ============================================
+             TABLET
+          ============================================ */
+
+          @media (max-width: 992px) {
+
+            .dashboard-card-header {
+              padding: 14px 16px;
+            }
+
+            .dashboard-card-body {
+              padding: 14px 16px;
+            }
+
+            .premium-table {
+              min-width: 580px;
+            }
+
+          }
+
+
+          /* ============================================
+             MOBILE
+          ============================================ */
+
+          @media (max-width: 576px) {
+
+            .dashboard-card {
+              border-radius: 13px;
+            }
+
+            .dashboard-card-header {
+              min-height: 64px;
+              padding: 13px 14px;
+            }
+
+            .dashboard-card-body {
+              padding: 13px 14px;
+            }
+
+            .dashboard-section-label {
+              font-size: 8px;
+            }
+
+            .dashboard-title {
+              font-size: 14px;
+            }
+
+            .premium-outline-btn {
+              padding: 5px 8px;
+              font-size: 10px;
+            }
+
+            .activity-item {
+              min-height: 58px;
+            }
+
+            .activity-icon {
+              width: 32px;
+              height: 32px;
+            }
+
+            .activity-timeline {
+              width: 32px;
+              min-width: 32px;
+            }
+
+            .activity-description {
+              font-size: 10px;
+            }
+
+            .activity-time {
+              font-size: 8px;
+            }
+
+            .summary-item {
+              padding: 10px 0;
+            }
+
+          }
+        `}
+      </style>
+    </>
   );
 };
 
 export default RecentSchoolActivitySummary;
+
