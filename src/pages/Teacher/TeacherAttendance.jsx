@@ -2905,7 +2905,7 @@ const TeacherAttendance = () => {
           },
         }
       );
-
+      console.log("Teachers fetch response:", res.data);
       const teacherList = Array.isArray(res.data)
         ? res.data
         : Array.isArray(res.data?.data)
@@ -2929,6 +2929,7 @@ const TeacherAttendance = () => {
     }
   };
 
+  console.log("Teachers:", teachers);
   /* =========================================================
      FETCH DAILY ATTENDANCE
   ========================================================= */
