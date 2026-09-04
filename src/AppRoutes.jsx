@@ -592,6 +592,12 @@ import AssignRouteVehicle from "./pages/Transport/AssignRouteVehicle";
 import DriverManagement from "./pages/Transport/DriverManagement";
 import StudentTransportAllocation from "./pages/Transport/StudentTransportAllocation";
 import StudentBulkImport from "./pages/Setup/StudentBulkImport";
+import TeacherClassAssignment from "./pages/Teacher/TeacherClassAssignment";
+import PeriodManagement from "./pages/Setup/PeriodManagement";
+
+import TimeTable from "./pages/TeacherDashboard/TimeTable";
+import MyClasses from "./pages/TeacherDashboard/MyClasses";
+import Homework from "./pages/TeacherDashboard/Homework";
 
 // =====================================================
 // LOADING COMPONENT
@@ -678,6 +684,7 @@ const AppRoutes = () => {
 
         <Route path="/setup/add/ptm" element={<AddPTM />} />
         <Route path="/setup/student-bulk-import" element={<StudentBulkImport />} />
+        <Route path="/setup/period-management" element={<PeriodManagement />} />
 
         {/* =================================================
             ADMISSION
@@ -845,6 +852,7 @@ const AppRoutes = () => {
         />
 
         <Route path="/teacher/attendance" element={<TeacherAttendance />} />
+         <Route path="/teacher/class-assignment" element={<TeacherClassAssignment />} />
 
         <Route
           path="/teacher/attendance_report"
@@ -963,6 +971,14 @@ const AppRoutes = () => {
         <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/fee" element={<MyFee />} />
          <Route path="/attendance" element={<StudentAttendance />} />
+
+
+         {/* ====================================================
+            TEACHER DASHBOARD
+        ==================================================== */}
+        <Route path="/teacher/timetable" element={<TimeTable />} />
+        <Route path="/teacher/classes" element={<MyClasses/>} />
+        <Route path="/teacher/homework" element={<Homework/>} />
         {/* =================================================
             ADMIN DASHBOARD
         ================================================= */}

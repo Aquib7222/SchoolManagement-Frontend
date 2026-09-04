@@ -1,201 +1,754 @@
-import React, { useEffect, useState } from "react";
+
+
+import React, { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
+import { useNavigate } from "react-router-dom";
+import {
+  LuEye,
+  LuUsers,
+  LuCalendarCheck,
+  LuPercent,
+  LuBookOpen,
+  LuBell,
+  LuLoaderCircle,
+} from "react-icons/lu";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 import axios from "../../api/axiosInstance";
+
 const ClassesHomeworkNotice = () => {
-  const tableSlider = {
-    dots: false,
+  const navigate = useNavigate();
 
-    arrows: false,
+  const user = JSON.parse(localStorage.getItem("user") || "null");
 
-    infinite: true,
+  const schoolId =
+    user?.schoolId || localStorage.getItem("schoolId");
 
-    vertical: true,
+  const teacherId = user?.teacherId;
 
-    verticalSwiping: true,
-
-    slidesToShow: 3,
-
-    slidesToScroll: 1,
-
-    autoplay: true,
-
-    speed: 700,
-
-    autoplaySpeed: 2500,
-
-    pauseOnHover: true,
-  };
-  const [recentAdmissions, setRecentAdmissions] = useState([]);
-  const [pendingFee, setPendingFee] = useState([]);
-  const [paidFee, setPaidFee] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const schoolId = user?.schoolId;
   const token = localStorage.getItem("token");
 
-  // pending fee api
-  useEffect(() => {
-    if (!schoolId) return;
-    const res = axios
-      .get("/api/student-fee/all", {
-        // params:{status:"UNPAID"},
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const result = (res.data || []).filter(
-          (item) => item.status === "UNPAID",
-        );
-        const Paid = (res.data || []).filter(
-          (item) => item.status === "PAID" || item.status === "PARTIAL",
-        );
-        setPaidFee(Paid);
-        setPendingFee(result);
-      })
+  const getCurrentAcademicYear = () => {
+    const today = new Date();
 
-      .catch(console.error);
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+
+    const startYear =
+      currentMonth >= 4 ? currentYear : currentYear - 1;
+
+    return `${startYear}-${startYear + 1}`;
+  };
+
+  // ----------------------------------------------------
+  // Today's Day
+  // ----------------------------------------------------
+  const getTodayDay = () => {
+    const days = [
+      "SUNDAY",
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY",
+    ];
+
+    return days[new Date().getDay()];
+  };
+
+  const getTodayDate = () => {
+    const today = new Date();
+
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  const academicYear = getCurrentAcademicYear();
+  const selectedDay = getTodayDay();
+  const todayDate = getTodayDate();
+
+  // ----------------------------------------------------
+  // States
+  // ----------------------------------------------------
+  const [assignments, setAssignments] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [attendance, setAttendance] = useState([]);
+
+  const [loadingClasses, setLoadingClasses] = useState(true);
+  const [loadingAttendance, setLoadingAttendance] = useState(true);
+
+  const [error, setError] = useState("");
+
+  // ----------------------------------------------------
+  // Axios config
+  // ----------------------------------------------------
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  // ----------------------------------------------------
+  // Load Teacher Assignments
+  // ----------------------------------------------------
+  useEffect(() => {
+    const loadAssignments = async () => {
+      if (!schoolId || !teacherId) {
+        setLoadingClasses(false);
+        return;
+      }
+
+      try {
+        setLoadingClasses(true);
+        setError("");
+
+        const response = await axios.get(
+          "/api/teacher-class-assignment/teacher/day",
+          {
+            ...axiosConfig,
+            params: {
+              schoolId: Number(schoolId),
+              academicYear,
+              teacherId: Number(teacherId),
+              dayOfWeek: selectedDay,
+            },
+          }
+        );
+
+        const data = Array.isArray(response.data)
+          ? response.data
+          : [];
+
+        setAssignments(data.filter((item) => item.active !== false));
+      } catch (err) {
+        console.error("Teacher assignment error:", err);
+
+        setAssignments([]);
+
+        setError(
+          err?.response?.data?.message ||
+            "Unable to load classes."
+        );
+      } finally {
+        setLoadingClasses(false);
+      }
+    };
+
+    loadAssignments();
+  }, [schoolId, teacherId, academicYear, selectedDay]);
+
+  // ----------------------------------------------------
+  // Load Students
+  // ----------------------------------------------------
+  useEffect(() => {
+    const loadStudents = async () => {
+      if (!schoolId) {
+        setLoadingAttendance(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          "/api/students/school",
+          {
+            ...axiosConfig,
+            params: {
+              schoolId: Number(schoolId),
+            },
+          }
+        );
+
+        const data = Array.isArray(response.data)
+          ? response.data
+          : [];
+
+        setStudents(data);
+      } catch (err) {
+        console.error("Students loading error:", err);
+
+        setStudents([]);
+      }
+    };
+
+    loadStudents();
   }, [schoolId]);
 
-  //   ------------------Recent Admissions -----------------------
+  // ----------------------------------------------------
+  // Load Today's Attendance
+  // ----------------------------------------------------
   useEffect(() => {
-    if (!schoolId) return;
+    const loadAttendance = async () => {
+      if (!schoolId) {
+        setLoadingAttendance(false);
+        return;
+      }
 
-    axios
-      .get("/api/admissions/school", {
-        params: { schoolId },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        const list = Array.isArray(res.data) ? res.data : [];
+      try {
+        setLoadingAttendance(true);
 
-        const today = new Date();
-        today.setHours(23, 59, 59, 999);
+        const response = await axios.get(
+          "/api/student/attendance/current",
+          {
+            ...axiosConfig,
+            params: {
+              schoolId: Number(schoolId),
+              attendanceDate: todayDate,
+            },
+          }
+        );
 
-        const twoMonthsAgo = new Date();
-        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-        twoMonthsAgo.setHours(0, 0, 0, 0);
+        const data = Array.isArray(response.data)
+          ? response.data
+          : [];
 
-        const filtered = list
-          .filter((student) => {
-            if (!student.today) return false;
+        setAttendance(data);
+      } catch (err) {
+        console.error("Attendance loading error:", err);
 
-            const admissionDate = new Date(student.today);
+        setAttendance([]);
+      } finally {
+        setLoadingAttendance(false);
+      }
+    };
 
-            return admissionDate >= twoMonthsAgo && admissionDate <= today;
-          })
-          .sort((a, b) => new Date(b.today) - new Date(a.today));
+    loadAttendance();
+  }, [schoolId, todayDate]);
 
-        setRecentAdmissions(filtered);
-      })
-      .catch(console.error);
-  }, [schoolId, token]);
+  // ----------------------------------------------------
+  // Normalize Class
+  // ----------------------------------------------------
+  const normalizeValue = (value) => {
+    if (value === null || value === undefined) {
+      return "";
+    }
 
+    return String(value).trim().toUpperCase();
+  };
+
+  // ----------------------------------------------------
+  // Get Class + Section Key
+  // ----------------------------------------------------
+  const getClassKey = (studentClass, section) => {
+    return `${normalizeValue(studentClass)}__${normalizeValue(
+      section
+    )}`;
+  };
+
+  // ----------------------------------------------------
+  // Class List
+  // ----------------------------------------------------
+  const classSummaries = useMemo(() => {
+    if (!assignments.length) {
+      return [];
+    }
+
+    // -----------------------------------------------
+    // First get unique teacher assigned classes
+    // -----------------------------------------------
+    const uniqueClasses = [];
+
+    const classMap = new Map();
+
+    assignments.forEach((assignment) => {
+      const studentClass = normalizeValue(
+        assignment.studentClass
+      );
+
+      const section = normalizeValue(assignment.section);
+
+      if (!studentClass) {
+        return;
+      }
+
+      const key = getClassKey(studentClass, section);
+
+      if (!classMap.has(key)) {
+        const classData = {
+          key,
+          studentClass,
+          section,
+          subject: assignment.subject || "",
+        };
+
+        classMap.set(key, classData);
+        uniqueClasses.push(classData);
+      }
+    });
+
+    // -----------------------------------------------
+    // Create summary
+    // -----------------------------------------------
+    return uniqueClasses.map((classItem) => {
+      const totalStudents = students.filter((student) => {
+        const studentClass = normalizeValue(
+          student.studentClass ||
+            student.className ||
+            student.class
+        );
+
+        const studentSection = normalizeValue(
+          student.section
+        );
+
+        return (
+          studentClass === classItem.studentClass &&
+          studentSection === classItem.section
+        );
+      }).length;
+
+      // ---------------------------------------------
+      // Find today's attendance for this class
+      // ---------------------------------------------
+      const classAttendance = attendance.filter((item) => {
+        const attendanceClass = normalizeValue(
+          item.studentClass ||
+            item.className ||
+            item.class
+        );
+
+        const attendanceSection = normalizeValue(
+          item.section
+        );
+
+        return (
+          attendanceClass === classItem.studentClass &&
+          attendanceSection === classItem.section
+        );
+      });
+
+      // ---------------------------------------------
+      // Count PRESENT
+      // ---------------------------------------------
+      const presentToday = classAttendance.filter(
+        (item) =>
+          normalizeValue(item.status) === "PRESENT"
+      ).length;
+
+      // ---------------------------------------------
+      // Percentage
+      // ---------------------------------------------
+      const percentage =
+        totalStudents > 0
+          ? (presentToday / totalStudents) * 100
+          : 0;
+
+      return {
+        ...classItem,
+        totalStudents,
+        presentToday,
+        percentage: Number(percentage.toFixed(1)),
+      };
+    });
+  }, [assignments, students, attendance]);
+
+  // ----------------------------------------------------
+  // Navigate to My Classes
+  // ----------------------------------------------------
+  const handleViewClass = (classItem) => {
+    navigate("/myclasses", {
+      state: {
+        studentClass: classItem.studentClass,
+        section: classItem.section,
+        academicYear,
+      },
+    });
+  };
+
+  // ----------------------------------------------------
+  // Slider
+  // ----------------------------------------------------
+  const tableSlider = {
+    dots: false,
+    arrows: false,
+    infinite: true,
+    vertical: true,
+    verticalSwiping: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 700,
+    autoplaySpeed: 2500,
+    pauseOnHover: true,
+  };
+
+  // ----------------------------------------------------
+  // Render
+  // ----------------------------------------------------
   return (
     <>
       <div className="container-fluid px-0 mt-3">
         <div className="row g-3">
-          {/* ===================== Recent Admissions ====================== */}
 
+          {/* =====================================================
+              MY CLASSES
+          ===================================================== */}
           <div className="col-lg-5">
-            <div className="card border-0 shadow-sm rounded-4 h-100">
-              <div className="card-header bg-white border-0">
+            <div className="card border-0 shadow rounded-4 h-100">
+
+              {/* Header */}
+              <div className="card-header bg-white border-0 px-3 pt-3 pb-2">
                 <div className="d-flex justify-content-between align-items-center">
-                  <h6 className="fw-bold text-primary mb-0">My Classes</h6>
+
+                  <div>
+                    <h6 className="fw-bold text-primary mb-1">
+                      My Classes
+                    </h6>
+
+                    <small className="text-muted">
+                      Today's Attendance
+                    </small>
+                  </div>
+
+                  <div
+                    className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                    }}
+                  >
+                    <LuBookOpen
+                      size={20}
+                      className="text-primary"
+                    />
+                  </div>
+
                 </div>
+              </div>
+
+              {/* Body */}
+              <div className="card-body p-2">
+
+                {/* Loading */}
+                {loadingClasses ||
+                loadingAttendance ? (
+                  <div className="text-center py-5">
+
+                    <LuLoaderCircle
+                      size={28}
+                      className="text-primary"
+                      style={{
+                        animation: "spin 1s linear infinite",
+                      }}
+                    />
+
+                    <div className="small text-muted mt-2">
+                      Loading classes...
+                    </div>
+
+                  </div>
+                ) : error ? (
+                  /* Error */
+                  <div className="text-center py-4">
+                    <div className="text-danger small">
+                      {error}
+                    </div>
+                  </div>
+                ) : classSummaries.length === 0 ? (
+                  /* Empty */
+                  <div className="text-center py-5">
+
+                    <LuBookOpen
+                      size={35}
+                      className="text-muted mb-2"
+                    />
+
+                    <div className="fw-semibold text-muted">
+                      No classes assigned today
+                    </div>
+
+                    <small className="text-muted">
+                      There are no classes available for{" "}
+                      {selectedDay}.
+                    </small>
+
+                  </div>
+                ) : (
+                  /* Class Table */
+                  <div className="table-responsive">
+
+                    <table className="table table-hover align-middle mb-0">
+
+                      <thead>
+                        <tr>
+                          <th className="text-center small text-muted">
+                            Class
+                          </th>
+
+                          <th className="text-center small text-muted">
+                            Total
+                          </th>
+
+                          <th className="text-center small text-muted">
+                            Present
+                          </th>
+
+                          <th className="text-center small text-muted">
+                            %
+                          </th>
+
+                          <th className="text-center small text-muted">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {classSummaries.map(
+                          (classItem) => (
+                            <tr key={classItem.key}>
+
+                              {/* Class */}
+                              <td className="text-center">
+                                <div className="fw-semibold text-dark">
+                                  {classItem.studentClass}
+
+                                  {classItem.section
+                                    ? ` - ${classItem.section}`
+                                    : ""}
+                                </div>
+                              </td>
+
+                              {/* Total Students */}
+                              <td className="text-center">
+
+                                <div className="d-flex justify-content-center align-items-center gap-1">
+
+                                  <LuUsers
+                                    size={15}
+                                    className="text-primary"
+                                  />
+
+                                  <span className="fw-semibold">
+                                    {classItem.totalStudents}
+                                  </span>
+
+                                </div>
+
+                              </td>
+
+                              {/* Present */}
+                              <td className="text-center">
+
+                                <div className="d-flex justify-content-center align-items-center gap-1">
+
+                                  <LuCalendarCheck
+                                    size={15}
+                                    className="text-success"
+                                  />
+
+                                  <span className="fw-semibold text-success">
+                                    {classItem.presentToday}
+                                  </span>
+
+                                </div>
+
+                              </td>
+
+                              {/* Percentage */}
+                              <td className="text-center">
+
+                                <span
+                                  className={`badge ${
+                                    classItem.percentage >= 75
+                                      ? "bg-success"
+                                      : classItem.percentage >=
+                                        50
+                                      ? "bg-warning text-dark"
+                                      : "bg-danger"
+                                  }`}
+                                >
+                                  {classItem.percentage}%
+                                </span>
+
+                              </td>
+
+                              {/* Action */}
+                              <td className="text-center">
+
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-outline-primary rounded-circle d-inline-flex align-items-center justify-content-center"
+                                  style={{
+                                    width: "34px",
+                                    height: "34px",
+                                  }}
+                                  title="View My Classes"
+                                  onClick={() =>
+                                    handleViewClass(
+                                      classItem
+                                    )
+                                  }
+                                >
+                                  <LuEye size={17} />
+                                </button>
+
+                              </td>
+
+                            </tr>
+                          )
+                        )}
+                      </tbody>
+
+                    </table>
+
+                  </div>
+                )}
+
+              </div>
+            </div>
+          </div>
+
+          {/* =====================================================
+              RECENT HOMEWORK
+          ===================================================== */}
+          <div className="col-lg-4">
+            <div className="card border-0 shadow rounded-4 h-100">
+
+              <div className="card-header bg-white border-0 px-3 pt-3 pb-2">
+
+                <div className="d-flex justify-content-between align-items-center">
+
+                  <h6 className="fw-bold text-danger mb-0">
+                    Recent Homework
+                  </h6>
+
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-danger rounded-3"
+                  >
+                    View All
+                  </button>
+
+                </div>
+
               </div>
 
               <div className="card-body p-2">
-                
-              </div>
-            </div>
-          </div>
 
-          {/* ===================== Fee Pending ====================== */}
+                <div className="text-center py-5">
 
-          <div className="col-lg-4">
-            <div className="card border-0 shadow-sm rounded-4 h-100">
-              <div className="card-header bg-white border-0">
-                <div className="d-flex justify-content-between">
-                  <h6 className="fw-bold text-danger">Recent HomeWork</h6>
+                  <LuBookOpen
+                    size={35}
+                    className="text-muted mb-2"
+                  />
 
-                  <button className="btn btn-sm btn-outline-danger">
-                    View All
-                  </button>
+                  <div className="fw-semibold text-muted">
+                    No recent homework
+                  </div>
+
+                  <small className="text-muted">
+                    Recent homework will appear here.
+                  </small>
+
                 </div>
-              </div>
 
-              <div className="card-body p-2"></div>
+              </div>
             </div>
           </div>
 
-          {/* ===================== Today's Events ====================== */}
-
+          {/* =====================================================
+              NOTICE BOARD
+          ===================================================== */}
           <div className="col-lg-3">
-            <div className="card border-0 shadow-sm rounded-4 h-100">
-              <div className="card-header bg-white border-0">
-                <div className="d-flex justify-content-between">
-                  <h6 className="fw-bold text-success">Notice Board</h6>
+            <div className="card border-0 shadow rounded-4 h-100">
 
-                  <button className="btn btn-sm btn-outline-success">
+              <div className="card-header bg-white border-0 px-3 pt-3 pb-2">
+
+                <div className="d-flex justify-content-between align-items-center">
+
+                  <h6 className="fw-bold text-success mb-0">
+                    Notice Board
+                  </h6>
+
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-success rounded-3"
+                  >
                     View All
                   </button>
+
                 </div>
+
               </div>
 
               <div className="card-body">
-                <div className="border-start border-4 border-warning ps-3">
+
+                <div className="border-start border-4 border-success ps-3">
+
                   <Slider {...tableSlider}>
-                    {pendingFee.map((a) => (
-                      <div key={a.id}>
-                        <table className="table align-middle">
-                          <tbody>
-                            <tr>
-                              <td width="55">
-                                <img
-                                  src={`https://ui-avatars.com/api/?background=ef4444&color=fff&name=${a.studentName}`}
-                                  className="rounded-circle"
-                                  width="40"
-                                  height="40"
-                                />
-                              </td>
 
-                              <td>
-                                <strong>{a.studentName}</strong>
+                    {[1, 2, 3].map((item) => (
+                      <div key={item}>
 
-                                <br />
+                        <div className="py-2">
 
-                                <small>{a.admissionNumber}</small>
-                              </td>
+                          <div className="d-flex align-items-start gap-2">
 
-                              <td>
-                                <span className="badge bg-info">
-                                  {a.studentClass === "NURSERY"
-                                    ? "NUR"
-                                    : a.studentClass}
-                                </span>
-                              </td>
+                            <div
+                              className="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center flex-shrink-0"
+                              style={{
+                                width: "38px",
+                                height: "38px",
+                              }}
+                            >
+                              <LuBell
+                                size={18}
+                                className="text-success"
+                              />
+                            </div>
 
-                              <td>
-                                <span className="badge bg-danger">
-                                  ₹ {a.amount}
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                            <div>
+                              <div className="fw-semibold">
+                                No new notice
+                              </div>
+
+                              <small className="text-muted">
+                                New notices will appear
+                                here.
+                              </small>
+                            </div>
+
+                          </div>
+
+                        </div>
+
                       </div>
                     ))}
+
                   </Slider>
+
                 </div>
+
               </div>
             </div>
           </div>
+
         </div>
       </div>
+
+      {/* Spinner Animation */}
+      <style>
+        {`
+          @keyframes spin {
+            from {
+              transform: rotate(0deg);
+            }
+            to {
+              transform: rotate(360deg);
+            }
+          }
+
+          .table > :not(caption) > * > * {
+            padding: 0.65rem 0.4rem;
+          }
+        `}
+      </style>
     </>
   );
 };
