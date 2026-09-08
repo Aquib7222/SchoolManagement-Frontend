@@ -2390,6 +2390,7 @@ import { HiAcademicCap } from "react-icons/hi2";
 
 import useMasters from "../../hooks/useMasters";
 import { IoReturnDownBackOutline } from "react-icons/io5";
+import axiosInstance from "../../api/axiosInstance";
 
 const SchoolAddForm = () => {
   const {
@@ -2535,8 +2536,8 @@ const SchoolAddForm = () => {
           return;
         }
 
-        const response = await axios.get(
-          `http://localhost:8080/api/school/${schoolId}`,
+        const response = await axiosInstance.get(
+          `/api/school/${schoolId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -2897,8 +2898,8 @@ const SchoolAddForm = () => {
       let response;
 
       if (isEditMode) {
-        response = await axios.put(
-          `http://localhost:8080/api/school/update/${schoolId}`,
+        response = await axiosInstance.put(
+          `/api/school/update/${schoolId}`,
           data,
           {
             headers: {
@@ -2907,8 +2908,8 @@ const SchoolAddForm = () => {
           }
         );
       } else {
-        response = await axios.post(
-          "http://localhost:8080/api/school/add",
+        response = await axiosInstance.post(
+          "/api/school/add",
           data,
           {
             headers: {
