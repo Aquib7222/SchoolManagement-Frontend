@@ -2,7 +2,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 
 import schoolImage from "../../assets/icon/schoolImage.webp";
-import mother from "../../assets/icon/mother.webp";
+import mother from "../../assets/icon/Mother.webp";
 import father from "../../assets/icon/father.avif";
 
 import {
