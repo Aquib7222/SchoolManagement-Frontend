@@ -4010,7 +4010,7 @@ const StopManagement = () => {
       const [mappingResponse, driverResponse] =
         await Promise.all([
           axios.get(
-            "http://localhost:8080/api/transport/vehicle-routes",
+            "/api/transport/vehicle-routes",
             {
               params: {
                 schoolId: schoolId,
@@ -4020,7 +4020,7 @@ const StopManagement = () => {
           ),
 
           axios.get(
-            "http://localhost:8080/api/transport/drivers",
+            "/api/transport/drivers",
             {
               params: {
                 schoolId: schoolId,

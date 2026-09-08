@@ -126,7 +126,7 @@
 // //   const loadUserGroup = async () => {
 // //     try {
 // //       const res = await axios.get(
-// //         "http://localhost:8080/api/user-group/all",
+// //         "/api/user-group/all",
 // //         {
 // //           headers: {
 // //             Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@
 // //   const loadSchools = async () => {
 // //     try {
 // //       const res = await axios.get(
-// //         "http://localhost:8080/api/school/all",
+// //         "/api/school/all",
 // //         {
 // //           headers: {
 // //             Authorization: `Bearer ${token}`,
@@ -230,7 +230,7 @@
 // //       setSendingPhoneOtp(true);
 
 // //       await axios.post(
-// //         "http://localhost:8080/api/otp/send-phone",
+// //         "/api/otp/send-phone",
 // //         {
 // //           phone: formData.phoneNumber,
 // //         },
@@ -269,7 +269,7 @@
 // //       setVerifyingPhoneOtp(true);
 
 // //       await axios.post(
-// //         "http://localhost:8080/api/otp/verify-phone",
+// //         "/api/otp/verify-phone",
 // //         {
 // //           phone: formData.phoneNumber,
 // //           otp: phoneOtp,
@@ -308,7 +308,7 @@
 // //       setSendingEmailOtp(true);
 
 // //       await axios.post(
-// //         "http://localhost:8080/api/otp/send-email",
+// //         "/api/otp/send-email",
 // //         {
 // //           email: formData.email.trim(),
 // //         },
@@ -347,7 +347,7 @@
 // //       setVerifyingEmailOtp(true);
 
 // //       await axios.post(
-// //         "http://localhost:8080/api/otp/verify-email",
+// //         "/api/otp/verify-email",
 // //         {
 // //           email: formData.email.trim(),
 // //           otp: emailOtp,
@@ -526,7 +526,7 @@
 // //       setCreatingUser(true);
 
 // //       const response = await axios.post(
-// //         `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+// //         `/api/superadmin/create?schoolId=${formData.schoolId}`,
 // //         payload,
 // //         {
 // //           headers: {
@@ -2348,7 +2348,7 @@
 //     try {
 
 //       const res = await axios.get(
-//         "http://localhost:8080/api/user-group/all",
+//         "/api/user-group/all",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -2375,7 +2375,7 @@
 //     try {
 
 //       const res = await axios.get(
-//         "http://localhost:8080/api/school/all",
+//         "/api/school/all",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -2551,7 +2551,7 @@
 //       // -------------------------------------------------
 
 //       await axios.post(
-//         "http://localhost:8080/api/email-otp/send",
+//         "/api/email-otp/send",
 //         null,
 //         {
 //           params: {
@@ -2634,7 +2634,7 @@
 //       // -------------------------------------------------
 
 //       await axios.post(
-//         "http://localhost:8080/api/email-otp/verify",
+//         "/api/email-otp/verify",
 //         null,
 //         {
 //           params: {
@@ -3001,7 +3001,7 @@
 
 //       const response =
 //         await axios.post(
-//           `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+//           `/api/superadmin/create?schoolId=${formData.schoolId}`,
 //           payload,
 //           {
 //             headers: {
@@ -5129,7 +5129,7 @@ const SuperAdminCreation = () => {
   const loadUserGroup = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/user-group/all",
+        "/api/user-group/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -5153,7 +5153,7 @@ const SuperAdminCreation = () => {
   const loadSchools = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/school/all",
+        "/api/school/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -5310,7 +5310,7 @@ const SuperAdminCreation = () => {
        */
 
       await axios.post(
-        "http://localhost:8080/api/email-otp/send",
+        "/api/email-otp/send",
         null,
         {
           params: {
@@ -5378,7 +5378,7 @@ const SuperAdminCreation = () => {
        */
 
       await axios.post(
-        "http://localhost:8080/api/email-otp/verify",
+        "/api/email-otp/verify",
         null,
         {
           params: {
@@ -5673,7 +5673,7 @@ const SuperAdminCreation = () => {
 
       const response =
         await axios.post(
-          `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+          `/api/superadmin/create?schoolId=${formData.schoolId}`,
           payload,
           {
             headers: {

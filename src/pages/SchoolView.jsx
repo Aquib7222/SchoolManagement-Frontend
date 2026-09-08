@@ -43,7 +43,7 @@ const SchoolView = () => {
         localStorage.getItem("AdminToken") || localStorage.getItem("token");
 
       const response = await axios.get(
-        `http://localhost:8080/api/school/${id}`,
+        `/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const SchoolView = () => {
       return logoUrl;
     }
 
-    return `http://localhost:8080${logoUrl}`;
+    return `${logoUrl}`;
   };
 
   // =====================================================

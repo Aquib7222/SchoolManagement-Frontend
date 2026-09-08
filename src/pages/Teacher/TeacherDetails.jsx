@@ -74,7 +74,7 @@
 //       return teacher.photo;
 //     }
 
-//     return `http://localhost:8080/uploads/${teacher.photo}`;
+//     return `/uploads/${teacher.photo}`;
 //   };
 
 //   useEffect(() => {
@@ -1062,7 +1062,7 @@ const TeacherDetails = () => {
       return teacher.photo;
     }
 
-    return `http://localhost:8080/uploads/${teacher.photo}`;
+    return `/uploads/${teacher.photo}`;
   };
 
   // =========================================================

@@ -28,7 +28,7 @@
 
 //     try {
 //       await axios.post(
-//         "http://localhost:8080/api/documents/upload",
+//         "/api/documents/upload",
 //         formData,
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       );
@@ -125,7 +125,7 @@
 //       setLoading(true);
 
 //       await axios.post(
-//         "http://localhost:8080/api/documents/upload",
+//         "/api/documents/upload",
 //         formData,
 //         { headers: { "Content-Type": "multipart/form-data" } }
 //       );
@@ -229,7 +229,7 @@ const UploadDocumentModal = ({ admission, onSuccess }) => {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:8080/api/documents/upload",
+        "/api/documents/upload",
         formData,
         {
           headers: {

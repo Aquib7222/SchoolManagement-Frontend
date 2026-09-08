@@ -81,7 +81,7 @@
 //     setError("");
 
 //     const response = await axios.get(
-//       "http://localhost:8080/api/transport/vehicle-routes",
+//       "/api/transport/vehicle-routes",
 //       {
 //         params: {
 //           schoolId: schoolId,
@@ -158,7 +158,7 @@
 //     console.log("PARAMS:", params);
 
 //     const response = await axios.get(
-//       "http://localhost:8080/api/students/search",
+//       "/api/students/search",
 //       {
 //         params,
 //         headers: {
@@ -1630,7 +1630,7 @@
 //       setError("");
 
 //       const response = await axios.get(
-//         "http://localhost:8080/api/transport/vehicle-routes",
+//         "/api/transport/vehicle-routes",
 //         {
 //           params: {
 //             schoolId: schoolId,
@@ -1713,7 +1713,7 @@
 //       );
 
 //       const response = await axios.get(
-//         "http://localhost:8080/api/students/search",
+//         "/api/students/search",
 //         {
 //           params,
 //           headers: {
@@ -2050,7 +2050,7 @@
 //       setAssigning(true);
 
 //       const response = await axios.post(
-//         "http://localhost:8080/api/transport/student-allocation",
+//         "/api/transport/student-allocation",
 //         payload,
 //         axiosConfig
 //       );
@@ -3452,7 +3452,7 @@ import {
 
 import useMaster from "../../hooks/useMasters";
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL = "";
 
 const StudentTransportAllocation = () => {
   const { sessions, sections, standards } = useMaster();

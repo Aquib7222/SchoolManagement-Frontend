@@ -25,7 +25,7 @@
 
 //     axios
 //       .get(
-//         `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
+//         `/api/admissions/school?schoolId=${user.schoolId}`,
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       )
 //       .then((res) => {

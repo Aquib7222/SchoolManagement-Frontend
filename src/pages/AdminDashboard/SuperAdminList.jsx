@@ -26,7 +26,7 @@
 // import { IoMdClose } from "react-icons/io";
 // import { SiAdguard } from "react-icons/si";
 
-// const API_BASE = "http://localhost:8080/api/superadmin";
+// const API_BASE = "/api/superadmin";
 
 // const SuperAdminList = () => {
 //   const token = localStorage.getItem("token");
@@ -151,7 +151,7 @@
 //   const loadSchools = async () => {
 //     try {
 //       const response = await axios.get(
-//         "http://localhost:8080/api/school/all",
+//         "/api/school/all",
 //         axiosConfig
 //       );
 
@@ -171,7 +171,7 @@
 //   const loadUserGroups = async () => {
 //     try {
 //       const response = await axios.get(
-//         "http://localhost:8080/api/user-group/all",
+//         "/api/user-group/all",
 //         axiosConfig
 //       );
 
@@ -3063,7 +3063,7 @@ import {
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 
-const API_BASE = "http://localhost:8080/api/superadmin";
+const API_BASE = "/api/superadmin";
 
 const SuperAdminList = () => {
   const token = localStorage.getItem("token");
@@ -3182,7 +3182,7 @@ const SuperAdminList = () => {
   const loadSchools = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/school/all",
+        "/api/school/all",
         axiosConfig
       );
 
@@ -3202,7 +3202,7 @@ const SuperAdminList = () => {
   const loadUserGroups = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/user-group/all",
+        "/api/user-group/all",
         axiosConfig
       );
 

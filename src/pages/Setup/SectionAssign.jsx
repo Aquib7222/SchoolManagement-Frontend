@@ -57,7 +57,7 @@
 
 // //   /* FETCH STUDENTS */
 // //   useEffect(() => {
-// //     axios.get("http://localhost:8080/api/sections/students", {
+// //     axios.get("/api/sections/students", {
 // //       params: { schoolId: user.schoolId, studentClass: selectedClass },
 // //       headers: { Authorization: `Bearer ${token}` }
 // //     }).then(res => setStudents(res.data));
@@ -78,7 +78,7 @@
 // //     }
 
 // //     axios.post(
-// //       `http://localhost:8080/api/sections/assign?schoolId=${user.schoolId}`,
+// //       `/api/sections/assign?schoolId=${user.schoolId}`,
 // //       { studentIds: selectedIds, section },
 // //       { headers: { Authorization: `Bearer ${token}` } }
 // //     ).then(() => {

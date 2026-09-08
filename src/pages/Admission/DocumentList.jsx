@@ -17,7 +17,7 @@ const DocumentList = ({admissionId}) => {
 
     axios
       .get(
-        `http://localhost:8080/api/documents/admission/${admissionId}`,
+        `/api/documents/admission/${admissionId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -66,7 +66,7 @@ const DocumentList = ({admissionId}) => {
                 <td>{doc.fileName}</td>
                 <td>
                   <a
-                    href={`http://localhost:8080/api/documents/download/${doc.id}`}
+                    href={`/api/documents/download/${doc.id}`}
                     className="btn btn-sm btn-primary"
                     target="_blank"
                     rel="noreferrer"

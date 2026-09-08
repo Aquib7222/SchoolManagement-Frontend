@@ -45,7 +45,7 @@
 //       return logoUrl;
 //     }
 
-//     return `http://localhost:8080${logoUrl}`;
+//     return `${logoUrl}`;
 //   };
 
 //   useEffect(() => {
@@ -59,7 +59,7 @@
 //       const token =
 //         localStorage.getItem("AdminToken") || localStorage.getItem("token");
 
-//       const response = await axios.get("http://localhost:8080/api/school/all", {
+//       const response = await axios.get("/api/school/all", {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -103,7 +103,7 @@
 //       const token =
 //         localStorage.getItem("AdminToken") || localStorage.getItem("token");
 
-//       await axios.delete(`http://localhost:8080/api/school/${id}`, {
+//       await axios.delete(`/api/school/${id}`, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -629,7 +629,7 @@
 //       return logoUrl;
 //     }
 
-//     return `http://localhost:8080${logoUrl}`;
+//     return `${logoUrl}`;
 //   };
 
 //   // =========================================================
@@ -649,7 +649,7 @@
 //         localStorage.getItem("token");
 
 //       const response = await axios.get(
-//         "http://localhost:8080/api/school/all",
+//         "/api/school/all",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -729,7 +729,7 @@
 //         localStorage.getItem("token");
 
 //       await axios.delete(
-//         `http://localhost:8080/api/school/${id}`,
+//         `/api/school/${id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -1591,6 +1591,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { SiAdguard } from "react-icons/si";
 import { LuBuilding2 } from "react-icons/lu";
+import axiosInstance from "../../api/axiosInstance";
 
 const SchoolList = () => {
   const navigate = useNavigate();
@@ -1626,7 +1627,7 @@ const SchoolList = () => {
       return logoUrl;
     }
 
-    return `http://localhost:8080${logoUrl}`;
+    return `${logoUrl}`;
   };
 
   // =========================================================
@@ -1645,8 +1646,8 @@ const SchoolList = () => {
         localStorage.getItem("AdminToken") ||
         localStorage.getItem("token");
 
-      const response = await axios.get(
-        "http://localhost:8080/api/school/all",
+      const response = await axiosInstance.get(
+        "/api/school/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -1725,8 +1726,8 @@ const SchoolList = () => {
         localStorage.getItem("AdminToken") ||
         localStorage.getItem("token");
 
-      await axios.delete(
-        `http://localhost:8080/api/school/${id}`,
+      await axiosInstance.delete(
+        `/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -9,7 +9,7 @@ const NotificationListener = () => {
         const client = new Client({
 
             webSocketFactory: () =>
-                new SockJS("http://localhost:8080/ws"),
+                new SockJS("/ws"),
 
             reconnectDelay: 5000,
 

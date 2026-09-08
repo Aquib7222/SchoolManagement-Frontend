@@ -151,7 +151,7 @@ const MyHomework = () => {
     /*
      * Agar backend /uploads/homework/... bhej raha hai
      */
-    return `http://localhost:8080${imageUrl}`;
+    return `${imageUrl}`;
   };
 
   // =========================================================

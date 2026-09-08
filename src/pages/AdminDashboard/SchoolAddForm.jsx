@@ -177,7 +177,7 @@
 //         }
 
 //         const response = await axios.get(
-//           `http://localhost:8080/api/school/${schoolId}`,
+//           `/api/school/${schoolId}`,
 //           {
 //             headers: {
 //               Authorization: `Bearer ${token}`,
@@ -681,7 +681,7 @@
 //         // ===================================================
 
 //         response = await axios.put(
-//           `http://localhost:8080/api/school/update/${schoolId}`,
+//           `/api/school/update/${schoolId}`,
 //           data,
 //           {
 //             headers: {
@@ -695,7 +695,7 @@
 //         // ===================================================
 
 //         response = await axios.post(
-//           "http://localhost:8080/api/school/add",
+//           "/api/school/add",
 //           data,
 //           {
 //             headers: {
