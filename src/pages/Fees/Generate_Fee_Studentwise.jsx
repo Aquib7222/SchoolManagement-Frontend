@@ -31,7 +31,7 @@ const months = [
   "March",
 ];
 
-const Generate_Fee_Studentwise = () => {
+const Generate_Fee_StudentWise = () => {
   const { admissionNumber } = useParams();
   const navigate = useNavigate();
 
@@ -933,4 +933,4 @@ const Generate_Fee_Studentwise = () => {
   );
 };
 
-export default Generate_Fee_Studentwise;
+export default Generate_Fee_StudentWise;
