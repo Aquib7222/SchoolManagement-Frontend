@@ -37,7 +37,7 @@
 // import ModuleList from "./pages/AdminDashboard/ModuleList/ModuleList";
 // import Create_Fee_Structure from "./pages/Fees/Create_Fee_Structure";
 
-// import Generate_Fee_Studentwise from "./pages/Fees/Generate_Fee_StudentWise";
+// import Generate_Fee_Studentwise from "./pages/Fees/Generate_Fee_Studentwise";
 // import Assign_Fee_Student from "./pages/Fees/Assign_Fee_Student";
 // import Generate_Fee from "./pages/Fees/Generate_Fee";
 // import StudentFeeAssignment from "./pages/Fees/StudentFeeAssignment";
@@ -608,7 +608,9 @@ import DailyAttendanceReportsPage from "./pages/Reports/AttendanceReport/DailyAt
 import MonthlyAttendanceReportPage from "./pages/Reports/AttendanceReport/MonthlyAttendanceReportPage";
 import UserManagement from "./pages/AdminDashboard/UserManagement";
 import SchoolUserManagement from "./pages/SchoolUserManagement";
-import Generate_Fee_StudentWise from "./pages/Fees/Generate_Fee_StudentWise";
+
+import Generate_Fee_Student from "./pages/Fees/Generate_Fee_Student";
+
 
 
 // =====================================================
@@ -779,7 +781,7 @@ const AppRoutes = () => {
 
         <Route
           path="/fee/generate_fee/:admissionNumber"
-          element={<Generate_Fee_StudentWise />}
+          element={<Generate_Fee_Student />}
         />
 
         <Route path="/fee/generate_fee" element={<Generate_Fee />} />
