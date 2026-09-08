@@ -482,9 +482,7 @@ const Create_Fee_Structure = lazy(
   () => import("./pages/Fees/Create_Fee_Structure"),
 );
 
-const Generate_Fee_Studentwise = lazy(
-  () => import("./pages/Fees/Generate_Fee_StudentWise"),
-);
+
 const Assign_Fee_Student = lazy(
   () => import("./pages/Fees/Assign_Fee_Student"),
 );
@@ -610,6 +608,7 @@ import DailyAttendanceReportsPage from "./pages/Reports/AttendanceReport/DailyAt
 import MonthlyAttendanceReportPage from "./pages/Reports/AttendanceReport/MonthlyAttendanceReportPage";
 import UserManagement from "./pages/AdminDashboard/UserManagement";
 import SchoolUserManagement from "./pages/SchoolUserManagement";
+import Generate_Fee_Studentwise from "./pages/Fees/Generate_Fee_StudentWise";
 
 // =====================================================
 // LOADING COMPONENT
