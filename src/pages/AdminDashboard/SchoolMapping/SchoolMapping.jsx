@@ -484,7 +484,7 @@
 // export default SchoolMapping;
 
 
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 import PermissionTables from "./PermissionTables";
 
@@ -494,7 +494,7 @@ import {
   handleSubMenuChange,
   createPermissionPayload,
   loadExistingPermissions,
-} from "./permissionUtils";
+} from "./PermissionUtils";
 
 import axiosInstance from "../../../api/axiosInstance";
 
