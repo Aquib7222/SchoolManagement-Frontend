@@ -20,7 +20,7 @@
 //   // 🔁 Fetch admission
 //   useEffect(() => {
 //     axios
-//       .get(`/api/admissions/${id}`, {
+//       .get(`http://localhost:8080/api/admissions/${id}`, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -43,7 +43,7 @@
 
 //     try {
 //       await axios.put(
-//         `/api/admissions/${id}`,
+//         `http://localhost:8080/api/admissions/${id}`,
 //         formData,
 //         {
 //           headers: {
@@ -233,7 +233,7 @@
 //   // 🔁 Fetch admission
 //   useEffect(() => {
 //     axios
-//       .get(`/api/admissions/${id}`, {
+//       .get(`http://localhost:8080/api/admissions/${id}`, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -257,7 +257,7 @@
 
 //     try {
 //       await axios.put(
-//         `/api/admissions/${id}`,
+//         `http://localhost:8080/api/admissions/${id}`,
 //         formData,
 //         {
 //           headers: {
@@ -1576,7 +1576,7 @@ const EditAdmissionForm = () => {
         setLoading(true);
 
         const response = await axios.get(
-          `/api/admissions/${id}`,
+          `http://localhost:8080/api/admissions/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1750,7 +1750,7 @@ const EditAdmissionForm = () => {
       };
 
       await axios.put(
-        `/api/admissions/${id}`,
+        `http://localhost:8080/api/admissions/${id}`,
         payload,
         {
           headers: {

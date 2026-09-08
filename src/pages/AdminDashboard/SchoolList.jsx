@@ -45,7 +45,7 @@
 //       return logoUrl;
 //     }
 
-//     return `${logoUrl}`;
+//     return `http://localhost:8080${logoUrl}`;
 //   };
 
 //   useEffect(() => {
@@ -59,7 +59,7 @@
 //       const token =
 //         localStorage.getItem("AdminToken") || localStorage.getItem("token");
 
-//       const response = await axios.get("/api/school/all", {
+//       const response = await axios.get("http://localhost:8080/api/school/all", {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -103,7 +103,7 @@
 //       const token =
 //         localStorage.getItem("AdminToken") || localStorage.getItem("token");
 
-//       await axios.delete(`/api/school/${id}`, {
+//       await axios.delete(`http://localhost:8080/api/school/${id}`, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
@@ -629,7 +629,7 @@
 //       return logoUrl;
 //     }
 
-//     return `${logoUrl}`;
+//     return `http://localhost:8080${logoUrl}`;
 //   };
 
 //   // =========================================================
@@ -649,7 +649,7 @@
 //         localStorage.getItem("token");
 
 //       const response = await axios.get(
-//         "/api/school/all",
+//         "http://localhost:8080/api/school/all",
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -729,7 +729,7 @@
 //         localStorage.getItem("token");
 
 //       await axios.delete(
-//         `/api/school/${id}`,
+//         `http://localhost:8080/api/school/${id}`,
 //         {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
@@ -1627,7 +1627,7 @@ const SchoolList = () => {
       return logoUrl;
     }
 
-    return `${logoUrl}`;
+    return `http://localhost:8080${logoUrl}`;
   };
 
   // =========================================================

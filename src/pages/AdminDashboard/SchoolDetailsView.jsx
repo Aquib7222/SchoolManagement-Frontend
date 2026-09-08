@@ -76,7 +76,7 @@ const SchoolDetailsView = () => {
       setLoadingSchool(true);
 
       const response = await axios.get(
-        `/api/school/${id}`,
+        `http://localhost:8080/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ const SchoolDetailsView = () => {
       setLoadingStudents(true);
 
       const response = await axios.get(
-        "/api/students",
+        "http://localhost:8080/api/students",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -135,7 +135,7 @@ const SchoolDetailsView = () => {
       setLoadingAdmins(true);
 
       const response = await axios.get(
-        "/api/superadmin/all",
+        "http://localhost:8080/api/superadmin/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -258,7 +258,7 @@ const SchoolDetailsView = () => {
       return logoUrl;
     }
 
-    return `${logoUrl}`;
+    return `http://localhost:8080${logoUrl}`;
   };
 
   const getStudentName = (student) => {
@@ -288,7 +288,7 @@ const SchoolDetailsView = () => {
 
     try {
       await axios.delete(
-        `/api/school/${id}`,
+        `http://localhost:8080/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

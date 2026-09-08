@@ -92,7 +92,7 @@
 
 //     axios
 //       .get(
-//         `/api/admissions/school?schoolId=${user.schoolId}`,
+//         `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
 //         { headers: { Authorization: `Bearer ${token}` } }
 //       )
 //       .then((res) => setStudents(res.data))
@@ -186,7 +186,7 @@ const Documents = () => {
 
     axios
       .get(
-        `/api/admissions/school?schoolId=${user.schoolId}`,
+        `http://localhost:8080/api/admissions/school?schoolId=${user.schoolId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => setAdmissions(res.data))

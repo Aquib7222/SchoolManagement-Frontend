@@ -14,7 +14,7 @@
 //     e.preventDefault();
 
 //     try {
-//       const response = await axios.post("/auth/login", {
+//       const response = await axios.post("http://localhost:8080/auth/login", {
 //         email,
 //         password,
 //       });
@@ -51,7 +51,7 @@
 
 //   //   try {
 //   //     const response = await axios.post(
-//   //       "/auth/login",
+//   //       "http://localhost:8080/auth/login",
 //   //       {
 //   //         email,
 //   //         password,
@@ -224,7 +224,7 @@
 //     e.preventDefault();
 
 //     try {
-//       const { data } = await axios.post("/auth/login", {
+//       const { data } = await axios.post("http://localhost:8080/auth/login", {
 //         email,
 //         password,
 //       });

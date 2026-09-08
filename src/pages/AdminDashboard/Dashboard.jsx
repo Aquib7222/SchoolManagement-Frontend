@@ -38,7 +38,7 @@ const Dashboard = () => {
   // Fetch students
   const fetchStudentsCount = async () => {
     try {
-      const res = await axios.get("/api/students/count", {
+      const res = await axios.get("http://localhost:8080/api/students/count", {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("student count", res);
@@ -52,7 +52,7 @@ const Dashboard = () => {
   const fetchActiveStudentsBySchool = async (schoolId) => {
     try {
       const res = await axios.get(
-        `/api/students/count/active?schoolId=${schoolId}`,
+        `http://localhost:8080/api/students/count/active?schoolId=${schoolId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -70,7 +70,7 @@ const Dashboard = () => {
   // 🔹 Fetch super admins
   const fetchSuperAdmins = async () => {
     try {
-      const res = await axios.get("/api/superadmin/all", {
+      const res = await axios.get("http://localhost:8080/api/superadmin/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("res", res);
@@ -84,7 +84,7 @@ const Dashboard = () => {
 
   const fetchSchools = async () => {
     try {
-      const res = await axios.get("/api/school/all", {
+      const res = await axios.get("http://localhost:8080/api/school/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -117,7 +117,7 @@ const Dashboard = () => {
     if (!window.confirm("Are you sure you want to delete?")) return;
 
     try {
-      await axios.delete(`/api/school/delete/${id}`, {
+      await axios.delete(`http://localhost:8080/api/school/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -132,7 +132,7 @@ const Dashboard = () => {
   const toggleStatus = async (id) => {
     try {
       const res = await axios.put(
-        `/api/school/toggle/${id}`,
+        `http://localhost:8080/api/school/toggle/${id}`,
         {},
         {
           headers: {

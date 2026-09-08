@@ -45,12 +45,12 @@ const RecentSchoolActivitySummary = () => {
         };
 
         const [schoolResponse, auditResponse] = await Promise.all([
-          axios.get("/api/school/all", {
+          axios.get("http://localhost:8080/api/school/all", {
             headers,
           }),
 
           axios.get(
-            "/api/audit-logs?page=0&size=20&sort=createdAt,desc",
+            "http://localhost:8080/api/audit-logs?page=0&size=20&sort=createdAt,desc",
             {
               headers,
             }

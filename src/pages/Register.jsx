@@ -12,7 +12,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      await axios.post("/auth/register", {
+      await axios.post("http://localhost:8080/auth/register", {
         email,
         password,
         role,

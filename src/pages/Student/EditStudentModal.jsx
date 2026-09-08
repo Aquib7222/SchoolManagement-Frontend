@@ -543,7 +543,7 @@
 //             <div className="card-body text-center">
 //               {student.photo && (
 //                 <img
-//                   src={`/uploads/${student.photo}`}
+//                   src={`http://localhost:8080/uploads/${student.photo}`}
 //                   alt="Student"
 //                   className="img-thumbnail mb-3"
 //                   style={{
@@ -1376,7 +1376,7 @@
 //                   <div className="col-md-4 text-center">
 //                     {student?.photo ? (
 //                       <img
-//                         src={`/uploads/${student.photo}`}
+//                         src={`http://localhost:8080/uploads/${student.photo}`}
 //                         alt="Student"
 //                         className="img-thumbnail shadow-sm"
 //                         style={{
@@ -2353,7 +2353,7 @@ const EditStudentModal = ({
                       />
                     ) : student?.photo ? (
                       <img
-                        src={`/uploads/${student.photo}`}
+                        src={`http://localhost:8080/uploads/${student.photo}`}
                         alt="Student"
                         className="img-thumbnail shadow-sm"
                         style={{

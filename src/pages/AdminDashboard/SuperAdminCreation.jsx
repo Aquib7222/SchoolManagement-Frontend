@@ -4870,6 +4870,7 @@ import {
   MdOutlineSchool,
   MdAdminPanelSettings,
 } from "react-icons/md";
+import axiosInstance from "../../api/axiosInstance";
 
 /* =========================================================
    SECTION HEADER
@@ -5126,49 +5127,106 @@ const SuperAdminCreation = () => {
      LOAD USER GROUP
   ======================================================= */
 
-  const loadUserGroup = async () => {
-    try {
-      const response = await axios.get(
-        "/api/user-group/all",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  // const loadUserGroup = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "/api/user-group/all",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      setUserGroup(response.data || []);
-    } catch (error) {
-      console.error(
-        "User group loading failed:",
-        error
-      );
-    }
-  };
+  //     setUserGroup(response.data || []);
+  //   } catch (error) {
+  //     console.error(
+  //       "User group loading failed:",
+  //       error
+  //     );
+  //   }
+  // };
+  const loadUserGroup = async () => {
+  try {
+    const response = await axiosInstance.get(
+      "/api/user-group/all"
+    );
+
+    const data = response.data;
+
+    console.log("User Group API Response:", data);
+
+    setUserGroup(
+      Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.content)
+        ? data.content
+        : []
+    );
+  } catch (error) {
+    console.error(
+      "User group loading failed:",
+      error
+    );
+
+    setUserGroup([]);
+  }
+};
 
   /* =======================================================
      LOAD SCHOOLS
   ======================================================= */
 
-  const loadSchools = async () => {
-    try {
-      const response = await axios.get(
-        "/api/school/all",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  // const loadSchools = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "/api/school/all",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      setSchools(response.data || []);
-    } catch (error) {
-      console.error(
-        "School loading failed:",
-        error
-      );
-    }
-  };
+  //     setSchools(response.data || []);
+  //   } catch (error) {
+  //     console.error(
+  //       "School loading failed:",
+  //       error
+  //     );
+  //   }
+  // };
+
+  const loadSchools = async () => {
+  try {
+    const response = await axiosInstance.get(
+      "/api/school/all"
+    );
+
+    const data = response.data;
+
+    console.log("School API Response:", data);
+
+    setSchools(
+      Array.isArray(data)
+        ? data
+        : Array.isArray(data?.data)
+        ? data.data
+        : Array.isArray(data?.content)
+        ? data.content
+        : []
+    );
+  } catch (error) {
+    console.error(
+      "School loading failed:",
+      error
+    );
+
+    setSchools([]);
+  }
+};
 
   /* =======================================================
      INPUT CHANGE
@@ -5309,7 +5367,7 @@ const SuperAdminCreation = () => {
        * No JWT required.
        */
 
-      await axios.post(
+      await axiosInstance.post(
         "/api/email-otp/send",
         null,
         {
@@ -5377,7 +5435,7 @@ const SuperAdminCreation = () => {
        * No JWT required.
        */
 
-      await axios.post(
+      await axiosInstance.post(
         "/api/email-otp/verify",
         null,
         {
@@ -5672,7 +5730,7 @@ const SuperAdminCreation = () => {
       setCreatingUser(true);
 
       const response =
-        await axios.post(
+        await axiosInstance.post(
           `/api/superadmin/create?schoolId=${formData.schoolId}`,
           payload,
           {

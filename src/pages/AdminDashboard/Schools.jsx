@@ -11,7 +11,7 @@ const Schools = () => {
 
 useEffect(() => {
   axios
-    .get("/api/students/count", {
+    .get("http://localhost:8080/api/students/count", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

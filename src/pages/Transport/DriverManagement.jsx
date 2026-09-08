@@ -24,8 +24,8 @@ const DriverManagement = () => {
   const token = localStorage.getItem("token");
   const schoolId = localStorage.getItem("schoolId");
 
-  const API_URL = "/api/transport/drivers";
-  const VEHICLE_API_URL = "/api/transport/vehicles";
+  const API_URL = "http://localhost:8080/api/transport/drivers";
+  const VEHICLE_API_URL = "http://localhost:8080/api/transport/vehicles";
 
   const authConfig = {
     headers: {

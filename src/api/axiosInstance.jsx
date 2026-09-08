@@ -1,7 +1,7 @@
 // import axios from "axios";
 
 // const axiosInstance = axios.create({
-//   baseURL: "",
+//   baseURL: "http://localhost:8080",
 // });
 
 // // Attach JWT automatically
@@ -59,6 +59,7 @@
 // );
 
 // export default axiosInstance;
+
 
 import axios from "axios";
 
