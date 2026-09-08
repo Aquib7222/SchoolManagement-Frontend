@@ -667,9 +667,9 @@ const AdminSidebar = () => {
             <div className="section-menu">
 
               {menuItem(
-                "/admin/modules",
+                "/admin/user-management",
                 <LuSettings2 size={20} />,
-                "General Settings",
+                "User Management Settings",
               )}
 
               {menuItem(

@@ -598,6 +598,18 @@ import PeriodManagement from "./pages/Setup/PeriodManagement";
 import TimeTable from "./pages/TeacherDashboard/TimeTable";
 import MyClasses from "./pages/TeacherDashboard/MyClasses";
 import Homework from "./pages/TeacherDashboard/Homework";
+import MyHomework from "./pages/StudentDashboard/MyHomework";
+import MyTimeTable from "./pages/StudentDashboard/MyTimeTable";
+import NoticeManagement from "./pages/Setup/NoticeManagement";
+import TransferCertificates from "./pages/TC/TransferCertificates";
+import StudentDetailsReport from "./pages/Reports/StudentsReport/StudentDetailsReport";
+import ClasswiseStudentsReport from "./pages/Reports/StudentsReport/ClasswiseStudentsReport";
+import InactiveStudentsReport from "./pages/Reports/StudentsReport/InactiveStudentsReport";
+import StudentStrengthReport from "./pages/Reports/StudentsReport/StudentStrengthReport";
+import DailyAttendanceReportsPage from "./pages/Reports/AttendanceReport/DailyAttendanceReportsPage";
+import MonthlyAttendanceReportPage from "./pages/Reports/AttendanceReport/MonthlyAttendanceReportPage";
+import UserManagement from "./pages/AdminDashboard/UserManagement";
+import SchoolUserManagement from "./pages/SchoolUserManagement";
 
 // =====================================================
 // LOADING COMPONENT
@@ -685,6 +697,7 @@ const AppRoutes = () => {
         <Route path="/setup/add/ptm" element={<AddPTM />} />
         <Route path="/setup/student-bulk-import" element={<StudentBulkImport />} />
         <Route path="/setup/period-management" element={<PeriodManagement />} />
+        <Route path="/setup/notice-management" element={<NoticeManagement />} />
 
         {/* =================================================
             ADMISSION
@@ -958,6 +971,16 @@ const AppRoutes = () => {
         <Route path="/transport/student-allocation" element={<StudentTransportAllocation />} />
 
         {/* =================================================
+            REPORT
+        ================================================= */}
+
+        <Route path="/reports/students/details" element={<StudentDetailsReport />} />
+        <Route path="/reports/students/classwise" element={<ClasswiseStudentsReport/>}/>
+        <Route path="/reports/students/discontinue" element={<InactiveStudentsReport/>}/>
+        <Route path="/reports/students/strength" element={<StudentStrengthReport/>}/>
+        <Route path="/report/attendance/daily" element={<DailyAttendanceReportsPage/>}/>
+        <Route path="/report/attendance/monthly" element={<MonthlyAttendanceReportPage/>}/>
+        {/* =================================================
             RESULTS
         ================================================= */}
 
@@ -965,12 +988,25 @@ const AppRoutes = () => {
 
         <Route path="/result" element={<StudentResult />} />
 
+        {/* =================================================
+            TC
+        ================================================= */}
+
+        <Route path="/tc" element={<TransferCertificates />} />
+
+         {/* ====================================================
+            School User Management
+        ==================================================== */}
+        <Route path="/user-management" element={<SchoolUserManagement />} />
+
         {/* ====================================================
             STUDENT DASHBOARD
         ==================================================== */}
         <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/fee" element={<MyFee />} />
-         <Route path="/attendance" element={<StudentAttendance />} />
+        <Route path="/attendance" element={<StudentAttendance />} />
+        <Route path="/myhomework" element={<MyHomework />} />
+        <Route path="/time-table" element={<MyTimeTable />} />
 
 
          {/* ====================================================
@@ -979,6 +1015,8 @@ const AppRoutes = () => {
         <Route path="/teacher/timetable" element={<TimeTable />} />
         <Route path="/teacher/classes" element={<MyClasses/>} />
         <Route path="/teacher/homework" element={<Homework/>} />
+
+        
         {/* =================================================
             ADMIN DASHBOARD
         ================================================= */}
@@ -1051,6 +1089,7 @@ const AppRoutes = () => {
         <Route path="/superadmin-list" element={<SuperAdminList />} />
 
         {/* Audit */}
+        <Route path="/admin/user-management/" element={<UserManagement />} />
 
         <Route path="/settings/system-log/" element={<AuditLogList />} />
 

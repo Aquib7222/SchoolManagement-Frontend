@@ -396,40 +396,47 @@ const AdmissionFeeToday = () => {
   // PENDING FEE
   // =========================================================
 
-  useEffect(() => {
-    if (!schoolId) return;
+ useEffect(() => {
+  if (!schoolId) return;
 
-    const fetchPendingFees = async () => {
-      try {
-        setLoadingFees(true);
+  const fetchPendingFees = async () => {
+    try {
+      setLoadingFees(true);
 
-        const res = await axios.get("/api/student-fee/all", {
+      const res = await axios.get(
+        "/api/student-fee/all",
+        {
+          params: {
+            schoolId,
+          },
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
+        }
+      );
 
-        const list = Array.isArray(res.data)
-          ? res.data
-          : [];
+      const list = Array.isArray(res.data)
+        ? res.data
+        : [];
 
-        const pending = list.filter(
-          (item) => item.status === "UNPAID"
-        );
+      const pending = list.filter(
+        (item) => item.status === "UNPAID"
+      );
 
-        setPendingFee(pending);
-      } catch (error) {
-        console.error(
-          "Fee API Error:",
-          error.response?.data || error.message
-        );
-      } finally {
-        setLoadingFees(false);
-      }
-    };
+      setPendingFee(pending);
 
-    fetchPendingFees();
-  }, [schoolId, token]);
+    } catch (error) {
+      console.error(
+        "Fee API Error:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setLoadingFees(false);
+    }
+  };
+
+  fetchPendingFees();
+}, [schoolId, token]);
 
   // =========================================================
   // FORMAT DATE

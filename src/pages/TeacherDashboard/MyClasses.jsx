@@ -1262,6 +1262,2387 @@
 
 // export default MyClasses;
 
+// import React, { useEffect, useMemo, useState } from "react";
+// import { useLocation } from "react-router-dom";
+// import axiosInstance from "../../api/axiosInstance";
+
+// import {
+//   LuCalendarDays,
+//   LuClock3,
+//   LuBookOpen,
+//   LuSchool,
+//   LuRefreshCw,
+//   LuUserRound,
+//   LuSearch,
+//   LuUsers,
+//   LuEye,
+//   LuCheck,
+//   LuX,
+//   LuPercent,
+// } from "react-icons/lu";
+
+// import { MdOutlineSchool } from "react-icons/md";
+// import { FaChalkboardTeacher } from "react-icons/fa";
+// import useMasters from "../../hooks/useMasters";
+
+// const DAYS = [
+//   "MONDAY",
+//   "TUESDAY",
+//   "WEDNESDAY",
+//   "THURSDAY",
+//   "FRIDAY",
+//   "SATURDAY",
+//   "SUNDAY",
+// ];
+
+// const MyClasses = () => {
+//   const location = useLocation();
+
+//   const user = JSON.parse(localStorage.getItem("user") || "null");
+
+//   const [schoolId, setSchoolId] = useState("");
+//   const [teacherId, setTeacherId] = useState("");
+
+//   const [academicYear, setAcademicYear] = useState("");
+
+//   const { sessions } = useMasters();
+
+//   const [assignments, setAssignments] = useState([]);
+//   const [students, setStudents] = useState([]);
+//   const [attendance, setAttendance] = useState([]);
+
+//   const [loading, setLoading] = useState(false);
+//   const [studentLoading, setStudentLoading] = useState(false);
+//   const [attendanceLoading, setAttendanceLoading] = useState(false);
+
+//   const [error, setError] = useState("");
+
+//   const [selectedClass, setSelectedClass] = useState(
+//     location.state?.studentClass || "",
+//   );
+
+//   const [selectedSection, setSelectedSection] = useState(
+//     location.state?.section || "",
+//   );
+
+//   const [studentSearch, setStudentSearch] = useState("");
+
+//   // =========================================================
+//   // CURRENT DAY
+//   // =========================================================
+
+//   const [selectedDay, setSelectedDay] = useState(() => {
+//     const day = new Date().getDay();
+
+//     const map = {
+//       0: "SUNDAY",
+//       1: "MONDAY",
+//       2: "TUESDAY",
+//       3: "WEDNESDAY",
+//       4: "THURSDAY",
+//       5: "FRIDAY",
+//       6: "SATURDAY",
+//     };
+
+//     return map[day];
+//   });
+
+//   // =========================================================
+//   // CURRENT ACADEMIC YEAR
+//   // =========================================================
+
+//   useEffect(() => {
+//     const today = new Date();
+
+//     const year = today.getFullYear();
+//     const month = today.getMonth() + 1;
+
+//     const startYear = month >= 4 ? year : year - 1;
+
+//     setAcademicYear(`${startYear}-${startYear + 1}`);
+//   }, []);
+
+//   // =========================================================
+//   // GET SCHOOL + TEACHER
+//   // =========================================================
+
+//   useEffect(() => {
+//     const storedSchoolId =
+//       localStorage.getItem("schoolId") || user?.schoolId;
+
+//     const storedTeacherId = user?.teacherId;
+
+//     if (storedSchoolId) {
+//       setSchoolId(storedSchoolId);
+//     }
+
+//     if (storedTeacherId) {
+//       setTeacherId(storedTeacherId);
+//     }
+//   }, []);
+
+//   // =========================================================
+//   // LOAD ASSIGNMENTS
+//   // =========================================================
+
+//   const loadAssignments = async () => {
+//     if (!schoolId || !teacherId || !academicYear) {
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+//       setError("");
+
+//       const response = await axiosInstance.get(
+//         "/api/teacher-class-assignment/teacher/day",
+//         {
+//           params: {
+//             schoolId: Number(schoolId),
+//             academicYear,
+//             teacherId: Number(teacherId),
+//             dayOfWeek: selectedDay,
+//           },
+//         },
+//       );
+
+//       const data = Array.isArray(response.data)
+//         ? response.data
+//         : [];
+
+//       setAssignments(
+//         data.filter((item) => item.active !== false),
+//       );
+//     } catch (err) {
+//       console.error(
+//         "Teacher assignment error:",
+//         err.response?.data || err,
+//       );
+
+//       setAssignments([]);
+
+//       setError(
+//         err.response?.data?.message ||
+//           err.response?.data ||
+//           "Unable to load your classes.",
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     loadAssignments();
+//   }, [
+//     schoolId,
+//     teacherId,
+//     academicYear,
+//     selectedDay,
+//   ]);
+
+//   // =========================================================
+//   // LOAD STUDENTS
+//   // =========================================================
+
+//   const loadStudents = async () => {
+//     if (!schoolId) {
+//       setStudents([]);
+//       return;
+//     }
+
+//     try {
+//       setStudentLoading(true);
+
+//       const response = await axiosInstance.get(
+//         "/api/students/school",
+//         {
+//           params: {
+//             schoolId: Number(schoolId),
+//           },
+//         },
+//       );
+
+//       const data = Array.isArray(response.data)
+//         ? response.data
+//         : [];
+
+//       setStudents(data);
+//     } catch (err) {
+//       console.error(
+//         "Students loading error:",
+//         err.response?.data || err,
+//       );
+
+//       setStudents([]);
+//     } finally {
+//       setStudentLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     loadStudents();
+//   }, [schoolId]);
+
+//   // =========================================================
+//   // LOAD ATTENDANCE
+//   // =========================================================
+
+//   const loadAttendance = async () => {
+//     if (!schoolId) {
+//       setAttendance([]);
+//       return;
+//     }
+
+//     try {
+//       setAttendanceLoading(true);
+
+//       const response = await axiosInstance.get(
+//         "/api/student/attendance/school",
+//         {
+//           params: {
+//             schoolId: Number(schoolId),
+//           },
+//         },
+//       );
+
+//       const data = Array.isArray(response.data)
+//         ? response.data
+//         : [];
+
+//       setAttendance(data);
+//     } catch (err) {
+//       console.error(
+//         "Attendance loading error:",
+//         err.response?.data || err,
+//       );
+
+//       setAttendance([]);
+//     } finally {
+//       setAttendanceLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     loadAttendance();
+//   }, [schoolId]);
+
+//   // =========================================================
+//   // FORMAT DATE
+//   // =========================================================
+
+//   const todayDate = useMemo(() => {
+//     const today = new Date();
+
+//     const year = today.getFullYear();
+//     const month = String(today.getMonth() + 1).padStart(
+//       2,
+//       "0",
+//     );
+//     const day = String(today.getDate()).padStart(2, "0");
+
+//     return `${year}-${month}-${day}`;
+//   }, []);
+
+//   // =========================================================
+//   // UNIQUE CLASS + SECTION
+//   // =========================================================
+//   console.log("assignments",assignments);
+
+//   const classList = useMemo(() => {
+//     const map = new Map();
+
+//     assignments.forEach((item) => {
+//       const studentClass =
+//         item.studentClass?.toString().trim() || "";
+
+//       const section =
+//         item.section?.toString().trim() || "";
+
+//       if (!studentClass) return;
+
+//       const key = `${studentClass}-${section}`;
+
+//       if (!map.has(key)) {
+//         map.set(key, {
+//           studentClass,
+//           section,
+//         });
+//       }
+//     });
+
+//     return Array.from(map.values());
+//   }, [assignments]);
+//   console.log("classlist",classList);
+
+//   // =========================================================
+//   // AVAILABLE SECTIONS
+//   // =========================================================
+
+//   const sectionList = useMemo(() => {
+//     return [
+//       ...new Set(
+//         classList
+//           .filter(
+//             (item) =>
+//               item.studentClass === selectedClass,
+//           )
+//           .map((item) => item.section)
+//           .filter(Boolean),
+//       ),
+//     ];
+//   }, [classList, selectedClass]);
+
+//   // =========================================================
+//   // SELECTED CLASS ASSIGNMENTS
+//   // =========================================================
+
+//   const selectedAssignments = useMemo(() => {
+//     if (!selectedClass) return [];
+
+//     return assignments.filter(
+//       (item) =>
+//         item.studentClass === selectedClass &&
+//         (!selectedSection ||
+//           item.section === selectedSection),
+//     );
+//   }, [
+//     assignments,
+//     selectedClass,
+//     selectedSection,
+//   ]);
+
+//   // =========================================================
+//   // SELECTED CLASS STUDENTS
+//   // =========================================================
+
+//   const classStudents = useMemo(() => {
+//     if (!selectedClass) return [];
+
+//     return students.filter((student) => {
+//       const studentClass =
+//         student.studentClass ||
+//         student.className ||
+//         student.class;
+
+//       const section =
+//         student.section ||
+//         student.studentSection;
+
+//       return (
+//         String(studentClass || "").trim() ===
+//           String(selectedClass).trim() &&
+//         (!selectedSection ||
+//           String(section || "").trim() ===
+//             String(selectedSection).trim())
+//       );
+//     });
+//   }, [
+//     students,
+//     selectedClass,
+//     selectedSection,
+//   ]);
+
+//   // =========================================================
+//   // GET STUDENT ATTENDANCE
+//   // =========================================================
+
+//   const getStudentAttendance = (student) => {
+//     const studentId =
+//       student.id || student.studentId;
+
+//     const admissionNumber =
+//       student.admissionNumber;
+
+//     return attendance.find((item) => {
+//       if (item.attendanceDate !== todayDate) {
+//         return false;
+//       }
+
+//       const attendanceStudentId =
+//         item.studentId ||
+//         item.student?.id;
+
+//       const attendanceAdmissionNumber =
+//         item.admissionNumber ||
+//         item.student?.admissionNumber;
+
+//       if (
+//         studentId &&
+//         attendanceStudentId &&
+//         Number(studentId) ===
+//           Number(attendanceStudentId)
+//       ) {
+//         return true;
+//       }
+
+//       if (
+//         admissionNumber &&
+//         attendanceAdmissionNumber &&
+//         admissionNumber ===
+//           attendanceAdmissionNumber
+//       ) {
+//         return true;
+//       }
+
+//       return false;
+//     });
+//   };
+
+//   // =========================================================
+//   // STUDENT SEARCH
+//   // =========================================================
+
+//   const filteredStudents = useMemo(() => {
+//     const keyword = studentSearch
+//       .trim()
+//       .toLowerCase();
+
+//     if (!keyword) {
+//       return classStudents;
+//     }
+
+//     return classStudents.filter((student) => {
+//       const name =
+//         student.studentName ||
+//         student.name ||
+//         `${student.firstName || ""} ${
+//           student.lastName || ""
+//         }`;
+
+//       const admissionNumber =
+//         student.admissionNumber || "";
+
+//       const rollNumber =
+//         student.rollNumber ||
+//         student.rollNo ||
+//         "";
+
+//       return (
+//         String(name)
+//           .toLowerCase()
+//           .includes(keyword) ||
+//         String(admissionNumber)
+//           .toLowerCase()
+//           .includes(keyword) ||
+//         String(rollNumber)
+//           .toLowerCase()
+//           .includes(keyword)
+//       );
+//     });
+//   }, [
+//     classStudents,
+//     studentSearch,
+//   ]);
+
+//   // =========================================================
+//   // CLASS ATTENDANCE
+//   // =========================================================
+
+//   const presentStudents = useMemo(() => {
+//     return classStudents.filter((student) => {
+//       const item =
+//         getStudentAttendance(student);
+
+//       return (
+//         item?.status === "PRESENT" ||
+//         item?.attendanceStatus === "PRESENT"
+//       );
+//     });
+//   }, [classStudents, attendance, todayDate]);
+
+//   const absentStudents = useMemo(() => {
+//     return classStudents.filter((student) => {
+//       const item =
+//         getStudentAttendance(student);
+
+//       return (
+//         item?.status === "ABSENT" ||
+//         item?.attendanceStatus === "ABSENT"
+//       );
+//     });
+//   }, [classStudents, attendance, todayDate]);
+
+//   const totalStudents =
+//     classStudents.length;
+
+//   const presentCount =
+//     presentStudents.length;
+
+//   const absentCount =
+//     absentStudents.length;
+
+//   const attendancePercentage =
+//     totalStudents > 0
+//       ? (
+//           (presentCount / totalStudents) *
+//           100
+//         ).toFixed(1)
+//       : "0.0";
+
+//   // =========================================================
+//   // FORMAT HELPERS
+//   // =========================================================
+
+//   const formatDay = (day) => {
+//     if (!day) return "-";
+
+//     return (
+//       day.charAt(0) +
+//       day.slice(1).toLowerCase()
+//     );
+//   };
+
+//   const formatSubject = (subject) => {
+//     if (!subject) return "-";
+
+//     return String(subject)
+//       .replaceAll("_", " ")
+//       .toLowerCase()
+//       .replace(/\b\w/g, (char) =>
+//         char.toUpperCase(),
+//       );
+//   };
+
+//   const formatTime = (time) => {
+//     if (!time) return "--";
+
+//     const parts = String(time).split(":");
+
+//     if (parts.length < 2) {
+//       return time;
+//     }
+
+//     let hour = Number(parts[0]);
+//     const minute = parts[1];
+
+//     const ampm =
+//       hour >= 12 ? "PM" : "AM";
+
+//     hour = hour % 12 || 12;
+
+//     return `${hour}:${minute} ${ampm}`;
+//   };
+
+//   // =========================================================
+//   // REFRESH
+//   // =========================================================
+
+//   const handleRefresh = () => {
+//     loadAssignments();
+//     loadStudents();
+//     loadAttendance();
+//   };
+
+//   // =========================================================
+//   // SELECT CLASS
+//   // =========================================================
+
+//   const handleClassSelect = (
+//     studentClass,
+//     section,
+//   ) => {
+//     setSelectedClass(studentClass);
+//     setSelectedSection(section || "");
+//     setStudentSearch("");
+//   };
+
+//   return (
+//     <>
+//       {/* ================================================= */}
+//       {/* PAGE HEADER */}
+//       {/* ================================================= */}
+
+//       <div className="mx-2 mt-2 mb-3">
+//         <div
+//           className="rounded-4 shadow overflow-hidden"
+//           style={{
+//             background:
+//               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+//             border: "1px solid #dbeafe",
+//           }}
+//         >
+//           <div className="p-3 p-md-4">
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+//               <div className="d-flex align-items-center gap-3">
+//                 <div
+//                   className="d-flex align-items-center justify-content-center rounded-3"
+//                   style={{
+//                     width: "52px",
+//                     height: "52px",
+//                     background:
+//                       "linear-gradient(135deg,#2563eb,#3b82f6)",
+//                     color: "#fff",
+//                     boxShadow:
+//                       "0 8px 20px rgba(37,99,235,.22)",
+//                   }}
+//                 >
+//                   <FaChalkboardTeacher
+//                     size={27}
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold text-dark">
+//                     My Classes
+//                   </h5>
+
+//                   <div className="text-muted small">
+//                     Dashboard &nbsp;/&nbsp; My
+//                     Classes
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <div className="d-flex align-items-center gap-2">
+//                 <span
+//                   className="badge rounded-pill px-3 py-2"
+//                   style={{
+//                     backgroundColor: "#eff6ff",
+//                     color: "#2563eb",
+//                     border:
+//                       "1px solid #bfdbfe",
+//                   }}
+//                 >
+//                   <MdOutlineSchool className="me-1" />
+//                   Teacher Dashboard
+//                 </span>
+
+//                 <button
+//                   type="button"
+//                   onClick={handleRefresh}
+//                   className="btn btn-sm"
+//                   style={{
+//                     width: 38,
+//                     height: 38,
+//                     borderRadius: 10,
+//                     border:
+//                       "1px solid #bfdbfe",
+//                     background: "#fff",
+//                     color: "#2563eb",
+//                   }}
+//                   title="Refresh"
+//                 >
+//                   <LuRefreshCw
+//                     size={17}
+//                   />
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div
+//             className="px-4 py-2"
+//             style={{
+//               backgroundColor:
+//                 "rgba(239,246,255,.75)",
+//               borderTop:
+//                 "1px solid #e0ecff",
+//             }}
+//           >
+//             <small className="text-muted">
+//               Home &nbsp;›&nbsp; Dashboard
+//               &nbsp;›&nbsp;
+//               <span className="text-primary fw-semibold">
+//                 My Classes
+//               </span>
+//             </small>
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="mx-2 mt-2 mb-3">
+
+//         {/* ================================================= */}
+//         {/* FILTER / CLASS SELECTION */}
+//         {/* ================================================= */}
+
+//         <div
+//           className="card border-0 rounded-4 shadow mb-3"
+//           style={{
+//             boxShadow:
+//               "0 6px 22px rgba(15,23,42,.07)",
+//           }}
+//         >
+//           <div className="card-body p-3">
+//             <div className="row g-3">
+
+//               {/* CLASS */}
+
+//               <div className="col-12 col-md-4">
+//                 <div
+//                   className="p-3 h-100"
+//                   style={{
+//                     background: "#f8fbff",
+//                     border:
+//                       "1px solid #dbeafe",
+//                     borderRadius: 14,
+//                   }}
+//                 >
+//                   <div className="d-flex align-items-center gap-2 mb-2">
+//                     <LuSchool
+//                       size={18}
+//                       style={{
+//                         color: "#2563eb",
+//                       }}
+//                     />
+
+//                     <div
+//                       style={{
+//                         fontSize: 12,
+//                         color: "#64748b",
+//                         fontWeight: 600,
+//                       }}
+//                     >
+//                       Select Class
+//                     </div>
+//                   </div>
+
+//                   <select
+//                     className="form-control"
+//                     value={selectedClass}
+//                     onChange={(e) => {
+//                       setSelectedClass(
+//                         e.target.value,
+//                       );
+//                       setSelectedSection("");
+//                       setStudentSearch("");
+//                     }}
+//                     style={{
+//                       border:
+//                         "1px solid #dbeafe",
+//                       borderRadius: 10,
+//                     }}
+//                   >
+//                     <option value="">
+//                       Select Class
+//                     </option>
+
+//                     {classList.map(
+//                       (item, index) => (
+//                         <option
+//                           key={`${item.studentClass}-${item.section}-${index}`}
+//                           value={
+//                             item.studentClass
+//                           }
+//                         >
+//                           {item.studentClass}
+//                         </option>
+//                       ),
+//                     )}
+//                   </select>
+//                 </div>
+//               </div>
+
+//               {/* SECTION */}
+
+//               <div className="col-12 col-md-4">
+//                 <div
+//                   className="p-3 h-100"
+//                   style={{
+//                     background: "#f8fbff",
+//                     border:
+//                       "1px solid #dbeafe",
+//                     borderRadius: 14,
+//                   }}
+//                 >
+//                   <div className="d-flex align-items-center gap-2 mb-2">
+//                     <LuUsers
+//                       size={18}
+//                       style={{
+//                         color: "#2563eb",
+//                       }}
+//                     />
+
+//                     <div
+//                       style={{
+//                         fontSize: 12,
+//                         color: "#64748b",
+//                         fontWeight: 600,
+//                       }}
+//                     >
+//                       Select Section
+//                     </div>
+//                   </div>
+
+//                   <select
+//                     className="form-control"
+//                     value={selectedSection}
+//                     onChange={(e) => {
+//                       setSelectedSection(
+//                         e.target.value,
+//                       );
+//                       setStudentSearch("");
+//                     }}
+//                     disabled={!selectedClass}
+//                     style={{
+//                       border:
+//                         "1px solid #dbeafe",
+//                       borderRadius: 10,
+//                     }}
+//                   >
+//                     <option value="">
+//                       All Sections
+//                     </option>
+
+//                     {sectionList.map(
+//                       (section) => (
+//                         <option
+//                           key={section}
+//                           value={section}
+//                         >
+//                           Section {section}
+//                         </option>
+//                       ),
+//                     )}
+//                   </select>
+//                 </div>
+//               </div>
+
+//               {/* ACADEMIC YEAR */}
+
+//               <div className="col-12 col-md-4">
+//                 <div
+//                   className="p-3 h-100"
+//                   style={{
+//                     background: "#f8fbff",
+//                     border:
+//                       "1px solid #dbeafe",
+//                     borderRadius: 14,
+//                   }}
+//                 >
+//                   <div className="d-flex align-items-center gap-2 mb-2">
+//                     <LuCalendarDays
+//                       size={18}
+//                       style={{
+//                         color: "#2563eb",
+//                       }}
+//                     />
+
+//                     <div
+//                       style={{
+//                         fontSize: 12,
+//                         color: "#64748b",
+//                         fontWeight: 600,
+//                       }}
+//                     >
+//                       Academic Session
+//                     </div>
+//                   </div>
+
+//                   <select
+//                     className="form-control"
+//                     value={academicYear}
+//                     onChange={(e) =>
+//                       setAcademicYear(
+//                         e.target.value,
+//                       )
+//                     }
+//                     style={{
+//                       border:
+//                         "1px solid #dbeafe",
+//                       borderRadius: 10,
+//                     }}
+//                   >
+//                     {sessions?.map(
+//                       (session) => (
+//                         <option
+//                           key={session}
+//                           value={session}
+//                         >
+//                           {session}
+//                         </option>
+//                       ),
+//                     )}
+
+//                     {!sessions?.length &&
+//                       academicYear && (
+//                         <option
+//                           value={academicYear}
+//                         >
+//                           {academicYear}
+//                         </option>
+//                       )}
+//                   </select>
+//                 </div>
+//               </div>
+
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* ================================================= */}
+//         {/* CLASS LIST */}
+//         {/* ================================================= */}
+
+//         <div
+//           className="card border-0 rounded-4 shadow mb-3"
+//           style={{
+//             boxShadow:
+//               "0 6px 22px rgba(15,23,42,.07)",
+//           }}
+//         >
+//           <div className="card-body p-3">
+
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+
+//               <div className="d-flex align-items-center gap-2">
+//                 <div
+//                   className="d-flex align-items-center justify-content-center"
+//                   style={{
+//                     width: 42,
+//                     height: 42,
+//                     borderRadius: 12,
+//                     background: "#eff6ff",
+//                     color: "#2563eb",
+//                   }}
+//                 >
+//                   <LuBookOpen
+//                     size={21}
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <div
+//                     className="fw-bold"
+//                     style={{
+//                       color: "#0f172a",
+//                     }}
+//                   >
+//                     My Assigned Classes
+//                   </div>
+
+//                   <div
+//                     style={{
+//                       fontSize: 12,
+//                       color: "#64748b",
+//                     }}
+//                   >
+//                     Select a class to view
+//                     students
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <span
+//                 className="badge rounded-pill px-3 py-2"
+//                 style={{
+//                   background: "#eff6ff",
+//                   color: "#2563eb",
+//                   border:
+//                     "1px solid #bfdbfe",
+//                 }}
+//               >
+//                 {classList.length} Classes
+//               </span>
+
+//             </div>
+
+//             {loading ? (
+//               <div className="text-center py-4">
+//                 <div
+//                   className="spinner-border"
+//                   style={{
+//                     color: "#2563eb",
+//                   }}
+//                 />
+
+//                 <div
+//                   className="mt-2 small"
+//                   style={{
+//                     color: "#64748b",
+//                   }}
+//                 >
+//                   Loading classes...
+//                 </div>
+//               </div>
+//             ) : classList.length === 0 ? (
+//               <div className="text-center py-4">
+//                 <LuBookOpen
+//                   size={32}
+//                   style={{
+//                     color: "#94a3b8",
+//                   }}
+//                 />
+
+//                 <div
+//                   className="fw-semibold mt-2"
+//                   style={{
+//                     color: "#334155",
+//                   }}
+//                 >
+//                   No Classes Assigned
+//                 </div>
+
+//                 <small className="text-muted">
+//                   No class assignment found
+//                   for today.
+//                 </small>
+//               </div>
+//             ) : (
+//               <div className="row g-3">
+//                 {classList.map(
+//                   (item) => {
+//                     const active =
+//                       selectedClass ===
+//                         item.studentClass &&
+//                       selectedSection ===
+//                         item.section;
+
+//                     const classAssignments =
+//                       assignments.filter(
+//                         (assignment) =>
+//                           assignment.studentClass ===
+//                             item.studentClass &&
+//                           assignment.section ===
+//                             item.section,
+//                       );
+
+//                     const subjects = [
+//                       ...new Set(
+//                         classAssignments
+//                           .map(
+//                             (a) =>
+//                               a.subject,
+//                           )
+//                           .filter(Boolean),
+//                       ),
+//                     ];
+
+//                     return (
+//                       <div
+//                         className="col-12 col-sm-6 col-xl-4"
+//                         key={`${item.studentClass}-${item.section}`}
+//                       >
+//                         <div
+//                           className="p-3 h-100"
+//                           onClick={() =>
+//                             handleClassSelect(
+//                               item.studentClass,
+//                               item.section,
+//                             )
+//                           }
+//                           style={{
+//                             background:
+//                               active
+//                                 ? "#f0f7ff"
+//                                 : "#f8fbff",
+//                             border: active
+//                               ? "1px solid #2563eb"
+//                               : "1px solid #dbeafe",
+//                             borderRadius: 14,
+//                             cursor: "pointer",
+//                             transition:
+//                               "all .2s ease",
+//                           }}
+//                         >
+//                           <div className="d-flex justify-content-between align-items-start">
+
+//                             <div>
+//                               <div
+//                                 style={{
+//                                   fontSize: 11,
+//                                   color:
+//                                     "#64748b",
+//                                   fontWeight: 600,
+//                                 }}
+//                               >
+//                                 CLASS
+//                               </div>
+
+//                               <div
+//                                 className="fw-bold"
+//                                 style={{
+//                                   color:
+//                                     "#0f172a",
+//                                   fontSize: 17,
+//                                 }}
+//                               >
+//                                 {
+//                                   item.studentClass
+//                                 }
+
+//                                 {item.section &&
+//                                   ` - ${item.section}`}
+//                               </div>
+//                             </div>
+
+//                             <div
+//                               className="d-flex align-items-center justify-content-center"
+//                               style={{
+//                                 width: 36,
+//                                 height: 36,
+//                                 borderRadius: 10,
+//                                 background:
+//                                   "#eff6ff",
+//                                 color:
+//                                   "#2563eb",
+//                               }}
+//                             >
+//                               <LuEye
+//                                 size={18}
+//                               />
+//                             </div>
+//                           </div>
+
+//                           <div
+//                             className="mt-2"
+//                             style={{
+//                               fontSize: 12,
+//                               color:
+//                                 "#64748b",
+//                             }}
+//                           >
+//                             {subjects.length
+//                               ? subjects
+//                                   .map(
+//                                     formatSubject,
+//                                   )
+//                                   .join(
+//                                     ", ",
+//                                   )
+//                               : "No subject"}
+//                           </div>
+
+//                           <div className="d-flex justify-content-between align-items-center mt-3">
+
+//                             <span
+//                               style={{
+//                                 background:
+//                                   "#fff",
+//                                 border:
+//                                   "1px solid #dbeafe",
+//                                 borderRadius: 9,
+//                                 padding:
+//                                   "5px 9px",
+//                                 fontSize: 11,
+//                                 color:
+//                                   "#2563eb",
+//                                 fontWeight: 700,
+//                               }}
+//                             >
+//                               {
+//                                 classAssignments.length
+//                               }{" "}
+//                               Period
+//                               {classAssignments.length !==
+//                               1
+//                                 ? "s"
+//                                 : ""}
+//                             </span>
+
+//                             {active && (
+//                               <span
+//                                 style={{
+//                                   background:
+//                                     "#2563eb",
+//                                   color: "#fff",
+//                                   borderRadius: 9,
+//                                   padding:
+//                                     "5px 9px",
+//                                   fontSize: 11,
+//                                   fontWeight: 700,
+//                                 }}
+//                               >
+//                                 Selected
+//                               </span>
+//                             )}
+
+//                           </div>
+//                         </div>
+//                       </div>
+//                     );
+//                   },
+//                 )}
+//               </div>
+//             )}
+//           </div>
+//         </div>
+
+//         {/* ================================================= */}
+//         {/* ERROR */}
+//         {/* ================================================= */}
+
+//         {error && (
+//           <div
+//             className="alert mb-3"
+//             style={{
+//               borderRadius: 12,
+//               border:
+//                 "1px solid #fecaca",
+//               background: "#fef2f2",
+//               color: "#b91c1c",
+//             }}
+//           >
+//             {error}
+//           </div>
+//         )}
+
+//         {/* ================================================= */}
+//         {/* SELECTED CLASS */}
+//         {/* ================================================= */}
+
+//         {selectedClass && (
+//           <>
+//             {/* CLASS HEADER */}
+
+//             <div
+//               className="card border-0 rounded-4 shadow mb-3"
+//               style={{
+//                 boxShadow:
+//                   "0 6px 22px rgba(15,23,42,.07)",
+//               }}
+//             >
+//               <div className="card-body p-3">
+
+//                 <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+//                   <div className="d-flex align-items-center gap-3">
+
+//                     <div
+//                       className="d-flex align-items-center justify-content-center"
+//                       style={{
+//                         width: 48,
+//                         height: 48,
+//                         borderRadius: 12,
+//                         background:
+//                           "linear-gradient(135deg,#2563eb,#3b82f6)",
+//                         color: "#fff",
+//                       }}
+//                     >
+//                       <FaChalkboardTeacher
+//                         size={23}
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <div
+//                         className="fw-bold"
+//                         style={{
+//                           fontSize: 18,
+//                           color:
+//                             "#0f172a",
+//                         }}
+//                       >
+//                         {selectedClass}
+
+//                         {selectedSection &&
+//                           ` - ${selectedSection}`}
+//                       </div>
+
+//                       <div
+//                         style={{
+//                           fontSize: 12,
+//                           color:
+//                             "#64748b",
+//                         }}
+//                       >
+//                         {formatDay(
+//                           selectedDay,
+//                         )}{" "}
+//                         •{" "}
+//                         {academicYear}
+//                       </div>
+//                     </div>
+
+//                   </div>
+
+//                   <div className="text-end">
+
+//                     <div
+//                       style={{
+//                         fontSize: 11,
+//                         color: "#64748b",
+//                         fontWeight: 600,
+//                       }}
+//                     >
+//                       Attendance
+//                       Today
+//                     </div>
+
+//                     <div
+//                       className="fw-bold"
+//                       style={{
+//                         color:
+//                           "#2563eb",
+//                         fontSize: 22,
+//                       }}
+//                     >
+//                       {
+//                         attendancePercentage
+//                       }
+//                       %
+//                     </div>
+
+//                   </div>
+
+//                 </div>
+
+//               </div>
+//             </div>
+
+//             {/* ================================================= */}
+//             {/* STATS */}
+//             {/* ================================================= */}
+
+//             <div className="row g-3 mb-3">
+
+//               {/* TOTAL */}
+
+//               <div className="col-6 col-lg-3">
+//                 <div
+//                   className="card border-0 rounded-4 shadow h-100"
+//                   style={{
+//                     boxShadow:
+//                       "0 6px 22px rgba(15,23,42,.07)",
+//                   }}
+//                 >
+//                   <div className="card-body p-3">
+
+//                     <div className="d-flex align-items-center gap-3">
+
+//                       <div
+//                         className="d-flex align-items-center justify-content-center"
+//                         style={{
+//                           width: 42,
+//                           height: 42,
+//                           borderRadius: 12,
+//                           background:
+//                             "#eff6ff",
+//                           color:
+//                             "#2563eb",
+//                         }}
+//                       >
+//                         <LuUsers
+//                           size={21}
+//                         />
+//                       </div>
+
+//                       <div>
+//                         <div
+//                           style={{
+//                             fontSize: 11,
+//                             color:
+//                               "#64748b",
+//                             fontWeight: 600,
+//                           }}
+//                         >
+//                           TOTAL STUDENTS
+//                         </div>
+
+//                         <div
+//                           className="fw-bold"
+//                           style={{
+//                             fontSize: 21,
+//                             color:
+//                               "#0f172a",
+//                           }}
+//                         >
+//                           {
+//                             totalStudents
+//                           }
+//                         </div>
+//                       </div>
+
+//                     </div>
+
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* PRESENT */}
+
+//               <div className="col-6 col-lg-3">
+//                 <div
+//                   className="card border-0 rounded-4 shadow h-100"
+//                   style={{
+//                     boxShadow:
+//                       "0 6px 22px rgba(15,23,42,.07)",
+//                   }}
+//                 >
+//                   <div className="card-body p-3">
+
+//                     <div className="d-flex align-items-center gap-3">
+
+//                       <div
+//                         className="d-flex align-items-center justify-content-center"
+//                         style={{
+//                           width: 42,
+//                           height: 42,
+//                           borderRadius: 12,
+//                           background:
+//                             "#ecfdf5",
+//                           color:
+//                             "#047857",
+//                         }}
+//                       >
+//                         <LuCheck
+//                           size={21}
+//                         />
+//                       </div>
+
+//                       <div>
+//                         <div
+//                           style={{
+//                             fontSize: 11,
+//                             color:
+//                               "#64748b",
+//                             fontWeight: 600,
+//                           }}
+//                         >
+//                           PRESENT TODAY
+//                         </div>
+
+//                         <div
+//                           className="fw-bold"
+//                           style={{
+//                             fontSize: 21,
+//                             color:
+//                               "#047857",
+//                           }}
+//                         >
+//                           {
+//                             presentCount
+//                           }
+//                         </div>
+//                       </div>
+
+//                     </div>
+
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* ABSENT */}
+
+//               <div className="col-6 col-lg-3">
+//                 <div
+//                   className="card border-0 rounded-4 shadow h-100"
+//                   style={{
+//                     boxShadow:
+//                       "0 6px 22px rgba(15,23,42,.07)",
+//                   }}
+//                 >
+//                   <div className="card-body p-3">
+
+//                     <div className="d-flex align-items-center gap-3">
+
+//                       <div
+//                         className="d-flex align-items-center justify-content-center"
+//                         style={{
+//                           width: 42,
+//                           height: 42,
+//                           borderRadius: 12,
+//                           background:
+//                             "#fef2f2",
+//                           color:
+//                             "#dc2626",
+//                         }}
+//                       >
+//                         <LuX
+//                           size={21}
+//                         />
+//                       </div>
+
+//                       <div>
+//                         <div
+//                           style={{
+//                             fontSize: 11,
+//                             color:
+//                               "#64748b",
+//                             fontWeight: 600,
+//                           }}
+//                         >
+//                           ABSENT TODAY
+//                         </div>
+
+//                         <div
+//                           className="fw-bold"
+//                           style={{
+//                             fontSize: 21,
+//                             color:
+//                               "#dc2626",
+//                           }}
+//                         >
+//                           {
+//                             absentCount
+//                           }
+//                         </div>
+//                       </div>
+
+//                     </div>
+
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* PERCENTAGE */}
+
+//               <div className="col-6 col-lg-3">
+//                 <div
+//                   className="card border-0 rounded-4 shadow h-100"
+//                   style={{
+//                     boxShadow:
+//                       "0 6px 22px rgba(15,23,42,.07)",
+//                   }}
+//                 >
+//                   <div className="card-body p-3">
+
+//                     <div className="d-flex align-items-center gap-3">
+
+//                       <div
+//                         className="d-flex align-items-center justify-content-center"
+//                         style={{
+//                           width: 42,
+//                           height: 42,
+//                           borderRadius: 12,
+//                           background:
+//                             "#eff6ff",
+//                           color:
+//                             "#2563eb",
+//                         }}
+//                       >
+//                         <LuPercent
+//                           size={21}
+//                         />
+//                       </div>
+
+//                       <div>
+//                         <div
+//                           style={{
+//                             fontSize: 11,
+//                             color:
+//                               "#64748b",
+//                             fontWeight: 600,
+//                           }}
+//                         >
+//                           ATTENDANCE
+//                         </div>
+
+//                         <div
+//                           className="fw-bold"
+//                           style={{
+//                             fontSize: 21,
+//                             color:
+//                               "#2563eb",
+//                           }}
+//                         >
+//                           {
+//                             attendancePercentage
+//                           }
+//                           %
+//                         </div>
+//                       </div>
+
+//                     </div>
+
+//                   </div>
+//                 </div>
+//               </div>
+
+//             </div>
+
+//             {/* ================================================= */}
+//             {/* TODAY'S PERIODS */}
+//             {/* ================================================= */}
+
+//             <div
+//               className="card border-0 rounded-4 shadow mb-3"
+//               style={{
+//                 boxShadow:
+//                   "0 6px 22px rgba(15,23,42,.07)",
+//               }}
+//             >
+//               <div className="card-body p-3">
+
+//                 <div className="d-flex align-items-center gap-2 mb-3">
+
+//                   <div
+//                     className="d-flex align-items-center justify-content-center"
+//                     style={{
+//                       width: 42,
+//                       height: 42,
+//                       borderRadius: 12,
+//                       background:
+//                         "#eff6ff",
+//                       color:
+//                         "#2563eb",
+//                     }}
+//                   >
+//                     <LuClock3
+//                       size={21}
+//                     />
+//                   </div>
+
+//                   <div>
+//                     <div
+//                       className="fw-bold"
+//                       style={{
+//                         color:
+//                           "#0f172a",
+//                       }}
+//                     >
+//                       Today's Periods
+//                     </div>
+
+//                     <div
+//                       style={{
+//                         fontSize: 12,
+//                         color:
+//                           "#64748b",
+//                       }}
+//                     >
+//                       Class timetable for{" "}
+//                       {formatDay(
+//                         selectedDay,
+//                       )}
+//                     </div>
+//                   </div>
+
+//                 </div>
+
+//                 {selectedAssignments.length ===
+//                 0 ? (
+//                   <div
+//                     className="text-center py-3"
+//                     style={{
+//                       color:
+//                         "#64748b",
+//                       fontSize: 13,
+//                     }}
+//                   >
+//                     No periods assigned.
+//                   </div>
+//                 ) : (
+//                   <div className="row g-2">
+
+//                     {selectedAssignments.map(
+//                       (item, index) => (
+//                         <div
+//                           className="col-12 col-md-6 col-xl-4"
+//                           key={
+//                             item.id ||
+//                             `${item.periodId}-${index}`
+//                           }
+//                         >
+//                           <div
+//                             className="d-flex align-items-center gap-3 p-3"
+//                             style={{
+//                               background:
+//                                 "#f8fbff",
+//                               border:
+//                                 "1px solid #dbeafe",
+//                               borderRadius: 12,
+//                             }}
+//                           >
+
+//                             <div
+//                               className="d-flex align-items-center justify-content-center flex-shrink-0"
+//                               style={{
+//                                 width: 42,
+//                                 height: 42,
+//                                 borderRadius: 11,
+//                                 background:
+//                                   "#eff6ff",
+//                                 color:
+//                                   "#2563eb",
+//                                 fontWeight: 700,
+//                                 fontSize: 12,
+//                               }}
+//                             >
+//                               P
+//                               {item.periodId ||
+//                                 index + 1}
+//                             </div>
+
+//                             <div>
+//                               <div
+//                                 className="fw-bold"
+//                                 style={{
+//                                   color:
+//                                     "#334155",
+//                                   fontSize: 14,
+//                                 }}
+//                               >
+//                                 {formatSubject(
+//                                   item.subject,
+//                                 )}
+//                               </div>
+
+//                               <div
+//                                 style={{
+//                                   fontSize: 12,
+//                                   color:
+//                                     "#64748b",
+//                                 }}
+//                               >
+//                                 {formatTime(
+//                                   item.startTime,
+//                                 )}{" "}
+//                                 -{" "}
+//                                 {formatTime(
+//                                   item.endTime,
+//                                 )}
+//                               </div>
+
+//                               {item.room && (
+//                                 <div
+//                                   style={{
+//                                     fontSize: 11,
+//                                     color:
+//                                       "#64748b",
+//                                   }}
+//                                 >
+//                                   Room:{" "}
+//                                   {
+//                                     item.room
+//                                   }
+//                                 </div>
+//                               )}
+//                             </div>
+
+//                           </div>
+//                         </div>
+//                       ),
+//                     )}
+
+//                   </div>
+//                 )}
+
+//               </div>
+//             </div>
+
+//             {/* ================================================= */}
+//             {/* STUDENTS */}
+//             {/* ================================================= */}
+
+//             <div
+//               className="card border-0 rounded-4 shadow"
+//               style={{
+//                 boxShadow:
+//                   "0 6px 22px rgba(15,23,42,.07)",
+//               }}
+//             >
+//               <div className="card-body p-3">
+
+//                 <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+
+//                   <div className="d-flex align-items-center gap-2">
+
+//                     <div
+//                       className="d-flex align-items-center justify-content-center"
+//                       style={{
+//                         width: 42,
+//                         height: 42,
+//                         borderRadius: 12,
+//                         background:
+//                           "#eff6ff",
+//                         color:
+//                           "#2563eb",
+//                       }}
+//                     >
+//                       <LuUserRound
+//                         size={21}
+//                       />
+//                     </div>
+
+//                     <div>
+//                       <div
+//                         className="fw-bold"
+//                         style={{
+//                           color:
+//                             "#0f172a",
+//                         }}
+//                       >
+//                         Students
+//                       </div>
+
+//                       <div
+//                         style={{
+//                           fontSize: 12,
+//                           color:
+//                             "#64748b",
+//                         }}
+//                       >
+//                         {selectedClass}
+//                         {selectedSection &&
+//                           ` - ${selectedSection}`}{" "}
+//                         •{" "}
+//                         {
+//                           classStudents.length
+//                         }{" "}
+//                         Students
+//                       </div>
+//                     </div>
+
+//                   </div>
+
+//                   <div
+//                     className="position-relative"
+//                     style={{
+//                       width: "100%",
+//                       maxWidth: 280,
+//                     }}
+//                   >
+//                     <LuSearch
+//                       size={17}
+//                       style={{
+//                         position:
+//                           "absolute",
+//                         left: 13,
+//                         top: "50%",
+//                         transform:
+//                           "translateY(-50%)",
+//                         color:
+//                           "#64748b",
+//                       }}
+//                     />
+
+//                     <input
+//                       type="text"
+//                       value={
+//                         studentSearch
+//                       }
+//                       onChange={(e) =>
+//                         setStudentSearch(
+//                           e.target.value,
+//                         )
+//                       }
+//                       placeholder="Search student..."
+//                       className="form-control"
+//                       style={{
+//                         minHeight: 42,
+//                         paddingLeft: 40,
+//                         border:
+//                           "1px solid #dbeafe",
+//                         borderRadius: 11,
+//                       }}
+//                     />
+//                   </div>
+
+//                 </div>
+
+//                 {studentLoading ? (
+//                   <div className="text-center py-5">
+//                     <div
+//                       className="spinner-border"
+//                       style={{
+//                         color:
+//                           "#2563eb",
+//                       }}
+//                     />
+
+//                     <div
+//                       className="mt-2 small"
+//                       style={{
+//                         color:
+//                           "#64748b",
+//                       }}
+//                     >
+//                       Loading students...
+//                     </div>
+//                   </div>
+//                 ) : filteredStudents.length ===
+//                   0 ? (
+//                   <div className="text-center py-5">
+
+//                     <div
+//                       className="d-inline-flex align-items-center justify-content-center"
+//                       style={{
+//                         width: 60,
+//                         height: 60,
+//                         borderRadius: 15,
+//                         background:
+//                           "#eff6ff",
+//                         color:
+//                           "#2563eb",
+//                       }}
+//                     >
+//                       <LuUsers
+//                         size={28}
+//                       />
+//                     </div>
+
+//                     <div
+//                       className="fw-semibold mt-3"
+//                       style={{
+//                         color:
+//                           "#334155",
+//                       }}
+//                     >
+//                       No Students Found
+//                     </div>
+
+//                     <small className="text-muted">
+//                       No students found for
+//                       this class/section.
+//                     </small>
+
+//                   </div>
+//                 ) : (
+//                   <div className="table-responsive">
+
+//                     <table
+//                       className="table align-middle mb-0"
+//                       style={{
+//                         minWidth: 850,
+//                       }}
+//                     >
+
+//                       <thead>
+//                         <tr
+//                           style={{
+//                             background:
+//                               "#eff6ff",
+//                             color:
+//                               "#1e3a8a",
+//                           }}
+//                         >
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                               width: 60,
+//                             }}
+//                           >
+//                             #
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Student
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Admission No.
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Roll No.
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Class
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Section
+//                           </th>
+
+//                           <th
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Attendance
+//                           </th>
+
+//                           <th
+//                             className="text-center"
+//                             style={{
+//                               borderColor:
+//                                 "#dbeafe",
+//                               fontSize: 12,
+//                             }}
+//                           >
+//                             Action
+//                           </th>
+
+//                         </tr>
+//                       </thead>
+
+//                       <tbody>
+
+//                         {filteredStudents.map(
+//                           (
+//                             student,
+//                             index,
+//                           ) => {
+
+//                             const attendanceItem =
+//                               getStudentAttendance(
+//                                 student,
+//                               );
+
+//                             const status =
+//                               attendanceItem?.status ||
+//                               attendanceItem?.attendanceStatus ||
+//                               "NOT_MARKED";
+
+//                             const studentName =
+//                               student.studentName ||
+//                               student.name ||
+//                               `${student.firstName || ""} ${
+//                                 student.lastName || ""
+//                               }`.trim() ||
+//                               "Unknown Student";
+
+//                             const admissionNumber =
+//                               student.admissionNumber ||
+//                               "--";
+
+//                             const rollNumber =
+//                               student.rollNumber ||
+//                               student.rollNo ||
+//                               "--";
+
+//                             const studentClass =
+//                               student.studentClass ||
+//                               student.className ||
+//                               student.class ||
+//                               "--";
+
+//                             const section =
+//                               student.section ||
+//                               student.studentSection ||
+//                               "--";
+
+//                             return (
+//                               <tr
+//                                 key={
+//                                   student.id ||
+//                                   student.studentId ||
+//                                   admissionNumber ||
+//                                   index
+//                                 }
+//                               >
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                     color:
+//                                       "#64748b",
+//                                   }}
+//                                 >
+//                                   {index + 1}
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                   }}
+//                                 >
+//                                   <div
+//                                     className="d-flex align-items-center gap-2"
+//                                   >
+
+//                                     <div
+//                                       className="d-flex align-items-center justify-content-center"
+//                                       style={{
+//                                         width: 34,
+//                                         height: 34,
+//                                         borderRadius: 10,
+//                                         background:
+//                                           "#eff6ff",
+//                                         color:
+//                                           "#2563eb",
+//                                       }}
+//                                     >
+//                                       <LuUserRound
+//                                         size={16}
+//                                       />
+//                                     </div>
+
+//                                     <div>
+//                                       <div
+//                                         className="fw-semibold"
+//                                         style={{
+//                                           color:
+//                                             "#334155",
+//                                           fontSize: 13,
+//                                         }}
+//                                       >
+//                                         {
+//                                           studentName
+//                                         }
+//                                       </div>
+//                                     </div>
+
+//                                   </div>
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                     color:
+//                                       "#475569",
+//                                     fontSize: 13,
+//                                   }}
+//                                 >
+//                                   {
+//                                     admissionNumber
+//                                   }
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                     color:
+//                                       "#475569",
+//                                     fontSize: 13,
+//                                   }}
+//                                 >
+//                                   {
+//                                     rollNumber
+//                                   }
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                     color:
+//                                       "#475569",
+//                                     fontSize: 13,
+//                                   }}
+//                                 >
+//                                   {
+//                                     studentClass
+//                                   }
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                   }}
+//                                 >
+//                                   <span
+//                                     style={{
+//                                       background:
+//                                         "#eff6ff",
+//                                       color:
+//                                         "#2563eb",
+//                                       border:
+//                                         "1px solid #bfdbfe",
+//                                       borderRadius: 9,
+//                                       padding:
+//                                         "4px 9px",
+//                                       fontSize: 11,
+//                                       fontWeight: 700,
+//                                     }}
+//                                   >
+//                                     {section}
+//                                   </span>
+//                                 </td>
+
+//                                 <td
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                   }}
+//                                 >
+
+//                                   {status ===
+//                                   "PRESENT" ? (
+//                                     <span
+//                                       style={{
+//                                         background:
+//                                           "#ecfdf5",
+//                                         color:
+//                                           "#047857",
+//                                         border:
+//                                           "1px solid #a7f3d0",
+//                                         borderRadius: 9,
+//                                         padding:
+//                                           "5px 10px",
+//                                         fontSize: 11,
+//                                         fontWeight: 700,
+//                                       }}
+//                                     >
+//                                       Present
+//                                     </span>
+//                                   ) : status ===
+//                                     "ABSENT" ? (
+//                                     <span
+//                                       style={{
+//                                         background:
+//                                           "#fef2f2",
+//                                         color:
+//                                           "#dc2626",
+//                                         border:
+//                                           "1px solid #fecaca",
+//                                         borderRadius: 9,
+//                                         padding:
+//                                           "5px 10px",
+//                                         fontSize: 11,
+//                                         fontWeight: 700,
+//                                       }}
+//                                     >
+//                                       Absent
+//                                     </span>
+//                                   ) : status ===
+//                                     "HALF_DAY" ? (
+//                                     <span
+//                                       style={{
+//                                         background:
+//                                           "#fffbeb",
+//                                         color:
+//                                           "#b45309",
+//                                         border:
+//                                           "1px solid #fde68a",
+//                                         borderRadius: 9,
+//                                         padding:
+//                                           "5px 10px",
+//                                         fontSize: 11,
+//                                         fontWeight: 700,
+//                                       }}
+//                                     >
+//                                       Half Day
+//                                     </span>
+//                                   ) : status ===
+//                                     "LEAVE" ? (
+//                                     <span
+//                                       style={{
+//                                         background:
+//                                           "#eff6ff",
+//                                         color:
+//                                           "#2563eb",
+//                                         border:
+//                                           "1px solid #bfdbfe",
+//                                         borderRadius: 9,
+//                                         padding:
+//                                           "5px 10px",
+//                                         fontSize: 11,
+//                                         fontWeight: 700,
+//                                       }}
+//                                     >
+//                                       Leave
+//                                     </span>
+//                                   ) : (
+//                                     <span
+//                                       style={{
+//                                         background:
+//                                           "#f8fafc",
+//                                         color:
+//                                           "#64748b",
+//                                         border:
+//                                           "1px solid #e2e8f0",
+//                                         borderRadius: 9,
+//                                         padding:
+//                                           "5px 10px",
+//                                         fontSize: 11,
+//                                         fontWeight: 700,
+//                                       }}
+//                                     >
+//                                       Not Marked
+//                                     </span>
+//                                   )}
+
+//                                 </td>
+
+//                                 <td
+//                                   className="text-center"
+//                                   style={{
+//                                     borderColor:
+//                                       "#eef2ff",
+//                                   }}
+//                                 >
+//                                   <button
+//                                     type="button"
+//                                     className="btn btn-sm"
+//                                     title="View Student"
+//                                     style={{
+//                                       width: 34,
+//                                       height: 34,
+//                                       borderRadius: 9,
+//                                       border:
+//                                         "1px solid #bfdbfe",
+//                                       background:
+//                                         "#eff6ff",
+//                                       color:
+//                                         "#2563eb",
+//                                     }}
+//                                   >
+//                                     <LuEye
+//                                       size={16}
+//                                     />
+//                                   </button>
+//                                 </td>
+
+//                               </tr>
+//                             );
+//                           },
+//                         )}
+
+//                       </tbody>
+
+//                     </table>
+
+//                   </div>
+//                 )}
+
+//               </div>
+//             </div>
+//           </>
+//         )}
+
+//       </div>
+
+//       {/* ================================================= */}
+//       {/* CSS */}
+//       {/* ================================================= */}
+
+//       <style>
+//         {`
+//           .form-control:focus {
+//             border-color: #60a5fa !important;
+//             box-shadow: 0 0 0 3px rgba(96,165,250,.12) !important;
+//           }
+
+//           .table > :not(caption) > * > * {
+//             padding: 11px 12px;
+//           }
+
+//           @media (max-width: 767px) {
+//             .card-body {
+//               padding: 12px !important;
+//             }
+//           }
+//         `}
+//       </style>
+//     </>
+//   );
+// };
+
+// export default MyClasses;
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
@@ -1300,12 +3681,15 @@ const MyClasses = () => {
 
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
+  const { sessions } = useMasters();
+
+  // =========================================================
+  // BASIC STATES
+  // =========================================================
+
   const [schoolId, setSchoolId] = useState("");
   const [teacherId, setTeacherId] = useState("");
-
   const [academicYear, setAcademicYear] = useState("");
-
-  const { sessions } = useMasters();
 
   const [assignments, setAssignments] = useState([]);
   const [students, setStudents] = useState([]);
@@ -1318,11 +3702,11 @@ const MyClasses = () => {
   const [error, setError] = useState("");
 
   const [selectedClass, setSelectedClass] = useState(
-    location.state?.studentClass || "",
+    location.state?.studentClass || ""
   );
 
   const [selectedSection, setSelectedSection] = useState(
-    location.state?.section || "",
+    location.state?.section || ""
   );
 
   const [studentSearch, setStudentSearch] = useState("");
@@ -1359,7 +3743,9 @@ const MyClasses = () => {
 
     const startYear = month >= 4 ? year : year - 1;
 
-    setAcademicYear(`${startYear}-${startYear + 1}`);
+    const currentYear = `${startYear}-${startYear + 1}`;
+
+    setAcademicYear(currentYear);
   }, []);
 
   // =========================================================
@@ -1368,16 +3754,29 @@ const MyClasses = () => {
 
   useEffect(() => {
     const storedSchoolId =
-      localStorage.getItem("schoolId") || user?.schoolId;
+      localStorage.getItem("schoolId") ||
+      user?.schoolId ||
+      user?.school?.id ||
+      "";
 
-    const storedTeacherId = user?.teacherId;
+    const storedTeacherId =
+      user?.teacherId ||
+      user?.teacher?.id ||
+      localStorage.getItem("teacherId") ||
+      "";
+
+    console.log("========== LOGIN USER ==========");
+    console.log("user:", user);
+    console.log("schoolId:", storedSchoolId);
+    console.log("teacherId:", storedTeacherId);
+    console.log("================================");
 
     if (storedSchoolId) {
-      setSchoolId(storedSchoolId);
+      setSchoolId(String(storedSchoolId));
     }
 
     if (storedTeacherId) {
-      setTeacherId(storedTeacherId);
+      setTeacherId(String(storedTeacherId));
     }
   }, []);
 
@@ -1387,6 +3786,12 @@ const MyClasses = () => {
 
   const loadAssignments = async () => {
     if (!schoolId || !teacherId || !academicYear) {
+      console.log("Assignments API skipped:", {
+        schoolId,
+        teacherId,
+        academicYear,
+      });
+
       return;
     }
 
@@ -1394,37 +3799,114 @@ const MyClasses = () => {
       setLoading(true);
       setError("");
 
+      console.log("========== LOADING ASSIGNMENTS ==========");
+      console.log("schoolId:", schoolId);
+      console.log("teacherId:", teacherId);
+      console.log("academicYear:", academicYear);
+      console.log("dayOfWeek:", selectedDay);
+
       const response = await axiosInstance.get(
         "/api/teacher-class-assignment/teacher/day",
         {
           params: {
             schoolId: Number(schoolId),
-            academicYear,
+            academicYear: academicYear,
             teacherId: Number(teacherId),
             dayOfWeek: selectedDay,
           },
-        },
+        }
       );
 
-      const data = Array.isArray(response.data)
-        ? response.data
-        : [];
+      console.log("========== ASSIGNMENT API RESPONSE ==========");
+      console.log("status:", response.status);
+      console.log("response.data:", response.data);
+      console.log("==============================================");
 
-      setAssignments(
-        data.filter((item) => item.active !== false),
+      /*
+       * Backend response ko multiple formats me handle karenge.
+       *
+       * Format 1:
+       * [
+       *   {...},
+       *   {...}
+       * ]
+       *
+       * Format 2:
+       * {
+       *   data: [...]
+       * }
+       *
+       * Format 3:
+       * {
+       *   assignments: [...]
+       * }
+       *
+       * Format 4:
+       * {
+       *   content: [...]
+       * }
+       */
+
+      let data = [];
+
+      if (Array.isArray(response.data)) {
+        data = response.data;
+      } else if (Array.isArray(response.data?.data)) {
+        data = response.data.data;
+      } else if (Array.isArray(response.data?.assignments)) {
+        data = response.data.assignments;
+      } else if (Array.isArray(response.data?.content)) {
+        data = response.data.content;
+      }
+
+      console.log("Normalized assignments:", data);
+      console.log("Assignment count:", data.length);
+
+      if (data.length > 0) {
+        console.log("First assignment:", data[0]);
+        console.log("studentClass:", data[0]?.studentClass);
+        console.log("section:", data[0]?.section);
+        console.log("subject:", data[0]?.subject);
+      }
+
+      const activeAssignments = data.filter(
+        (item) => item && item.active !== false
       );
+
+      console.log(
+        "Active assignments:",
+        activeAssignments
+      );
+
+      setAssignments(activeAssignments);
+
+      if (activeAssignments.length === 0) {
+        setError(
+          `No class assignment found for ${selectedDay}.`
+        );
+      }
     } catch (err) {
       console.error(
-        "Teacher assignment error:",
-        err.response?.data || err,
+        "========== TEACHER ASSIGNMENT ERROR =========="
+      );
+
+      console.error("error:", err);
+      console.error("response:", err?.response);
+      console.error(
+        "response.data:",
+        err?.response?.data
+      );
+
+      console.error(
+        "==============================================="
       );
 
       setAssignments([]);
 
       setError(
-        err.response?.data?.message ||
-          err.response?.data ||
-          "Unable to load your classes.",
+        err?.response?.data?.message ||
+          err?.response?.data ||
+          "Unable to load your classes."
       );
     } finally {
       setLoading(false);
@@ -1459,18 +3941,31 @@ const MyClasses = () => {
           params: {
             schoolId: Number(schoolId),
           },
-        },
+        }
       );
 
-      const data = Array.isArray(response.data)
-        ? response.data
-        : [];
+      let data = [];
+
+      if (Array.isArray(response.data)) {
+        data = response.data;
+      } else if (Array.isArray(response.data?.data)) {
+        data = response.data.data;
+      } else if (Array.isArray(response.data?.students)) {
+        data = response.data.students;
+      } else if (Array.isArray(response.data?.content)) {
+        data = response.data.content;
+      }
 
       setStudents(data);
+
+      console.log(
+        "Students loaded:",
+        data.length
+      );
     } catch (err) {
       console.error(
         "Students loading error:",
-        err.response?.data || err,
+        err?.response?.data || err
       );
 
       setStudents([]);
@@ -1502,18 +3997,33 @@ const MyClasses = () => {
           params: {
             schoolId: Number(schoolId),
           },
-        },
+        }
       );
 
-      const data = Array.isArray(response.data)
-        ? response.data
-        : [];
+      let data = [];
+
+      if (Array.isArray(response.data)) {
+        data = response.data;
+      } else if (Array.isArray(response.data?.data)) {
+        data = response.data.data;
+      } else if (
+        Array.isArray(response.data?.attendance)
+      ) {
+        data = response.data.attendance;
+      } else if (Array.isArray(response.data?.content)) {
+        data = response.data.content;
+      }
 
       setAttendance(data);
+
+      console.log(
+        "Attendance loaded:",
+        data.length
+      );
     } catch (err) {
       console.error(
         "Attendance loading error:",
-        err.response?.data || err,
+        err?.response?.data || err
       );
 
       setAttendance([]);
@@ -1527,49 +4037,78 @@ const MyClasses = () => {
   }, [schoolId]);
 
   // =========================================================
-  // FORMAT DATE
+  // TODAY DATE
   // =========================================================
 
   const todayDate = useMemo(() => {
     const today = new Date();
 
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(
-      2,
-      "0",
-    );
-    const day = String(today.getDate()).padStart(2, "0");
+
+    const month = String(
+      today.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+      today.getDate()
+    ).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   }, []);
 
   // =========================================================
-  // UNIQUE CLASS + SECTION
+  // NORMALIZE ASSIGNMENT VALUES
+  // =========================================================
+
+  const getAssignmentClass = (item) => {
+    return String(
+      item?.studentClass ??
+        item?.className ??
+        item?.class ??
+        item?.student_class ??
+        ""
+    ).trim();
+  };
+
+  const getAssignmentSection = (item) => {
+    return String(
+      item?.section ??
+        item?.studentSection ??
+        item?.student_section ??
+        ""
+    ).trim();
+  };
+
+  // =========================================================
+  // UNIQUE CLASS LIST
   // =========================================================
 
   const classList = useMemo(() => {
-    const map = new Map();
+    const uniqueClasses = new Set();
 
     assignments.forEach((item) => {
       const studentClass =
-        item.studentClass?.toString().trim() || "";
+        getAssignmentClass(item);
 
-      const section =
-        item.section?.toString().trim() || "";
-
-      if (!studentClass) return;
-
-      const key = `${studentClass}-${section}`;
-
-      if (!map.has(key)) {
-        map.set(key, {
-          studentClass,
-          section,
-        });
+      if (studentClass) {
+        uniqueClasses.add(studentClass);
       }
     });
 
-    return Array.from(map.values());
+    const list = Array.from(uniqueClasses);
+
+    console.log(
+      "========== CLASS LIST =========="
+    );
+
+    console.log("assignments:", assignments);
+    console.log("classList:", list);
+
+    console.log(
+      "================================"
+    );
+
+    return list;
   }, [assignments]);
 
   // =========================================================
@@ -1577,32 +4116,55 @@ const MyClasses = () => {
   // =========================================================
 
   const sectionList = useMemo(() => {
-    return [
-      ...new Set(
-        classList
-          .filter(
-            (item) =>
-              item.studentClass === selectedClass,
-          )
-          .map((item) => item.section)
-          .filter(Boolean),
-      ),
-    ];
-  }, [classList, selectedClass]);
+    if (!selectedClass) {
+      return [];
+    }
+
+    const uniqueSections = new Set();
+
+    assignments.forEach((item) => {
+      const studentClass =
+        getAssignmentClass(item);
+
+      const section =
+        getAssignmentSection(item);
+
+      if (
+        studentClass ===
+          String(selectedClass).trim() &&
+        section
+      ) {
+        uniqueSections.add(section);
+      }
+    });
+
+    return Array.from(uniqueSections);
+  }, [assignments, selectedClass]);
 
   // =========================================================
   // SELECTED CLASS ASSIGNMENTS
   // =========================================================
 
   const selectedAssignments = useMemo(() => {
-    if (!selectedClass) return [];
+    if (!selectedClass) {
+      return [];
+    }
 
-    return assignments.filter(
-      (item) =>
-        item.studentClass === selectedClass &&
+    return assignments.filter((item) => {
+      const studentClass =
+        getAssignmentClass(item);
+
+      const section =
+        getAssignmentSection(item);
+
+      return (
+        studentClass ===
+          String(selectedClass).trim() &&
         (!selectedSection ||
-          item.section === selectedSection),
-    );
+          section ===
+            String(selectedSection).trim())
+      );
+    });
   }, [
     assignments,
     selectedClass,
@@ -1614,23 +4176,29 @@ const MyClasses = () => {
   // =========================================================
 
   const classStudents = useMemo(() => {
-    if (!selectedClass) return [];
+    if (!selectedClass) {
+      return [];
+    }
 
     return students.filter((student) => {
-      const studentClass =
+      const studentClass = String(
         student.studentClass ||
-        student.className ||
-        student.class;
+          student.className ||
+          student.class ||
+          ""
+      ).trim();
 
-      const section =
+      const section = String(
         student.section ||
-        student.studentSection;
+          student.studentSection ||
+          ""
+      ).trim();
 
       return (
-        String(studentClass || "").trim() ===
+        studentClass ===
           String(selectedClass).trim() &&
         (!selectedSection ||
-          String(section || "").trim() ===
+          section ===
             String(selectedSection).trim())
       );
     });
@@ -1646,13 +4214,17 @@ const MyClasses = () => {
 
   const getStudentAttendance = (student) => {
     const studentId =
-      student.id || student.studentId;
+      student.id ||
+      student.studentId;
 
     const admissionNumber =
       student.admissionNumber;
 
     return attendance.find((item) => {
-      if (item.attendanceDate !== todayDate) {
+      if (
+        item.attendanceDate !==
+        todayDate
+      ) {
         return false;
       }
 
@@ -1691,42 +4263,46 @@ const MyClasses = () => {
   // =========================================================
 
   const filteredStudents = useMemo(() => {
-    const keyword = studentSearch
-      .trim()
-      .toLowerCase();
+    const keyword =
+      studentSearch
+        .trim()
+        .toLowerCase();
 
     if (!keyword) {
       return classStudents;
     }
 
-    return classStudents.filter((student) => {
-      const name =
-        student.studentName ||
-        student.name ||
-        `${student.firstName || ""} ${
-          student.lastName || ""
-        }`;
+    return classStudents.filter(
+      (student) => {
+        const name =
+          student.studentName ||
+          student.name ||
+          `${student.firstName || ""} ${
+            student.lastName || ""
+          }`;
 
-      const admissionNumber =
-        student.admissionNumber || "";
+        const admissionNumber =
+          student.admissionNumber ||
+          "";
 
-      const rollNumber =
-        student.rollNumber ||
-        student.rollNo ||
-        "";
+        const rollNumber =
+          student.rollNumber ||
+          student.rollNo ||
+          "";
 
-      return (
-        String(name)
-          .toLowerCase()
-          .includes(keyword) ||
-        String(admissionNumber)
-          .toLowerCase()
-          .includes(keyword) ||
-        String(rollNumber)
-          .toLowerCase()
-          .includes(keyword)
-      );
-    });
+        return (
+          String(name)
+            .toLowerCase()
+            .includes(keyword) ||
+          String(admissionNumber)
+            .toLowerCase()
+            .includes(keyword) ||
+          String(rollNumber)
+            .toLowerCase()
+            .includes(keyword)
+        );
+      }
+    );
   }, [
     classStudents,
     studentSearch,
@@ -1737,28 +4313,48 @@ const MyClasses = () => {
   // =========================================================
 
   const presentStudents = useMemo(() => {
-    return classStudents.filter((student) => {
-      const item =
-        getStudentAttendance(student);
+    return classStudents.filter(
+      (student) => {
+        const item =
+          getStudentAttendance(
+            student
+          );
 
-      return (
-        item?.status === "PRESENT" ||
-        item?.attendanceStatus === "PRESENT"
-      );
-    });
-  }, [classStudents, attendance, todayDate]);
+        return (
+          item?.status ===
+            "PRESENT" ||
+          item?.attendanceStatus ===
+            "PRESENT"
+        );
+      }
+    );
+  }, [
+    classStudents,
+    attendance,
+    todayDate,
+  ]);
 
   const absentStudents = useMemo(() => {
-    return classStudents.filter((student) => {
-      const item =
-        getStudentAttendance(student);
+    return classStudents.filter(
+      (student) => {
+        const item =
+          getStudentAttendance(
+            student
+          );
 
-      return (
-        item?.status === "ABSENT" ||
-        item?.attendanceStatus === "ABSENT"
-      );
-    });
-  }, [classStudents, attendance, todayDate]);
+        return (
+          item?.status ===
+            "ABSENT" ||
+          item?.attendanceStatus ===
+            "ABSENT"
+        );
+      }
+    );
+  }, [
+    classStudents,
+    attendance,
+    todayDate,
+  ]);
 
   const totalStudents =
     classStudents.length;
@@ -1772,7 +4368,8 @@ const MyClasses = () => {
   const attendancePercentage =
     totalStudents > 0
       ? (
-          (presentCount / totalStudents) *
+          (presentCount /
+            totalStudents) *
           100
         ).toFixed(1)
       : "0.0";
@@ -1796,27 +4393,32 @@ const MyClasses = () => {
     return String(subject)
       .replaceAll("_", " ")
       .toLowerCase()
-      .replace(/\b\w/g, (char) =>
-        char.toUpperCase(),
+      .replace(
+        /\b\w/g,
+        (char) =>
+          char.toUpperCase()
       );
   };
 
   const formatTime = (time) => {
     if (!time) return "--";
 
-    const parts = String(time).split(":");
+    const parts =
+      String(time).split(":");
 
     if (parts.length < 2) {
       return time;
     }
 
     let hour = Number(parts[0]);
+
     const minute = parts[1];
 
     const ampm =
       hour >= 12 ? "PM" : "AM";
 
-    hour = hour % 12 || 12;
+    hour =
+      hour % 12 || 12;
 
     return `${hour}:${minute} ${ampm}`;
   };
@@ -1837,10 +4439,20 @@ const MyClasses = () => {
 
   const handleClassSelect = (
     studentClass,
-    section,
+    section = ""
   ) => {
     setSelectedClass(studentClass);
-    setSelectedSection(section || "");
+    setSelectedSection(section);
+    setStudentSearch("");
+  };
+
+  // =========================================================
+  // SELECT CLASS FROM DROPDOWN
+  // =========================================================
+
+  const handleClassDropdown = (value) => {
+    setSelectedClass(value);
+    setSelectedSection("");
     setStudentSearch("");
   };
 
@@ -1856,7 +4468,8 @@ const MyClasses = () => {
           style={{
             background:
               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
-            border: "1px solid #dbeafe",
+            border:
+              "1px solid #dbeafe",
           }}
         >
           <div className="p-3 p-md-4">
@@ -1885,8 +4498,8 @@ const MyClasses = () => {
                   </h5>
 
                   <div className="text-muted small">
-                    Dashboard &nbsp;/&nbsp; My
-                    Classes
+                    Dashboard &nbsp;/&nbsp;
+                    My Classes
                   </div>
                 </div>
               </div>
@@ -1895,7 +4508,8 @@ const MyClasses = () => {
                 <span
                   className="badge rounded-pill px-3 py-2"
                   style={{
-                    backgroundColor: "#eff6ff",
+                    backgroundColor:
+                      "#eff6ff",
                     color: "#2563eb",
                     border:
                       "1px solid #bfdbfe",
@@ -1907,7 +4521,9 @@ const MyClasses = () => {
 
                 <button
                   type="button"
-                  onClick={handleRefresh}
+                  onClick={
+                    handleRefresh
+                  }
                   className="btn btn-sm"
                   style={{
                     width: 38,
@@ -1938,8 +4554,8 @@ const MyClasses = () => {
             }}
           >
             <small className="text-muted">
-              Home &nbsp;›&nbsp; Dashboard
-              &nbsp;›&nbsp;
+              Home &nbsp;›&nbsp;
+              Dashboard &nbsp;›&nbsp;
               <span className="text-primary fw-semibold">
                 My Classes
               </span>
@@ -1951,7 +4567,7 @@ const MyClasses = () => {
       <div className="mx-2 mt-2 mb-3">
 
         {/* ================================================= */}
-        {/* FILTER / CLASS SELECTION */}
+        {/* FILTER */}
         {/* ================================================= */}
 
         <div
@@ -1970,7 +4586,8 @@ const MyClasses = () => {
                 <div
                   className="p-3 h-100"
                   style={{
-                    background: "#f8fbff",
+                    background:
+                      "#f8fbff",
                     border:
                       "1px solid #dbeafe",
                     borderRadius: 14,
@@ -1980,14 +4597,16 @@ const MyClasses = () => {
                     <LuSchool
                       size={18}
                       style={{
-                        color: "#2563eb",
+                        color:
+                          "#2563eb",
                       }}
                     />
 
                     <div
                       style={{
                         fontSize: 12,
-                        color: "#64748b",
+                        color:
+                          "#64748b",
                         fontWeight: 600,
                       }}
                     >
@@ -1998,13 +4617,11 @@ const MyClasses = () => {
                   <select
                     className="form-control"
                     value={selectedClass}
-                    onChange={(e) => {
-                      setSelectedClass(
-                        e.target.value,
-                      );
-                      setSelectedSection("");
-                      setStudentSearch("");
-                    }}
+                    onChange={(e) =>
+                      handleClassDropdown(
+                        e.target.value
+                      )
+                    }
                     style={{
                       border:
                         "1px solid #dbeafe",
@@ -2016,16 +4633,16 @@ const MyClasses = () => {
                     </option>
 
                     {classList.map(
-                      (item, index) => (
+                      (studentClass) => (
                         <option
-                          key={`${item.studentClass}-${item.section}-${index}`}
+                          key={studentClass}
                           value={
-                            item.studentClass
+                            studentClass
                           }
                         >
-                          {item.studentClass}
+                          {studentClass}
                         </option>
-                      ),
+                      )
                     )}
                   </select>
                 </div>
@@ -2037,7 +4654,8 @@ const MyClasses = () => {
                 <div
                   className="p-3 h-100"
                   style={{
-                    background: "#f8fbff",
+                    background:
+                      "#f8fbff",
                     border:
                       "1px solid #dbeafe",
                     borderRadius: 14,
@@ -2047,14 +4665,16 @@ const MyClasses = () => {
                     <LuUsers
                       size={18}
                       style={{
-                        color: "#2563eb",
+                        color:
+                          "#2563eb",
                       }}
                     />
 
                     <div
                       style={{
                         fontSize: 12,
-                        color: "#64748b",
+                        color:
+                          "#64748b",
                         fontWeight: 600,
                       }}
                     >
@@ -2067,11 +4687,13 @@ const MyClasses = () => {
                     value={selectedSection}
                     onChange={(e) => {
                       setSelectedSection(
-                        e.target.value,
+                        e.target.value
                       );
                       setStudentSearch("");
                     }}
-                    disabled={!selectedClass}
+                    disabled={
+                      !selectedClass
+                    }
                     style={{
                       border:
                         "1px solid #dbeafe",
@@ -2090,7 +4712,7 @@ const MyClasses = () => {
                         >
                           Section {section}
                         </option>
-                      ),
+                      )
                     )}
                   </select>
                 </div>
@@ -2102,7 +4724,8 @@ const MyClasses = () => {
                 <div
                   className="p-3 h-100"
                   style={{
-                    background: "#f8fbff",
+                    background:
+                      "#f8fbff",
                     border:
                       "1px solid #dbeafe",
                     borderRadius: 14,
@@ -2112,14 +4735,16 @@ const MyClasses = () => {
                     <LuCalendarDays
                       size={18}
                       style={{
-                        color: "#2563eb",
+                        color:
+                          "#2563eb",
                       }}
                     />
 
                     <div
                       style={{
                         fontSize: 12,
-                        color: "#64748b",
+                        color:
+                          "#64748b",
                         fontWeight: 600,
                       }}
                     >
@@ -2132,7 +4757,7 @@ const MyClasses = () => {
                     value={academicYear}
                     onChange={(e) =>
                       setAcademicYear(
-                        e.target.value,
+                        e.target.value
                       )
                     }
                     style={{
@@ -2149,13 +4774,15 @@ const MyClasses = () => {
                         >
                           {session}
                         </option>
-                      ),
+                      )
                     )}
 
                     {!sessions?.length &&
                       academicYear && (
                         <option
-                          value={academicYear}
+                          value={
+                            academicYear
+                          }
                         >
                           {academicYear}
                         </option>
@@ -2190,7 +4817,8 @@ const MyClasses = () => {
                     width: 42,
                     height: 42,
                     borderRadius: 12,
-                    background: "#eff6ff",
+                    background:
+                      "#eff6ff",
                     color: "#2563eb",
                   }}
                 >
@@ -2203,7 +4831,8 @@ const MyClasses = () => {
                   <div
                     className="fw-bold"
                     style={{
-                      color: "#0f172a",
+                      color:
+                        "#0f172a",
                     }}
                   >
                     My Assigned Classes
@@ -2212,11 +4841,12 @@ const MyClasses = () => {
                   <div
                     style={{
                       fontSize: 12,
-                      color: "#64748b",
+                      color:
+                        "#64748b",
                     }}
                   >
-                    Select a class to view
-                    students
+                    Select a class to
+                    view students
                   </div>
                 </div>
               </div>
@@ -2224,13 +4854,15 @@ const MyClasses = () => {
               <span
                 className="badge rounded-pill px-3 py-2"
                 style={{
-                  background: "#eff6ff",
+                  background:
+                    "#eff6ff",
                   color: "#2563eb",
                   border:
                     "1px solid #bfdbfe",
                 }}
               >
-                {classList.length} Classes
+                {classList.length}{" "}
+                Classes
               </span>
 
             </div>
@@ -2240,46 +4872,133 @@ const MyClasses = () => {
                 <div
                   className="spinner-border"
                   style={{
-                    color: "#2563eb",
+                    color:
+                      "#2563eb",
                   }}
                 />
 
                 <div
                   className="mt-2 small"
                   style={{
-                    color: "#64748b",
+                    color:
+                      "#64748b",
                   }}
                 >
                   Loading classes...
                 </div>
               </div>
-            ) : classList.length === 0 ? (
+            ) : classList.length ===
+              0 ? (
               <div className="text-center py-4">
+
                 <LuBookOpen
                   size={32}
                   style={{
-                    color: "#94a3b8",
+                    color:
+                      "#94a3b8",
                   }}
                 />
 
                 <div
                   className="fw-semibold mt-2"
                   style={{
-                    color: "#334155",
+                    color:
+                      "#334155",
                   }}
                 >
                   No Classes Assigned
                 </div>
 
                 <small className="text-muted">
-                  No class assignment found
-                  for today.
+                  No class assignment
+                  found for{" "}
+                  {formatDay(
+                    selectedDay
+                  )}.
                 </small>
+
+                <div
+                  className="mt-3 p-3 mx-auto"
+                  style={{
+                    maxWidth: 600,
+                    background:
+                      "#f8fafc",
+                    border:
+                      "1px solid #e2e8f0",
+                    borderRadius: 12,
+                    textAlign:
+                      "left",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color:
+                        "#475569",
+                    }}
+                  >
+                    <strong>
+                      Debug:
+                    </strong>
+                    <br />
+                    School ID:{" "}
+                    {schoolId || "-"}
+                    <br />
+                    Teacher ID:{" "}
+                    {teacherId || "-"}
+                    <br />
+                    Academic Year:{" "}
+                    {academicYear || "-"}
+                    <br />
+                    Day:{" "}
+                    {selectedDay}
+                  </div>
+                </div>
+
               </div>
             ) : (
               <div className="row g-3">
-                {classList.map(
-                  (item) => {
+
+                {assignments
+                  .reduce(
+                    (unique, item) => {
+                      const studentClass =
+                        getAssignmentClass(
+                          item
+                        );
+
+                      const section =
+                        getAssignmentSection(
+                          item
+                        );
+
+                      if (
+                        !studentClass
+                      ) {
+                        return unique;
+                      }
+
+                      const key = `${studentClass}-${section}`;
+
+                      if (
+                        !unique.some(
+                          (x) =>
+                            x.key === key
+                        )
+                      ) {
+                        unique.push({
+                          key,
+                          studentClass,
+                          section,
+                        });
+                      }
+
+                      return unique;
+                    },
+                    []
+                  )
+                  .map((item) => {
+
                     const active =
                       selectedClass ===
                         item.studentClass &&
@@ -2289,10 +5008,14 @@ const MyClasses = () => {
                     const classAssignments =
                       assignments.filter(
                         (assignment) =>
-                          assignment.studentClass ===
+                          getAssignmentClass(
+                            assignment
+                          ) ===
                             item.studentClass &&
-                          assignment.section ===
-                            item.section,
+                          getAssignmentSection(
+                            assignment
+                          ) ===
+                            item.section
                       );
 
                     const subjects = [
@@ -2300,23 +5023,25 @@ const MyClasses = () => {
                         classAssignments
                           .map(
                             (a) =>
-                              a.subject,
+                              a.subject
                           )
-                          .filter(Boolean),
+                          .filter(
+                            Boolean
+                          )
                       ),
                     ];
 
                     return (
                       <div
                         className="col-12 col-sm-6 col-xl-4"
-                        key={`${item.studentClass}-${item.section}`}
+                        key={item.key}
                       >
                         <div
                           className="p-3 h-100"
                           onClick={() =>
                             handleClassSelect(
                               item.studentClass,
-                              item.section,
+                              item.section
                             )
                           }
                           style={{
@@ -2324,15 +5049,18 @@ const MyClasses = () => {
                               active
                                 ? "#f0f7ff"
                                 : "#f8fbff",
-                            border: active
-                              ? "1px solid #2563eb"
-                              : "1px solid #dbeafe",
+                            border:
+                              active
+                                ? "1px solid #2563eb"
+                                : "1px solid #dbeafe",
                             borderRadius: 14,
-                            cursor: "pointer",
+                            cursor:
+                              "pointer",
                             transition:
                               "all .2s ease",
                           }}
                         >
+
                           <div className="d-flex justify-content-between align-items-start">
 
                             <div>
@@ -2341,7 +5069,8 @@ const MyClasses = () => {
                                   fontSize: 11,
                                   color:
                                     "#64748b",
-                                  fontWeight: 600,
+                                  fontWeight:
+                                    600,
                                 }}
                               >
                                 CLASS
@@ -2380,6 +5109,7 @@ const MyClasses = () => {
                                 size={18}
                               />
                             </div>
+
                           </div>
 
                           <div
@@ -2393,10 +5123,10 @@ const MyClasses = () => {
                             {subjects.length
                               ? subjects
                                   .map(
-                                    formatSubject,
+                                    formatSubject
                                   )
                                   .join(
-                                    ", ",
+                                    ", "
                                   )
                               : "No subject"}
                           </div>
@@ -2415,7 +5145,8 @@ const MyClasses = () => {
                                 fontSize: 11,
                                 color:
                                   "#2563eb",
-                                fontWeight: 700,
+                                fontWeight:
+                                  700,
                               }}
                             >
                               {
@@ -2433,12 +5164,15 @@ const MyClasses = () => {
                                 style={{
                                   background:
                                     "#2563eb",
-                                  color: "#fff",
-                                  borderRadius: 9,
+                                  color:
+                                    "#fff",
+                                  borderRadius:
+                                    9,
                                   padding:
                                     "5px 9px",
                                   fontSize: 11,
-                                  fontWeight: 700,
+                                  fontWeight:
+                                    700,
                                 }}
                               >
                                 Selected
@@ -2446,13 +5180,15 @@ const MyClasses = () => {
                             )}
 
                           </div>
+
                         </div>
                       </div>
                     );
-                  },
-                )}
+                  })}
+
               </div>
             )}
+
           </div>
         </div>
 
@@ -2467,8 +5203,10 @@ const MyClasses = () => {
               borderRadius: 12,
               border:
                 "1px solid #fecaca",
-              background: "#fef2f2",
-              color: "#b91c1c",
+              background:
+                "#fef2f2",
+              color:
+                "#b91c1c",
             }}
           >
             {error}
@@ -2481,6 +5219,7 @@ const MyClasses = () => {
 
         {selectedClass && (
           <>
+
             {/* CLASS HEADER */}
 
             <div
@@ -2535,7 +5274,7 @@ const MyClasses = () => {
                         }}
                       >
                         {formatDay(
-                          selectedDay,
+                          selectedDay
                         )}{" "}
                         •{" "}
                         {academicYear}
@@ -2549,8 +5288,10 @@ const MyClasses = () => {
                     <div
                       style={{
                         fontSize: 11,
-                        color: "#64748b",
-                        fontWeight: 600,
+                        color:
+                          "#64748b",
+                        fontWeight:
+                          600,
                       }}
                     >
                       Attendance
@@ -2621,7 +5362,8 @@ const MyClasses = () => {
                             fontSize: 11,
                             color:
                               "#64748b",
-                            fontWeight: 600,
+                            fontWeight:
+                              600,
                           }}
                         >
                           TOTAL STUDENTS
@@ -2684,7 +5426,8 @@ const MyClasses = () => {
                             fontSize: 11,
                             color:
                               "#64748b",
-                            fontWeight: 600,
+                            fontWeight:
+                              600,
                           }}
                         >
                           PRESENT TODAY
@@ -2747,7 +5490,8 @@ const MyClasses = () => {
                             fontSize: 11,
                             color:
                               "#64748b",
-                            fontWeight: 600,
+                            fontWeight:
+                              600,
                           }}
                         >
                           ABSENT TODAY
@@ -2810,7 +5554,8 @@ const MyClasses = () => {
                             fontSize: 11,
                             color:
                               "#64748b",
-                            fontWeight: 600,
+                            fontWeight:
+                              600,
                           }}
                         >
                           ATTENDANCE
@@ -2840,7 +5585,7 @@ const MyClasses = () => {
             </div>
 
             {/* ================================================= */}
-            {/* TODAY'S PERIODS */}
+            {/* TODAY PERIODS */}
             {/* ================================================= */}
 
             <div
@@ -2889,9 +5634,10 @@ const MyClasses = () => {
                           "#64748b",
                       }}
                     >
-                      Class timetable for{" "}
+                      Class timetable
+                      for{" "}
                       {formatDay(
-                        selectedDay,
+                        selectedDay
                       )}
                     </div>
                   </div>
@@ -2914,7 +5660,10 @@ const MyClasses = () => {
                   <div className="row g-2">
 
                     {selectedAssignments.map(
-                      (item, index) => (
+                      (
+                        item,
+                        index
+                      ) => (
                         <div
                           className="col-12 col-md-6 col-xl-4"
                           key={
@@ -2943,13 +5692,15 @@ const MyClasses = () => {
                                   "#eff6ff",
                                 color:
                                   "#2563eb",
-                                fontWeight: 700,
+                                fontWeight:
+                                  700,
                                 fontSize: 12,
                               }}
                             >
                               P
                               {item.periodId ||
-                                index + 1}
+                                index +
+                                  1}
                             </div>
 
                             <div>
@@ -2958,11 +5709,12 @@ const MyClasses = () => {
                                 style={{
                                   color:
                                     "#334155",
-                                  fontSize: 14,
+                                  fontSize:
+                                    14,
                                 }}
                               >
                                 {formatSubject(
-                                  item.subject,
+                                  item.subject
                                 )}
                               </div>
 
@@ -2974,11 +5726,11 @@ const MyClasses = () => {
                                 }}
                               >
                                 {formatTime(
-                                  item.startTime,
+                                  item.startTime
                                 )}{" "}
                                 -{" "}
                                 {formatTime(
-                                  item.endTime,
+                                  item.endTime
                                 )}
                               </div>
 
@@ -3000,7 +5752,7 @@ const MyClasses = () => {
 
                           </div>
                         </div>
-                      ),
+                      )
                     )}
 
                   </div>
@@ -3062,6 +5814,7 @@ const MyClasses = () => {
                         }}
                       >
                         {selectedClass}
+
                         {selectedSection &&
                           ` - ${selectedSection}`}{" "}
                         •{" "}
@@ -3102,7 +5855,7 @@ const MyClasses = () => {
                       }
                       onChange={(e) =>
                         setStudentSearch(
-                          e.target.value,
+                          e.target.value
                         )
                       }
                       placeholder="Search student..."
@@ -3121,6 +5874,7 @@ const MyClasses = () => {
 
                 {studentLoading ? (
                   <div className="text-center py-5">
+
                     <div
                       className="spinner-border"
                       style={{
@@ -3138,6 +5892,7 @@ const MyClasses = () => {
                     >
                       Loading students...
                     </div>
+
                   </div>
                 ) : filteredStudents.length ===
                   0 ? (
@@ -3171,8 +5926,9 @@ const MyClasses = () => {
                     </div>
 
                     <small className="text-muted">
-                      No students found for
-                      this class/section.
+                      No students found
+                      for this
+                      class/section.
                     </small>
 
                   </div>
@@ -3286,12 +6042,12 @@ const MyClasses = () => {
                         {filteredStudents.map(
                           (
                             student,
-                            index,
+                            index
                           ) => {
 
                             const attendanceItem =
                               getStudentAttendance(
-                                student,
+                                student
                               );
 
                             const status =
@@ -3354,9 +6110,7 @@ const MyClasses = () => {
                                       "#eef2ff",
                                   }}
                                 >
-                                  <div
-                                    className="d-flex align-items-center gap-2"
-                                  >
+                                  <div className="d-flex align-items-center gap-2">
 
                                     <div
                                       className="d-flex align-items-center justify-content-center"
@@ -3381,7 +6135,8 @@ const MyClasses = () => {
                                         style={{
                                           color:
                                             "#334155",
-                                          fontSize: 13,
+                                          fontSize:
+                                            13,
                                         }}
                                       >
                                         {
@@ -3453,7 +6208,8 @@ const MyClasses = () => {
                                       padding:
                                         "4px 9px",
                                       fontSize: 11,
-                                      fontWeight: 700,
+                                      fontWeight:
+                                        700,
                                     }}
                                   >
                                     {section}
@@ -3481,7 +6237,8 @@ const MyClasses = () => {
                                         padding:
                                           "5px 10px",
                                         fontSize: 11,
-                                        fontWeight: 700,
+                                        fontWeight:
+                                          700,
                                       }}
                                     >
                                       Present
@@ -3500,7 +6257,8 @@ const MyClasses = () => {
                                         padding:
                                           "5px 10px",
                                         fontSize: 11,
-                                        fontWeight: 700,
+                                        fontWeight:
+                                          700,
                                       }}
                                     >
                                       Absent
@@ -3519,7 +6277,8 @@ const MyClasses = () => {
                                         padding:
                                           "5px 10px",
                                         fontSize: 11,
-                                        fontWeight: 700,
+                                        fontWeight:
+                                          700,
                                       }}
                                     >
                                       Half Day
@@ -3538,7 +6297,8 @@ const MyClasses = () => {
                                         padding:
                                           "5px 10px",
                                         fontSize: 11,
-                                        fontWeight: 700,
+                                        fontWeight:
+                                          700,
                                       }}
                                     >
                                       Leave
@@ -3556,7 +6316,8 @@ const MyClasses = () => {
                                         padding:
                                           "5px 10px",
                                         fontSize: 11,
-                                        fontWeight: 700,
+                                        fontWeight:
+                                          700,
                                       }}
                                     >
                                       Not Marked
@@ -3596,7 +6357,7 @@ const MyClasses = () => {
 
                               </tr>
                             );
-                          },
+                          }
                         )}
 
                       </tbody>
@@ -3608,6 +6369,7 @@ const MyClasses = () => {
 
               </div>
             </div>
+
           </>
         )}
 

@@ -112,12 +112,7 @@ const Homework = () => {
     }
   };
 
-  useEffect(() => {
-    loadAssignments();
-    loadHomeworkList();
-  }, [schoolId, teacherId, academicYear]);
-
-  console.log("assignments", assignments);
+  
   // =========================================================
   // SECTIONS
   // =========================================================
@@ -346,6 +341,8 @@ const Homework = () => {
       setMessage("Homework added successfully.");
 
       resetForm();
+
+loadHomeworkList();
     } catch (err) {
       console.error("Homework save error:", err.response?.data || err);
 
@@ -361,24 +358,47 @@ const Homework = () => {
 
   const [homework, setHomework] = useState([]);
 
-  const loadHomeworkList = async () => {
-    if (!schoolId && !teacherId) return;
+ const loadHomeworkList = async () => {
+  if (!schoolId || !teacherId || !academicYear) {
+    return;
+  }
 
-    try {
-      const res = await axiosInstance.get("/api/homework/teacher", {
+  try {
+    const res = await axiosInstance.get(
+      "/api/homework/teacher",
+      {
         params: {
-          schoolId,
-          teacherId,
+          schoolId: Number(schoolId),
+          teacherId: Number(teacherId),
           academicYear,
         },
-      });
-      setHomework(res.data);
-    } catch (error) {
-      console.log(error.data);
-    }
-  };
+      },
+    );
+
+    setHomework(
+      Array.isArray(res.data)
+        ? res.data
+        : [],
+    );
+
+  } catch (err) {
+    console.error(
+      "Homework list error:",
+      err.response?.data || err,
+    );
+
+    setHomework([]);
+  }
+};
 
   console.log("homework list", homework);
+
+  useEffect(() => {
+  loadAssignments();
+  loadHomeworkList();
+}, [schoolId, teacherId, academicYear]);
+
+  console.log("assignments", assignments);
   return (
     <>
       {/* ================================================= */}
@@ -434,7 +454,10 @@ const Homework = () => {
 
                 <button
                   type="button"
-                  onClick={loadAssignments}
+                  onClick={() => {
+  loadAssignments();
+  loadHomeworkList();
+}}
                   className="btn btn-sm"
                   style={{
                     width: 38,
@@ -1102,97 +1125,599 @@ const Homework = () => {
             </div>
           </div>
         </div>
+<div
+  className="card border-0 rounded-4 mt-4 overflow-hidden"
+  style={{
+    boxShadow: "0 8px 30px rgba(15,23,42,.08)",
+    border: "1px solid #e2e8f0",
+  }}
+>
+  {/* HEADER */}
 
-        <div className="card border rounded-4 shadow mt-3">
-          <div className="card-body p-3">
-            <div className="d-flex align-items-start gap-3">
+  <div
+    className="p-3 p-md-4 d-flex flex-wrap justify-content-between align-items-center gap-3"
+    style={{
+      background:
+        "linear-gradient(135deg,#ffffff 0%,#f8fbff 55%,#eff6ff 100%)",
+      borderBottom: "1px solid #e2e8f0",
+    }}
+  >
+    <div className="d-flex align-items-center gap-3">
+
+      <div
+        className="d-flex align-items-center justify-content-center"
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 14,
+          background:
+            "linear-gradient(135deg,#2563eb,#3b82f6)",
+          color: "#fff",
+          boxShadow:
+            "0 8px 20px rgba(37,99,235,.20)",
+        }}
+      >
+        <LuBookOpen size={23} />
+      </div>
+
+      <div>
+
+        <h6
+          className="mb-1 fw-bold"
+          style={{
+            color: "#0f172a",
+          }}
+        >
+          Homework List
+        </h6>
+
+        <div
+          style={{
+            fontSize: 12,
+            color: "#64748b",
+          }}
+        >
+          All homework created by you
+        </div>
+
+      </div>
+
+    </div>
+
+    <div className="d-flex align-items-center gap-2">
+
+      <span
+        className="badge rounded-pill px-3 py-2"
+        style={{
+          background: "#eff6ff",
+          color: "#2563eb",
+          border: "1px solid #bfdbfe",
+        }}
+      >
+        Total: {homework.length}
+      </span>
+
+      <button
+        type="button"
+        onClick={loadHomeworkList}
+        className="btn btn-sm d-flex align-items-center justify-content-center"
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 10,
+          background: "#fff",
+          border: "1px solid #bfdbfe",
+          color: "#2563eb",
+        }}
+        title="Refresh Homework"
+      >
+        <LuRefreshCw size={17} />
+      </button>
+
+    </div>
+
+  </div>
+
+
+  {/* TABLE */}
+
+  <div className="table-responsive">
+
+    <table
+      className="table align-middle mb-0"
+      style={{
+        minWidth: "1200px",
+      }}
+    >
+
+      <thead>
+        <tr
+          style={{
+            background: "#f8fafc",
+          }}
+        >
+          <th
+            className="text-center small fw-semibold"
+            style={{
+              color: "#64748b",
+              padding: "16px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            #
+          </th>
+
+          <th
+            className="small fw-semibold"
+            style={{
+              color: "#64748b",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Academic Year
+          </th>
+
+          <th
+            className="small fw-semibold"
+            style={{
+              color: "#64748b",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Class / Section
+          </th>
+
+          <th
+            className="small fw-semibold"
+            style={{
+              color: "#64748b",
+            }}
+          >
+            Subject
+          </th>
+
+          <th
+            className="small fw-semibold"
+            style={{
+              color: "#64748b",
+              minWidth: 250,
+            }}
+          >
+            Homework
+          </th>
+
+          <th
+            className="small fw-semibold text-center"
+            style={{
+              color: "#64748b",
+            }}
+          >
+            Type
+          </th>
+
+          <th
+            className="small fw-semibold text-center"
+            style={{
+              color: "#64748b",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Homework Date
+          </th>
+
+          <th
+            className="small fw-semibold text-center"
+            style={{
+              color: "#64748b",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Submission Date
+          </th>
+
+          <th
+            className="small fw-semibold text-center"
+            style={{
+              color: "#64748b",
+            }}
+          >
+            Attachment
+          </th>
+
+          <th
+            className="small fw-semibold text-center"
+            style={{
+              color: "#64748b",
+            }}
+          >
+            Status
+          </th>
+
+        </tr>
+      </thead>
+
+
+      <tbody>
+
+        {loading ? (
+
+          <tr>
+
+            <td
+              colSpan="10"
+              className="text-center py-5"
+            >
+
               <div
-                className="d-flex align-items-center justify-content-center flex-shrink-0"
+                className="spinner-border text-primary"
+                role="status"
+              />
+
+              <div
+                className="mt-3 small text-muted"
+              >
+                Loading homework...
+              </div>
+
+            </td>
+
+          </tr>
+
+        ) : homework.length === 0 ? (
+
+          <tr>
+
+            <td
+              colSpan="10"
+              className="text-center py-5"
+            >
+
+              <div
+                className="d-flex justify-content-center mb-3"
+              >
+
+                <div
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: "50%",
+                    background: "#eff6ff",
+                    color: "#2563eb",
+                  }}
+                >
+                  <LuBookOpen size={28} />
+                </div>
+
+              </div>
+
+              <div
+                className="fw-semibold"
                 style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 12,
-                  background: "#eff6ff",
-                  color: "#2563eb",
+                  color: "#334155",
                 }}
               >
-                <LuSchool size={21} />
+                No homework found
               </div>
-              <div>
-                <div
-                  className="fw-bold mb-1"
+
+              <div
+                className="small mt-1"
+                style={{
+                  color: "#94a3b8",
+                }}
+              >
+                Add homework and it will appear here.
+              </div>
+
+            </td>
+
+          </tr>
+
+        ) : (
+
+          homework.map((work, idx) => (
+
+            <tr
+              key={work.id || idx}
+              style={{
+                borderBottom:
+                  "1px solid #f1f5f9",
+              }}
+            >
+
+              {/* NUMBER */}
+
+              <td
+                className="text-center fw-semibold"
+                style={{
+                  color: "#64748b",
+                }}
+              >
+                {idx + 1}
+              </td>
+
+
+              {/* ACADEMIC YEAR */}
+
+              <td>
+
+                <span
+                  className="small fw-semibold"
                   style={{
                     color: "#334155",
                   }}
                 >
-                  Homework List
-                </div>
+                  {work.academicYear || "-"}
+                </span>
+
+              </td>
+
+
+              {/* CLASS SECTION */}
+
+              <td>
+
                 <div
+                  className="d-flex align-items-center gap-2"
+                >
+
+                  <div
+                    className="d-flex align-items-center justify-content-center"
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 9,
+                      background: "#eff6ff",
+                      color: "#2563eb",
+                    }}
+                  >
+                    <LuSchool size={16} />
+                  </div>
+
+                  <div>
+
+                    <div
+                      className="fw-semibold small"
+                      style={{
+                        color: "#334155",
+                      }}
+                    >
+                      {work.studentClass || "-"}
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "#94a3b8",
+                      }}
+                    >
+                      Section {work.section || "-"}
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+
+              {/* SUBJECT */}
+
+              <td>
+
+                <span
+                  className="badge rounded-pill"
                   style={{
-                    fontSize: 12,
-                    color: "#64748b",
-                    lineHeight: 1.6,
+                    background: "#eff6ff",
+                    color: "#2563eb",
+                    border: "1px solid #bfdbfe",
+                    padding: "7px 12px",
+                    fontWeight: 500,
                   }}
                 >
-                  Daily Homework list
-                </div>
-              </div>
-            </div>
-            <div className="table-responsive">
-              <table className="table ">
-                <thead>
-                  <tr className="small text-center">
-                    <th>#</th>
-                    <th>Academic Year</th>
-                    <th>Class / section</th>
-                    <th>Subject</th>
-                    <th>Homework</th>
-                    <th>Homework type</th>
-                    <th>Homework date</th>
-                    <th>Submission Date</th>
-                    <th>Image</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {homework.map((work, idx) => (
-                    <tr key={idx + 1} className="text-center small">
-                      <td>{idx + 1}</td>
-                      <td>{work.academicYear}</td>
-                      <td>
-                        {work.studentClass} / {work.section}
-                      </td>
-                      <td>
-                        <span className="badge bg-primary rounded-pill">
-                          {work.subject}
-                        </span>
-                      </td>
-                      <td>{work.homeworkText}</td>
-                      <td>{work.homeworkType}</td>
-                      <td>{work.homeworkDate}</td>
-                      <td>{work.submissionDate}</td>
-                      <td>{work.image}</td>
-                      <td>
-                        <span
-                          className="badge rounded-pill"
-                          style={{
-                            backgroundColor: work.active
-                              ? "#dcfce7"
-                              : "#f1f5f9",
-                            color: work.active ? "#15803d" : "#64748b",
-                            padding: "7px 12px",
-                          }}
-                        >
-                          {work.active ? "true" : "false"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+                  {formatSubject(work.subject)}
+                </span>
+
+              </td>
+
+
+              {/* HOMEWORK TEXT */}
+
+              <td>
+
+                {work.homeworkText ? (
+
+                  <div
+                    style={{
+                      maxWidth: 280,
+                      color: "#475569",
+                      fontSize: 13,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {work.homeworkText}
+                  </div>
+
+                ) : (
+
+                  <span
+                    className="text-muted small"
+                  >
+                    Image homework
+                  </span>
+
+                )}
+
+              </td>
+
+
+              {/* TYPE */}
+
+              <td className="text-center">
+
+                <span
+                  className="badge rounded-pill"
+                  style={{
+                    background:
+                      work.homeworkType === "IMAGE"
+                        ? "#fef3c7"
+                        : "#eff6ff",
+
+                    color:
+                      work.homeworkType === "IMAGE"
+                        ? "#b45309"
+                        : "#2563eb",
+
+                    padding: "7px 12px",
+                    fontWeight: 500,
+                  }}
+                >
+                  {work.homeworkType === "IMAGE"
+                    ? "Image"
+                    : "Text"}
+                </span>
+
+              </td>
+
+
+              {/* HOMEWORK DATE */}
+
+              <td
+                className="text-center small"
+                style={{
+                  color: "#475569",
+                }}
+              >
+                {work.homeworkDate || "-"}
+              </td>
+
+
+              {/* SUBMISSION DATE */}
+
+              <td
+                className="text-center small"
+                style={{
+                  color: "#475569",
+                }}
+              >
+                {work.submissionDate || "-"}
+              </td>
+
+
+              {/* IMAGE */}
+
+              <td className="text-center">
+
+                {work.image ? (
+
+                  <a
+                    href={work.image}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-sm"
+                    style={{
+                      background: "#eff6ff",
+                      color: "#2563eb",
+                      border: "1px solid #bfdbfe",
+                      borderRadius: 9,
+                    }}
+                  >
+                    <LuImagePlus size={16} />
+                  </a>
+
+                ) : (
+
+                  <span
+                    className="text-muted small"
+                  >
+                    -
+                  </span>
+
+                )}
+
+              </td>
+
+
+              {/* STATUS */}
+
+              <td className="text-center">
+
+                <span
+                  className="badge rounded-pill"
+                  style={{
+                    backgroundColor:
+                      work.active
+                        ? "#dcfce7"
+                        : "#f1f5f9",
+
+                    color:
+                      work.active
+                        ? "#15803d"
+                        : "#64748b",
+
+                    border:
+                      work.active
+                        ? "1px solid #bbf7d0"
+                        : "1px solid #e2e8f0",
+
+                    padding: "7px 12px",
+                    fontWeight: 500,
+                  }}
+                >
+                  {work.active
+                    ? "Active"
+                    : "Inactive"}
+                </span>
+
+              </td>
+
+            </tr>
+
+          ))
+
+        )}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+
+  {/* FOOTER */}
+
+  {homework.length > 0 && (
+
+    <div
+      className="px-3 py-3 d-flex justify-content-between align-items-center"
+      style={{
+        background: "#fafcff",
+        borderTop: "1px solid #e2e8f0",
+      }}
+    >
+
+      <small
+        style={{
+          color: "#64748b",
+        }}
+      >
+        Showing {homework.length} homework record
+        {homework.length !== 1 ? "s" : ""}
+      </small>
+
+      <small
+        style={{
+          color: "#94a3b8",
+        }}
+      >
+        Teacher Homework Management
+      </small>
+
+    </div>
+
+  )}
+
+</div>
       </div>
 
       <style>

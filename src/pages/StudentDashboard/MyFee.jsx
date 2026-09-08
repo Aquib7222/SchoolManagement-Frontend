@@ -2091,73 +2091,7 @@ const Fee_LedgerDetails = () => {
             BOTTOM ACTIONS
         ===================================================== */}
 
-        <div className="px-2">
-
-          <div className="card border-0 shadow rounded-4 mb-5 no-print">
-
-            <div className="card-body p-3">
-
-              <div className="row g-2">
-
-                <div className="col-lg-3 col-md-6">
-
-                  <button
-                    className="btn btn-primary w-100 rounded-3"
-                    onClick={() =>
-                      navigate(
-                        `/fee/feecollection/${student.admissionNumber}`
-                      )
-                    }
-                  >
-                    <FaMoneyBillWave className="me-2" />
-                    Fee Collection
-                  </button>
-
-                </div>
-
-                <div className="col-lg-3 col-md-6">
-
-                  <button
-                    className="btn btn-success w-100 rounded-3"
-                    onClick={handlePrint}
-                  >
-                    <FaPrint className="me-2" />
-                    Print Ledger
-                  </button>
-
-                </div>
-
-                <div className="col-lg-3 col-md-6">
-
-                  <button
-                    className="btn btn-outline-secondary w-100 rounded-3"
-                    onClick={() => navigate(-1)}
-                  >
-                    <FaArrowLeft className="me-2" />
-                    Back
-                  </button>
-
-                </div>
-
-                <div className="col-lg-3 col-md-6">
-
-                  <button
-                    className="btn btn-outline-danger w-100 rounded-3"
-                    onClick={() => navigate("/")}
-                  >
-                    <FaFilePdf className="me-2" />
-                    Dashboard
-                  </button>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
+       
 
       </div>
     </>

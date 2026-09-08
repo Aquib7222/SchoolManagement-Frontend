@@ -1,126 +1,229 @@
-import React from "react";
+// import React from "react";
 
-import{
+// import{
 
-ResponsiveContainer,
+// ResponsiveContainer,
 
-BarChart,
+// BarChart,
 
-Bar,
+// Bar,
 
-XAxis,
+// XAxis,
 
-YAxis,
+// YAxis,
 
-Tooltip,
+// Tooltip,
 
-Cell
+// Cell
 
-}from"recharts";
+// }from"recharts";
 
-const data=[
+// const data=[
 
-{
+// {
 
-class:"I",
+// class:"I",
 
-fee:35000
+// fee:35000
 
-},
+// },
 
-{
+// {
 
-class:"II",
+// class:"II",
 
-fee:42000
+// fee:42000
 
-},
+// },
 
-{
+// {
 
-class:"III",
+// class:"III",
 
-fee:52000
+// fee:52000
 
-},
+// },
 
-{
+// {
 
-class:"IV",
+// class:"IV",
 
-fee:28000
+// fee:28000
 
-},
+// },
 
-{
+// {
 
-class:"V",
+// class:"V",
 
-fee:61000
+// fee:61000
 
-}
+// }
 
+// ];
+
+// const colors=[
+
+// "#2563eb",
+
+// "#22c55e",
+
+// "#f59e0b",
+
+// "#ec4899",
+
+// "#8b5cf6"
+
+// ];
+
+// export default function FeeCollectionBarChart(){
+
+// return(
+
+// <ResponsiveContainer
+// width="100%"
+// height={220}
+// >
+
+// <BarChart
+// data={data}
+// >
+
+// <XAxis
+// dataKey="class"
+// />
+
+// <YAxis/>
+
+// <Tooltip/>
+
+// <Bar
+// dataKey="fee"
+// radius={[10,10,0,0]}
+// >
+
+// {
+
+// data.map((e,i)=>
+
+// <Cell
+// key={i}
+// fill={colors[i]}
+// />
+
+// )
+
+// }
+
+// </Bar>
+
+// </BarChart>
+
+// </ResponsiveContainer>
+
+// );
+
+// }
+
+import React, { useMemo } from "react";
+
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+} from "recharts";
+
+const COLORS = [
+  "#2563eb",
+  "#22c55e",
+  "#f59e0b",
+  "#ec4899",
+  "#8b5cf6",
+  "#06b6d4",
+  "#f97316",
+  "#14b8a6",
 ];
 
-const colors=[
+export default function FeeCollectionBarChart({
+  data = [],
+}) {
 
-"#2563eb",
+  const chartData = useMemo(() => {
 
-"#22c55e",
+    if (!Array.isArray(data)) {
+      return [];
+    }
 
-"#f59e0b",
+    return data.map((item) => ({
+      class: item?.class || "Other",
+      fee: Number(item?.fee) || 0,
+    }));
 
-"#ec4899",
+  }, [data]);
 
-"#8b5cf6"
+  return (
+    <ResponsiveContainer
+      width="100%"
+      height={220}
+    >
 
-];
+      <BarChart
+        data={chartData}
+        margin={{
+          top: 5,
+          right: 10,
+          left: 0,
+          bottom: 5,
+        }}
+      >
 
-export default function FeeCollectionBarChart(){
+        <XAxis
+          dataKey="class"
+          tick={{
+            fontSize: 11,
+          }}
+        />
 
-return(
+        <YAxis
+          tick={{
+            fontSize: 10,
+          }}
+        />
 
-<ResponsiveContainer
-width="100%"
-height={220}
->
+        <Tooltip
+          formatter={(value) =>
+            `₹${Number(value).toLocaleString("en-IN")}`
+          }
+        />
 
-<BarChart
-data={data}
->
+        <Bar
+          dataKey="fee"
+          radius={[10, 10, 0, 0]}
+        >
 
-<XAxis
-dataKey="class"
-/>
+          {chartData.map(
+            (entry, index) => (
 
-<YAxis/>
+              <Cell
+                key={`bar-cell-${index}`}
+                fill={
+                  COLORS[
+                    index % COLORS.length
+                  ]
+                }
+              />
 
-<Tooltip/>
+            )
+          )}
 
-<Bar
-dataKey="fee"
-radius={[10,10,0,0]}
->
+        </Bar>
 
-{
+      </BarChart>
 
-data.map((e,i)=>
-
-<Cell
-key={i}
-fill={colors[i]}
-/>
-
-)
-
-}
-
-</Bar>
-
-</BarChart>
-
-</ResponsiveContainer>
-
-);
-
+    </ResponsiveContainer>
+  );
 }

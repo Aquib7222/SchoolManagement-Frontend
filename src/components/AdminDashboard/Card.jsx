@@ -763,22 +763,19 @@ import { RiShieldUserFill } from "react-icons/ri";
 import useDashboardData from "../../hooks/UserDashBoardData";
 
 const Card = () => {
-  const {
-    schools = [],
-    superadmins = [],
-    modules = [],
-    mappings = [],
-    totalStudents = 0,
-
-    teacherCount = 0,
-    totalStaff = 0,
-    admissions = [],
-    feeCollected = 0,
-    attendancePercentage = 0,
-    pendingFee = 0,
-
-    loading,
-  } = useDashboardData();
+ const {
+  schools = [],
+  superadmins = [],
+  modules = [],
+  mappings = [],
+  totalStudents = 0,
+  teacherCount = 0,
+  admissions = [],
+  feeCollected = 0,
+  attendancePercentage = 0,
+  pendingFee = 0,
+  loading,
+} = useDashboardData();
 
   // =====================================================
   // MAPPING COUNTS
@@ -894,7 +891,7 @@ const Card = () => {
                 <span>Total Schools</span>
 
                 <h3>
-                  {schools.length.toLocaleString("en-IN")}
+                  {schools.length}
                 </h3>
 
                 <div className="stat-status">
@@ -971,7 +968,7 @@ const Card = () => {
           {/* =====================================================
               4. TOTAL STAFF
           ===================================================== */}
-
+{/* 
           <div className="col-12 col-sm-6 col-md-4 col-xl-3">
             <div className="premium-stat-card shadow stat-orange h-100">
 
@@ -994,7 +991,7 @@ const Card = () => {
               </div>
 
             </div>
-          </div>
+          </div> */}
 
           {/* =====================================================
               5. ADMISSIONS
@@ -1227,8 +1224,7 @@ const Card = () => {
                   {(
                     Number(superadmins.length) +
                     Number(totalStudents) +
-                    Number(teacherCount) +
-                    Number(totalStaff)
+                    Number(teacherCount)
                   ).toLocaleString("en-IN")}
                 </h3>
 

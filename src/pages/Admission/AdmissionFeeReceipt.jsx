@@ -440,7 +440,7 @@ const studentName =
                   Admission No
                 </span>
                 <span className="info-value">
-                  {receiptData?.admission.admissionNumber || receiptData.admissionNumber ||
+                  {receiptData?.admission?.admissionNumber || receiptData?.admissionNumber ||
                     "-"}
                 </span>
               </div>

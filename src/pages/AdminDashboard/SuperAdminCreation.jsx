@@ -1,43 +1,2237 @@
 
 
+// // import axios from "axios";
+// // import React, { useEffect, useState } from "react";
+
+// // import {
+// //   FaArrowLeft,
+// //   FaPaperPlane,
+// //   FaRegUser,
+  
+ 
+// //   FaUserShield,
+// //   FaCheckCircle,
+// //   FaLock,
+// //   FaCog,
+// //   FaInfoCircle,
+// // } from "react-icons/fa";
+// // import { FaArrowsRotate, FaArrowUpFromBracket } from "react-icons/fa6";
+
+// // import {
+// //   MdOutlineGridView,
+// //   MdOutlineSchool,
+// //   MdAdminPanelSettings,
+// // } from "react-icons/md";
+
+// // const SuperAdminCreation = () => {
+// //   const token = localStorage.getItem("token");
+
+// //   const [selectedFile, setSelectedFile] = useState(null);
+
+// //   const [userGroup, setUserGroup] = useState([]);
+// //   const [schools, setSchools] = useState([]);
+
+// //   const [showPhoneOtp, setShowPhoneOtp] = useState(false);
+// //   const [showEmailOtp, setShowEmailOtp] = useState(false);
+
+// //   const [phoneOtp, setPhoneOtp] = useState("");
+// //   const [emailOtp, setEmailOtp] = useState("");
+
+// //   const [sendingPhoneOtp, setSendingPhoneOtp] = useState(false);
+// //   const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
+
+// //   const [verifyingPhoneOtp, setVerifyingPhoneOtp] = useState(false);
+// //   const [verifyingEmailOtp, setVerifyingEmailOtp] = useState(false);
+
+// //   const [phoneVerified, setPhoneVerified] = useState(false);
+// //   const [emailVerified, setEmailVerified] = useState(false);
+
+// //   const [creatingUser, setCreatingUser] = useState(false);
+
+// //   const initialForm = {
+// //     schoolId: "",
+// //     fullName: "",
+// //     username: "",
+// //     email: "",
+// //     phoneNumber: "",
+// //     alternatePhone: "",
+// //     dateOfBirth: "",
+// //     gender: "",
+// //     password: "",
+// //     confirmPassword: "",
+// //     securityQuestion: "",
+// //     securityAnswer: "",
+// //     address: "",
+// //     languagePreference: "",
+// //     timeZone: "",
+// //     note: "",
+// //     role: "",
+// //     accountStatus: true,
+// //     twoFactorAuthentication: false,
+// //     loginNotification: true,
+// //     userGroupId: "",
+// //   };
+
+// //   const [formData, setFormData] = useState(initialForm);
+
+// //   const securityQuestions = [
+// //     "What is your mother's maiden name?",
+// //     "What was the name of your first school?",
+// //     "What is your favorite place?",
+// //     "What was your childhood nickname?",
+// //   ];
+
+// //   const languages = [
+// //     { value: "ENGLISH", label: "English" },
+// //     { value: "HINDI", label: "Hindi" },
+// //   ];
+
+// //   const timeZones = [
+// //     {
+// //       value: "Asia/Kolkata",
+// //       label: "India Standard Time (IST) — UTC +05:30",
+// //     },
+// //     {
+// //       value: "Asia/Dubai",
+// //       label: "Gulf Standard Time (GST) — UTC +04:00",
+// //     },
+// //     {
+// //       value: "Asia/Dhaka",
+// //       label: "Bangladesh Standard Time — UTC +06:00",
+// //     },
+// //     {
+// //       value: "Asia/Singapore",
+// //       label: "Singapore Time — UTC +08:00",
+// //     },
+// //     {
+// //       value: "Asia/Tokyo",
+// //       label: "Japan Standard Time — UTC +09:00",
+// //     },
+// //   ];
+
+// //   const permissions = [
+// //     "All Modules Access",
+// //     "User & Role Management",
+// //     "System Settings",
+// //     "School Management",
+// //     "Reports & Analytics",
+// //     "System Configuration",
+// //   ];
+
+// //   useEffect(() => {
+// //     loadUserGroup();
+// //     loadSchools();
+// //   }, []);
+
+// //   const loadUserGroup = async () => {
+// //     try {
+// //       const res = await axios.get(
+// //         "http://localhost:8080/api/user-group/all",
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         }
+// //       );
+
+// //       setUserGroup(res.data || []);
+// //     } catch (error) {
+// //       console.error("User group loading failed:", error);
+// //     }
+// //   };
+
+// //   const loadSchools = async () => {
+// //     try {
+// //       const res = await axios.get(
+// //         "http://localhost:8080/api/school/all",
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //           },
+// //         }
+// //       );
+
+// //       setSchools(res.data || []);
+// //     } catch (error) {
+// //       console.error("School loading failed:", error);
+// //     }
+// //   };
+
+// //   const handleInputChange = (e) => {
+// //     const { name, value } = e.target;
+
+// //     if (name === "userGroupId") {
+// //       const selectedGroup = userGroup.find(
+// //         (group) => String(group.id) === String(value)
+// //       );
+
+// //       const selectedRole =
+// //         selectedGroup?.groupName ||
+// //         selectedGroup?.name ||
+// //         selectedGroup?.role ||
+// //         "";
+
+// //       setFormData((prev) => ({
+// //         ...prev,
+// //         userGroupId: value,
+// //         role: selectedRole,
+// //       }));
+
+// //       return;
+// //     }
+
+// //     setFormData((prev) => ({
+// //       ...prev,
+// //       [name]: value,
+// //     }));
+// //   };
+
+// //   const handleSwitchChange = (e) => {
+// //     const { name, checked } = e.target;
+
+// //     setFormData((prev) => ({
+// //       ...prev,
+// //       [name]: checked,
+// //     }));
+// //   };
+
+// //   const handleFileChange = (e) => {
+// //     const file = e.target.files?.[0];
+
+// //     if (!file) return;
+
+// //     if (file.size > 2 * 1024 * 1024) {
+// //       alert("Profile picture must be less than 2MB.");
+// //       return;
+// //     }
+
+// //     const allowedTypes = [
+// //       "image/png",
+// //       "image/jpeg",
+// //       "image/jpg",
+// //       "image/svg+xml",
+// //     ];
+
+// //     if (!allowedTypes.includes(file.type)) {
+// //       alert("Only JPG, PNG or SVG files are allowed.");
+// //       return;
+// //     }
+
+// //     setSelectedFile(file);
+// //   };
+
+// //   const sendPhoneOtp = async () => {
+// //     if (formData.phoneNumber.length !== 10) {
+// //       alert("Please enter valid 10 digit phone number.");
+// //       return;
+// //     }
+
+// //     try {
+// //       setSendingPhoneOtp(true);
+
+// //       await axios.post(
+// //         "http://localhost:8080/api/otp/send-phone",
+// //         {
+// //           phone: formData.phoneNumber,
+// //         },
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //             "Content-Type": "application/json",
+// //           },
+// //         }
+// //       );
+
+// //       setShowPhoneOtp(true);
+// //       setPhoneOtp("");
+
+// //       alert(
+// //         "Phone OTP generated successfully.\nCheck your Spring Boot console."
+// //       );
+// //     } catch (error) {
+// //       alert(
+// //         error.response?.data?.message ||
+// //           error.response?.data ||
+// //           "Failed to generate phone OTP."
+// //       );
+// //     } finally {
+// //       setSendingPhoneOtp(false);
+// //     }
+// //   };
+
+// //   const verifyPhoneOtp = async () => {
+// //     if (phoneOtp.length !== 6) {
+// //       alert("Please enter 6 digit OTP.");
+// //       return;
+// //     }
+
+// //     try {
+// //       setVerifyingPhoneOtp(true);
+
+// //       await axios.post(
+// //         "http://localhost:8080/api/otp/verify-phone",
+// //         {
+// //           phone: formData.phoneNumber,
+// //           otp: phoneOtp,
+// //         },
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //             "Content-Type": "application/json",
+// //           },
+// //         }
+// //       );
+
+// //       setPhoneVerified(true);
+// //       setShowPhoneOtp(false);
+// //       setPhoneOtp("");
+
+// //       alert("Phone number verified successfully.");
+// //     } catch (error) {
+// //       alert(
+// //         error.response?.data?.message ||
+// //           error.response?.data ||
+// //           "Invalid phone OTP."
+// //       );
+// //     } finally {
+// //       setVerifyingPhoneOtp(false);
+// //     }
+// //   };
+
+// //   const sendEmailOtp = async () => {
+// //     if (!formData.email.trim()) {
+// //       alert("Please enter email address.");
+// //       return;
+// //     }
+
+// //     try {
+// //       setSendingEmailOtp(true);
+
+// //       await axios.post(
+// //         "http://localhost:8080/api/otp/send-email",
+// //         {
+// //           email: formData.email.trim(),
+// //         },
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //             "Content-Type": "application/json",
+// //           },
+// //         }
+// //       );
+
+// //       setShowEmailOtp(true);
+// //       setEmailOtp("");
+
+// //       alert(
+// //         "Email OTP generated successfully.\nCheck your Spring Boot console."
+// //       );
+// //     } catch (error) {
+// //       alert(
+// //         error.response?.data?.message ||
+// //           error.response?.data ||
+// //           "Failed to generate email OTP."
+// //       );
+// //     } finally {
+// //       setSendingEmailOtp(false);
+// //     }
+// //   };
+
+// //   const verifyEmailOtp = async () => {
+// //     if (emailOtp.length !== 6) {
+// //       alert("Please enter 6 digit OTP.");
+// //       return;
+// //     }
+
+// //     try {
+// //       setVerifyingEmailOtp(true);
+
+// //       await axios.post(
+// //         "http://localhost:8080/api/otp/verify-email",
+// //         {
+// //           email: formData.email.trim(),
+// //           otp: emailOtp,
+// //         },
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //             "Content-Type": "application/json",
+// //           },
+// //         }
+// //       );
+
+// //       setEmailVerified(true);
+// //       setShowEmailOtp(false);
+// //       setEmailOtp("");
+
+// //       alert("Email address verified successfully.");
+// //     } catch (error) {
+// //       alert(
+// //         error.response?.data?.message ||
+// //           error.response?.data ||
+// //           "Invalid email OTP."
+// //       );
+// //     } finally {
+// //       setVerifyingEmailOtp(false);
+// //     }
+// //   };
+
+// //   const createSuperAdmin = async () => {
+// //     if (!formData.schoolId) {
+// //       alert("Please select school.");
+// //       return;
+// //     }
+
+// //     if (!formData.fullName.trim()) {
+// //       alert("Please enter full name.");
+// //       return;
+// //     }
+
+// //     if (!formData.email.trim()) {
+// //       alert("Please enter email address.");
+// //       return;
+// //     }
+
+// //     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+// //       alert("Please enter a valid email address.");
+// //       return;
+// //     }
+
+// //     if (formData.phoneNumber.length !== 10) {
+// //       alert("Please enter valid 10 digit phone number.");
+// //       return;
+// //     }
+
+// //     if (!phoneVerified) {
+// //       alert("Please verify phone number first.");
+// //       return;
+// //     }
+
+// //     if (!emailVerified) {
+// //       alert("Please verify email address first.");
+// //       return;
+// //     }
+
+// //     if (!formData.dateOfBirth) {
+// //       alert("Please select date of birth.");
+// //       return;
+// //     }
+
+// //     if (!formData.gender) {
+// //       alert("Please select gender.");
+// //       return;
+// //     }
+
+// //     if (!formData.userGroupId) {
+// //       alert("Please select role.");
+// //       return;
+// //     }
+
+// //     if (!formData.password) {
+// //       alert("Please enter password.");
+// //       return;
+// //     }
+
+// //     if (formData.password.length < 8) {
+// //       alert("Password must be at least 8 characters long.");
+// //       return;
+// //     }
+
+// //     if (!formData.confirmPassword) {
+// //       alert("Please confirm password.");
+// //       return;
+// //     }
+
+// //     if (formData.password !== formData.confirmPassword) {
+// //       alert("Password and confirm password do not match.");
+// //       return;
+// //     }
+
+// //     if (!formData.securityQuestion) {
+// //       alert("Please select security question.");
+// //       return;
+// //     }
+
+// //     if (!formData.securityAnswer.trim()) {
+// //       alert("Please enter security answer.");
+// //       return;
+// //     }
+
+// //     const selectedUserGroup = userGroup.find(
+// //       (group) =>
+// //         String(group.id) === String(formData.userGroupId)
+// //     );
+
+// //     if (!selectedUserGroup) {
+// //       alert("Selected role not found.");
+// //       return;
+// //     }
+
+// //     const selectedRole =
+// //       selectedUserGroup.groupName ||
+// //       selectedUserGroup.name ||
+// //       selectedUserGroup.role ||
+// //       "";
+
+// //     const payload = {
+// //       name: formData.fullName.trim(),
+// //       fullName: formData.fullName.trim(),
+
+// //       email: formData.email.trim(),
+
+// //       phone: formData.phoneNumber,
+// //       phoneNumber: formData.phoneNumber,
+
+// //       alternatePhone: formData.alternatePhone.trim(),
+
+// //       dateOfBirth: formData.dateOfBirth,
+// //       gender: formData.gender,
+
+// //       password: formData.password,
+// //       confirmPassword: formData.confirmPassword,
+
+// //       securityQuestion: formData.securityQuestion,
+// //       securityAnswer: formData.securityAnswer.trim(),
+
+// //       address: formData.address.trim(),
+
+// //       languagePreference:
+// //         formData.languagePreference || null,
+
+// //       timeZone: formData.timeZone || null,
+
+// //       note: formData.note.trim() || null,
+
+// //       role: selectedRole,
+
+// //       userGroupId: Number(formData.userGroupId),
+
+// //       status: formData.accountStatus
+// //         ? "Active"
+// //         : "Inactive",
+
+// //       accountStatus: formData.accountStatus,
+
+// //       twoFactorAuthentication:
+// //         formData.twoFactorAuthentication,
+
+// //       loginNotification:
+// //         formData.loginNotification,
+
+// //       phoneVerified,
+// //       emailVerified,
+// //     };
+
+// //     try {
+// //       setCreatingUser(true);
+
+// //       const response = await axios.post(
+// //         `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+// //         payload,
+// //         {
+// //           headers: {
+// //             Authorization: `Bearer ${token}`,
+// //             "Content-Type": "application/json",
+// //           },
+// //         }
+// //       );
+
+// //       const generatedUsername =
+// //         response.data?.username ||
+// //         response.data?.user?.username ||
+// //         response.data?.data?.username;
+
+// //       if (generatedUsername) {
+// //         alert(
+// //           `Super Admin created successfully!\n\nUsername: ${generatedUsername}`
+// //         );
+// //       } else {
+// //         alert("Super Admin created successfully.");
+// //       }
+
+// //       resetForm();
+// //     } catch (error) {
+// //       console.error("Create Super Admin Error:", error);
+
+// //       const backendMessage =
+// //         error.response?.data?.message ||
+// //         error.response?.data?.error ||
+// //         error.response?.data;
+
+// //       alert(
+// //         backendMessage ||
+// //           "Failed to create Super Admin."
+// //       );
+// //     } finally {
+// //       setCreatingUser(false);
+// //     }
+// //   };
+
+// //   const resetForm = () => {
+// //     setFormData(initialForm);
+
+// //     setPhoneOtp("");
+// //     setEmailOtp("");
+
+// //     setShowPhoneOtp(false);
+// //     setShowEmailOtp(false);
+
+// //     setPhoneVerified(false);
+// //     setEmailVerified(false);
+
+// //     setSelectedFile(null);
+// //   };
+
+// //   const SectionHeader = ({
+// //     icon,
+// //     title,
+// //     subtitle,
+// //   }) => (
+// //     <div className="sa-section-header">
+// //       <div className="sa-section-icon">
+// //         {icon}
+// //       </div>
+
+// //       <div>
+// //         <h6 className="mb-1 fw-bold text-dark">
+// //           {title}
+// //         </h6>
+
+// //         <small className="text-muted">
+// //           {subtitle}
+// //         </small>
+// //       </div>
+// //     </div>
+// //   );
+
+// //   const Field = ({
+// //     label,
+// //     required = false,
+// //     children,
+// //   }) => (
+// //     <div className="mb-3">
+// //       <label className="form-label fw-semibold">
+// //         {label}
+
+// //         {required && (
+// //           <span className="text-danger ms-1">
+// //             *
+// //           </span>
+// //         )}
+// //       </label>
+
+// //       {children}
+// //     </div>
+// //   );
+
+// //   return (
+// //     <>
+// //       {/* =====================================================
+// //           PAGE HEADER
+// //       ===================================================== */}
+
+// //       <div className="mx-2 mt-2 mb-3">
+// //         <div
+// //           className="rounded-4 shadow overflow-hidden"
+// //           style={{
+// //             background:
+// //               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+// //             border: "1px solid #dbeafe",
+// //           }}
+// //         >
+// //           <div className="p-3 p-md-4">
+// //             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+// //               <div className="d-flex align-items-center gap-3">
+
+// //                 <div
+// //                   className="d-flex align-items-center justify-content-center rounded-3"
+// //                   style={{
+// //                     width: "52px",
+// //                     height: "52px",
+// //                     background:
+// //                       "linear-gradient(135deg,#2563eb,#3b82f6)",
+// //                     color: "#fff",
+// //                     boxShadow:
+// //                       "0 8px 20px rgba(37,99,235,.22)",
+// //                   }}
+// //                 >
+// //                   <MdAdminPanelSettings size={29} />
+// //                 </div>
+
+// //                 <div>
+// //                   <h5 className="mb-1 fw-bold text-dark">
+// //                     Create Super Admin
+// //                   </h5>
+
+// //                   <div className="text-muted small">
+// //                     Super Admin Management
+// //                     &nbsp;/&nbsp;
+// //                     Create Account
+// //                   </div>
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="d-flex align-items-center gap-2">
+
+// //                 <span
+// //                   className="badge rounded-pill px-3 py-2"
+// //                   style={{
+// //                     backgroundColor: "#eff6ff",
+// //                     color: "#2563eb",
+// //                     border:
+// //                       "1px solid #bfdbfe",
+// //                   }}
+// //                 >
+// //                   <MdOutlineSchool className="me-1" />
+// //                   Administration
+// //                 </span>
+
+// //                 <button
+// //                   type="button"
+// //                   className="btn btn-outline-primary rounded-3"
+// //                   onClick={() =>
+// //                     window.history.back()
+// //                   }
+// //                 >
+// //                   <FaArrowLeft className="me-2" />
+// //                   Back
+// //                 </button>
+
+// //               </div>
+
+// //             </div>
+// //           </div>
+
+// //           <div
+// //             className="px-4 py-2"
+// //             style={{
+// //               backgroundColor:
+// //                 "rgba(239,246,255,.75)",
+// //               borderTop:
+// //                 "1px solid #e0ecff",
+// //             }}
+// //           >
+// //             <small className="text-muted">
+// //               Home
+// //               &nbsp;›&nbsp;
+// //               Super Admin Management
+// //               &nbsp;›&nbsp;
+// //               <span className="text-primary fw-semibold">
+// //                 Create Super Admin
+// //               </span>
+// //             </small>
+// //           </div>
+// //         </div>
+// //       </div>
+
+// //       {/* =====================================================
+// //           FORM
+// //       ===================================================== */}
+
+// //       <div className="px-2 mb-5">
+
+// //         <div className="sa-form-wrapper">
+
+// //           {/* =================================================
+// //               PERSONAL INFORMATION
+// //           ================================================= */}
+
+// //           <div className="sa-card shadow">
+
+// //             <SectionHeader
+// //               icon={<FaRegUser />}
+// //               title="Personal Information"
+// //               subtitle="Enter basic administrator details"
+// //             />
+
+// //             <div className="sa-card-body">
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="School"
+// //                     required
+// //                   >
+// //                     <select
+// //                       name="schoolId"
+// //                       className="form-select"
+// //                       value={formData.schoolId}
+// //                       onChange={handleInputChange}
+// //                     >
+// //                       <option value="">
+// //                         Select School
+// //                       </option>
+
+// //                       {schools.map(
+// //                         (school) => (
+// //                           <option
+// //                             key={school.id}
+// //                             value={school.id}
+// //                           >
+// //                             {school.schoolName ||
+// //                               school.name ||
+// //                               school.schoolCode}
+
+// //                             {school.schoolCode
+// //                               ? ` (${school.schoolCode})`
+// //                               : ""}
+// //                           </option>
+// //                         )
+// //                       )}
+// //                     </select>
+// //                   </Field>
+// //                 </div>
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="Full Name"
+// //                     required
+// //                   >
+// //                     <input
+// //                       type="text"
+// //                       name="fullName"
+// //                       className="form-control"
+// //                       placeholder="Enter full name"
+// //                       value={formData.fullName}
+// //                       onChange={handleInputChange}
+// //                     />
+// //                   </Field>
+// //                 </div>
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="Gender"
+// //                     required
+// //                   >
+// //                     <select
+// //                       name="gender"
+// //                       className="form-select"
+// //                       value={formData.gender}
+// //                       onChange={handleInputChange}
+// //                     >
+// //                       <option value="">
+// //                         Select Gender
+// //                       </option>
+
+// //                       <option value="MALE">
+// //                         Male
+// //                       </option>
+
+// //                       <option value="FEMALE">
+// //                         Female
+// //                       </option>
+
+// //                       <option value="OTHER">
+// //                         Other
+// //                       </option>
+// //                     </select>
+// //                   </Field>
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="Date of Birth"
+// //                     required
+// //                   >
+// //                     <input
+// //                       type="date"
+// //                       name="dateOfBirth"
+// //                       className="form-control"
+// //                       value={formData.dateOfBirth}
+// //                       onChange={handleInputChange}
+// //                     />
+// //                   </Field>
+// //                 </div>
+
+// //                 {/* EMAIL */}
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="Email Address"
+// //                     required
+// //                   >
+
+// //                     <div className="otp-wrapper">
+
+// //                       <input
+// //                         type="email"
+// //                         name="email"
+// //                         className="form-control"
+// //                         placeholder="Enter email address"
+// //                         value={formData.email}
+// //                         disabled={emailVerified}
+// //                         onChange={(e) => {
+// //                           setFormData(
+// //                             (prev) => ({
+// //                               ...prev,
+// //                               email:
+// //                                 e.target.value,
+// //                             })
+// //                           );
+
+// //                           setEmailVerified(false);
+// //                           setShowEmailOtp(false);
+// //                           setEmailOtp("");
+// //                         }}
+// //                       />
+
+// //                       <button
+// //                         type="button"
+// //                         className={`btn ${
+// //                           emailVerified
+// //                             ? "btn-success"
+// //                             : "btn-outline-primary"
+// //                         }`}
+// //                         disabled={
+// //                           sendingEmailOtp ||
+// //                           emailVerified ||
+// //                           !formData.email.trim()
+// //                         }
+// //                         onClick={sendEmailOtp}
+// //                       >
+// //                         {sendingEmailOtp ? (
+// //                           <span className="spinner-border spinner-border-sm" />
+// //                         ) : emailVerified ? (
+// //                           <>
+// //                             <FaCheckCircle className="me-1" />
+// //                             Verified
+// //                           </>
+// //                         ) : (
+// //                           <>
+// //                             <FaPaperPlane
+// //                               size={13}
+// //                               className="me-1"
+// //                             />
+// //                             OTP
+// //                           </>
+// //                         )}
+// //                       </button>
+
+// //                     </div>
+
+// //                     {showEmailOtp &&
+// //                       !emailVerified && (
+// //                         <div className="otp-box mt-2">
+
+// //                           <div className="input-group">
+
+// //                             <input
+// //                               type="text"
+// //                               className="form-control"
+// //                               placeholder="Enter 6-digit OTP"
+// //                               maxLength={6}
+// //                               value={emailOtp}
+// //                               onChange={(e) =>
+// //                                 setEmailOtp(
+// //                                   e.target.value.replace(
+// //                                     /\D/g,
+// //                                     ""
+// //                                   )
+// //                                 )
+// //                               }
+// //                             />
+
+// //                             <button
+// //                               type="button"
+// //                               className="btn btn-outline-success"
+// //                               disabled={
+// //                                 verifyingEmailOtp ||
+// //                                 emailOtp.length !== 6
+// //                               }
+// //                               onClick={
+// //                                 verifyEmailOtp
+// //                               }
+// //                             >
+// //                               {verifyingEmailOtp ? (
+// //                                 <span className="spinner-border spinner-border-sm" />
+// //                               ) : (
+// //                                 <>
+// //                                   <FaCheckCircle className="me-1" />
+// //                                   Verify
+// //                                 </>
+// //                               )}
+// //                             </button>
+
+// //                           </div>
+
+// //                           <small className="text-muted">
+// //                             OTP expires in 5 minutes.
+// //                           </small>
+
+// //                         </div>
+// //                       )}
+
+// //                     {emailVerified && (
+// //                       <small className="text-success fw-semibold">
+// //                         ✓ Email address verified
+// //                       </small>
+// //                     )}
+
+// //                   </Field>
+// //                 </div>
+
+// //                 {/* PHONE */}
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field
+// //                     label="Phone Number"
+// //                     required
+// //                   >
+
+// //                     <div className="otp-wrapper">
+
+// //                       <input
+// //                         type="text"
+// //                         name="phoneNumber"
+// //                         className="form-control"
+// //                         placeholder="Enter 10 digit phone no"
+// //                         maxLength={10}
+// //                         value={formData.phoneNumber}
+// //                         disabled={phoneVerified}
+// //                         onChange={(e) => {
+
+// //                           const value =
+// //                             e.target.value.replace(
+// //                               /\D/g,
+// //                               ""
+// //                             );
+
+// //                           setFormData(
+// //                             (prev) => ({
+// //                               ...prev,
+// //                               phoneNumber:
+// //                                 value,
+// //                             })
+// //                           );
+
+// //                           setPhoneVerified(false);
+// //                           setShowPhoneOtp(false);
+// //                           setPhoneOtp("");
+// //                         }}
+// //                       />
+
+// //                       <button
+// //                         type="button"
+// //                         className={`btn ${
+// //                           phoneVerified
+// //                             ? "btn-success"
+// //                             : "btn-outline-primary"
+// //                         }`}
+// //                         disabled={
+// //                           sendingPhoneOtp ||
+// //                           phoneVerified ||
+// //                           formData.phoneNumber
+// //                             .length !== 10
+// //                         }
+// //                         onClick={sendPhoneOtp}
+// //                       >
+// //                         {sendingPhoneOtp ? (
+// //                           <span className="spinner-border spinner-border-sm" />
+// //                         ) : phoneVerified ? (
+// //                           <>
+// //                             <FaCheckCircle className="me-1" />
+// //                             Verified
+// //                           </>
+// //                         ) : (
+// //                           <>
+// //                             <FaPaperPlane
+// //                               size={13}
+// //                               className="me-1"
+// //                             />
+// //                             OTP
+// //                           </>
+// //                         )}
+// //                       </button>
+
+// //                     </div>
+
+// //                     {showPhoneOtp &&
+// //                       !phoneVerified && (
+// //                         <div className="otp-box mt-2">
+
+// //                           <div className="input-group">
+
+// //                             <input
+// //                               type="text"
+// //                               className="form-control"
+// //                               placeholder="Enter 6-digit OTP"
+// //                               maxLength={6}
+// //                               value={phoneOtp}
+// //                               onChange={(e) =>
+// //                                 setPhoneOtp(
+// //                                   e.target.value.replace(
+// //                                     /\D/g,
+// //                                     ""
+// //                                   )
+// //                                 )
+// //                               }
+// //                             />
+
+// //                             <button
+// //                               type="button"
+// //                               className="btn btn-outline-success"
+// //                               disabled={
+// //                                 verifyingPhoneOtp ||
+// //                                 phoneOtp.length !== 6
+// //                               }
+// //                               onClick={
+// //                                 verifyPhoneOtp
+// //                               }
+// //                             >
+// //                               {verifyingPhoneOtp ? (
+// //                                 <span className="spinner-border spinner-border-sm" />
+// //                               ) : (
+// //                                 <>
+// //                                   <FaCheckCircle className="me-1" />
+// //                                   Verify
+// //                                 </>
+// //                               )}
+// //                             </button>
+
+// //                           </div>
+
+// //                           <small className="text-muted">
+// //                             OTP expires in 5 minutes.
+// //                           </small>
+
+// //                         </div>
+// //                       )}
+
+// //                     {phoneVerified && (
+// //                       <small className="text-success fw-semibold">
+// //                         ✓ Phone number verified
+// //                       </small>
+// //                     )}
+
+// //                   </Field>
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-xl-4 col-md-6">
+// //                   <Field label="Alternate Phone">
+// //                     <input
+// //                       type="text"
+// //                       name="alternatePhone"
+// //                       className="form-control"
+// //                       placeholder="Enter alternate phone"
+// //                       value={
+// //                         formData.alternatePhone
+// //                       }
+// //                       onChange={handleInputChange}
+// //                     />
+// //                   </Field>
+// //                 </div>
+
+// //                 <div className="col-xl-8">
+// //                   <Field label="Profile Picture">
+
+// //                     <div className="upload-area">
+
+// //                       <FaArrowUpFromBracket
+// //                         size={27}
+// //                         className="text-primary mb-2"
+// //                       />
+
+// //                       <div className="fw-semibold">
+// //                         <span className="text-primary">
+// //                           Click to upload
+// //                         </span>
+
+// //                         {" "}
+
+// //                         <span className="text-muted">
+// //                           or drag and drop
+// //                         </span>
+// //                       </div>
+
+// //                       <small className="text-muted">
+// //                         JPG, PNG or SVG · Maximum 2MB
+// //                         · Recommended 200 × 200 px
+// //                       </small>
+
+// //                       <input
+// //                         type="file"
+// //                         accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+// //                         onChange={
+// //                           handleFileChange
+// //                         }
+// //                       />
+
+// //                     </div>
+
+// //                     {selectedFile && (
+// //                       <small className="text-success fw-semibold">
+// //                         ✓ {selectedFile.name}
+// //                       </small>
+// //                     )}
+
+// //                   </Field>
+// //                 </div>
+
+// //               </div>
+
+// //             </div>
+// //           </div>
+
+// //           {/* =================================================
+// //               ROLE & PERMISSIONS
+// //           ================================================= */}
+
+// //           <div className="sa-card shadow">
+
+// //             <SectionHeader
+// //               icon={<FaUserShield />}
+// //               title="Role & Permissions"
+// //               subtitle="Assign access level to the administrator"
+// //             />
+
+// //             <div className="sa-card-body">
+
+// //               <Field
+// //                 label="Assign Role"
+// //                 required
+// //               >
+// //                 <select
+// //                   name="userGroupId"
+// //                   className="form-select"
+// //                   value={
+// //                     formData.userGroupId
+// //                   }
+// //                   onChange={
+// //                     handleInputChange
+// //                   }
+// //                 >
+// //                   <option value="">
+// //                     Select Role
+// //                   </option>
+
+// //                   {userGroup.map(
+// //                     (group) => (
+// //                       <option
+// //                         key={group.id}
+// //                         value={group.id}
+// //                       >
+// //                         {group.groupName ||
+// //                           group.name ||
+// //                           group.role}
+// //                       </option>
+// //                     )
+// //                   )}
+// //                 </select>
+// //               </Field>
+
+// //               <div className="permission-info">
+
+// //                 <div className="d-flex align-items-start gap-3">
+
+// //                   <div className="info-icon">
+// //                     <FaUserShield />
+// //                   </div>
+
+// //                   <div>
+// //                     <strong>
+// //                       Super Admin Access
+// //                     </strong>
+
+// //                     <p className="mb-0 mt-1">
+// //                       Super admin will have full
+// //                       access to modules, menus,
+// //                       users and system settings.
+// //                     </p>
+// //                   </div>
+
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="permission-grid">
+
+// //                 {permissions.map(
+// //                   (permission) => (
+// //                     <div
+// //                       key={permission}
+// //                       className="permission-item"
+// //                     >
+// //                       <span>
+// //                         <FaCheckCircle />
+// //                       </span>
+
+// //                       {permission}
+// //                     </div>
+// //                   )
+// //                 )}
+
+// //               </div>
+
+// //             </div>
+// //           </div>
+
+// //           {/* =================================================
+// //               ACCOUNT INFORMATION
+// //           ================================================= */}
+
+// //           <div className="sa-card shadow">
+
+// //             <SectionHeader
+// //               icon={<FaLock />}
+// //               title="Account Information"
+// //               subtitle="Configure login credentials and recovery"
+// //             />
+
+// //             <div className="sa-card-body">
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-md-6">
+
+// //                   <Field
+// //                     label="Password"
+// //                     required
+// //                   >
+// //                     <input
+// //                       type="password"
+// //                       name="password"
+// //                       className="form-control"
+// //                       placeholder="Enter password"
+// //                       value={formData.password}
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     />
+
+// //                     <small className="text-muted">
+// //                       Minimum 8 characters.
+// //                     </small>
+// //                   </Field>
+
+// //                 </div>
+
+// //                 <div className="col-md-6">
+
+// //                   <Field
+// //                     label="Confirm Password"
+// //                     required
+// //                   >
+// //                     <input
+// //                       type="password"
+// //                       name="confirmPassword"
+// //                       className="form-control"
+// //                       placeholder="Confirm password"
+// //                       value={
+// //                         formData.confirmPassword
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     />
+// //                   </Field>
+
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-md-6">
+
+// //                   <Field
+// //                     label="Security Question"
+// //                     required
+// //                   >
+// //                     <select
+// //                       name="securityQuestion"
+// //                       className="form-select"
+// //                       value={
+// //                         formData.securityQuestion
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     >
+// //                       <option value="">
+// //                         Select security question
+// //                       </option>
+
+// //                       {securityQuestions.map(
+// //                         (question) => (
+// //                           <option
+// //                             key={question}
+// //                             value={question}
+// //                           >
+// //                             {question}
+// //                           </option>
+// //                         )
+// //                       )}
+// //                     </select>
+// //                   </Field>
+
+// //                 </div>
+
+// //                 <div className="col-md-6">
+
+// //                   <Field
+// //                     label="Security Answer"
+// //                     required
+// //                   >
+// //                     <input
+// //                       type="text"
+// //                       name="securityAnswer"
+// //                       className="form-control"
+// //                       placeholder="Enter security answer"
+// //                       value={
+// //                         formData.securityAnswer
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     />
+// //                   </Field>
+
+// //                 </div>
+
+// //               </div>
+
+// //             </div>
+// //           </div>
+
+// //           {/* =================================================
+// //               STATUS & SETTINGS
+// //           ================================================= */}
+
+// //           <div className="sa-card shadow">
+
+// //             <SectionHeader
+// //               icon={<FaCog />}
+// //               title="Status & Settings"
+// //               subtitle="Configure account behaviour"
+// //             />
+
+// //             <div className="sa-card-body">
+
+// //               <ToggleRow
+// //                 label="Account Status"
+// //                 checked={
+// //                   formData.accountStatus
+// //                 }
+// //                 name="accountStatus"
+// //                 onChange={
+// //                   handleSwitchChange
+// //                 }
+// //                 activeText="Active"
+// //                 helper="Inactive accounts cannot login to the system."
+// //               />
+
+// //               <hr />
+
+// //               <ToggleRow
+// //                 label="Two Factor Authentication"
+// //                 checked={
+// //                   formData.twoFactorAuthentication
+// //                 }
+// //                 name="twoFactorAuthentication"
+// //                 onChange={
+// //                   handleSwitchChange
+// //                 }
+// //                 activeText="Enabled"
+// //                 helper="User will need verification codes at login."
+// //               />
+
+// //               <hr />
+
+// //               <ToggleRow
+// //                 label="Login Notification"
+// //                 checked={
+// //                   formData.loginNotification
+// //                 }
+// //                 name="loginNotification"
+// //                 onChange={
+// //                   handleSwitchChange
+// //                 }
+// //                 activeText="Enabled"
+// //                 helper="Email notification will be sent when this admin logs in."
+// //               />
+
+// //             </div>
+// //           </div>
+
+// //           {/* =================================================
+// //               ADDITIONAL INFORMATION
+// //           ================================================= */}
+
+// //           <div className="sa-card shadow">
+
+// //             <SectionHeader
+// //               icon={<FaInfoCircle />}
+// //               title="Additional Information"
+// //               subtitle="Optional administrator information"
+// //             />
+
+// //             <div className="sa-card-body">
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-lg-8">
+
+// //                   <Field label="Address">
+
+// //                     <textarea
+// //                       name="address"
+// //                       className="form-control"
+// //                       rows="3"
+// //                       placeholder="Enter address"
+// //                       value={
+// //                         formData.address
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     />
+
+// //                   </Field>
+
+// //                 </div>
+
+// //                 <div className="col-lg-4">
+
+// //                   <Field label="Language Preference">
+
+// //                     <select
+// //                       name="languagePreference"
+// //                       className="form-select"
+// //                       value={
+// //                         formData.languagePreference
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     >
+// //                       <option value="">
+// //                         Select Language
+// //                       </option>
+
+// //                       {languages.map(
+// //                         (item) => (
+// //                           <option
+// //                             key={item.value}
+// //                             value={item.value}
+// //                           >
+// //                             {item.label}
+// //                           </option>
+// //                         )
+// //                       )}
+
+// //                     </select>
+
+// //                   </Field>
+
+// //                 </div>
+
+// //               </div>
+
+// //               <div className="row g-3">
+
+// //                 <div className="col-lg-7">
+
+// //                   <Field label="Time Zone">
+
+// //                     <select
+// //                       name="timeZone"
+// //                       className="form-select"
+// //                       value={
+// //                         formData.timeZone
+// //                       }
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     >
+// //                       <option value="">
+// //                         Select Time Zone
+// //                       </option>
+
+// //                       {timeZones.map(
+// //                         (item) => (
+// //                           <option
+// //                             key={item.value}
+// //                             value={item.value}
+// //                           >
+// //                             {item.label}
+// //                           </option>
+// //                         )
+// //                       )}
+
+// //                     </select>
+
+// //                   </Field>
+
+// //                 </div>
+
+// //                 <div className="col-lg-5">
+
+// //                   <Field label="Note">
+
+// //                     <textarea
+// //                       name="note"
+// //                       className="form-control"
+// //                       rows="2"
+// //                       placeholder="Enter additional note"
+// //                       value={formData.note}
+// //                       onChange={
+// //                         handleInputChange
+// //                       }
+// //                     />
+
+// //                   </Field>
+
+// //                 </div>
+
+// //               </div>
+
+// //             </div>
+// //           </div>
+
+// //         </div>
+
+// //         {/* =====================================================
+// //             FOOTER BUTTONS
+// //         ===================================================== */}
+
+// //         <div className="sa-footer">
+
+// //           <button
+// //             type="button"
+// //             className="btn btn-outline-secondary rounded-3 px-4"
+// //             onClick={resetForm}
+// //             disabled={creatingUser}
+// //           >
+// //             <FaArrowsRotate
+// //               size={14}
+// //               className="me-2"
+// //             />
+
+// //             Reset
+// //           </button>
+
+// //           <button
+// //             type="button"
+// //             className="btn btn-primary rounded-3 px-4"
+// //             onClick={createSuperAdmin}
+// //             disabled={
+// //               creatingUser ||
+// //               !phoneVerified ||
+// //               !emailVerified
+// //             }
+// //           >
+// //             {creatingUser ? (
+// //               <>
+// //                 <span className="spinner-border spinner-border-sm me-2" />
+// //                 Creating...
+// //               </>
+// //             ) : (
+// //               <>
+// //                 <MdOutlineGridView
+// //                   size={17}
+// //                   className="me-2"
+// //                 />
+// //                 Create Super Admin
+// //               </>
+// //             )}
+// //           </button>
+
+// //         </div>
+
+// //       </div>
+
+// //       {/* =====================================================
+// //           CSS
+// //       ===================================================== */}
+
+// //       <style>{`
+
+// //         * {
+// //           box-sizing: border-box;
+// //         }
+
+// //         /* ===============================
+// //            FORM WRAPPER
+// //         =============================== */
+
+// //         .sa-form-wrapper {
+// //           display: flex;
+// //           flex-direction: column;
+// //           gap: 16px;
+// //         }
+
+// //         /* ===============================
+// //            CARD
+// //         =============================== */
+
+// //         .sa-card {
+// //           background: #fff;
+// //           border: 1px solid #e5e7eb;
+// //           border-radius: 16px;
+// //           overflow: hidden;
+// //         }
+
+// //         .sa-card-body {
+// //           padding: 22px;
+// //         }
+
+// //         /* ===============================
+// //            SECTION HEADER
+// //         =============================== */
+
+// //         .sa-section-header {
+// //           min-height: 68px;
+// //           padding: 13px 20px;
+// //           display: flex;
+// //           align-items: center;
+// //           gap: 13px;
+
+// //           background:
+// //             linear-gradient(
+// //               135deg,
+// //               #ffffff 0%,
+// //               #f8fbff 70%,
+// //               #eff6ff 100%
+// //             );
+
+// //           border-bottom: 1px solid #e5e7eb;
+// //         }
+
+// //         .sa-section-icon {
+// //           width: 43px;
+// //           height: 43px;
+// //           border-radius: 11px;
+
+// //           display: flex;
+// //           align-items: center;
+// //           justify-content: center;
+
+// //           background:
+// //             linear-gradient(
+// //               135deg,
+// //               #2563eb,
+// //               #3b82f6
+// //             );
+
+// //           color: #fff;
+
+// //           box-shadow:
+// //             0 8px 20px
+// //             rgba(37,99,235,.20);
+
+// //           font-size: 18px;
+// //           flex-shrink: 0;
+// //         }
+
+// //         /* ===============================
+// //            FORM ELEMENTS
+// //         =============================== */
+
+// //         .form-label {
+// //           margin-bottom: 7px;
+// //           font-size: 14px;
+// //           color: #1f2937;
+// //         }
+
+// //         .form-control,
+// //         .form-select {
+// //           min-height: 43px;
+// //           border: 1px solid #dfe3e8;
+// //           border-radius: 8px;
+// //           font-size: 14px;
+// //           box-shadow: none !important;
+// //         }
+
+// //         .form-control:focus,
+// //         .form-select:focus {
+// //           border-color: #86b7fe;
+// //           box-shadow:
+// //             0 0 0 3px
+// //             rgba(37,99,235,.08) !important;
+// //         }
+
+// //         textarea.form-control {
+// //           min-height: 90px;
+// //           resize: vertical;
+// //         }
+
+// //         /* ===============================
+// //            OTP
+// //         =============================== */
+
+// //         .otp-wrapper {
+// //           display: flex;
+// //           width: 100%;
+// //         }
+
+// //         .otp-wrapper .form-control {
+// //           border-top-right-radius: 0;
+// //           border-bottom-right-radius: 0;
+// //         }
+
+// //         .otp-wrapper .btn {
+// //           min-width: 82px;
+// //           border-top-left-radius: 0;
+// //           border-bottom-left-radius: 0;
+// //         }
+
+// //         .otp-box {
+// //           padding: 11px;
+// //           background: #f8fafc;
+// //           border: 1px solid #e2e8f0;
+// //           border-radius: 9px;
+// //         }
+
+// //         /* ===============================
+// //            UPLOAD
+// //         =============================== */
+
+// //         .upload-area {
+// //           position: relative;
+
+// //           min-height: 132px;
+
+// //           border: 2px dashed #cbd5e1;
+// //           border-radius: 11px;
+
+// //           background:
+// //             linear-gradient(
+// //               135deg,
+// //               #ffffff,
+// //               #f8fbff
+// //             );
+
+// //           display: flex;
+// //           flex-direction: column;
+// //           justify-content: center;
+// //           align-items: center;
+
+// //           text-align: center;
+
+// //           padding: 20px;
+
+// //           cursor: pointer;
+
+// //           overflow: hidden;
+
+// //           transition: all .2s ease;
+// //         }
+
+// //         .upload-area:hover {
+// //           border-color: #2563eb;
+
+// //           background: #f5f9ff;
+
+// //           box-shadow:
+// //             0 5px 15px
+// //             rgba(37,99,235,.08);
+// //         }
+
+// //         .upload-area input {
+// //           position: absolute;
+// //           inset: 0;
+
+// //           opacity: 0;
+
+// //           width: 100%;
+// //           height: 100%;
+
+// //           cursor: pointer;
+// //         }
+
+// //         /* ===============================
+// //            PERMISSION INFO
+// //         =============================== */
+
+// //         .permission-info {
+// //           margin-top: 12px;
+// //           padding: 15px 16px;
+
+// //           border-radius: 10px;
+
+// //           background:
+// //             linear-gradient(
+// //               135deg,
+// //               #eff6ff,
+// //               #f8fbff
+// //             );
+
+// //           border: 1px solid #bfdbfe;
+
+// //           color: #174a8b;
+
+// //           font-size: 14px;
+// //         }
+
+// //         .info-icon {
+// //           width: 35px;
+// //           height: 35px;
+
+// //           border-radius: 9px;
+
+// //           display: flex;
+// //           align-items: center;
+// //           justify-content: center;
+
+// //           background: #2563eb;
+// //           color: white;
+
+// //           flex-shrink: 0;
+// //         }
+
+// //         /* ===============================
+// //            PERMISSIONS
+// //         =============================== */
+
+// //         .permission-grid {
+// //           margin-top: 16px;
+
+// //           display: grid;
+
+// //           grid-template-columns:
+// //             repeat(2, 1fr);
+
+// //           gap: 10px;
+// //         }
+
+// //         .permission-item {
+// //           display: flex;
+// //           align-items: center;
+
+// //           gap: 9px;
+
+// //           padding: 12px 13px;
+
+// //           border: 1px solid #e5e7eb;
+
+// //           border-radius: 9px;
+
+// //           font-size: 14px;
+
+// //           background: #fff;
+
+// //           transition: .2s ease;
+// //         }
+
+// //         .permission-item:hover {
+// //           border-color: #bfdbfe;
+// //           background: #f8fbff;
+// //         }
+
+// //         .permission-item span {
+// //           width: 20px;
+// //           height: 20px;
+
+// //           display: inline-flex;
+
+// //           align-items: center;
+// //           justify-content: center;
+
+// //           border-radius: 50%;
+
+// //           background: #198754;
+// //           color: #fff;
+
+// //           font-size: 10px;
+
+// //           flex-shrink: 0;
+// //         }
+
+// //         /* ===============================
+// //            FOOTER
+// //         =============================== */
+
+// //         .sa-footer {
+// //           margin-top: 18px;
+
+// //           padding: 15px 0;
+
+// //           display: flex;
+
+// //           justify-content: flex-end;
+
+// //           align-items: center;
+
+// //           gap: 10px;
+// //         }
+
+// //         .sa-footer .btn {
+// //           min-height: 43px;
+// //         }
+
+// //         /* ===============================
+// //            SWITCH
+// //         =============================== */
+
+// //         .form-switch .form-check-input {
+// //           width: 42px;
+// //           height: 22px;
+
+// //           cursor: pointer;
+// //         }
+
+// //         /* ===============================
+// //            BUTTON
+// //         =============================== */
+
+// //         .btn {
+// //           transition: all .2s ease;
+// //         }
+
+// //         .btn-primary {
+// //           background:
+// //             linear-gradient(
+// //               135deg,
+// //               #2563eb,
+// //               #3b82f6
+// //             );
+
+// //           border-color: #2563eb;
+// //         }
+
+// //         .btn-primary:hover {
+// //           transform: translateY(-1px);
+
+// //           box-shadow:
+// //             0 7px 18px
+// //             rgba(37,99,235,.20);
+// //         }
+
+// //         /* ===============================
+// //            MOBILE
+// //         =============================== */
+
+// //         @media (max-width: 767px) {
+
+// //           .sa-card-body {
+// //             padding: 15px;
+// //           }
+
+// //           .sa-section-header {
+// //             padding: 12px 15px;
+// //           }
+
+// //           .permission-grid {
+// //             grid-template-columns: 1fr;
+// //           }
+
+// //           .otp-wrapper {
+// //             flex-direction: column;
+// //           }
+
+// //           .otp-wrapper .form-control {
+// //             border-radius: 8px;
+// //           }
+
+// //           .otp-wrapper .btn {
+// //             margin-top: 7px;
+// //             width: 100%;
+// //             border-radius: 8px;
+// //           }
+
+// //           .sa-footer {
+// //             flex-direction: column-reverse;
+// //           }
+
+// //           .sa-footer .btn {
+// //             width: 100%;
+// //           }
+
+// //         }
+
+// //         @media (max-width: 480px) {
+
+// //           .sa-section-header {
+// //             min-height: 62px;
+// //           }
+
+// //           .sa-section-icon {
+// //             width: 38px;
+// //             height: 38px;
+// //             font-size: 16px;
+// //           }
+
+// //           .sa-card-body {
+// //             padding: 12px;
+// //           }
+
+// //         }
+
+// //         /* ===============================
+// //            PRINT
+// //         =============================== */
+
+// //         @media print {
+
+// //           body {
+// //             background: white !important;
+// //           }
+
+// //           button,
+// //           .btn {
+// //             display: none !important;
+// //           }
+
+// //           .sa-card {
+// //             box-shadow: none !important;
+// //             border: 1px solid #ddd !important;
+// //           }
+
+// //           .sa-section-header {
+// //             background: white !important;
+// //           }
+
+// //         }
+
+// //       `}</style>
+// //     </>
+// //   );
+// // };
+
+// // /* =========================================================
+// //    TOGGLE ROW
+// // ========================================================= */
+
+// // const ToggleRow = ({
+// //   label,
+// //   checked,
+// //   name,
+// //   onChange,
+// //   activeText,
+// //   helper,
+// // }) => {
+// //   return (
+// //     <div>
+
+// //       <div className="d-flex justify-content-between align-items-center gap-3">
+
+// //         <div>
+// //           <div className="fw-semibold text-dark">
+// //             {label}
+// //           </div>
+
+// //           <small className="text-muted">
+// //             {helper}
+// //           </small>
+// //         </div>
+
+// //         <div className="d-flex align-items-center gap-2 flex-shrink-0">
+
+// //           <div className="form-check form-switch mb-0">
+
+// //             <input
+// //               className="form-check-input"
+// //               type="checkbox"
+// //               role="switch"
+// //               name={name}
+// //               checked={checked}
+// //               onChange={onChange}
+// //             />
+
+// //           </div>
+
+// //           <span
+// //             className={`small fw-semibold ${
+// //               checked
+// //                 ? "text-success"
+// //                 : "text-muted"
+// //             }`}
+// //           >
+// //             {checked
+// //               ? activeText
+// //               : "Disabled"}
+// //           </span>
+
+// //         </div>
+
+// //       </div>
+
+// //     </div>
+// //   );
+// // };
+
+// // export default SuperAdminCreation;
+
+
 // import axios from "axios";
 // import React, { useEffect, useState } from "react";
+
 // import {
 //   FaArrowLeft,
 //   FaPaperPlane,
 //   FaRegUser,
-  
-  
+//   FaUserShield,
+//   FaCheckCircle,
+//   FaLock,
+//   FaCog,
+//   FaInfoCircle,
 // } from "react-icons/fa";
-// import { FaArrowsRotate, FaArrowUpFromBracket } from "react-icons/fa6";
-// import { IoMdSettings } from "react-icons/io";
-// import { MdOutlineGridView } from "react-icons/md";
-// import { SiAdguard } from "react-icons/si";
+
+// import {
+//   FaArrowsRotate,
+//   FaArrowUpFromBracket,
+// } from "react-icons/fa6";
+
+// import {
+//   MdOutlineGridView,
+//   MdOutlineSchool,
+//   MdAdminPanelSettings,
+// } from "react-icons/md";
 
 // const SuperAdminCreation = () => {
+
 //   const token = localStorage.getItem("token");
 
+//   // =====================================================
+//   // FILE
+//   // =====================================================
+
 //   const [selectedFile, setSelectedFile] = useState(null);
+
+//   // =====================================================
+//   // DATA
+//   // =====================================================
 
 //   const [userGroup, setUserGroup] = useState([]);
 //   const [schools, setSchools] = useState([]);
 
-//   const [showPhoneOtp, setShowPhoneOtp] = useState(false);
-//   const [showEmailOtp, setShowEmailOtp] = useState(false);
+//   // =====================================================
+//   // EMAIL OTP
+//   // =====================================================
 
-//   const [phoneOtp, setPhoneOtp] = useState("");
+//   const [showEmailOtp, setShowEmailOtp] = useState(false);
 //   const [emailOtp, setEmailOtp] = useState("");
 
-//   const [sendingPhoneOtp, setSendingPhoneOtp] = useState(false);
-//   const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
+//   const [sendingEmailOtp, setSendingEmailOtp] =
+//     useState(false);
 
-//   const [verifyingPhoneOtp, setVerifyingPhoneOtp] = useState(false);
-//   const [verifyingEmailOtp, setVerifyingEmailOtp] = useState(false);
+//   const [verifyingEmailOtp, setVerifyingEmailOtp] =
+//     useState(false);
 
-//   const [phoneVerified, setPhoneVerified] = useState(false);
-//   const [emailVerified, setEmailVerified] = useState(false);
+//   const [emailVerified, setEmailVerified] =
+//     useState(false);
 
-//   const [creatingUser, setCreatingUser] = useState(false);
+//   // =====================================================
+//   // CREATE USER
+//   // =====================================================
+
+//   const [creatingUser, setCreatingUser] =
+//     useState(false);
+
+//   // =====================================================
+//   // INITIAL FORM
+//   // =====================================================
 
 //   const initialForm = {
 //     schoolId: "",
@@ -63,7 +2257,12 @@
 //     userGroupId: "",
 //   };
 
-//   const [formData, setFormData] = useState(initialForm);
+//   const [formData, setFormData] =
+//     useState(initialForm);
+
+//   // =====================================================
+//   // SECURITY QUESTIONS
+//   // =====================================================
 
 //   const securityQuestions = [
 //     "What is your mother's maiden name?",
@@ -72,33 +2271,56 @@
 //     "What was your childhood nickname?",
 //   ];
 
+//   // =====================================================
+//   // LANGUAGES
+//   // =====================================================
+
 //   const languages = [
-//     { value: "ENGLISH", label: "English" },
-//     { value: "HINDI", label: "Hindi" },
+//     {
+//       value: "ENGLISH",
+//       label: "English",
+//     },
+//     {
+//       value: "HINDI",
+//       label: "Hindi",
+//     },
 //   ];
+
+//   // =====================================================
+//   // TIME ZONES
+//   // =====================================================
 
 //   const timeZones = [
 //     {
 //       value: "Asia/Kolkata",
-//       label: "India Standard Time (IST) — UTC +05:30",
+//       label:
+//         "India Standard Time (IST) — UTC +05:30",
 //     },
 //     {
 //       value: "Asia/Dubai",
-//       label: "Gulf Standard Time (GST) — UTC +04:00",
+//       label:
+//         "Gulf Standard Time (GST) — UTC +04:00",
 //     },
 //     {
 //       value: "Asia/Dhaka",
-//       label: "Bangladesh Standard Time — UTC +06:00",
+//       label:
+//         "Bangladesh Standard Time — UTC +06:00",
 //     },
 //     {
 //       value: "Asia/Singapore",
-//       label: "Singapore Time — UTC +08:00",
+//       label:
+//         "Singapore Time — UTC +08:00",
 //     },
 //     {
 //       value: "Asia/Tokyo",
-//       label: "Japan Standard Time — UTC +09:00",
+//       label:
+//         "Japan Standard Time — UTC +09:00",
 //     },
 //   ];
+
+//   // =====================================================
+//   // PERMISSIONS
+//   // =====================================================
 
 //   const permissions = [
 //     "All Modules Access",
@@ -109,13 +2331,22 @@
 //     "System Configuration",
 //   ];
 
+//   // =====================================================
+//   // LOAD DATA
+//   // =====================================================
+
 //   useEffect(() => {
 //     loadUserGroup();
 //     loadSchools();
 //   }, []);
 
+//   // =====================================================
+//   // LOAD USER GROUP
+//   // =====================================================
+
 //   const loadUserGroup = async () => {
 //     try {
+
 //       const res = await axios.get(
 //         "http://localhost:8080/api/user-group/all",
 //         {
@@ -126,13 +2357,23 @@
 //       );
 
 //       setUserGroup(res.data || []);
+
 //     } catch (error) {
-//       console.error("User group loading failed:", error);
+
+//       console.error(
+//         "User group loading failed:",
+//         error
+//       );
 //     }
 //   };
 
+//   // =====================================================
+//   // LOAD SCHOOLS
+//   // =====================================================
+
 //   const loadSchools = async () => {
 //     try {
+
 //       const res = await axios.get(
 //         "http://localhost:8080/api/school/all",
 //         {
@@ -143,18 +2384,39 @@
 //       );
 
 //       setSchools(res.data || []);
+
 //     } catch (error) {
-//       console.error("School loading failed:", error);
+
+//       console.error(
+//         "School loading failed:",
+//         error
+//       );
 //     }
 //   };
 
+//   // =====================================================
+//   // INPUT CHANGE
+//   // =====================================================
+
 //   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
+
+//     const {
+//       name,
+//       value,
+//     } = e.target;
+
+//     // ---------------------------------------------------
+//     // USER GROUP
+//     // ---------------------------------------------------
 
 //     if (name === "userGroupId") {
-//       const selectedGroup = userGroup.find(
-//         (group) => String(group.id) === String(value)
-//       );
+
+//       const selectedGroup =
+//         userGroup.find(
+//           (group) =>
+//             String(group.id) ===
+//             String(value)
+//         );
 
 //       const selectedRole =
 //         selectedGroup?.groupName ||
@@ -171,14 +2433,26 @@
 //       return;
 //     }
 
+//     // ---------------------------------------------------
+//     // NORMAL INPUT
+//     // ---------------------------------------------------
+
 //     setFormData((prev) => ({
 //       ...prev,
 //       [name]: value,
 //     }));
 //   };
 
+//   // =====================================================
+//   // SWITCH CHANGE
+//   // =====================================================
+
 //   const handleSwitchChange = (e) => {
-//     const { name, checked } = e.target;
+
+//     const {
+//       name,
+//       checked,
+//     } = e.target;
 
 //     setFormData((prev) => ({
 //       ...prev,
@@ -186,13 +2460,23 @@
 //     }));
 //   };
 
+//   // =====================================================
+//   // FILE CHANGE
+//   // =====================================================
+
 //   const handleFileChange = (e) => {
-//     const file = e.target.files?.[0];
+
+//     const file =
+//       e.target.files?.[0];
 
 //     if (!file) return;
 
 //     if (file.size > 2 * 1024 * 1024) {
-//       alert("Profile picture must be less than 2MB.");
+
+//       alert(
+//         "Profile picture must be less than 2MB."
+//       );
+
 //       return;
 //     }
 
@@ -204,109 +2488,74 @@
 //     ];
 
 //     if (!allowedTypes.includes(file.type)) {
-//       alert("Only JPG, PNG or SVG files are allowed.");
+
+//       alert(
+//         "Only JPG, PNG or SVG files are allowed."
+//       );
+
 //       return;
 //     }
 
 //     setSelectedFile(file);
 //   };
 
-//   const sendPhoneOtp = async () => {
-//     if (formData.phoneNumber.length !== 10) {
-//       alert("Please enter valid 10 digit phone number.");
-//       return;
-//     }
-
-//     try {
-//       setSendingPhoneOtp(true);
-
-//       await axios.post(
-//         "http://localhost:8080/api/otp/send-phone",
-//         {
-//           phone: formData.phoneNumber,
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-
-//       setShowPhoneOtp(true);
-//       setPhoneOtp("");
-
-//       alert(
-//         "Phone OTP generated successfully.\nCheck your Spring Boot console."
-//       );
-//     } catch (error) {
-//       alert(
-//         error.response?.data?.message ||
-//           error.response?.data ||
-//           "Failed to generate phone OTP."
-//       );
-//     } finally {
-//       setSendingPhoneOtp(false);
-//     }
-//   };
-
-//   const verifyPhoneOtp = async () => {
-//     if (phoneOtp.length !== 6) {
-//       alert("Please enter 6 digit OTP.");
-//       return;
-//     }
-
-//     try {
-//       setVerifyingPhoneOtp(true);
-
-//       await axios.post(
-//         "http://localhost:8080/api/otp/verify-phone",
-//         {
-//           phone: formData.phoneNumber,
-//           otp: phoneOtp,
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-
-//       setPhoneVerified(true);
-//       setShowPhoneOtp(false);
-//       setPhoneOtp("");
-
-//       alert("Phone number verified successfully.");
-//     } catch (error) {
-//       alert(
-//         error.response?.data?.message ||
-//           error.response?.data ||
-//           "Invalid phone OTP."
-//       );
-//     } finally {
-//       setVerifyingPhoneOtp(false);
-//     }
-//   };
+//   // =====================================================
+//   // SEND EMAIL OTP
+//   // =====================================================
 
 //   const sendEmailOtp = async () => {
-//     if (!formData.email.trim()) {
-//       alert("Please enter email address.");
+
+//     const email =
+//       formData.email.trim();
+
+//     // ---------------------------------------------------
+//     // EMPTY EMAIL
+//     // ---------------------------------------------------
+
+//     if (!email) {
+
+//       alert(
+//         "Please enter email address."
+//       );
+
+//       return;
+//     }
+
+//     // ---------------------------------------------------
+//     // EMAIL FORMAT
+//     // ---------------------------------------------------
+
+//     if (
+//       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+//         email
+//       )
+//     ) {
+
+//       alert(
+//         "Please enter a valid email address."
+//       );
+
 //       return;
 //     }
 
 //     try {
+
 //       setSendingEmailOtp(true);
 
+//       // -------------------------------------------------
+//       // EMAIL OTP API
+//       // -------------------------------------------------
+//       // No JWT required
+//       // Backend:
+//       // POST /api/email-otp/send?email=...
+//       // -------------------------------------------------
+
 //       await axios.post(
-//         "http://localhost:8080/api/otp/send-email",
+//         "http://localhost:8080/api/email-otp/send",
+//         null,
 //         {
-//           email: formData.email.trim(),
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
+//           params: {
+//             email: email,
 //           },
 //         }
 //       );
@@ -315,148 +2564,344 @@
 //       setEmailOtp("");
 
 //       alert(
-//         "Email OTP generated successfully.\nCheck your Spring Boot console."
+//         "OTP sent successfully.\nPlease check your email."
 //       );
+
 //     } catch (error) {
+
+//       console.error(
+//         "Send Email OTP Error:",
+//         error
+//       );
+
 //       alert(
 //         error.response?.data?.message ||
 //           error.response?.data ||
-//           "Failed to generate email OTP."
+//           "Failed to send email OTP."
 //       );
+
 //     } finally {
+
 //       setSendingEmailOtp(false);
 //     }
 //   };
 
+//   // =====================================================
+//   // VERIFY EMAIL OTP
+//   // =====================================================
+
 //   const verifyEmailOtp = async () => {
+
+//     const email =
+//       formData.email.trim();
+
+//     // ---------------------------------------------------
+//     // EMAIL
+//     // ---------------------------------------------------
+
+//     if (!email) {
+
+//       alert(
+//         "Please enter email address."
+//       );
+
+//       return;
+//     }
+
+//     // ---------------------------------------------------
+//     // OTP
+//     // ---------------------------------------------------
+
 //     if (emailOtp.length !== 6) {
-//       alert("Please enter 6 digit OTP.");
+
+//       alert(
+//         "Please enter 6 digit OTP."
+//       );
+
 //       return;
 //     }
 
 //     try {
+
 //       setVerifyingEmailOtp(true);
 
+//       // -------------------------------------------------
+//       // VERIFY EMAIL OTP API
+//       // -------------------------------------------------
+//       // No JWT required
+//       // Backend:
+//       // POST /api/email-otp/verify
+//       // -------------------------------------------------
+
 //       await axios.post(
-//         "http://localhost:8080/api/otp/verify-email",
+//         "http://localhost:8080/api/email-otp/verify",
+//         null,
 //         {
-//           email: formData.email.trim(),
-//           otp: emailOtp,
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
+//           params: {
+//             email: email,
+//             otp: emailOtp,
 //           },
 //         }
 //       );
+
+//       // -------------------------------------------------
+//       // VERIFIED
+//       // -------------------------------------------------
 
 //       setEmailVerified(true);
 //       setShowEmailOtp(false);
 //       setEmailOtp("");
 
-//       alert("Email address verified successfully.");
+//       alert(
+//         "Email address verified successfully."
+//       );
+
 //     } catch (error) {
+
+//       console.error(
+//         "Verify Email OTP Error:",
+//         error
+//       );
+
 //       alert(
 //         error.response?.data?.message ||
 //           error.response?.data ||
 //           "Invalid email OTP."
 //       );
+
 //     } finally {
+
 //       setVerifyingEmailOtp(false);
 //     }
 //   };
 
+//   // =====================================================
+//   // CREATE SUPER ADMIN
+//   // =====================================================
+
 //   const createSuperAdmin = async () => {
+
+//     // ---------------------------------------------------
+//     // SCHOOL
+//     // ---------------------------------------------------
+
 //     if (!formData.schoolId) {
-//       alert("Please select school.");
+
+//       alert(
+//         "Please select school."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // NAME
+//     // ---------------------------------------------------
 
 //     if (!formData.fullName.trim()) {
-//       alert("Please enter full name.");
+
+//       alert(
+//         "Please enter full name."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // EMAIL
+//     // ---------------------------------------------------
 
 //     if (!formData.email.trim()) {
-//       alert("Please enter email address.");
+
+//       alert(
+//         "Please enter email address."
+//       );
+
 //       return;
 //     }
 
-//     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-//       alert("Please enter a valid email address.");
+//     // ---------------------------------------------------
+//     // EMAIL FORMAT
+//     // ---------------------------------------------------
+
+//     if (
+//       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+//         formData.email.trim()
+//       )
+//     ) {
+
+//       alert(
+//         "Please enter a valid email address."
+//       );
+
 //       return;
 //     }
 
-//     if (formData.phoneNumber.length !== 10) {
-//       alert("Please enter valid 10 digit phone number.");
-//       return;
-//     }
-
-//     if (!phoneVerified) {
-//       alert("Please verify phone number first.");
-//       return;
-//     }
+//     // ---------------------------------------------------
+//     // EMAIL VERIFICATION
+//     // ---------------------------------------------------
 
 //     if (!emailVerified) {
-//       alert("Please verify email address first.");
+
+//       alert(
+//         "Please verify email address first."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // PHONE
+//     // ---------------------------------------------------
+
+//     if (
+//       formData.phoneNumber.length !== 10
+//     ) {
+
+//       alert(
+//         "Please enter valid 10 digit phone number."
+//       );
+
+//       return;
+//     }
+
+//     // ---------------------------------------------------
+//     // DATE OF BIRTH
+//     // ---------------------------------------------------
 
 //     if (!formData.dateOfBirth) {
-//       alert("Please select date of birth.");
+
+//       alert(
+//         "Please select date of birth."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // GENDER
+//     // ---------------------------------------------------
 
 //     if (!formData.gender) {
-//       alert("Please select gender.");
+
+//       alert(
+//         "Please select gender."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // ROLE
+//     // ---------------------------------------------------
 
 //     if (!formData.userGroupId) {
-//       alert("Please select role.");
+
+//       alert(
+//         "Please select role."
+//       );
+
 //       return;
 //     }
 
+//     // ---------------------------------------------------
+//     // PASSWORD
+//     // ---------------------------------------------------
+
 //     if (!formData.password) {
-//       alert("Please enter password.");
+
+//       alert(
+//         "Please enter password."
+//       );
+
 //       return;
 //     }
 
 //     if (formData.password.length < 8) {
-//       alert("Password must be at least 8 characters long.");
+
+//       alert(
+//         "Password must be at least 8 characters long."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // CONFIRM PASSWORD
+//     // ---------------------------------------------------
 
 //     if (!formData.confirmPassword) {
-//       alert("Please confirm password.");
+
+//       alert(
+//         "Please confirm password."
+//       );
+
 //       return;
 //     }
 
-//     if (formData.password !== formData.confirmPassword) {
-//       alert("Password and confirm password do not match.");
+//     if (
+//       formData.password !==
+//       formData.confirmPassword
+//     ) {
+
+//       alert(
+//         "Password and confirm password do not match."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // SECURITY QUESTION
+//     // ---------------------------------------------------
 
 //     if (!formData.securityQuestion) {
-//       alert("Please select security question.");
+
+//       alert(
+//         "Please select security question."
+//       );
+
 //       return;
 //     }
 
-//     if (!formData.securityAnswer.trim()) {
-//       alert("Please enter security answer.");
+//     // ---------------------------------------------------
+//     // SECURITY ANSWER
+//     // ---------------------------------------------------
+
+//     if (
+//       !formData.securityAnswer.trim()
+//     ) {
+
+//       alert(
+//         "Please enter security answer."
+//       );
+
 //       return;
 //     }
 
-//     const selectedUserGroup = userGroup.find(
-//       (group) =>
-//         String(group.id) === String(formData.userGroupId)
-//     );
+//     // ---------------------------------------------------
+//     // USER GROUP
+//     // ---------------------------------------------------
+
+//     const selectedUserGroup =
+//       userGroup.find(
+//         (group) =>
+//           String(group.id) ===
+//           String(formData.userGroupId)
+//       );
 
 //     if (!selectedUserGroup) {
-//       alert("Selected role not found.");
+
+//       alert(
+//         "Selected role not found."
+//       );
+
 //       return;
 //     }
+
+//     // ---------------------------------------------------
+//     // ROLE NAME
+//     // ---------------------------------------------------
 
 //     const selectedRole =
 //       selectedUserGroup.groupName ||
@@ -464,44 +2909,76 @@
 //       selectedUserGroup.role ||
 //       "";
 
+//     // ===================================================
+//     // PAYLOAD
+//     // ===================================================
+
 //     const payload = {
-//       name: formData.fullName.trim(),
-//       fullName: formData.fullName.trim(),
 
-//       email: formData.email.trim(),
+//       name:
+//         formData.fullName.trim(),
 
-//       phone: formData.phoneNumber,
-//       phoneNumber: formData.phoneNumber,
+//       fullName:
+//         formData.fullName.trim(),
 
-//       alternatePhone: formData.alternatePhone.trim(),
+//       email:
+//         formData.email.trim(),
 
-//       dateOfBirth: formData.dateOfBirth,
-//       gender: formData.gender,
+//       phone:
+//         formData.phoneNumber,
 
-//       password: formData.password,
-//       confirmPassword: formData.confirmPassword,
+//       phoneNumber:
+//         formData.phoneNumber,
 
-//       securityQuestion: formData.securityQuestion,
-//       securityAnswer: formData.securityAnswer.trim(),
+//       alternatePhone:
+//         formData.alternatePhone.trim(),
 
-//       address: formData.address.trim(),
+//       dateOfBirth:
+//         formData.dateOfBirth,
+
+//       gender:
+//         formData.gender,
+
+//       password:
+//         formData.password,
+
+//       confirmPassword:
+//         formData.confirmPassword,
+
+//       securityQuestion:
+//         formData.securityQuestion,
+
+//       securityAnswer:
+//         formData.securityAnswer.trim(),
+
+//       address:
+//         formData.address.trim(),
 
 //       languagePreference:
-//         formData.languagePreference || null,
+//         formData.languagePreference ||
+//         null,
 
-//       timeZone: formData.timeZone || null,
+//       timeZone:
+//         formData.timeZone ||
+//         null,
 
-//       note: formData.note.trim() || null,
+//       note:
+//         formData.note.trim() ||
+//         null,
 
-//       role: selectedRole,
+//       role:
+//         selectedRole,
 
-//       userGroupId: Number(formData.userGroupId),
+//       userGroupId:
+//         Number(formData.userGroupId),
 
-//       status: formData.accountStatus
-//         ? "Active"
-//         : "Inactive",
+//       status:
+//         formData.accountStatus
+//           ? "Active"
+//           : "Inactive",
 
-//       accountStatus: formData.accountStatus,
+//       accountStatus:
+//         formData.accountStatus,
 
 //       twoFactorAuthentication:
 //         formData.twoFactorAuthentication,
@@ -509,23 +2986,37 @@
 //       loginNotification:
 //         formData.loginNotification,
 
-//       phoneVerified,
-//       emailVerified,
+//       // Only Email Verification
+//       emailVerified:
+//         emailVerified,
 //     };
 
+//     // ===================================================
+//     // CREATE REQUEST
+//     // ===================================================
+
 //     try {
+
 //       setCreatingUser(true);
 
-//       const response = await axios.post(
-//         `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
-//         payload,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
+//       const response =
+//         await axios.post(
+//           `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+//           payload,
+//           {
+//             headers: {
+//               Authorization:
+//                 `Bearer ${token}`,
+
+//               "Content-Type":
+//                 "application/json",
+//             },
+//           }
+//         );
+
+//       // -------------------------------------------------
+//       // GENERATED USERNAME
+//       // -------------------------------------------------
 
 //       const generatedUsername =
 //         response.data?.username ||
@@ -533,16 +3024,26 @@
 //         response.data?.data?.username;
 
 //       if (generatedUsername) {
+
 //         alert(
 //           `Super Admin created successfully!\n\nUsername: ${generatedUsername}`
 //         );
+
 //       } else {
-//         alert("Super Admin created successfully.");
+
+//         alert(
+//           "Super Admin created successfully."
+//         );
 //       }
 
 //       resetForm();
+
 //     } catch (error) {
-//       console.error("Create Super Admin Error:", error);
+
+//       console.error(
+//         "Create Super Admin Error:",
+//         error
+//       );
 
 //       const backendMessage =
 //         error.response?.data?.message ||
@@ -553,224 +3054,430 @@
 //         backendMessage ||
 //           "Failed to create Super Admin."
 //       );
+
 //     } finally {
+
 //       setCreatingUser(false);
 //     }
 //   };
 
+//   // =====================================================
+//   // RESET FORM
+//   // =====================================================
+
 //   const resetForm = () => {
+
 //     setFormData(initialForm);
 
-//     setPhoneOtp("");
 //     setEmailOtp("");
 
-//     setShowPhoneOtp(false);
 //     setShowEmailOtp(false);
 
-//     setPhoneVerified(false);
 //     setEmailVerified(false);
 
 //     setSelectedFile(null);
 //   };
 
-//   const SectionHeader = ({ icon, title, subtitle }) => (
-//     <div className="admission-section-header">
-//       <div className="admission-section-icon">
+//   // =====================================================
+//   // SECTION HEADER
+//   // =====================================================
+
+//   const SectionHeader = ({
+//     icon,
+//     title,
+//     subtitle,
+//   }) => (
+
+//     <div className="sa-section-header">
+
+//       <div className="sa-section-icon">
 //         {icon}
 //       </div>
 
 //       <div>
-//         <h5 className="mb-0 fw-bold">{title}</h5>
 
-//         {subtitle && (
-//           <small className="text-muted">
-//             {subtitle}
-//           </small>
-//         )}
+//         <h6 className="mb-1 fw-bold text-dark">
+//           {title}
+//         </h6>
+
+//         <small className="text-muted">
+//           {subtitle}
+//         </small>
+
 //       </div>
+
 //     </div>
 //   );
+
+//   // =====================================================
+//   // FIELD
+//   // =====================================================
 
 //   const Field = ({
 //     label,
 //     required = false,
 //     children,
 //   }) => (
+
 //     <div className="mb-3">
+
 //       <label className="form-label fw-semibold">
+
 //         {label}
+
 //         {required && (
-//           <span className="text-danger ms-1">*</span>
+//           <span className="text-danger ms-1">
+//             *
+//           </span>
 //         )}
+
 //       </label>
 
 //       {children}
+
 //     </div>
 //   );
 
+//   // =====================================================
+//   // RETURN
+//   // =====================================================
+
 //   return (
 //     <>
-//       {/* PAGE HEADER */}
-//       <div className="container-fluid px-2">
-//         <div className="new-admission-header shadow">
-//           <div>
-//             <h4 className="fw-bold mb-1">
-//               Create Super Admin
-//             </h4>
 
-//             <p className="text-muted mb-2">
-//               Create a new super administrator account
-//               for school management.
-//             </p>
+//       {/* =====================================================
+//           PAGE HEADER
+//       ===================================================== */}
 
-//             <nav>
-//               <ol className="breadcrumb mb-0 small">
-//                 <li className="breadcrumb-item">
-//                   <a
-//                     href="/"
-//                     className="text-decoration-none text-dark"
-//                   >
-//                     Dashboard
-//                   </a>
-//                 </li>
+//       <div className="mx-2 mt-2 mb-3">
 
-//                 <li className="breadcrumb-item">
-//                   Super Admin Management
-//                 </li>
+//         <div
+//           className="rounded-4 shadow overflow-hidden"
+//           style={{
+//             background:
+//               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
 
-//                 <li className="breadcrumb-item active text-primary">
-//                   Create Super Admin
-//                 </li>
-//               </ol>
-//             </nav>
+//             border:
+//               "1px solid #dbeafe",
+//           }}
+//         >
+
+//           <div className="p-3 p-md-4">
+
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+//               <div className="d-flex align-items-center gap-3">
+
+//                 <div
+//                   className="d-flex align-items-center justify-content-center rounded-3"
+//                   style={{
+//                     width: "52px",
+//                     height: "52px",
+//                     background:
+//                       "linear-gradient(135deg,#2563eb,#3b82f6)",
+//                     color: "#fff",
+//                     boxShadow:
+//                       "0 8px 20px rgba(37,99,235,.22)",
+//                   }}
+//                 >
+//                   <MdAdminPanelSettings size={29} />
+//                 </div>
+
+//                 <div>
+
+//                   <h5 className="mb-1 fw-bold text-dark">
+//                     Create Super Admin
+//                   </h5>
+
+//                   <div className="text-muted small">
+//                     Super Admin Management
+//                     &nbsp;/&nbsp;
+//                     Create Account
+//                   </div>
+
+//                 </div>
+
+//               </div>
+
+//               <div className="d-flex align-items-center gap-2">
+
+//                 <span
+//                   className="badge rounded-pill px-3 py-2"
+//                   style={{
+//                     backgroundColor:
+//                       "#eff6ff",
+//                     color:
+//                       "#2563eb",
+//                     border:
+//                       "1px solid #bfdbfe",
+//                   }}
+//                 >
+//                   <MdOutlineSchool className="me-1" />
+//                   Administration
+//                 </span>
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-outline-primary rounded-3"
+//                   onClick={() =>
+//                     window.history.back()
+//                   }
+//                 >
+//                   <FaArrowLeft className="me-2" />
+//                   Back
+//                 </button>
+
+//               </div>
+
+//             </div>
+
 //           </div>
 
-//           <button
-//             type="button"
-//             className="btn btn-outline-primary"
-//             onClick={() => window.history.back()}
+//           <div
+//             className="px-4 py-2"
+//             style={{
+//               backgroundColor:
+//                 "rgba(239,246,255,.75)",
+
+//               borderTop:
+//                 "1px solid #e0ecff",
+//             }}
 //           >
-//             <FaArrowLeft className="me-2" />
-//             Back to List
-//           </button>
+
+//             <small className="text-muted">
+
+//               Home
+//               &nbsp;›&nbsp;
+
+//               Super Admin Management
+//               &nbsp;›&nbsp;
+
+//               <span className="text-primary fw-semibold">
+//                 Create Super Admin
+//               </span>
+
+//             </small>
+
+//           </div>
+
 //         </div>
+
 //       </div>
 
-//       {/* MAIN FORM */}
-//       <div className="container-fluid px-2 mt-3 mb-4">
-//         <div className="admission-form-wrapper">
+//       {/* =====================================================
+//           FORM
+//       ===================================================== */}
 
-//           {/* PERSONAL INFORMATION */}
-//           <div className="admission-card">
+//       <div className="px-2 mb-5">
+
+//         <div className="sa-form-wrapper">
+
+//           {/* =================================================
+//               PERSONAL INFORMATION
+//           ================================================= */}
+
+//           <div className="sa-card shadow">
+
 //             <SectionHeader
 //               icon={<FaRegUser />}
 //               title="Personal Information"
 //               subtitle="Enter basic administrator details"
 //             />
 
-//             <div className="admission-card-body">
+//             <div className="sa-card-body">
 
 //               <div className="row g-3">
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="School" required>
+
+//                 {/* SCHOOL */}
+
+//                 <div className="col-xl-4 col-md-6">
+
+//                   <Field
+//                     label="School"
+//                     required
+//                   >
+
 //                     <select
 //                       name="schoolId"
 //                       className="form-select"
-//                       value={formData.schoolId}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.schoolId
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     >
+
 //                       <option value="">
 //                         Select School
 //                       </option>
 
-//                       {schools.map((school) => (
-//                         <option
-//                           key={school.id}
-//                           value={school.id}
-//                         >
-//                           {school.schoolName ||
-//                             school.name ||
-//                             school.schoolCode}
+//                       {schools.map(
+//                         (school) => (
 
-//                           {school.schoolCode
-//                             ? ` (${school.schoolCode})`
-//                             : ""}
-//                         </option>
-//                       ))}
+//                           <option
+//                             key={school.id}
+//                             value={school.id}
+//                           >
+
+//                             {school.schoolName ||
+//                               school.name ||
+//                               school.schoolCode}
+
+//                             {school.schoolCode
+//                               ? ` (${school.schoolCode})`
+//                               : ""}
+
+//                           </option>
+
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </Field>
+
 //                 </div>
 
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="Full Name" required>
+//                 {/* FULL NAME */}
+
+//                 <div className="col-xl-4 col-md-6">
+
+//                   <Field
+//                     label="Full Name"
+//                     required
+//                   >
+
 //                     <input
 //                       type="text"
 //                       name="fullName"
 //                       className="form-control"
 //                       placeholder="Enter full name"
-//                       value={formData.fullName}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.fullName
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
 
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="Gender" required>
+//                 {/* GENDER */}
+
+//                 <div className="col-xl-4 col-md-6">
+
+//                   <Field
+//                     label="Gender"
+//                     required
+//                   >
+
 //                     <select
 //                       name="gender"
 //                       className="form-select"
-//                       value={formData.gender}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.gender
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     >
+
 //                       <option value="">
 //                         Select Gender
 //                       </option>
-//                       <option value="MALE">Male</option>
+
+//                       <option value="MALE">
+//                         Male
+//                       </option>
+
 //                       <option value="FEMALE">
 //                         Female
 //                       </option>
+
 //                       <option value="OTHER">
 //                         Other
 //                       </option>
+
 //                     </select>
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
 
 //               <div className="row g-3">
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="Date of Birth" required>
+
+//                 {/* DATE OF BIRTH */}
+
+//                 <div className="col-xl-4 col-md-6">
+
+//                   <Field
+//                     label="Date of Birth"
+//                     required
+//                   >
+
 //                     <input
 //                       type="date"
 //                       name="dateOfBirth"
 //                       className="form-control"
-//                       value={formData.dateOfBirth}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.dateOfBirth
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
 
 //                 {/* EMAIL */}
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="Email Address" required>
+
+//                 <div className="col-xl-4 col-md-6">
+
+//                   <Field
+//                     label="Email Address"
+//                     required
+//                   >
 
 //                     <div className="otp-wrapper">
+
 //                       <input
 //                         type="email"
 //                         name="email"
 //                         className="form-control"
 //                         placeholder="Enter email address"
-//                         value={formData.email}
-//                         disabled={emailVerified}
+//                         value={
+//                           formData.email
+//                         }
+//                         disabled={
+//                           emailVerified
+//                         }
 //                         onChange={(e) => {
-//                           setFormData((prev) => ({
-//                             ...prev,
-//                             email: e.target.value,
-//                           }));
 
-//                           setEmailVerified(false);
-//                           setShowEmailOtp(false);
+//                           setFormData(
+//                             (prev) => ({
+//                               ...prev,
+//                               email:
+//                                 e.target.value,
+//                             })
+//                           );
+
+//                           setEmailVerified(
+//                             false
+//                           );
+
+//                           setShowEmailOtp(
+//                             false
+//                           );
+
 //                           setEmailOtp("");
+
 //                         }}
 //                       />
 
@@ -786,13 +3493,24 @@
 //                           emailVerified ||
 //                           !formData.email.trim()
 //                         }
-//                         onClick={sendEmailOtp}
+//                         onClick={
+//                           sendEmailOtp
+//                         }
 //                       >
+
 //                         {sendingEmailOtp ? (
+
 //                           <span className="spinner-border spinner-border-sm" />
+
 //                         ) : emailVerified ? (
-//                           "Verified"
+
+//                           <>
+//                             <FaCheckCircle className="me-1" />
+//                             Verified
+//                           </>
+
 //                         ) : (
+
 //                           <>
 //                             <FaPaperPlane
 //                               size={13}
@@ -801,19 +3519,28 @@
 //                             OTP
 //                           </>
 //                         )}
+
 //                       </button>
+
 //                     </div>
+
+//                     {/* OTP INPUT */}
 
 //                     {showEmailOtp &&
 //                       !emailVerified && (
-//                         <div className="otp-verify-box mt-2">
+
+//                         <div className="otp-box mt-2">
+
 //                           <div className="input-group">
+
 //                             <input
 //                               type="text"
 //                               className="form-control"
 //                               placeholder="Enter 6-digit OTP"
 //                               maxLength={6}
-//                               value={emailOtp}
+//                               value={
+//                                 emailOtp
+//                               }
 //                               onChange={(e) =>
 //                                 setEmailOtp(
 //                                   e.target.value.replace(
@@ -835,340 +3562,431 @@
 //                                 verifyEmailOtp
 //                               }
 //                             >
+
 //                               {verifyingEmailOtp ? (
+
 //                                 <span className="spinner-border spinner-border-sm" />
+
 //                               ) : (
-//                                 "Verify"
+
+//                                 <>
+//                                   <FaCheckCircle className="me-1" />
+//                                   Verify
+//                                 </>
 //                               )}
+
 //                             </button>
+
 //                           </div>
 
 //                           <small className="text-muted">
 //                             OTP expires in 5 minutes.
 //                           </small>
+
 //                         </div>
 //                       )}
 
+//                     {/* VERIFIED MESSAGE */}
+
 //                     {emailVerified && (
+
 //                       <small className="text-success fw-semibold">
+
 //                         ✓ Email address verified
+
 //                       </small>
+
 //                     )}
+
 //                   </Field>
+
 //                 </div>
 
 //                 {/* PHONE */}
-//                 <div className="col-lg-4 col-md-6">
-//                   <Field label="Phone Number" required>
 
-//                     <div className="otp-wrapper">
-//                       <input
-//                         type="text"
-//                         name="phoneNumber"
-//                         className="form-control"
-//                         placeholder="Enter 10 digit phone no"
-//                         maxLength={10}
-//                         value={formData.phoneNumber}
-//                         disabled={phoneVerified}
-//                         onChange={(e) => {
-//                           const value =
-//                             e.target.value.replace(
-//                               /\D/g,
-//                               ""
-//                             );
+//                 <div className="col-xl-4 col-md-6">
 
-//                           setFormData((prev) => ({
+//                   <Field
+//                     label="Phone Number"
+//                     required
+//                   >
+
+//                     <input
+//                       type="text"
+//                       name="phoneNumber"
+//                       className="form-control"
+//                       placeholder="Enter 10 digit phone no"
+//                       maxLength={10}
+//                       value={
+//                         formData.phoneNumber
+//                       }
+//                       onChange={(e) => {
+
+//                         const value =
+//                           e.target.value.replace(
+//                             /\D/g,
+//                             ""
+//                           );
+
+//                         setFormData(
+//                           (prev) => ({
 //                             ...prev,
-//                             phoneNumber: value,
-//                           }));
+//                             phoneNumber:
+//                               value,
+//                           })
+//                         );
 
-//                           setPhoneVerified(false);
-//                           setShowPhoneOtp(false);
-//                           setPhoneOtp("");
-//                         }}
-//                       />
+//                       }}
+//                     />
 
-//                       <button
-//                         type="button"
-//                         className={`btn ${
-//                           phoneVerified
-//                             ? "btn-success"
-//                             : "btn-outline-primary"
-//                         }`}
-//                         disabled={
-//                           sendingPhoneOtp ||
-//                           phoneVerified ||
-//                           formData.phoneNumber.length !==
-//                             10
-//                         }
-//                         onClick={sendPhoneOtp}
-//                       >
-//                         {sendingPhoneOtp ? (
-//                           <span className="spinner-border spinner-border-sm" />
-//                         ) : phoneVerified ? (
-//                           "Verified"
-//                         ) : (
-//                           <>
-//                             <FaPaperPlane
-//                               size={13}
-//                               className="me-1"
-//                             />
-//                             OTP
-//                           </>
-//                         )}
-//                       </button>
-//                     </div>
-
-//                     {showPhoneOtp &&
-//                       !phoneVerified && (
-//                         <div className="otp-verify-box mt-2">
-//                           <div className="input-group">
-//                             <input
-//                               type="text"
-//                               className="form-control"
-//                               placeholder="Enter 6-digit OTP"
-//                               maxLength={6}
-//                               value={phoneOtp}
-//                               onChange={(e) =>
-//                                 setPhoneOtp(
-//                                   e.target.value.replace(
-//                                     /\D/g,
-//                                     ""
-//                                   )
-//                                 )
-//                               }
-//                             />
-
-//                             <button
-//                               type="button"
-//                               className="btn btn-outline-success"
-//                               disabled={
-//                                 verifyingPhoneOtp ||
-//                                 phoneOtp.length !== 6
-//                               }
-//                               onClick={
-//                                 verifyPhoneOtp
-//                               }
-//                             >
-//                               {verifyingPhoneOtp ? (
-//                                 <span className="spinner-border spinner-border-sm" />
-//                               ) : (
-//                                 "Verify"
-//                               )}
-//                             </button>
-//                           </div>
-
-//                           <small className="text-muted">
-//                             OTP expires in 5 minutes.
-//                           </small>
-//                         </div>
-//                       )}
-
-//                     {phoneVerified && (
-//                       <small className="text-success fw-semibold">
-//                         ✓ Phone number verified
-//                       </small>
-//                     )}
 //                   </Field>
+
 //                 </div>
+
 //               </div>
 
 //               <div className="row g-3">
-//                 <div className="col-lg-4 col-md-6">
+
+//                 {/* ALTERNATE PHONE */}
+
+//                 <div className="col-xl-4 col-md-6">
+
 //                   <Field label="Alternate Phone">
+
 //                     <input
 //                       type="text"
 //                       name="alternatePhone"
 //                       className="form-control"
 //                       placeholder="Enter alternate phone"
-//                       value={formData.alternatePhone}
-//                       onChange={handleInputChange}
+//                       maxLength={10}
+//                       value={
+//                         formData.alternatePhone
+//                       }
+//                       onChange={(e) => {
+
+//                         const value =
+//                           e.target.value.replace(
+//                             /\D/g,
+//                             ""
+//                           );
+
+//                         setFormData(
+//                           (prev) => ({
+//                             ...prev,
+//                             alternatePhone:
+//                               value,
+//                           })
+//                         );
+
+//                       }}
 //                     />
+
 //                   </Field>
+
 //                 </div>
 
-//                 <div className="col-lg-8">
+//                 {/* PROFILE PICTURE */}
+
+//                 <div className="col-xl-8">
+
 //                   <Field label="Profile Picture">
+
 //                     <div className="upload-area">
+
 //                       <FaArrowUpFromBracket
-//                         size={28}
+//                         size={27}
 //                         className="text-primary mb-2"
 //                       />
 
 //                       <div className="fw-semibold">
+
 //                         <span className="text-primary">
 //                           Click to upload
-//                         </span>{" "}
+//                         </span>
+
+//                         {" "}
+
 //                         <span className="text-muted">
 //                           or drag and drop
 //                         </span>
+
 //                       </div>
 
 //                       <small className="text-muted">
-//                         JPG, PNG or SVG · Maximum 2MB ·
-//                         Recommended 200 × 200 px
+//                         JPG, PNG or SVG · Maximum 2MB
+//                         · Recommended 200 × 200 px
 //                       </small>
 
 //                       <input
 //                         type="file"
 //                         accept="image/png,image/jpeg,image/jpg,image/svg+xml"
-//                         onChange={handleFileChange}
+//                         onChange={
+//                           handleFileChange
+//                         }
 //                       />
+
 //                     </div>
 
 //                     {selectedFile && (
+
 //                       <small className="text-success fw-semibold">
+
 //                         ✓ {selectedFile.name}
+
 //                       </small>
+
 //                     )}
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
+
 //             </div>
+
 //           </div>
 
-//           {/* ROLE & PERMISSIONS */}
-//           <div className="admission-card">
+//           {/* =================================================
+//               ROLE & PERMISSIONS
+//           ================================================= */}
+
+//           <div className="sa-card shadow">
+
 //             <SectionHeader
-//               icon={<SiAdguard />}
+//               icon={<FaUserShield />}
 //               title="Role & Permissions"
 //               subtitle="Assign access level to the administrator"
 //             />
 
-//             <div className="admission-card-body">
+//             <div className="sa-card-body">
 
-//               <Field label="Assign Role" required>
+//               <Field
+//                 label="Assign Role"
+//                 required
+//               >
+
 //                 <select
 //                   name="userGroupId"
 //                   className="form-select"
-//                   value={formData.userGroupId}
-//                   onChange={handleInputChange}
+//                   value={
+//                     formData.userGroupId
+//                   }
+//                   onChange={
+//                     handleInputChange
+//                   }
 //                 >
+
 //                   <option value="">
 //                     Select Role
 //                   </option>
 
-//                   {userGroup.map((group) => (
-//                     <option
-//                       key={group.id}
-//                       value={group.id}
-//                     >
-//                       {group.groupName ||
-//                         group.name ||
-//                         group.role}
-//                     </option>
-//                   ))}
+//                   {userGroup.map(
+//                     (group) => (
+
+//                       <option
+//                         key={group.id}
+//                         value={group.id}
+//                       >
+
+//                         {group.groupName ||
+//                           group.name ||
+//                           group.role}
+
+//                       </option>
+
+//                     )
+//                   )}
+
 //                 </select>
+
 //               </Field>
 
 //               <div className="permission-info">
-//                 <strong>
-//                   Super Admin Access
-//                 </strong>
 
-//                 <p className="mb-0 mt-1">
-//                   Super admin will have full access to
-//                   modules, menus, users and system
-//                   settings.
-//                 </p>
+//                 <div className="d-flex align-items-start gap-3">
+
+//                   <div className="info-icon">
+//                     <FaUserShield />
+//                   </div>
+
+//                   <div>
+
+//                     <strong>
+//                       Super Admin Access
+//                     </strong>
+
+//                     <p className="mb-0 mt-1">
+
+//                       Super admin will have full
+//                       access to modules, menus,
+//                       users and system settings.
+
+//                     </p>
+
+//                   </div>
+
+//                 </div>
+
 //               </div>
 
 //               <div className="permission-grid">
-//                 {permissions.map((permission) => (
-//                   <div
-//                     key={permission}
-//                     className="permission-item"
-//                   >
-//                     <span>✓</span>
-//                     {permission}
-//                   </div>
-//                 ))}
+
+//                 {permissions.map(
+//                   (permission) => (
+
+//                     <div
+//                       key={permission}
+//                       className="permission-item"
+//                     >
+
+//                       <span>
+//                         <FaCheckCircle />
+//                       </span>
+
+//                       {permission}
+
+//                     </div>
+
+//                   )
+//                 )}
+
 //               </div>
+
 //             </div>
+
 //           </div>
 
-//           {/* ACCOUNT INFORMATION */}
-//           <div className="admission-card">
+//           {/* =================================================
+//               ACCOUNT INFORMATION
+//           ================================================= */}
+
+//           <div className="sa-card shadow">
+
 //             <SectionHeader
-//               icon={<FaRegUser />}
+//               icon={<FaLock />}
 //               title="Account Information"
 //               subtitle="Configure login credentials and recovery"
 //             />
 
-//             <div className="admission-card-body">
+//             <div className="sa-card-body">
 
 //               <div className="row g-3">
+
+//                 {/* PASSWORD */}
+
 //                 <div className="col-md-6">
-//                   <Field label="Password" required>
+
+//                   <Field
+//                     label="Password"
+//                     required
+//                   >
+
 //                     <input
 //                       type="password"
 //                       name="password"
 //                       className="form-control"
 //                       placeholder="Enter password"
-//                       value={formData.password}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.password
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
 
 //                     <small className="text-muted">
 //                       Minimum 8 characters.
 //                     </small>
+
 //                   </Field>
+
 //                 </div>
 
+//                 {/* CONFIRM PASSWORD */}
+
 //                 <div className="col-md-6">
+
 //                   <Field
 //                     label="Confirm Password"
 //                     required
 //                   >
+
 //                     <input
 //                       type="password"
 //                       name="confirmPassword"
 //                       className="form-control"
 //                       placeholder="Confirm password"
-//                       value={formData.confirmPassword}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.confirmPassword
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
 
 //               <div className="row g-3">
+
+//                 {/* SECURITY QUESTION */}
+
 //                 <div className="col-md-6">
+
 //                   <Field
 //                     label="Security Question"
 //                     required
 //                   >
+
 //                     <select
 //                       name="securityQuestion"
 //                       className="form-select"
 //                       value={
 //                         formData.securityQuestion
 //                       }
-//                       onChange={handleInputChange}
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     >
+
 //                       <option value="">
 //                         Select security question
 //                       </option>
 
 //                       {securityQuestions.map(
 //                         (question) => (
+
 //                           <option
 //                             key={question}
 //                             value={question}
 //                           >
+
 //                             {question}
+
 //                           </option>
+
 //                         )
 //                       )}
+
 //                     </select>
+
 //                   </Field>
+
 //                 </div>
 
+//                 {/* SECURITY ANSWER */}
+
 //                 <div className="col-md-6">
+
 //                   <Field
 //                     label="Security Answer"
 //                     required
 //                   >
+
 //                     <input
 //                       type="text"
 //                       name="securityAnswer"
@@ -1177,29 +3995,44 @@
 //                       value={
 //                         formData.securityAnswer
 //                       }
-//                       onChange={handleInputChange}
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
+
 //             </div>
+
 //           </div>
 
-//           {/* STATUS SETTINGS */}
-//           <div className="admission-card">
+//           {/* =================================================
+//               STATUS & SETTINGS
+//           ================================================= */}
+
+//           <div className="sa-card shadow">
+
 //             <SectionHeader
-//               icon={<IoMdSettings />}
+//               icon={<FaCog />}
 //               title="Status & Settings"
 //               subtitle="Configure account behaviour"
 //             />
 
-//             <div className="admission-card-body">
+//             <div className="sa-card-body">
 
 //               <ToggleRow
 //                 label="Account Status"
-//                 checked={formData.accountStatus}
+//                 checked={
+//                   formData.accountStatus
+//                 }
 //                 name="accountStatus"
-//                 onChange={handleSwitchChange}
+//                 onChange={
+//                   handleSwitchChange
+//                 }
 //                 activeText="Active"
 //                 helper="Inactive accounts cannot login to the system."
 //               />
@@ -1212,8 +4045,10 @@
 //                   formData.twoFactorAuthentication
 //                 }
 //                 name="twoFactorAuthentication"
-//                 onChange={handleSwitchChange}
-//                 activeText="Enable Two Factor Authentication"
+//                 onChange={
+//                   handleSwitchChange
+//                 }
+//                 activeText="Enabled"
 //                 helper="User will need verification codes at login."
 //               />
 
@@ -1225,220 +4060,359 @@
 //                   formData.loginNotification
 //                 }
 //                 name="loginNotification"
-//                 onChange={handleSwitchChange}
-//                 activeText="Send email notification on login"
+//                 onChange={
+//                   handleSwitchChange
+//                 }
+//                 activeText="Enabled"
 //                 helper="Email notification will be sent when this admin logs in."
 //               />
+
 //             </div>
+
 //           </div>
 
-//           {/* ADDITIONAL INFORMATION */}
-//           <div className="admission-card">
+//           {/* =================================================
+//               ADDITIONAL INFORMATION
+//           ================================================= */}
+
+//           <div className="sa-card shadow">
+
 //             <SectionHeader
-//               icon={<FaRegUser />}
+//               icon={<FaInfoCircle />}
 //               title="Additional Information"
 //               subtitle="Optional administrator information"
 //             />
 
-//             <div className="admission-card-body">
+//             <div className="sa-card-body">
 
 //               <div className="row g-3">
+
+//                 {/* ADDRESS */}
+
 //                 <div className="col-lg-8">
+
 //                   <Field label="Address">
+
 //                     <textarea
 //                       name="address"
 //                       className="form-control"
 //                       rows="3"
 //                       placeholder="Enter address"
-//                       value={formData.address}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.address
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
 
+//                 {/* LANGUAGE */}
+
 //                 <div className="col-lg-4">
+
 //                   <Field label="Language Preference">
+
 //                     <select
 //                       name="languagePreference"
 //                       className="form-select"
 //                       value={
 //                         formData.languagePreference
 //                       }
-//                       onChange={handleInputChange}
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     >
+
 //                       <option value="">
 //                         Select Language
 //                       </option>
 
-//                       {languages.map((item) => (
-//                         <option
-//                           key={item.value}
-//                           value={item.value}
-//                         >
-//                           {item.label}
-//                         </option>
-//                       ))}
+//                       {languages.map(
+//                         (item) => (
+
+//                           <option
+//                             key={item.value}
+//                             value={item.value}
+//                           >
+
+//                             {item.label}
+
+//                           </option>
+
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
 
 //               <div className="row g-3">
+
+//                 {/* TIME ZONE */}
+
 //                 <div className="col-lg-7">
+
 //                   <Field label="Time Zone">
+
 //                     <select
 //                       name="timeZone"
 //                       className="form-select"
-//                       value={formData.timeZone}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.timeZone
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     >
+
 //                       <option value="">
 //                         Select Time Zone
 //                       </option>
 
-//                       {timeZones.map((item) => (
-//                         <option
-//                           key={item.value}
-//                           value={item.value}
-//                         >
-//                           {item.label}
-//                         </option>
-//                       ))}
+//                       {timeZones.map(
+//                         (item) => (
+
+//                           <option
+//                             key={item.value}
+//                             value={item.value}
+//                           >
+
+//                             {item.label}
+
+//                           </option>
+
+//                         )
+//                       )}
+
 //                     </select>
+
 //                   </Field>
+
 //                 </div>
 
+//                 {/* NOTE */}
+
 //                 <div className="col-lg-5">
+
 //                   <Field label="Note">
+
 //                     <textarea
 //                       name="note"
 //                       className="form-control"
 //                       rows="2"
 //                       placeholder="Enter additional note"
-//                       value={formData.note}
-//                       onChange={handleInputChange}
+//                       value={
+//                         formData.note
+//                       }
+//                       onChange={
+//                         handleInputChange
+//                       }
 //                     />
+
 //                   </Field>
+
 //                 </div>
+
 //               </div>
+
 //             </div>
+
 //           </div>
+
 //         </div>
 
-//         {/* BUTTONS */}
-//         <div className="form-footer">
+//         {/* =====================================================
+//             FOOTER BUTTONS
+//         ===================================================== */}
+
+//         <div className="sa-footer">
+
 //           <button
 //             type="button"
-//             className="btn btn-outline-secondary px-4"
+//             className="btn btn-outline-secondary rounded-3 px-4"
 //             onClick={resetForm}
-//             disabled={creatingUser}
+//             disabled={
+//               creatingUser
+//             }
 //           >
+
 //             <FaArrowsRotate
 //               size={14}
 //               className="me-2"
 //             />
+
 //             Reset
+
 //           </button>
 
 //           <button
 //             type="button"
-//             className="btn btn-success px-4"
-//             onClick={createSuperAdmin}
+//             className="btn btn-primary rounded-3 px-4"
+//             onClick={
+//               createSuperAdmin
+//             }
 //             disabled={
 //               creatingUser ||
-//               !phoneVerified ||
 //               !emailVerified
 //             }
 //           >
+
 //             {creatingUser ? (
+
 //               <>
+
 //                 <span className="spinner-border spinner-border-sm me-2" />
+
 //                 Creating...
+
 //               </>
+
 //             ) : (
+
 //               <>
+
 //                 <MdOutlineGridView
-//                   size={16}
+//                   size={17}
 //                   className="me-2"
 //                 />
+
 //                 Create Super Admin
+
 //               </>
+
 //             )}
+
 //           </button>
+
 //         </div>
+
 //       </div>
 
-//       {/* CSS */}
+//       {/* =====================================================
+//           CSS
+//       ===================================================== */}
+
 //       <style>{`
+
 //         * {
 //           box-sizing: border-box;
 //         }
 
-//         .new-admission-header {
-//           background: #fff;
-//           border-radius: 10px;
-//           padding: 18px 20px;
-//           display: flex;
-//           justify-content: space-between;
-//           align-items: center;
-//           gap: 20px;
-//           border: 1px solid #edf0f5;
-//         }
+//         /* ===============================
+//            FORM WRAPPER
+//         =============================== */
 
-//         .admission-form-wrapper {
+//         .sa-form-wrapper {
 //           display: flex;
 //           flex-direction: column;
 //           gap: 16px;
 //         }
 
-//         .admission-card {
+//         /* ===============================
+//            CARD
+//         =============================== */
+
+//         .sa-card {
 //           background: #fff;
-//           border: 1px solid #e8ebf0;
-//           border-radius: 10px;
+//           border: 1px solid #e5e7eb;
+//           border-radius: 16px;
 //           overflow: hidden;
-//           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 //         }
 
-//         .admission-section-header {
+//         .sa-card-body {
+//           padding: 22px;
+//         }
+
+//         /* ===============================
+//            SECTION HEADER
+//         =============================== */
+
+//         .sa-section-header {
 //           min-height: 68px;
-//           padding: 14px 18px;
-//           background: #fff;
-//           border-bottom: 1px solid #edf0f4;
+//           padding: 13px 20px;
+
 //           display: flex;
 //           align-items: center;
-//           gap: 12px;
+//           gap: 13px;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #ffffff 0%,
+//               #f8fbff 70%,
+//               #eff6ff 100%
+//             );
+
+//           border-bottom:
+//             1px solid #e5e7eb;
 //         }
 
-//         .admission-section-icon {
-//           width: 38px;
-//           height: 38px;
-//           border-radius: 8px;
-//           background: #0d6efd;
-//           color: #fff;
+//         .sa-section-icon {
+//           width: 43px;
+//           height: 43px;
+
+//           border-radius: 11px;
+
 //           display: flex;
 //           align-items: center;
 //           justify-content: center;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #2563eb,
+//               #3b82f6
+//             );
+
+//           color: #fff;
+
+//           box-shadow:
+//             0 8px 20px
+//             rgba(37,99,235,.20);
+
 //           font-size: 18px;
 //           flex-shrink: 0;
 //         }
 
-//         .admission-card-body {
-//           padding: 20px;
-//         }
+//         /* ===============================
+//            FORM ELEMENTS
+//         =============================== */
 
 //         .form-label {
 //           margin-bottom: 7px;
 //           font-size: 14px;
-//           color: #30343b;
+//           color: #1f2937;
 //         }
 
 //         .form-control,
 //         .form-select {
-//           min-height: 42px;
-//           border-color: #dfe3e8;
-//           border-radius: 7px;
+//           min-height: 43px;
+
+//           border:
+//             1px solid #dfe3e8;
+
+//           border-radius: 8px;
+
 //           font-size: 14px;
+
 //           box-shadow: none !important;
+//         }
+
+//         .form-control:focus,
+//         .form-select:focus {
+//           border-color: #86b7fe;
+
+//           box-shadow:
+//             0 0 0 3px
+//             rgba(37,99,235,.08) !important;
 //         }
 
 //         textarea.form-control {
@@ -1446,10 +4420,9 @@
 //           resize: vertical;
 //         }
 
-//         .form-control:focus,
-//         .form-select:focus {
-//           border-color: #86b7fe;
-//         }
+//         /* ===============================
+//            OTP
+//         =============================== */
 
 //         .otp-wrapper {
 //           display: flex;
@@ -1462,123 +4435,260 @@
 //         }
 
 //         .otp-wrapper .btn {
-//           min-width: 76px;
+//           min-width: 82px;
+
 //           border-top-left-radius: 0;
 //           border-bottom-left-radius: 0;
 //         }
 
-//         .otp-verify-box {
-//           padding: 10px;
+//         .otp-box {
+//           padding: 11px;
+
 //           background: #f8fafc;
-//           border: 1px solid #e8ebef;
-//           border-radius: 7px;
+
+//           border:
+//             1px solid #e2e8f0;
+
+//           border-radius: 9px;
 //         }
+
+//         /* ===============================
+//            UPLOAD
+//         =============================== */
 
 //         .upload-area {
 //           position: relative;
-//           min-height: 130px;
-//           border: 2px dashed #d7dce2;
-//           border-radius: 9px;
-//           background: #fafbfc;
+
+//           min-height: 132px;
+
+//           border:
+//             2px dashed #cbd5e1;
+
+//           border-radius: 11px;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #ffffff,
+//               #f8fbff
+//             );
+
 //           display: flex;
 //           flex-direction: column;
+
 //           justify-content: center;
 //           align-items: center;
+
 //           text-align: center;
+
 //           padding: 20px;
+
 //           cursor: pointer;
+
 //           overflow: hidden;
-//           transition: 0.2s ease;
+
+//           transition: all .2s ease;
 //         }
 
 //         .upload-area:hover {
-//           border-color: #0d6efd;
+//           border-color: #2563eb;
+
 //           background: #f5f9ff;
+
+//           box-shadow:
+//             0 5px 15px
+//             rgba(37,99,235,.08);
 //         }
 
 //         .upload-area input {
 //           position: absolute;
 //           inset: 0;
+
 //           opacity: 0;
+
 //           width: 100%;
 //           height: 100%;
+
 //           cursor: pointer;
 //         }
 
+//         /* ===============================
+//            PERMISSION INFO
+//         =============================== */
+
 //         .permission-info {
-//           padding: 14px 16px;
-//           margin-top: 10px;
-//           border-radius: 8px;
-//           background: #f1f7ff;
-//           border: 1px solid #d8e8ff;
+//           margin-top: 12px;
+
+//           padding: 15px 16px;
+
+//           border-radius: 10px;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #eff6ff,
+//               #f8fbff
+//             );
+
+//           border:
+//             1px solid #bfdbfe;
+
 //           color: #174a8b;
+
 //           font-size: 14px;
 //         }
 
+//         .info-icon {
+//           width: 35px;
+//           height: 35px;
+
+//           border-radius: 9px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background: #2563eb;
+
+//           color: white;
+
+//           flex-shrink: 0;
+//         }
+
+//         /* ===============================
+//            PERMISSIONS
+//         =============================== */
+
 //         .permission-grid {
-//           margin-top: 15px;
+//           margin-top: 16px;
+
 //           display: grid;
-//           grid-template-columns: repeat(2, 1fr);
+
+//           grid-template-columns:
+//             repeat(2, 1fr);
+
 //           gap: 10px;
 //         }
 
 //         .permission-item {
 //           display: flex;
+
 //           align-items: center;
+
 //           gap: 9px;
-//           padding: 11px 12px;
-//           border: 1px solid #e7eaf0;
-//           border-radius: 7px;
+
+//           padding: 12px 13px;
+
+//           border:
+//             1px solid #e5e7eb;
+
+//           border-radius: 9px;
+
 //           font-size: 14px;
+
 //           background: #fff;
+
+//           transition: .2s ease;
+//         }
+
+//         .permission-item:hover {
+//           border-color: #bfdbfe;
+//           background: #f8fbff;
 //         }
 
 //         .permission-item span {
-//           width: 18px;
-//           height: 18px;
+//           width: 20px;
+//           height: 20px;
+
 //           display: inline-flex;
+
 //           align-items: center;
 //           justify-content: center;
-//           border-radius: 4px;
+
+//           border-radius: 50%;
+
 //           background: #198754;
+
 //           color: #fff;
-//           font-size: 11px;
-//           font-weight: bold;
+
+//           font-size: 10px;
+
 //           flex-shrink: 0;
 //         }
 
-//         .form-footer {
+//         /* ===============================
+//            FOOTER
+//         =============================== */
+
+//         .sa-footer {
 //           margin-top: 18px;
+
 //           padding: 15px 0;
+
 //           display: flex;
+
 //           justify-content: flex-end;
+
 //           align-items: center;
+
 //           gap: 10px;
 //         }
 
-//         .form-footer .btn {
-//           min-height: 42px;
-//           border-radius: 7px;
+//         .sa-footer .btn {
+//           min-height: 43px;
 //         }
 
+//         /* ===============================
+//            SWITCH
+//         =============================== */
+
 //         .form-switch .form-check-input {
-//           width: 40px;
-//           height: 21px;
+//           width: 42px;
+//           height: 22px;
+
 //           cursor: pointer;
 //         }
 
+//         /* ===============================
+//            BUTTON
+//         =============================== */
+
+//         .btn {
+//           transition: all .2s ease;
+//         }
+
+//         .btn-primary {
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #2563eb,
+//               #3b82f6
+//             );
+
+//           border-color: #2563eb;
+//         }
+
+//         .btn-primary:hover {
+//           transform:
+//             translateY(-1px);
+
+//           box-shadow:
+//             0 7px 18px
+//             rgba(37,99,235,.20);
+//         }
+
+//         /* ===============================
+//            MOBILE
+//         =============================== */
+
 //         @media (max-width: 767px) {
-//           .new-admission-header {
-//             flex-direction: column;
-//             align-items: flex-start;
-//           }
 
-//           .new-admission-header .btn {
-//             width: 100%;
-//           }
-
-//           .admission-card-body {
+//           .sa-card-body {
 //             padding: 15px;
+//           }
+
+//           .sa-section-header {
+//             padding: 12px 15px;
 //           }
 
 //           .permission-grid {
@@ -1590,45 +4700,83 @@
 //           }
 
 //           .otp-wrapper .form-control {
-//             border-radius: 7px;
+//             border-radius: 8px;
 //           }
 
 //           .otp-wrapper .btn {
 //             margin-top: 7px;
+
 //             width: 100%;
-//             border-radius: 7px;
+
+//             border-radius: 8px;
 //           }
 
-//           .form-footer {
+//           .sa-footer {
 //             flex-direction: column-reverse;
 //           }
 
-//           .form-footer .btn {
+//           .sa-footer .btn {
 //             width: 100%;
 //           }
+
 //         }
 
 //         @media (max-width: 480px) {
-//           .new-admission-header {
-//             padding: 15px;
+
+//           .sa-section-header {
+//             min-height: 62px;
 //           }
 
-//           .new-admission-header h4 {
-//             font-size: 19px;
+//           .sa-section-icon {
+//             width: 38px;
+//             height: 38px;
+//             font-size: 16px;
 //           }
 
-//           .admission-section-header {
+//           .sa-card-body {
 //             padding: 12px;
 //           }
 
-//           .admission-card-body {
-//             padding: 12px;
-//           }
 //         }
+
+//         /* ===============================
+//            PRINT
+//         =============================== */
+
+//         @media print {
+
+//           body {
+//             background: white !important;
+//           }
+
+//           button,
+//           .btn {
+//             display: none !important;
+//           }
+
+//           .sa-card {
+//             box-shadow: none !important;
+
+//             border:
+//               1px solid #ddd !important;
+//           }
+
+//           .sa-section-header {
+//             background:
+//               white !important;
+//           }
+
+//         }
+
 //       `}</style>
+
 //     </>
 //   );
 // };
+
+// // =========================================================
+// // TOGGLE ROW
+// // =========================================================
 
 // const ToggleRow = ({
 //   label,
@@ -1638,21 +4786,29 @@
 //   activeText,
 //   helper,
 // }) => {
+
 //   return (
+
 //     <div>
+
 //       <div className="d-flex justify-content-between align-items-center gap-3">
+
 //         <div>
-//           <div className="fw-semibold">
+
+//           <div className="fw-semibold text-dark">
 //             {label}
 //           </div>
 
 //           <small className="text-muted">
 //             {helper}
 //           </small>
+
 //         </div>
 
 //         <div className="d-flex align-items-center gap-2 flex-shrink-0">
+
 //           <div className="form-check form-switch mb-0">
+
 //             <input
 //               className="form-check-input"
 //               type="checkbox"
@@ -1661,19 +4817,32 @@
 //               checked={checked}
 //               onChange={onChange}
 //             />
+
 //           </div>
 
-//           <span className="small fw-semibold">
-//             {checked ? activeText : "Disabled"}
+//           <span
+//             className={`small fw-semibold ${
+//               checked
+//                 ? "text-success"
+//                 : "text-muted"
+//             }`}
+//           >
+
+//             {checked
+//               ? activeText
+//               : "Disabled"}
+
 //           </span>
+
 //         </div>
+
 //       </div>
+
 //     </div>
 //   );
 // };
 
 // export default SuperAdminCreation;
-
 
 
 
@@ -1684,15 +4853,17 @@ import {
   FaArrowLeft,
   FaPaperPlane,
   FaRegUser,
-  
- 
   FaUserShield,
   FaCheckCircle,
   FaLock,
   FaCog,
   FaInfoCircle,
 } from "react-icons/fa";
-import { FaArrowsRotate, FaArrowUpFromBracket } from "react-icons/fa6";
+
+import {
+  FaArrowsRotate,
+  FaArrowUpFromBracket,
+} from "react-icons/fa6";
 
 import {
   MdOutlineGridView,
@@ -1700,30 +4871,161 @@ import {
   MdAdminPanelSettings,
 } from "react-icons/md";
 
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+const SectionHeader = ({
+  icon,
+  title,
+  subtitle,
+}) => {
+  return (
+    <div className="sa-section-header">
+      <div className="sa-section-icon">
+        {icon}
+      </div>
+
+      <div>
+        <h6 className="mb-1 fw-bold text-dark">
+          {title}
+        </h6>
+
+        <small className="text-muted">
+          {subtitle}
+        </small>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================
+   FIELD
+========================================================= */
+
+const Field = ({
+  label,
+  required = false,
+  children,
+}) => {
+  return (
+    <div className="mb-3">
+      <label className="form-label fw-semibold">
+        {label}
+
+        {required && (
+          <span className="text-danger ms-1">
+            *
+          </span>
+        )}
+      </label>
+
+      {children}
+    </div>
+  );
+};
+
+/* =========================================================
+   TOGGLE ROW
+========================================================= */
+
+const ToggleRow = ({
+  label,
+  checked,
+  name,
+  onChange,
+  activeText,
+  helper,
+}) => {
+  return (
+    <div>
+      <div className="d-flex justify-content-between align-items-center gap-3">
+        <div>
+          <div className="fw-semibold text-dark">
+            {label}
+          </div>
+
+          <small className="text-muted">
+            {helper}
+          </small>
+        </div>
+
+        <div className="d-flex align-items-center gap-2 flex-shrink-0">
+          <div className="form-check form-switch mb-0">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              name={name}
+              checked={checked}
+              onChange={onChange}
+            />
+          </div>
+
+          <span
+            className={`small fw-semibold ${
+              checked
+                ? "text-success"
+                : "text-muted"
+            }`}
+          >
+            {checked ? activeText : "Disabled"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* =========================================================
+   SUPER ADMIN CREATION
+========================================================= */
+
 const SuperAdminCreation = () => {
   const token = localStorage.getItem("token");
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  /* =======================================================
+     STATES
+  ======================================================= */
 
-  const [userGroup, setUserGroup] = useState([]);
-  const [schools, setSchools] = useState([]);
+  const [selectedFile, setSelectedFile] =
+    useState(null);
 
-  const [showPhoneOtp, setShowPhoneOtp] = useState(false);
-  const [showEmailOtp, setShowEmailOtp] = useState(false);
+  const [userGroup, setUserGroup] =
+    useState([]);
 
-  const [phoneOtp, setPhoneOtp] = useState("");
-  const [emailOtp, setEmailOtp] = useState("");
+  const [schools, setSchools] =
+    useState([]);
 
-  const [sendingPhoneOtp, setSendingPhoneOtp] = useState(false);
-  const [sendingEmailOtp, setSendingEmailOtp] = useState(false);
+  /* =======================================================
+     EMAIL OTP STATES
+  ======================================================= */
 
-  const [verifyingPhoneOtp, setVerifyingPhoneOtp] = useState(false);
-  const [verifyingEmailOtp, setVerifyingEmailOtp] = useState(false);
+  const [showEmailOtp, setShowEmailOtp] =
+    useState(false);
 
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [emailOtp, setEmailOtp] =
+    useState("");
 
-  const [creatingUser, setCreatingUser] = useState(false);
+  const [sendingEmailOtp, setSendingEmailOtp] =
+    useState(false);
+
+  const [verifyingEmailOtp, setVerifyingEmailOtp] =
+    useState(false);
+
+  const [emailVerified, setEmailVerified] =
+    useState(false);
+
+  /* =======================================================
+     CREATE USER
+  ======================================================= */
+
+  const [creatingUser, setCreatingUser] =
+    useState(false);
+
+  /* =======================================================
+     INITIAL FORM
+  ======================================================= */
 
   const initialForm = {
     schoolId: "",
@@ -1749,7 +5051,12 @@ const SuperAdminCreation = () => {
     userGroupId: "",
   };
 
-  const [formData, setFormData] = useState(initialForm);
+  const [formData, setFormData] =
+    useState(initialForm);
+
+  /* =======================================================
+     CONSTANTS
+  ======================================================= */
 
   const securityQuestions = [
     "What is your mother's maiden name?",
@@ -1759,30 +5066,41 @@ const SuperAdminCreation = () => {
   ];
 
   const languages = [
-    { value: "ENGLISH", label: "English" },
-    { value: "HINDI", label: "Hindi" },
+    {
+      value: "ENGLISH",
+      label: "English",
+    },
+    {
+      value: "HINDI",
+      label: "Hindi",
+    },
   ];
 
   const timeZones = [
     {
       value: "Asia/Kolkata",
-      label: "India Standard Time (IST) — UTC +05:30",
+      label:
+        "India Standard Time (IST) — UTC +05:30",
     },
     {
       value: "Asia/Dubai",
-      label: "Gulf Standard Time (GST) — UTC +04:00",
+      label:
+        "Gulf Standard Time (GST) — UTC +04:00",
     },
     {
       value: "Asia/Dhaka",
-      label: "Bangladesh Standard Time — UTC +06:00",
+      label:
+        "Bangladesh Standard Time — UTC +06:00",
     },
     {
       value: "Asia/Singapore",
-      label: "Singapore Time — UTC +08:00",
+      label:
+        "Singapore Time — UTC +08:00",
     },
     {
       value: "Asia/Tokyo",
-      label: "Japan Standard Time — UTC +09:00",
+      label:
+        "Japan Standard Time — UTC +09:00",
     },
   ];
 
@@ -1795,14 +5113,22 @@ const SuperAdminCreation = () => {
     "System Configuration",
   ];
 
+  /* =======================================================
+     LOAD DATA
+  ======================================================= */
+
   useEffect(() => {
     loadUserGroup();
     loadSchools();
   }, []);
 
+  /* =======================================================
+     LOAD USER GROUP
+  ======================================================= */
+
   const loadUserGroup = async () => {
     try {
-      const res = await axios.get(
+      const response = await axios.get(
         "http://localhost:8080/api/user-group/all",
         {
           headers: {
@@ -1811,15 +5137,22 @@ const SuperAdminCreation = () => {
         }
       );
 
-      setUserGroup(res.data || []);
+      setUserGroup(response.data || []);
     } catch (error) {
-      console.error("User group loading failed:", error);
+      console.error(
+        "User group loading failed:",
+        error
+      );
     }
   };
 
+  /* =======================================================
+     LOAD SCHOOLS
+  ======================================================= */
+
   const loadSchools = async () => {
     try {
-      const res = await axios.get(
+      const response = await axios.get(
         "http://localhost:8080/api/school/all",
         {
           headers: {
@@ -1828,19 +5161,34 @@ const SuperAdminCreation = () => {
         }
       );
 
-      setSchools(res.data || []);
+      setSchools(response.data || []);
     } catch (error) {
-      console.error("School loading failed:", error);
+      console.error(
+        "School loading failed:",
+        error
+      );
     }
   };
 
+  /* =======================================================
+     INPUT CHANGE
+  ======================================================= */
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value,
+    } = e.target;
+
+    /* USER GROUP */
 
     if (name === "userGroupId") {
-      const selectedGroup = userGroup.find(
-        (group) => String(group.id) === String(value)
-      );
+      const selectedGroup =
+        userGroup.find(
+          (group) =>
+            String(group.id) ===
+            String(value)
+        );
 
       const selectedRole =
         selectedGroup?.groupName ||
@@ -1857,14 +5205,23 @@ const SuperAdminCreation = () => {
       return;
     }
 
+    /* NORMAL INPUT */
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
+  /* =======================================================
+     SWITCH CHANGE
+  ======================================================= */
+
   const handleSwitchChange = (e) => {
-    const { name, checked } = e.target;
+    const {
+      name,
+      checked,
+    } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -1872,13 +5229,22 @@ const SuperAdminCreation = () => {
     }));
   };
 
+  /* =======================================================
+     FILE CHANGE
+  ======================================================= */
+
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
+    const file =
+      e.target.files?.[0];
 
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert("Profile picture must be less than 2MB.");
+      alert(
+        "Profile picture must be less than 2MB."
+      );
+
+      e.target.value = "";
       return;
     }
 
@@ -1890,109 +5256,65 @@ const SuperAdminCreation = () => {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      alert("Only JPG, PNG or SVG files are allowed.");
+      alert(
+        "Only JPG, PNG or SVG files are allowed."
+      );
+
+      e.target.value = "";
       return;
     }
 
     setSelectedFile(file);
   };
 
-  const sendPhoneOtp = async () => {
-    if (formData.phoneNumber.length !== 10) {
-      alert("Please enter valid 10 digit phone number.");
-      return;
-    }
-
-    try {
-      setSendingPhoneOtp(true);
-
-      await axios.post(
-        "http://localhost:8080/api/otp/send-phone",
-        {
-          phone: formData.phoneNumber,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setShowPhoneOtp(true);
-      setPhoneOtp("");
-
-      alert(
-        "Phone OTP generated successfully.\nCheck your Spring Boot console."
-      );
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          error.response?.data ||
-          "Failed to generate phone OTP."
-      );
-    } finally {
-      setSendingPhoneOtp(false);
-    }
-  };
-
-  const verifyPhoneOtp = async () => {
-    if (phoneOtp.length !== 6) {
-      alert("Please enter 6 digit OTP.");
-      return;
-    }
-
-    try {
-      setVerifyingPhoneOtp(true);
-
-      await axios.post(
-        "http://localhost:8080/api/otp/verify-phone",
-        {
-          phone: formData.phoneNumber,
-          otp: phoneOtp,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      setPhoneVerified(true);
-      setShowPhoneOtp(false);
-      setPhoneOtp("");
-
-      alert("Phone number verified successfully.");
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          error.response?.data ||
-          "Invalid phone OTP."
-      );
-    } finally {
-      setVerifyingPhoneOtp(false);
-    }
-  };
+  /* =======================================================
+     SEND EMAIL OTP
+  ======================================================= */
 
   const sendEmailOtp = async () => {
-    if (!formData.email.trim()) {
-      alert("Please enter email address.");
+    const email =
+      formData.email.trim();
+
+    /* EMPTY */
+
+    if (!email) {
+      alert(
+        "Please enter email address."
+      );
+      return;
+    }
+
+    /* FORMAT */
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        email
+      )
+    ) {
+      alert(
+        "Please enter a valid email address."
+      );
       return;
     }
 
     try {
       setSendingEmailOtp(true);
 
+      /*
+       * IMPORTANT:
+       *
+       * Backend:
+       * POST /api/email-otp/send?email=...
+       *
+       * No JWT required.
+       */
+
       await axios.post(
-        "http://localhost:8080/api/otp/send-email",
+        "http://localhost:8080/api/email-otp/send",
+        null,
         {
-          email: formData.email.trim(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+          params: {
+            email,
           },
         }
       );
@@ -2001,38 +5323,67 @@ const SuperAdminCreation = () => {
       setEmailOtp("");
 
       alert(
-        "Email OTP generated successfully.\nCheck your Spring Boot console."
+        "OTP sent successfully.\nPlease check your email."
       );
     } catch (error) {
+      console.error(
+        "Send Email OTP Error:",
+        error
+      );
+
       alert(
         error.response?.data?.message ||
           error.response?.data ||
-          "Failed to generate email OTP."
+          "Failed to send email OTP."
       );
     } finally {
       setSendingEmailOtp(false);
     }
   };
 
+  /* =======================================================
+     VERIFY EMAIL OTP
+  ======================================================= */
+
   const verifyEmailOtp = async () => {
+    const email =
+      formData.email.trim();
+
+    if (!email) {
+      alert(
+        "Please enter email address."
+      );
+      return;
+    }
+
     if (emailOtp.length !== 6) {
-      alert("Please enter 6 digit OTP.");
+      alert(
+        "Please enter 6 digit OTP."
+      );
       return;
     }
 
     try {
       setVerifyingEmailOtp(true);
 
+      /*
+       * Backend:
+       * POST /api/email-otp/verify
+       *
+       * Query Params:
+       * email
+       * otp
+       *
+       * No JWT required.
+       */
+
       await axios.post(
-        "http://localhost:8080/api/otp/verify-email",
+        "http://localhost:8080/api/email-otp/verify",
+        null,
         {
-          email: formData.email.trim(),
-          otp: emailOtp,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+          params: {
+            email,
+            otp: emailOtp,
           },
         }
       );
@@ -2041,8 +5392,15 @@ const SuperAdminCreation = () => {
       setShowEmailOtp(false);
       setEmailOtp("");
 
-      alert("Email address verified successfully.");
+      alert(
+        "Email address verified successfully."
+      );
     } catch (error) {
+      console.error(
+        "Verify Email OTP Error:",
+        error
+      );
+
       alert(
         error.response?.data?.message ||
           error.response?.data ||
@@ -2053,96 +5411,173 @@ const SuperAdminCreation = () => {
     }
   };
 
+  /* =======================================================
+     CREATE SUPER ADMIN
+  ======================================================= */
+
   const createSuperAdmin = async () => {
+    /* SCHOOL */
+
     if (!formData.schoolId) {
-      alert("Please select school.");
+      alert(
+        "Please select school."
+      );
       return;
     }
+
+    /* FULL NAME */
 
     if (!formData.fullName.trim()) {
-      alert("Please enter full name.");
+      alert(
+        "Please enter full name."
+      );
       return;
     }
 
-    if (!formData.email.trim()) {
-      alert("Please enter email address.");
+    /* EMAIL */
+
+    const email =
+      formData.email.trim();
+
+    if (!email) {
+      alert(
+        "Please enter email address."
+      );
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      alert("Please enter a valid email address.");
+    /* EMAIL FORMAT */
+
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        email
+      )
+    ) {
+      alert(
+        "Please enter a valid email address."
+      );
       return;
     }
 
-    if (formData.phoneNumber.length !== 10) {
-      alert("Please enter valid 10 digit phone number.");
-      return;
-    }
-
-    if (!phoneVerified) {
-      alert("Please verify phone number first.");
-      return;
-    }
+    /* EMAIL VERIFICATION */
 
     if (!emailVerified) {
-      alert("Please verify email address first.");
+      alert(
+        "Please verify email address first."
+      );
       return;
     }
+
+    /* PHONE */
+
+    if (
+      formData.phoneNumber.length !== 10
+    ) {
+      alert(
+        "Please enter valid 10 digit phone number."
+      );
+      return;
+    }
+
+    /* DATE OF BIRTH */
 
     if (!formData.dateOfBirth) {
-      alert("Please select date of birth.");
+      alert(
+        "Please select date of birth."
+      );
       return;
     }
+
+    /* GENDER */
 
     if (!formData.gender) {
-      alert("Please select gender.");
+      alert(
+        "Please select gender."
+      );
       return;
     }
+
+    /* ROLE */
 
     if (!formData.userGroupId) {
-      alert("Please select role.");
+      alert(
+        "Please select role."
+      );
       return;
     }
 
+    /* PASSWORD */
+
     if (!formData.password) {
-      alert("Please enter password.");
+      alert(
+        "Please enter password."
+      );
       return;
     }
 
     if (formData.password.length < 8) {
-      alert("Password must be at least 8 characters long.");
+      alert(
+        "Password must be at least 8 characters long."
+      );
       return;
     }
+
+    /* CONFIRM PASSWORD */
 
     if (!formData.confirmPassword) {
-      alert("Please confirm password.");
+      alert(
+        "Please confirm password."
+      );
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Password and confirm password do not match.");
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
+      alert(
+        "Password and confirm password do not match."
+      );
       return;
     }
+
+    /* SECURITY QUESTION */
 
     if (!formData.securityQuestion) {
-      alert("Please select security question.");
+      alert(
+        "Please select security question."
+      );
       return;
     }
 
-    if (!formData.securityAnswer.trim()) {
-      alert("Please enter security answer.");
+    /* SECURITY ANSWER */
+
+    if (
+      !formData.securityAnswer.trim()
+    ) {
+      alert(
+        "Please enter security answer."
+      );
       return;
     }
 
-    const selectedUserGroup = userGroup.find(
-      (group) =>
-        String(group.id) === String(formData.userGroupId)
-    );
+    /* USER GROUP */
+
+    const selectedUserGroup =
+      userGroup.find(
+        (group) =>
+          String(group.id) ===
+          String(formData.userGroupId)
+      );
 
     if (!selectedUserGroup) {
-      alert("Selected role not found.");
+      alert(
+        "Selected role not found."
+      );
       return;
     }
+
+    /* ROLE */
 
     const selectedRole =
       selectedUserGroup.groupName ||
@@ -2150,44 +5585,74 @@ const SuperAdminCreation = () => {
       selectedUserGroup.role ||
       "";
 
+    /* =====================================================
+       PAYLOAD
+    ===================================================== */
+
     const payload = {
-      name: formData.fullName.trim(),
-      fullName: formData.fullName.trim(),
+      name:
+        formData.fullName.trim(),
 
-      email: formData.email.trim(),
+      fullName:
+        formData.fullName.trim(),
 
-      phone: formData.phoneNumber,
-      phoneNumber: formData.phoneNumber,
+      email,
 
-      alternatePhone: formData.alternatePhone.trim(),
+      phone:
+        formData.phoneNumber,
 
-      dateOfBirth: formData.dateOfBirth,
-      gender: formData.gender,
+      phoneNumber:
+        formData.phoneNumber,
 
-      password: formData.password,
-      confirmPassword: formData.confirmPassword,
+      alternatePhone:
+        formData.alternatePhone.trim(),
 
-      securityQuestion: formData.securityQuestion,
-      securityAnswer: formData.securityAnswer.trim(),
+      dateOfBirth:
+        formData.dateOfBirth,
 
-      address: formData.address.trim(),
+      gender:
+        formData.gender,
+
+      password:
+        formData.password,
+
+      confirmPassword:
+        formData.confirmPassword,
+
+      securityQuestion:
+        formData.securityQuestion,
+
+      securityAnswer:
+        formData.securityAnswer.trim(),
+
+      address:
+        formData.address.trim(),
 
       languagePreference:
-        formData.languagePreference || null,
+        formData.languagePreference ||
+        null,
 
-      timeZone: formData.timeZone || null,
+      timeZone:
+        formData.timeZone ||
+        null,
 
-      note: formData.note.trim() || null,
+      note:
+        formData.note.trim() ||
+        null,
 
-      role: selectedRole,
+      role:
+        selectedRole,
 
-      userGroupId: Number(formData.userGroupId),
+      userGroupId:
+        Number(formData.userGroupId),
 
-      status: formData.accountStatus
-        ? "Active"
-        : "Inactive",
+      status:
+        formData.accountStatus
+          ? "Active"
+          : "Inactive",
 
-      accountStatus: formData.accountStatus,
+      accountStatus:
+        formData.accountStatus,
 
       twoFactorAuthentication:
         formData.twoFactorAuthentication,
@@ -2195,23 +5660,31 @@ const SuperAdminCreation = () => {
       loginNotification:
         formData.loginNotification,
 
-      phoneVerified,
-      emailVerified,
+      emailVerified:
+        emailVerified,
     };
+
+    /* =====================================================
+       CREATE API
+    ===================================================== */
 
     try {
       setCreatingUser(true);
 
-      const response = await axios.post(
-        `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response =
+        await axios.post(
+          `http://localhost:8080/api/superadmin/create?schoolId=${formData.schoolId}`,
+          payload,
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+
+              "Content-Type":
+                "application/json",
+            },
+          }
+        );
 
       const generatedUsername =
         response.data?.username ||
@@ -2223,12 +5696,17 @@ const SuperAdminCreation = () => {
           `Super Admin created successfully!\n\nUsername: ${generatedUsername}`
         );
       } else {
-        alert("Super Admin created successfully.");
+        alert(
+          "Super Admin created successfully."
+        );
       }
 
       resetForm();
     } catch (error) {
-      console.error("Create Super Admin Error:", error);
+      console.error(
+        "Create Super Admin Error:",
+        error
+      );
 
       const backendMessage =
         error.response?.data?.message ||
@@ -2244,67 +5722,30 @@ const SuperAdminCreation = () => {
     }
   };
 
+  /* =======================================================
+     RESET
+  ======================================================= */
+
   const resetForm = () => {
     setFormData(initialForm);
 
-    setPhoneOtp("");
     setEmailOtp("");
 
-    setShowPhoneOtp(false);
     setShowEmailOtp(false);
 
-    setPhoneVerified(false);
     setEmailVerified(false);
 
     setSelectedFile(null);
   };
 
-  const SectionHeader = ({
-    icon,
-    title,
-    subtitle,
-  }) => (
-    <div className="sa-section-header">
-      <div className="sa-section-icon">
-        {icon}
-      </div>
-
-      <div>
-        <h6 className="mb-1 fw-bold text-dark">
-          {title}
-        </h6>
-
-        <small className="text-muted">
-          {subtitle}
-        </small>
-      </div>
-    </div>
-  );
-
-  const Field = ({
-    label,
-    required = false,
-    children,
-  }) => (
-    <div className="mb-3">
-      <label className="form-label fw-semibold">
-        {label}
-
-        {required && (
-          <span className="text-danger ms-1">
-            *
-          </span>
-        )}
-      </label>
-
-      {children}
-    </div>
-  );
+  /* =======================================================
+     RETURN
+  ======================================================= */
 
   return (
     <>
       {/* =====================================================
-          PAGE HEADER
+          HEADER
       ===================================================== */}
 
       <div className="mx-2 mt-2 mb-3">
@@ -2313,7 +5754,8 @@ const SuperAdminCreation = () => {
           style={{
             background:
               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
-            border: "1px solid #dbeafe",
+            border:
+              "1px solid #dbeafe",
           }}
         >
           <div className="p-3 p-md-4">
@@ -2333,7 +5775,9 @@ const SuperAdminCreation = () => {
                       "0 8px 20px rgba(37,99,235,.22)",
                   }}
                 >
-                  <MdAdminPanelSettings size={29} />
+                  <MdAdminPanelSettings
+                    size={29}
+                  />
                 </div>
 
                 <div>
@@ -2347,7 +5791,6 @@ const SuperAdminCreation = () => {
                     Create Account
                   </div>
                 </div>
-
               </div>
 
               <div className="d-flex align-items-center gap-2">
@@ -2355,8 +5798,10 @@ const SuperAdminCreation = () => {
                 <span
                   className="badge rounded-pill px-3 py-2"
                   style={{
-                    backgroundColor: "#eff6ff",
-                    color: "#2563eb",
+                    backgroundColor:
+                      "#eff6ff",
+                    color:
+                      "#2563eb",
                     border:
                       "1px solid #bfdbfe",
                   }}
@@ -2377,7 +5822,6 @@ const SuperAdminCreation = () => {
                 </button>
 
               </div>
-
             </div>
           </div>
 
@@ -2427,7 +5871,10 @@ const SuperAdminCreation = () => {
 
               <div className="row g-3">
 
+                {/* SCHOOL */}
+
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="School"
                     required
@@ -2435,8 +5882,12 @@ const SuperAdminCreation = () => {
                     <select
                       name="schoolId"
                       className="form-select"
-                      value={formData.schoolId}
-                      onChange={handleInputChange}
+                      value={
+                        formData.schoolId
+                      }
+                      onChange={
+                        handleInputChange
+                      }
                     >
                       <option value="">
                         Select School
@@ -2460,9 +5911,13 @@ const SuperAdminCreation = () => {
                       )}
                     </select>
                   </Field>
+
                 </div>
 
+                {/* FULL NAME */}
+
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="Full Name"
                     required
@@ -2472,13 +5927,21 @@ const SuperAdminCreation = () => {
                       name="fullName"
                       className="form-control"
                       placeholder="Enter full name"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
+                      value={
+                        formData.fullName
+                      }
+                      onChange={
+                        handleInputChange
+                      }
                     />
                   </Field>
+
                 </div>
 
+                {/* GENDER */}
+
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="Gender"
                     required
@@ -2486,8 +5949,12 @@ const SuperAdminCreation = () => {
                     <select
                       name="gender"
                       className="form-select"
-                      value={formData.gender}
-                      onChange={handleInputChange}
+                      value={
+                        formData.gender
+                      }
+                      onChange={
+                        handleInputChange
+                      }
                     >
                       <option value="">
                         Select Gender
@@ -2506,13 +5973,17 @@ const SuperAdminCreation = () => {
                       </option>
                     </select>
                   </Field>
+
                 </div>
 
               </div>
 
               <div className="row g-3">
 
+                {/* DOB */}
+
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="Date of Birth"
                     required
@@ -2521,15 +5992,21 @@ const SuperAdminCreation = () => {
                       type="date"
                       name="dateOfBirth"
                       className="form-control"
-                      value={formData.dateOfBirth}
-                      onChange={handleInputChange}
+                      value={
+                        formData.dateOfBirth
+                      }
+                      onChange={
+                        handleInputChange
+                      }
                     />
                   </Field>
+
                 </div>
 
                 {/* EMAIL */}
 
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="Email Address"
                     required
@@ -2542,20 +6019,34 @@ const SuperAdminCreation = () => {
                         name="email"
                         className="form-control"
                         placeholder="Enter email address"
-                        value={formData.email}
-                        disabled={emailVerified}
+                        value={
+                          formData.email
+                        }
+                        disabled={
+                          emailVerified
+                        }
                         onChange={(e) => {
+
+                          const value =
+                            e.target.value;
+
                           setFormData(
                             (prev) => ({
                               ...prev,
-                              email:
-                                e.target.value,
+                              email: value,
                             })
                           );
 
-                          setEmailVerified(false);
-                          setShowEmailOtp(false);
+                          setEmailVerified(
+                            false
+                          );
+
+                          setShowEmailOtp(
+                            false
+                          );
+
                           setEmailOtp("");
+
                         }}
                       />
 
@@ -2571,16 +6062,24 @@ const SuperAdminCreation = () => {
                           emailVerified ||
                           !formData.email.trim()
                         }
-                        onClick={sendEmailOtp}
+                        onClick={
+                          sendEmailOtp
+                        }
                       >
+
                         {sendingEmailOtp ? (
+
                           <span className="spinner-border spinner-border-sm" />
+
                         ) : emailVerified ? (
+
                           <>
                             <FaCheckCircle className="me-1" />
                             Verified
                           </>
+
                         ) : (
+
                           <>
                             <FaPaperPlane
                               size={13}
@@ -2588,13 +6087,18 @@ const SuperAdminCreation = () => {
                             />
                             OTP
                           </>
+
                         )}
+
                       </button>
 
                     </div>
 
+                    {/* EMAIL OTP */}
+
                     {showEmailOtp &&
                       !emailVerified && (
+
                         <div className="otp-box mt-2">
 
                           <div className="input-group">
@@ -2604,15 +6108,23 @@ const SuperAdminCreation = () => {
                               className="form-control"
                               placeholder="Enter 6-digit OTP"
                               maxLength={6}
-                              value={emailOtp}
-                              onChange={(e) =>
-                                setEmailOtp(
+                              inputMode="numeric"
+                              autoComplete="one-time-code"
+                              value={
+                                emailOtp
+                              }
+                              onChange={(e) => {
+
+                                const value =
                                   e.target.value.replace(
                                     /\D/g,
                                     ""
-                                  )
-                                )
-                              }
+                                  );
+
+                                setEmailOtp(
+                                  value
+                                );
+                              }}
                             />
 
                             <button
@@ -2626,14 +6138,19 @@ const SuperAdminCreation = () => {
                                 verifyEmailOtp
                               }
                             >
+
                               {verifyingEmailOtp ? (
+
                                 <span className="spinner-border spinner-border-sm" />
+
                               ) : (
+
                                 <>
                                   <FaCheckCircle className="me-1" />
                                   Verify
                                 </>
                               )}
+
                             </button>
 
                           </div>
@@ -2645,171 +6162,109 @@ const SuperAdminCreation = () => {
                         </div>
                       )}
 
+                    {/* VERIFIED */}
+
                     {emailVerified && (
+
                       <small className="text-success fw-semibold">
                         ✓ Email address verified
                       </small>
+
                     )}
 
                   </Field>
+
                 </div>
 
                 {/* PHONE */}
 
                 <div className="col-xl-4 col-md-6">
+
                   <Field
                     label="Phone Number"
                     required
                   >
 
-                    <div className="otp-wrapper">
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      className="form-control"
+                      placeholder="Enter 10 digit phone no"
+                      maxLength={10}
+                      inputMode="numeric"
+                      value={
+                        formData.phoneNumber
+                      }
+                      onChange={(e) => {
 
-                      <input
-                        type="text"
-                        name="phoneNumber"
-                        className="form-control"
-                        placeholder="Enter 10 digit phone no"
-                        maxLength={10}
-                        value={formData.phoneNumber}
-                        disabled={phoneVerified}
-                        onChange={(e) => {
-
-                          const value =
-                            e.target.value.replace(
-                              /\D/g,
-                              ""
-                            );
-
-                          setFormData(
-                            (prev) => ({
-                              ...prev,
-                              phoneNumber:
-                                value,
-                            })
+                        const value =
+                          e.target.value.replace(
+                            /\D/g,
+                            ""
                           );
 
-                          setPhoneVerified(false);
-                          setShowPhoneOtp(false);
-                          setPhoneOtp("");
-                        }}
-                      />
+                        setFormData(
+                          (prev) => ({
+                            ...prev,
+                            phoneNumber:
+                              value,
+                          })
+                        );
 
-                      <button
-                        type="button"
-                        className={`btn ${
-                          phoneVerified
-                            ? "btn-success"
-                            : "btn-outline-primary"
-                        }`}
-                        disabled={
-                          sendingPhoneOtp ||
-                          phoneVerified ||
-                          formData.phoneNumber
-                            .length !== 10
-                        }
-                        onClick={sendPhoneOtp}
-                      >
-                        {sendingPhoneOtp ? (
-                          <span className="spinner-border spinner-border-sm" />
-                        ) : phoneVerified ? (
-                          <>
-                            <FaCheckCircle className="me-1" />
-                            Verified
-                          </>
-                        ) : (
-                          <>
-                            <FaPaperPlane
-                              size={13}
-                              className="me-1"
-                            />
-                            OTP
-                          </>
-                        )}
-                      </button>
-
-                    </div>
-
-                    {showPhoneOtp &&
-                      !phoneVerified && (
-                        <div className="otp-box mt-2">
-
-                          <div className="input-group">
-
-                            <input
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter 6-digit OTP"
-                              maxLength={6}
-                              value={phoneOtp}
-                              onChange={(e) =>
-                                setPhoneOtp(
-                                  e.target.value.replace(
-                                    /\D/g,
-                                    ""
-                                  )
-                                )
-                              }
-                            />
-
-                            <button
-                              type="button"
-                              className="btn btn-outline-success"
-                              disabled={
-                                verifyingPhoneOtp ||
-                                phoneOtp.length !== 6
-                              }
-                              onClick={
-                                verifyPhoneOtp
-                              }
-                            >
-                              {verifyingPhoneOtp ? (
-                                <span className="spinner-border spinner-border-sm" />
-                              ) : (
-                                <>
-                                  <FaCheckCircle className="me-1" />
-                                  Verify
-                                </>
-                              )}
-                            </button>
-
-                          </div>
-
-                          <small className="text-muted">
-                            OTP expires in 5 minutes.
-                          </small>
-
-                        </div>
-                      )}
-
-                    {phoneVerified && (
-                      <small className="text-success fw-semibold">
-                        ✓ Phone number verified
-                      </small>
-                    )}
+                      }}
+                    />
 
                   </Field>
+
                 </div>
 
               </div>
 
               <div className="row g-3">
 
+                {/* ALTERNATE PHONE */}
+
                 <div className="col-xl-4 col-md-6">
+
                   <Field label="Alternate Phone">
+
                     <input
                       type="text"
                       name="alternatePhone"
                       className="form-control"
                       placeholder="Enter alternate phone"
+                      maxLength={10}
+                      inputMode="numeric"
                       value={
                         formData.alternatePhone
                       }
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+
+                        const value =
+                          e.target.value.replace(
+                            /\D/g,
+                            ""
+                          );
+
+                        setFormData(
+                          (prev) => ({
+                            ...prev,
+                            alternatePhone:
+                              value,
+                          })
+                        );
+
+                      }}
                     />
+
                   </Field>
+
                 </div>
 
+                {/* PROFILE IMAGE */}
+
                 <div className="col-xl-8">
+
                   <Field label="Profile Picture">
 
                     <div className="upload-area">
@@ -2820,6 +6275,7 @@ const SuperAdminCreation = () => {
                       />
 
                       <div className="fw-semibold">
+
                         <span className="text-primary">
                           Click to upload
                         </span>
@@ -2829,6 +6285,7 @@ const SuperAdminCreation = () => {
                         <span className="text-muted">
                           or drag and drop
                         </span>
+
                       </div>
 
                       <small className="text-muted">
@@ -2847,12 +6304,15 @@ const SuperAdminCreation = () => {
                     </div>
 
                     {selectedFile && (
+
                       <small className="text-success fw-semibold">
                         ✓ {selectedFile.name}
                       </small>
+
                     )}
 
                   </Field>
+
                 </div>
 
               </div>
@@ -2878,6 +6338,7 @@ const SuperAdminCreation = () => {
                 label="Assign Role"
                 required
               >
+
                 <select
                   name="userGroupId"
                   className="form-select"
@@ -2888,23 +6349,30 @@ const SuperAdminCreation = () => {
                     handleInputChange
                   }
                 >
+
                   <option value="">
                     Select Role
                   </option>
 
                   {userGroup.map(
                     (group) => (
+
                       <option
                         key={group.id}
                         value={group.id}
                       >
+
                         {group.groupName ||
                           group.name ||
                           group.role}
+
                       </option>
+
                     )
                   )}
+
                 </select>
+
               </Field>
 
               <div className="permission-info">
@@ -2916,6 +6384,7 @@ const SuperAdminCreation = () => {
                   </div>
 
                   <div>
+
                     <strong>
                       Super Admin Access
                     </strong>
@@ -2925,6 +6394,7 @@ const SuperAdminCreation = () => {
                       access to modules, menus,
                       users and system settings.
                     </p>
+
                   </div>
 
                 </div>
@@ -2935,16 +6405,20 @@ const SuperAdminCreation = () => {
 
                 {permissions.map(
                   (permission) => (
+
                     <div
                       key={permission}
                       className="permission-item"
                     >
+
                       <span>
                         <FaCheckCircle />
                       </span>
 
                       {permission}
+
                     </div>
+
                   )
                 )}
 
@@ -2969,18 +6443,23 @@ const SuperAdminCreation = () => {
 
               <div className="row g-3">
 
+                {/* PASSWORD */}
+
                 <div className="col-md-6">
 
                   <Field
                     label="Password"
                     required
                   >
+
                     <input
                       type="password"
                       name="password"
                       className="form-control"
                       placeholder="Enter password"
-                      value={formData.password}
+                      value={
+                        formData.password
+                      }
                       onChange={
                         handleInputChange
                       }
@@ -2989,9 +6468,12 @@ const SuperAdminCreation = () => {
                     <small className="text-muted">
                       Minimum 8 characters.
                     </small>
+
                   </Field>
 
                 </div>
+
+                {/* CONFIRM PASSWORD */}
 
                 <div className="col-md-6">
 
@@ -2999,6 +6481,7 @@ const SuperAdminCreation = () => {
                     label="Confirm Password"
                     required
                   >
+
                     <input
                       type="password"
                       name="confirmPassword"
@@ -3011,6 +6494,7 @@ const SuperAdminCreation = () => {
                         handleInputChange
                       }
                     />
+
                   </Field>
 
                 </div>
@@ -3019,12 +6503,15 @@ const SuperAdminCreation = () => {
 
               <div className="row g-3">
 
+                {/* SECURITY QUESTION */}
+
                 <div className="col-md-6">
 
                   <Field
                     label="Security Question"
                     required
                   >
+
                     <select
                       name="securityQuestion"
                       className="form-select"
@@ -3035,24 +6522,31 @@ const SuperAdminCreation = () => {
                         handleInputChange
                       }
                     >
+
                       <option value="">
                         Select security question
                       </option>
 
                       {securityQuestions.map(
                         (question) => (
+
                           <option
                             key={question}
                             value={question}
                           >
                             {question}
                           </option>
+
                         )
                       )}
+
                     </select>
+
                   </Field>
 
                 </div>
+
+                {/* SECURITY ANSWER */}
 
                 <div className="col-md-6">
 
@@ -3060,6 +6554,7 @@ const SuperAdminCreation = () => {
                     label="Security Answer"
                     required
                   >
+
                     <input
                       type="text"
                       name="securityAnswer"
@@ -3072,6 +6567,7 @@ const SuperAdminCreation = () => {
                         handleInputChange
                       }
                     />
+
                   </Field>
 
                 </div>
@@ -3157,6 +6653,8 @@ const SuperAdminCreation = () => {
 
               <div className="row g-3">
 
+                {/* ADDRESS */}
+
                 <div className="col-lg-8">
 
                   <Field label="Address">
@@ -3178,6 +6676,8 @@ const SuperAdminCreation = () => {
 
                 </div>
 
+                {/* LANGUAGE */}
+
                 <div className="col-lg-4">
 
                   <Field label="Language Preference">
@@ -3192,18 +6692,21 @@ const SuperAdminCreation = () => {
                         handleInputChange
                       }
                     >
+
                       <option value="">
                         Select Language
                       </option>
 
                       {languages.map(
                         (item) => (
+
                           <option
                             key={item.value}
                             value={item.value}
                           >
                             {item.label}
                           </option>
+
                         )
                       )}
 
@@ -3216,6 +6719,8 @@ const SuperAdminCreation = () => {
               </div>
 
               <div className="row g-3">
+
+                {/* TIME ZONE */}
 
                 <div className="col-lg-7">
 
@@ -3231,18 +6736,21 @@ const SuperAdminCreation = () => {
                         handleInputChange
                       }
                     >
+
                       <option value="">
                         Select Time Zone
                       </option>
 
                       {timeZones.map(
                         (item) => (
+
                           <option
                             key={item.value}
                             value={item.value}
                           >
                             {item.label}
                           </option>
+
                         )
                       )}
 
@@ -3251,6 +6759,8 @@ const SuperAdminCreation = () => {
                   </Field>
 
                 </div>
+
+                {/* NOTE */}
 
                 <div className="col-lg-5">
 
@@ -3261,7 +6771,9 @@ const SuperAdminCreation = () => {
                       className="form-control"
                       rows="2"
                       placeholder="Enter additional note"
-                      value={formData.note}
+                      value={
+                        formData.note
+                      }
                       onChange={
                         handleInputChange
                       }
@@ -3279,7 +6791,7 @@ const SuperAdminCreation = () => {
         </div>
 
         {/* =====================================================
-            FOOTER BUTTONS
+            FOOTER
         ===================================================== */}
 
         <div className="sa-footer">
@@ -3288,40 +6800,52 @@ const SuperAdminCreation = () => {
             type="button"
             className="btn btn-outline-secondary rounded-3 px-4"
             onClick={resetForm}
-            disabled={creatingUser}
+            disabled={
+              creatingUser
+            }
           >
+
             <FaArrowsRotate
               size={14}
               className="me-2"
             />
 
             Reset
+
           </button>
 
           <button
             type="button"
             className="btn btn-primary rounded-3 px-4"
-            onClick={createSuperAdmin}
+            onClick={
+              createSuperAdmin
+            }
             disabled={
               creatingUser ||
-              !phoneVerified ||
               !emailVerified
             }
           >
+
             {creatingUser ? (
+
               <>
                 <span className="spinner-border spinner-border-sm me-2" />
                 Creating...
               </>
+
             ) : (
+
               <>
                 <MdOutlineGridView
                   size={17}
                   className="me-2"
                 />
+
                 Create Super Admin
               </>
+
             )}
+
           </button>
 
         </div>
@@ -3338,19 +6862,11 @@ const SuperAdminCreation = () => {
           box-sizing: border-box;
         }
 
-        /* ===============================
-           FORM WRAPPER
-        =============================== */
-
         .sa-form-wrapper {
           display: flex;
           flex-direction: column;
           gap: 16px;
         }
-
-        /* ===============================
-           CARD
-        =============================== */
 
         .sa-card {
           background: #fff;
@@ -3363,13 +6879,10 @@ const SuperAdminCreation = () => {
           padding: 22px;
         }
 
-        /* ===============================
-           SECTION HEADER
-        =============================== */
-
         .sa-section-header {
           min-height: 68px;
           padding: 13px 20px;
+
           display: flex;
           align-items: center;
           gap: 13px;
@@ -3382,12 +6895,14 @@ const SuperAdminCreation = () => {
               #eff6ff 100%
             );
 
-          border-bottom: 1px solid #e5e7eb;
+          border-bottom:
+            1px solid #e5e7eb;
         }
 
         .sa-section-icon {
           width: 43px;
           height: 43px;
+
           border-radius: 11px;
 
           display: flex;
@@ -3408,12 +6923,9 @@ const SuperAdminCreation = () => {
             rgba(37,99,235,.20);
 
           font-size: 18px;
+
           flex-shrink: 0;
         }
-
-        /* ===============================
-           FORM ELEMENTS
-        =============================== */
 
         .form-label {
           margin-bottom: 7px;
@@ -3424,15 +6936,21 @@ const SuperAdminCreation = () => {
         .form-control,
         .form-select {
           min-height: 43px;
-          border: 1px solid #dfe3e8;
+
+          border:
+            1px solid #dfe3e8;
+
           border-radius: 8px;
+
           font-size: 14px;
+
           box-shadow: none !important;
         }
 
         .form-control:focus,
         .form-select:focus {
           border-color: #86b7fe;
+
           box-shadow:
             0 0 0 3px
             rgba(37,99,235,.08) !important;
@@ -3444,7 +6962,7 @@ const SuperAdminCreation = () => {
         }
 
         /* ===============================
-           OTP
+           EMAIL OTP
         =============================== */
 
         .otp-wrapper {
@@ -3459,14 +6977,19 @@ const SuperAdminCreation = () => {
 
         .otp-wrapper .btn {
           min-width: 82px;
+
           border-top-left-radius: 0;
           border-bottom-left-radius: 0;
         }
 
         .otp-box {
           padding: 11px;
+
           background: #f8fafc;
-          border: 1px solid #e2e8f0;
+
+          border:
+            1px solid #e2e8f0;
+
           border-radius: 9px;
         }
 
@@ -3479,7 +7002,9 @@ const SuperAdminCreation = () => {
 
           min-height: 132px;
 
-          border: 2px dashed #cbd5e1;
+          border:
+            2px dashed #cbd5e1;
+
           border-radius: 11px;
 
           background:
@@ -3491,6 +7016,7 @@ const SuperAdminCreation = () => {
 
           display: flex;
           flex-direction: column;
+
           justify-content: center;
           align-items: center;
 
@@ -3533,6 +7059,7 @@ const SuperAdminCreation = () => {
 
         .permission-info {
           margin-top: 12px;
+
           padding: 15px 16px;
 
           border-radius: 10px;
@@ -3544,7 +7071,8 @@ const SuperAdminCreation = () => {
               #f8fbff
             );
 
-          border: 1px solid #bfdbfe;
+          border:
+            1px solid #bfdbfe;
 
           color: #174a8b;
 
@@ -3562,6 +7090,7 @@ const SuperAdminCreation = () => {
           justify-content: center;
 
           background: #2563eb;
+
           color: white;
 
           flex-shrink: 0;
@@ -3584,13 +7113,15 @@ const SuperAdminCreation = () => {
 
         .permission-item {
           display: flex;
+
           align-items: center;
 
           gap: 9px;
 
           padding: 12px 13px;
 
-          border: 1px solid #e5e7eb;
+          border:
+            1px solid #e5e7eb;
 
           border-radius: 9px;
 
@@ -3618,6 +7149,7 @@ const SuperAdminCreation = () => {
           border-radius: 50%;
 
           background: #198754;
+
           color: #fff;
 
           font-size: 10px;
@@ -3678,7 +7210,8 @@ const SuperAdminCreation = () => {
         }
 
         .btn-primary:hover {
-          transform: translateY(-1px);
+          transform:
+            translateY(-1px);
 
           box-shadow:
             0 7px 18px
@@ -3713,7 +7246,9 @@ const SuperAdminCreation = () => {
 
           .otp-wrapper .btn {
             margin-top: 7px;
+
             width: 100%;
+
             border-radius: 8px;
           }
 
@@ -3724,7 +7259,6 @@ const SuperAdminCreation = () => {
           .sa-footer .btn {
             width: 100%;
           }
-
         }
 
         @media (max-width: 480px) {
@@ -3742,7 +7276,6 @@ const SuperAdminCreation = () => {
           .sa-card-body {
             padding: 12px;
           }
-
         }
 
         /* ===============================
@@ -3762,79 +7295,19 @@ const SuperAdminCreation = () => {
 
           .sa-card {
             box-shadow: none !important;
-            border: 1px solid #ddd !important;
+
+            border:
+              1px solid #ddd !important;
           }
 
           .sa-section-header {
-            background: white !important;
+            background:
+              white !important;
           }
-
         }
 
       `}</style>
     </>
-  );
-};
-
-/* =========================================================
-   TOGGLE ROW
-========================================================= */
-
-const ToggleRow = ({
-  label,
-  checked,
-  name,
-  onChange,
-  activeText,
-  helper,
-}) => {
-  return (
-    <div>
-
-      <div className="d-flex justify-content-between align-items-center gap-3">
-
-        <div>
-          <div className="fw-semibold text-dark">
-            {label}
-          </div>
-
-          <small className="text-muted">
-            {helper}
-          </small>
-        </div>
-
-        <div className="d-flex align-items-center gap-2 flex-shrink-0">
-
-          <div className="form-check form-switch mb-0">
-
-            <input
-              className="form-check-input"
-              type="checkbox"
-              role="switch"
-              name={name}
-              checked={checked}
-              onChange={onChange}
-            />
-
-          </div>
-
-          <span
-            className={`small fw-semibold ${
-              checked
-                ? "text-success"
-                : "text-muted"
-            }`}
-          >
-            {checked
-              ? activeText
-              : "Disabled"}
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
   );
 };
 

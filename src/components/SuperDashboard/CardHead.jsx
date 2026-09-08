@@ -1,240 +1,11 @@
-// import { useEffect, useState } from "react";
-// import { FaChalkboardTeacher, FaUserGraduate } from "react-icons/fa";
-// import { MdPayments } from "react-icons/md";
-// import { RiMoneyRupeeCircleFill } from "react-icons/ri";
-// import axios from "../../api/axiosInstance";
 
-// const CardHead = () => {
-//   const user = JSON.parse(localStorage.getItem("user"));
-//   const schoolId = user?.schoolId;
-//   const token = localStorage.getItem("token");
-
-//   const [totalStudents, setTotalStudents] = useState(0);
-//   const [totalTeachers, setTotalTeachers] = useState([]);
-//   const [students, setStudents] = useState([]);
-
-//   const [pendingFee, setPendingFee] = useState([]);
-//   const [paidFee, setPaidFee] = useState([]);
-
-//   // -------------------- Fetch Total Students Count --------------------
-//   useEffect(() => {
-//     if (!schoolId) return;
-
-//     axios
-//       .get(`/api/students/count`, {
-//         params: { schoolId },
-//         headers: { Authorization: `Bearer ${token}` },
-//       })
-//       .then((res) => setTotalStudents(res.data))
-//       .catch(console.error);
-//   }, [schoolId, token]);
-
-//   // -------------------- Fetch Teachers --------------------
-//   useEffect(() => {
-//     if (!schoolId) return;
-
-//     axios
-//       .get("/api/teachers", {
-//         params: { schoolId, status: "Working" },
-//       })
-//       .then((res) => setTotalTeachers(res.data))
-//       .catch(console.error);
-//   }, [schoolId]);
-
-//   // -------------------- Fetch Students (NO class-wise API) --------------------
-//   useEffect(() => {
-//     if (!schoolId) return;
-
-//     axios
-//       .get("/api/students", {
-//         params: { schoolId },
-//         headers: { Authorization: `Bearer ${token}` },
-//       })
-//       .then((res) => {
-//         const list = Array.isArray(res.data) ? res.data : [];
-//         setStudents(list);
-//         calculateClassWise(list);
-//       })
-//       .catch(console.error);
-//   }, [schoolId, token]);
-
-//   console.log("students", students);
-//   console.log("users", user);
-
-//   // pending fee api
-//   useEffect(() => {
-//     if (!schoolId) return;
-//     const res = axios
-//       .get("/api/student-fee/all", {
-//         // params:{status:"UNPAID"},
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       })
-//       .then((res) => {
-//         const result = (res.data || []).filter(
-//           (item) => item.status === "UNPAID",
-//         );
-//         const Paid = (res.data || []).filter(
-//           (item) => item.status === "PAID" || item.status === "PARTIAL",
-//         );
-//         setPaidFee(Paid);
-//         setPendingFee(result);
-//       })
-
-//       .catch(console.error);
-//   }, [schoolId]);
-
-//   // -------------------------Calculate pending fees --------------------
-
-//   const pendingAmount = pendingFee.reduce(
-//     (sum, item) => sum + Number(item.amount || 0),
-//     0,
-//   );
-//   console.log("Pending Amount", pendingAmount);
-
-//   // -------------------------Calculate paid fees --------------------
-
-//   const paidAmount = paidFee.reduce(
-//     (sum, item) => sum + Number(item.paidAmount || 0),
-//     0,
-//   );
-//   console.log("Paid Amount", paidAmount);
-
-//   return (
-//     <>
-//       <div className="container-fluid px-0 mt-3 ">
-//         <div className="row g-3">
-//           {/* Total Students */}
-//           <div className="col-12 col-sm-6 col-lg-3">
-//             <div className="card border-0 shadow rounded-4 h-100">
-//               <div className="card-body">
-//                 <div className="d-flex align-items-center">
-//                   <div
-//                     className="rounded-3 d-flex align-items-center justify-content-center me-3"
-//                     style={{
-//                       width: 55,
-//                       height: 55,
-//                       background: "#E8F1FF",
-//                     }}
-//                   >
-//                     <FaUserGraduate size={26} color="#2563eb" />
-//                   </div>
-
-//                   <div className="flex-grow-1">
-//                     <small className="text-muted d-block">Total Students</small>
-
-//                     <h4 className="fw-bold mb-0">{totalStudents}</h4>
-
-//                     <small className="text-success">
-//                       ↑ 10% from last month
-//                     </small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Teachers */}
-
-//           <div className="col-12 col-sm-6 col-lg-3">
-//             <div className="card border-0 shadow rounded-4 h-100">
-//               <div className="card-body">
-//                 <div className="d-flex align-items-center">
-//                   <div
-//                     className="rounded-3 d-flex align-items-center justify-content-center me-3"
-//                     style={{
-//                       width: 55,
-//                       height: 55,
-//                       background: "#EAF8EF",
-//                     }}
-//                   >
-//                     <FaChalkboardTeacher size={26} color="#16a34a" />
-//                   </div>
-
-//                   <div className="flex-grow-1">
-//                     <small className="text-muted d-block">Total Teachers</small>
-
-//                     <h4 className="fw-bold mb-0">{totalTeachers.length}</h4>
-
-//                     <small className="text-success">↑ 5% from last month</small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Fee Collection */}
-
-//           <div className="col-12 col-sm-6 col-lg-3">
-//             <div className="card border-0 shadow rounded-4 h-100">
-//               <div className="card-body">
-//                 <div className="d-flex align-items-center">
-//                   <div
-//                     className="rounded-3 d-flex align-items-center justify-content-center me-3"
-//                     style={{
-//                       width: 55,
-//                       height: 55,
-//                       background: "#FFF4D9",
-//                     }}
-//                   >
-//                     <MdPayments size={26} color="#f59e0b" />
-//                   </div>
-
-//                   <div className="flex-grow-1">
-//                     <small className="text-muted d-block">Fee Collection</small>
-
-//                     <h4 className="fw-bold mb-0 text-warning">
-//                       ₹ {paidAmount}
-//                     </h4>
-
-//                     <small className="text-success">↑ 8% this month</small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-
-//           {/* Pending */}
-
-//           <div className="col-12 col-sm-6 col-lg-3">
-//             <div className="card border-0 shadow rounded-4 h-100">
-//               <div className="card-body">
-//                 <div className="d-flex align-items-center">
-//                   <div
-//                     className="rounded-3 d-flex align-items-center justify-content-center me-3"
-//                     style={{
-//                       width: 55,
-//                       height: 55,
-//                       background: "#FFEAEA",
-//                     }}
-//                   >
-//                     <RiMoneyRupeeCircleFill size={28} color="#dc2626" />
-//                   </div>
-
-//                   <div className="flex-grow-1">
-//                     <small className="text-muted d-block">Fee Pending</small>
-
-//                     <h4 className="fw-bold mb-0 text-danger">
-//                       ₹ {pendingAmount}
-//                     </h4>
-
-//                     <small className="text-danger">Pending Collection</small>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default CardHead;
 
 import { useEffect, useState } from "react";
-import { FaChalkboardTeacher, FaUserGraduate } from "react-icons/fa";
+import {
+  FaCalendarCheck,
+  FaChalkboardTeacher,
+  FaUserGraduate,
+} from "react-icons/fa";
 import { MdPayments } from "react-icons/md";
 import { RiMoneyRupeeCircleFill } from "react-icons/ri";
 import axios from "../../api/axiosInstance";
@@ -244,6 +15,14 @@ const CardHead = () => {
   const [totalTeachers, setTotalTeachers] = useState(0);
   const [pendingAmount, setPendingAmount] = useState(0);
   const [paidAmount, setPaidAmount] = useState(0);
+
+  const [attendance, setAttendance] = useState({
+    present: 0,
+    absent: 0,
+    total: 0,
+    percentage: 0,
+  });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -273,34 +52,68 @@ const CardHead = () => {
           },
         };
 
-        const [studentCountResponse, teacherResponse, feeResponse] =
-          await Promise.all([
-            // Total Students
-            axios.get("/api/students/count", {
-              params: {
-                schoolId,
-              },
-              ...config,
-            }),
+        const [
+          studentCountResponse,
+          teacherResponse,
+          feeResponse,
+          attendanceResponse,
+        ] = await Promise.all([
+          // =====================================================
+          // TOTAL STUDENTS
+          // =====================================================
 
-            // Total Working Teachers
-            axios.get("/api/teachers", {
-              params: {
-                schoolId,
-                status: "Working",
-              },
-              ...config,
-            }),
+          axios.get("/api/students/count", {
+            params: {
+              schoolId,
+            },
+            ...config,
+          }),
 
-            // Fees
-            axios.get("/api/student-fee/all", config),
-          ]);
+          // =====================================================
+          // TOTAL WORKING TEACHERS
+          // =====================================================
 
-        // ================= STUDENTS =================
+          axios.get("/api/teachers", {
+            params: {
+              schoolId,
+              status: "Working",
+            },
+            ...config,
+          }),
 
-        setTotalStudents(Number(studentCountResponse?.data || 0));
+          // =====================================================
+          // FEES
+          // =====================================================
 
-        // ================= TEACHERS =================
+          axios.get("/api/student-fee/all", {
+  params: {
+    schoolId,
+  },
+  ...config,
+}),
+          // =====================================================
+          // ALL SCHOOL ATTENDANCE
+          // =====================================================
+
+          axios.get("/api/student/attendance/school", {
+            params: {
+              schoolId,
+            },
+            ...config,
+          }),
+        ]);
+
+        // =====================================================
+        // STUDENTS
+        // =====================================================
+
+        setTotalStudents(
+          Number(studentCountResponse?.data || 0)
+        );
+
+        // =====================================================
+        // TEACHERS
+        // =====================================================
 
         const teachers = Array.isArray(teacherResponse?.data)
           ? teacherResponse.data
@@ -308,22 +121,145 @@ const CardHead = () => {
 
         setTotalTeachers(teachers.length);
 
-        // ================= FEES =================
+        // =====================================================
+        // FEES
+        // =====================================================
 
-        const fees = Array.isArray(feeResponse?.data) ? feeResponse.data : [];
+        const fees = Array.isArray(feeResponse?.data)
+          ? feeResponse.data
+          : [];
 
+          console.log("fees in card",fees);
         const pending = fees
           .filter((item) => item.status === "UNPAID")
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+          .reduce(
+            (sum, item) =>
+              sum + Number(item.amount || 0),
+            0
+          );
 
         const paid = fees
-          .filter((item) => item.status === "PAID" || item.status === "PARTIAL")
-          .reduce((sum, item) => sum + Number(item.paidAmount || 0), 0);
+          .filter(
+            (item) =>
+              item.status === "PAID" ||
+              item.status === "PARTIAL"
+          )
+          .reduce(
+            (sum, item) =>
+              sum + Number(item.paidAmount || 0),
+            0
+          );
 
         setPendingAmount(pending);
         setPaidAmount(paid);
+
+        // =====================================================
+        // TODAY'S ATTENDANCE
+        // =====================================================
+
+        const allAttendance = Array.isArray(
+          attendanceResponse?.data
+        )
+          ? attendanceResponse.data
+          : [];
+
+        // Today's date
+        const today = new Date();
+
+        const year = today.getFullYear();
+        const month = String(
+          today.getMonth() + 1
+        ).padStart(2, "0");
+        const day = String(
+          today.getDate()
+        ).padStart(2, "0");
+
+        const todayDate = `${year}-${month}-${day}`;
+
+        console.log("Today Date:", todayDate);
+        console.log(
+          "All Attendance:",
+          allAttendance
+        );
+
+        // =====================================================
+        // FILTER ONLY TODAY'S ATTENDANCE
+        // =====================================================
+
+        const todayAttendance = allAttendance.filter(
+          (item) => {
+            const attendanceDate =
+              item.attendanceDate ||
+              item.date;
+
+            return (
+              attendanceDate &&
+              String(attendanceDate).substring(0, 10) ===
+                todayDate
+            );
+          }
+        );
+
+        console.log(
+          "Today's Attendance:",
+          todayAttendance
+        );
+
+        // =====================================================
+        // PRESENT / ABSENT
+        // =====================================================
+
+        const presentCount =
+          todayAttendance.filter(
+            (item) =>
+              String(item.status).toUpperCase() ===
+                "PRESENT"
+          ).length;
+
+        const absentCount =
+          todayAttendance.filter(
+            (item) =>
+              String(item.status).toUpperCase() ===
+                "ABSENT"
+          ).length;
+
+        // =====================================================
+        // TOTAL ATTENDANCE
+        // =====================================================
+
+        const totalAttendance =
+          todayAttendance.length;
+
+        // =====================================================
+        // ATTENDANCE PERCENTAGE
+        // =====================================================
+
+        const attendancePercentage =
+          totalAttendance > 0
+            ? Math.round(
+                (presentCount / totalAttendance) * 100
+              )
+            : 0;
+
+        setAttendance({
+          present: presentCount,
+          absent: absentCount,
+          total: totalAttendance,
+          percentage: attendancePercentage,
+        });
+
       } catch (error) {
-        console.error("Dashboard data fetch failed:", error);
+        console.error(
+          "Dashboard data fetch failed:",
+          error
+        );
+
+        setAttendance({
+          present: 0,
+          absent: 0,
+          total: 0,
+          percentage: 0,
+        });
       } finally {
         setLoading(false);
       }
@@ -332,7 +268,12 @@ const CardHead = () => {
     fetchDashboardData();
   }, []);
 
-  // ================= CURRENCY FORMAT =================
+  console.log("pending amount",pendingAmount);
+  console.log("paid amount",paidAmount);
+
+  // =====================================================
+  // CURRENCY FORMAT
+  // =====================================================
 
   const formatAmount = (amount) => {
     return new Intl.NumberFormat("en-IN", {
@@ -340,65 +281,15 @@ const CardHead = () => {
     }).format(Number(amount || 0));
   };
 
-  // ================= STAT CARD =================
-
-  const StatCard = ({
-    icon,
-    iconBg,
-    title,
-    value,
-    subtitle,
-    valueClass = "",
-    subtitleClass = "text-success",
-  }) => {
-    return (
-      <div className="col-12 col-sm-6 col-lg-3">
-        <div className="dashboard-stat-card shadow">
-          <div className="stat-card-content">
-            {/* ICON */}
-            <div
-              className="stat-icon"
-              style={{
-                backgroundColor: iconBg,
-              }}
-            >
-              {icon}
-            </div>
-
-            {/* CONTENT */}
-            <div className="stat-content">
-              <div className="stat-title">{title}</div>
-
-              {loading ? (
-                <div className="stat-loading">
-                  <div className="loading-value"></div>
-                  <div className="loading-text"></div>
-                </div>
-              ) : (
-                <>
-                  <div className={`stat-value ${valueClass}`}>{value}</div>
-
-                  <div className={`stat-subtitle ${subtitleClass}`}>
-                    {subtitle}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Decorative circle */}
-          <div className="stat-decoration"></div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
       <div className="row g-3 mb-4 mt-2">
-        {/* Total Amount */}
 
-        <div className="col-xl-3 col-md-6">
+        {/* =================================================
+            1. TOTAL STUDENTS
+        ================================================= */}
+
+        <div className="col-12 col-sm-6 col-lg">
           <div className="premium-stat-card stat-blue shadow">
             <div className="stat-icon">
               <FaUserGraduate />
@@ -407,16 +298,22 @@ const CardHead = () => {
             <div className="stat-content">
               <span>Total Students</span>
 
-              <h3>₹{totalStudents}</h3>
+              <h3>
+                {loading ? "..." : totalStudents}
+              </h3>
 
-              <small>↑ 10% from last month</small>
+              <small>
+                ↑ 10% from last month
+              </small>
             </div>
           </div>
         </div>
 
-        {/* Collection */}
+        {/* =================================================
+            2. TOTAL TEACHERS
+        ================================================= */}
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col-12 col-sm-6 col-lg">
           <div className="premium-stat-card stat-green shadow">
             <div className="stat-icon">
               <FaChalkboardTeacher />
@@ -425,16 +322,22 @@ const CardHead = () => {
             <div className="stat-content">
               <span>Total Teachers</span>
 
-              <h3>₹{totalTeachers}</h3>
+              <h3>
+                {loading ? "..." : totalTeachers}
+              </h3>
 
-              <small>↑ 5% from last month</small>
+              <small>
+                ↑ 5% from last month
+              </small>
             </div>
           </div>
         </div>
 
-        {/* Discount */}
+        {/* =================================================
+            3. PAID AMOUNT
+        ================================================= */}
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col-12 col-sm-6 col-lg">
           <div className="premium-stat-card stat-orange shadow">
             <div className="stat-icon">
               <MdPayments />
@@ -443,16 +346,24 @@ const CardHead = () => {
             <div className="stat-content">
               <span>Paid Amount</span>
 
-              <h3>₹{paidAmount}</h3>
+              <h3>
+                {loading
+                  ? "₹..."
+                  : `₹${formatAmount(paidAmount)}`}
+              </h3>
 
-              <small>↑ 8% from this month</small>
+              <small>
+                ↑ 8% from this month
+              </small>
             </div>
           </div>
         </div>
 
-        {/* Fine */}
+        {/* =================================================
+            4. PENDING AMOUNT
+        ================================================= */}
 
-        <div className="col-xl-3 col-md-6">
+        <div className="col-12 col-sm-6 col-lg">
           <div className="premium-stat-card stat-red shadow">
             <div className="stat-icon">
               <RiMoneyRupeeCircleFill />
@@ -461,12 +372,47 @@ const CardHead = () => {
             <div className="stat-content">
               <span>Pending Amount</span>
 
-              <h3>₹{pendingAmount}</h3>
+              <h3>
+                {loading
+                  ? "₹..."
+                  : `₹${formatAmount(pendingAmount)}`}
+              </h3>
 
-              <small>Pending amount</small>
+              <small>
+                Pending amount
+              </small>
             </div>
           </div>
         </div>
+
+        {/* =================================================
+            5. TODAY'S ATTENDANCE
+        ================================================= */}
+
+        <div className="col-12 col-sm-6 col-lg">
+          <div className="premium-stat-card stat-green shadow">
+            <div className="stat-icon">
+              <FaCalendarCheck />
+            </div>
+
+            <div className="stat-content">
+              <span>Today's Attendance</span>
+
+              <h3>
+                {loading
+                  ? "..."
+                  : `${attendance.percentage}%`}
+              </h3>
+
+              <small>
+                {loading
+                  ? "Loading..."
+                  : `${attendance.present} Present • ${attendance.absent} Absent`}
+              </small>
+            </div>
+          </div>
+        </div>
+
       </div>
     </>
   );

@@ -1257,6 +1257,3345 @@
 
 
 
+// import { useEffect, useMemo, useState } from "react";
+// import {
+//   FaEdit,
+//   FaPlus,
+//   FaRedo,
+//   FaSearch,
+//   FaTrash,
+//   FaMoneyBillWave,
+//   FaFilter,
+//   // FaCalendarDays,
+//   FaLayerGroup,
+//   FaList,
+//   FaSave,
+//   FaTimes,
+// } from "react-icons/fa";
+// import { FaGraduationCap } from "react-icons/fa6";
+// import { MdOutlinePayments } from "react-icons/md";
+// import { useNavigate } from "react-router-dom";
+// import axiosInstance from "../../api/axiosInstance";
+
+// const CreateFeeStructure = () => {
+//   const navigate = useNavigate();
+
+//   const token = localStorage.getItem("token");
+
+//   /* =========================================================
+//      AUTH CONFIG
+//   ========================================================= */
+
+//   const authConfig = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   };
+
+//   /* =========================================================
+//      INITIAL FORM
+//   ========================================================= */
+
+//   const initialFormData = {
+//     session: "",
+//     standard: "",
+//     category: "",
+//     batch: "",
+//   };
+
+//   const initialFeeInput = {
+//     type: "",
+//     amount: "",
+//   };
+
+//   const initialFilters = {
+//     session: "",
+//     standard: "",
+//     category: "",
+//     batch: "",
+//     search: "",
+//   };
+
+//   /* =========================================================
+//      FORM STATES
+//   ========================================================= */
+
+//   const [formData, setFormData] = useState(initialFormData);
+
+//   const [feeInput, setFeeInput] = useState(initialFeeInput);
+
+//   const [fees, setFees] = useState([]);
+
+//   const [editingId, setEditingId] = useState(null);
+
+//   const [editIndex, setEditIndex] = useState(null);
+
+//   /* =========================================================
+//      MASTER DATA
+//   ========================================================= */
+
+//   const [sessions, setSessions] = useState([]);
+
+//   const [standards, setStandards] = useState([]);
+
+//   const [feeCategories, setFeeCategories] = useState([]);
+
+//   const [feeBatches, setFeeBatches] = useState([]);
+
+//   const [feeMaster, setFeeMaster] = useState([]);
+
+//   /* =========================================================
+//      FEE STRUCTURES
+//   ========================================================= */
+
+//   const [feeStructures, setFeeStructures] = useState([]);
+
+//   /* =========================================================
+//      FILTER
+//   ========================================================= */
+
+//   const [filters, setFilters] = useState(initialFilters);
+
+//   /* =========================================================
+//      LOADING
+//   ========================================================= */
+
+//   const [pageLoading, setPageLoading] = useState(false);
+
+//   const [loading, setLoading] = useState(false);
+
+//   const [saveLoading, setSaveLoading] = useState(false);
+
+//   /* =========================================================
+//      LOAD ALL DATA
+//   ========================================================= */
+
+//   useEffect(() => {
+//     loadMasterData();
+//     loadFeeStructures();
+//   }, []);
+
+//   /* =========================================================
+//      LOAD MASTER DATA
+//   ========================================================= */
+
+//   const loadMasterData = async () => {
+//     try {
+//       setPageLoading(true);
+
+//       const [
+//         sessionRes,
+//         standardRes,
+//         categoryRes,
+//         batchRes,
+//         feeMasterRes,
+//       ] = await Promise.all([
+//         axiosInstance.get(
+//           "/api/master/sessions",
+//           authConfig
+//         ),
+
+//         axiosInstance.get(
+//           "/api/master/standard",
+//           authConfig
+//         ),
+
+//         axiosInstance.get(
+//           "/api/master/fee-category",
+//           authConfig
+//         ),
+
+//         axiosInstance.get(
+//           "/api/master/fee-batch",
+//           authConfig
+//         ),
+
+//         axiosInstance.get(
+//           "/api/fee-master",
+//           authConfig
+//         ),
+//       ]);
+
+//       setSessions(sessionRes.data || []);
+
+//       setStandards(standardRes.data || []);
+
+//       setFeeCategories(categoryRes.data || []);
+
+//       setFeeBatches(batchRes.data || []);
+
+//       setFeeMaster(feeMasterRes.data || []);
+//     } catch (error) {
+//       console.error("Master Data Error:", error);
+
+//       alert(
+//         error?.response?.data?.message ||
+//           error?.response?.data ||
+//           "Unable to load master data"
+//       );
+//     } finally {
+//       setPageLoading(false);
+//     }
+//   };
+
+//   /* =========================================================
+//      LOAD FEE STRUCTURES
+//   ========================================================= */
+
+//   const loadFeeStructures = async () => {
+//     try {
+//       setLoading(true);
+
+//       /*
+//        * IMPORTANT:
+//        * Existing API kept exactly same.
+//        */
+
+//       const res = await axiosInstance.get(
+//         "/api/fee-structure",
+//         authConfig
+//       );
+
+//       console.log(
+//         "Fee Structure Response:",
+//         res.data
+//       );
+
+//       setFeeStructures(res.data || []);
+//     } catch (error) {
+//       console.error(
+//         "Fee Structure Error:",
+//         error
+//       );
+
+//       setFeeStructures([]);
+
+//       alert(
+//         error?.response?.data?.message ||
+//           error?.response?.data ||
+//           "Unable to load fee structures"
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   /* =========================================================
+//      FORM CHANGE
+//   ========================================================= */
+
+//   const handleFormChange = (e) => {
+//     const { name, value } = e.target;
+
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   /* =========================================================
+//      FEE INPUT CHANGE
+//   ========================================================= */
+
+//   const handleFeeInputChange = (e) => {
+//     const { name, value } = e.target;
+
+//     setFeeInput((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   /* =========================================================
+//      GET BATCH VALUE
+//   ========================================================= */
+
+//   const getBatchValue = (item) => {
+//     if (typeof item === "string") {
+//       return item;
+//     }
+
+//     return (
+//       item?.batch ||
+//       item?.name ||
+//       item?.value ||
+//       ""
+//     );
+//   };
+
+//   /* =========================================================
+//      ADD / UPDATE FEE COMPONENT
+//   ========================================================= */
+
+//   const handleAddFee = () => {
+//     if (
+//       !feeInput.type ||
+//       feeInput.amount === ""
+//     ) {
+//       alert(
+//         "Please select Fee Type and enter Amount."
+//       );
+
+//       return;
+//     }
+
+//     if (Number(feeInput.amount) <= 0) {
+//       alert(
+//         "Amount must be greater than 0."
+//       );
+
+//       return;
+//     }
+
+//     const selectedFee = feeMaster.find(
+//       (item) =>
+//         String(item.id) ===
+//         String(feeInput.type)
+//     );
+
+//     if (!selectedFee) {
+//       alert("Invalid Fee Type.");
+
+//       return;
+//     }
+
+//     const feeObject = {
+//       feeMasterId: selectedFee.id,
+
+//       feeName:
+//         selectedFee.feeName || "-",
+
+//       feeCode:
+//         selectedFee.feeCode || "-",
+
+//       amount: Number(
+//         feeInput.amount
+//       ),
+//     };
+
+//     /* =====================================================
+//        UPDATE TEMPORARY FEE
+//     ===================================================== */
+
+//     if (editIndex !== null) {
+//       const duplicate = fees.some(
+//         (fee, index) =>
+//           index !== editIndex &&
+//           Number(fee.feeMasterId) ===
+//             Number(selectedFee.id)
+//       );
+
+//       if (duplicate) {
+//         alert(
+//           "This Fee Type is already added."
+//         );
+
+//         return;
+//       }
+
+//       const updatedFees = [...fees];
+
+//       updatedFees[editIndex] =
+//         feeObject;
+
+//       setFees(updatedFees);
+
+//       setEditIndex(null);
+//     }
+
+//     /* =====================================================
+//        ADD NEW FEE
+//     ===================================================== */
+
+//     else {
+//       const alreadyExists =
+//         fees.some(
+//           (fee) =>
+//             Number(fee.feeMasterId) ===
+//             Number(selectedFee.id)
+//         );
+
+//       if (alreadyExists) {
+//         alert(
+//           "This Fee Type is already added."
+//         );
+
+//         return;
+//       }
+
+//       setFees((prev) => [
+//         ...prev,
+//         feeObject,
+//       ]);
+//     }
+
+//     setFeeInput(initialFeeInput);
+//   };
+
+//   /* =========================================================
+//      EDIT TEMP FEE
+//   ========================================================= */
+
+//   const handleEditFee = (index) => {
+//     const fee = fees[index];
+
+//     setFeeInput({
+//       type: String(
+//         fee.feeMasterId || ""
+//       ),
+
+//       amount:
+//         fee.amount !== null &&
+//         fee.amount !== undefined
+//           ? String(fee.amount)
+//           : "",
+//     });
+
+//     setEditIndex(index);
+//   };
+
+//   /* =========================================================
+//      DELETE TEMP FEE
+//   ========================================================= */
+
+//   const handleDeleteFee = (index) => {
+//     const confirmed =
+//       window.confirm(
+//         "Are you sure you want to remove this fee component?"
+//       );
+
+//     if (!confirmed) {
+//       return;
+//     }
+
+//     setFees((prev) =>
+//       prev.filter(
+//         (_, i) => i !== index
+//       )
+//     );
+
+//     if (editIndex === index) {
+//       setEditIndex(null);
+
+//       setFeeInput(
+//         initialFeeInput
+//       );
+//     }
+//   };
+
+//   /* =========================================================
+//      CANCEL FEE EDIT
+//   ========================================================= */
+
+//   const handleCancelFeeEdit = () => {
+//     setEditIndex(null);
+
+//     setFeeInput(
+//       initialFeeInput
+//     );
+//   };
+
+//   /* =========================================================
+//      EDIT FEE STRUCTURE
+//   ========================================================= */
+
+//   const handleEdit = (item) => {
+//     console.log(
+//       "Editing Fee Structure:",
+//       item
+//     );
+
+//     setEditingId(item.id);
+
+//     /*
+//      * Existing response fields.
+//      */
+
+//     setFormData({
+//       session: item.session || "",
+
+//       standard:
+//         item.standard || "",
+
+//       category:
+//         item.feeCategory || "",
+
+//       batch:
+//         item.batch || "",
+//     });
+
+//     /*
+//      * Existing feeDetails response.
+//      */
+
+//     const existingFees =
+//       (item.feeDetails || []).map(
+//         (detail) => ({
+//           feeMasterId:
+//             detail.feeMaster?.id,
+
+//           feeName:
+//             detail.feeMaster?.feeName ||
+//             "-",
+
+//           feeCode:
+//             detail.feeMaster?.feeCode ||
+//             "-",
+
+//           amount:
+//             Number(detail.amount || 0),
+//         })
+//       );
+
+//     setFees(existingFees);
+
+//     setFeeInput(
+//       initialFeeInput
+//     );
+
+//     setEditIndex(null);
+
+//     window.scrollTo({
+//       top: 0,
+//       behavior: "smooth",
+//     });
+//   };
+
+//   /* =========================================================
+//      RESET FORM
+//   ========================================================= */
+
+//   const resetForm = () => {
+//     setEditingId(null);
+
+//     setEditIndex(null);
+
+//     setFormData(
+//       initialFormData
+//     );
+
+//     setFeeInput(
+//       initialFeeInput
+//     );
+
+//     setFees([]);
+//   };
+
+//   /* =========================================================
+//      SAVE / UPDATE FEE STRUCTURE
+//   ========================================================= */
+
+//   const handleSave = async (e) => {
+//     e.preventDefault();
+
+//     if (
+//       !formData.session ||
+//       !formData.standard ||
+//       !formData.category ||
+//       !formData.batch
+//     ) {
+//       alert(
+//         "Please fill all Fee Structure fields."
+//       );
+
+//       return;
+//     }
+
+//     if (fees.length === 0) {
+//       alert(
+//         "Please add at least one fee component."
+//       );
+
+//       return;
+//     }
+
+//     const payload = {
+//       session:
+//         formData.session,
+
+//       standard:
+//         formData.standard,
+
+//       feeCategory:
+//         formData.category,
+
+//       batch:
+//         formData.batch,
+
+//       fees: fees.map((item) => ({
+//         feeMasterId:
+//           item.feeMasterId,
+
+//         amount:
+//           Number(item.amount),
+//       })),
+//     };
+
+//     console.log(
+//       "Fee Structure Payload:",
+//       payload
+//     );
+
+//     setSaveLoading(true);
+
+//     try {
+//       let res;
+
+//       /* =====================================================
+//          UPDATE
+//       ===================================================== */
+
+//       if (editingId) {
+//         res =
+//           await axiosInstance.put(
+//             `/api/fee-structure/${editingId}`,
+//             payload,
+//             {
+//               ...authConfig,
+
+//               headers: {
+//                 ...authConfig.headers,
+
+//                 "Content-Type":
+//                   "application/json",
+//               },
+//             }
+//           );
+//       }
+
+//       /* =====================================================
+//          CREATE
+//       ===================================================== */
+
+//       else {
+//         res =
+//           await axiosInstance.post(
+//             "/api/fee-structure",
+//             payload,
+//             {
+//               ...authConfig,
+
+//               headers: {
+//                 ...authConfig.headers,
+
+//                 "Content-Type":
+//                   "application/json",
+//               },
+//             }
+//           );
+//       }
+
+//       alert(
+//         res?.data?.message ||
+//           (editingId
+//             ? "Fee Structure Updated Successfully"
+//             : "Fee Structure Created Successfully")
+//       );
+
+//       resetForm();
+
+//       await loadFeeStructures();
+//     } catch (error) {
+//       console.error(
+//         "Save Fee Structure Error:",
+//         error
+//       );
+
+//       alert(
+//         error?.response?.data?.message ||
+//           error?.response?.data ||
+//           "Something went wrong while saving fee structure"
+//       );
+//     } finally {
+//       setSaveLoading(false);
+//     }
+//   };
+
+//   /* =========================================================
+//      DELETE FEE STRUCTURE
+//   ========================================================= */
+
+//   const handleDelete = async (id) => {
+//     const confirmed =
+//       window.confirm(
+//         "Are you sure you want to delete this Fee Structure?"
+//       );
+
+//     if (!confirmed) {
+//       return;
+//     }
+
+//     try {
+//       await axiosInstance.delete(
+//         `/api/fee-structure/${id}`,
+//         authConfig
+//       );
+
+//       setFeeStructures(
+//         (prev) =>
+//           prev.filter(
+//             (item) =>
+//               Number(item.id) !==
+//               Number(id)
+//           )
+//       );
+
+//       if (
+//         Number(editingId) ===
+//         Number(id)
+//       ) {
+//         resetForm();
+//       }
+
+//       alert(
+//         "Fee Structure deleted successfully"
+//       );
+//     } catch (error) {
+//       console.error(
+//         "Delete Fee Structure Error:",
+//         error
+//       );
+
+//       alert(
+//         error?.response?.data?.message ||
+//           error?.response?.data ||
+//           "Delete Failed"
+//       );
+//     }
+//   };
+
+//   /* =========================================================
+//      FILTER CHANGE
+//   ========================================================= */
+
+//   const handleFilterChange = (e) => {
+//     const { name, value } = e.target;
+
+//     setFilters((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   /* =========================================================
+//      FILTER STRUCTURES
+//   ========================================================= */
+
+//   const filteredFeeStructures =
+//     useMemo(() => {
+//       const search =
+//         filters.search
+//           .trim()
+//           .toLowerCase();
+
+//       return feeStructures.filter(
+//         (item) => {
+//           const matchesSearch =
+//             !search ||
+//             String(
+//               item.session || ""
+//             )
+//               .toLowerCase()
+//               .includes(search) ||
+//             String(
+//               item.standard || ""
+//             )
+//               .toLowerCase()
+//               .includes(search) ||
+//             String(
+//               item.feeCategory || ""
+//             )
+//               .toLowerCase()
+//               .includes(search) ||
+//             String(
+//               item.batch || ""
+//             )
+//               .toLowerCase()
+//               .includes(search) ||
+//             (item.feeDetails || []).some(
+//               (detail) =>
+//                 String(
+//                   detail.feeMaster
+//                     ?.feeName || ""
+//                 )
+//                   .toLowerCase()
+//                   .includes(search) ||
+//                 String(
+//                   detail.feeMaster
+//                     ?.feeCode || ""
+//                 )
+//                   .toLowerCase()
+//                   .includes(search)
+//             );
+
+//           const matchesSession =
+//             !filters.session ||
+//             String(
+//               item.session || ""
+//             ) ===
+//               String(
+//                 filters.session
+//               );
+
+//           const matchesStandard =
+//             !filters.standard ||
+//             String(
+//               item.standard || ""
+//             ) ===
+//               String(
+//                 filters.standard
+//               );
+
+//           const matchesCategory =
+//             !filters.category ||
+//             String(
+//               item.feeCategory || ""
+//             ) ===
+//               String(
+//                 filters.category
+//               );
+
+//           const matchesBatch =
+//             !filters.batch ||
+//             String(
+//               item.batch || ""
+//             ) ===
+//               String(
+//                 filters.batch
+//               );
+
+//           return (
+//             matchesSearch &&
+//             matchesSession &&
+//             matchesStandard &&
+//             matchesCategory &&
+//             matchesBatch
+//           );
+//         }
+//       );
+//     }, [
+//       feeStructures,
+//       filters,
+//     ]);
+
+//   /* =========================================================
+//      RESET FILTER
+//   ========================================================= */
+
+//   const handleResetFilter = () => {
+//     setFilters(
+//       initialFilters
+//     );
+//   };
+
+//   /* =========================================================
+//      TOTAL CURRENT FORM AMOUNT
+//   ========================================================= */
+
+//   const totalCurrentFee =
+//     fees.reduce(
+//       (sum, fee) =>
+//         sum +
+//         Number(
+//           fee.amount || 0
+//         ),
+//       0
+//     );
+
+//   /* =========================================================
+//      TOTAL STRUCTURE AMOUNT
+//   ========================================================= */
+
+//   const getStructureTotal = (
+//     item
+//   ) => {
+//     if (
+//       item.totalAmount !==
+//         undefined &&
+//       item.totalAmount !== null
+//     ) {
+//       return Number(
+//         item.totalAmount
+//       );
+//     }
+
+//     if (
+//       item.amount !==
+//         undefined &&
+//       item.amount !== null
+//     ) {
+//       return Number(
+//         item.amount
+//       );
+//     }
+
+//     return (
+//       item.feeDetails || []
+//     ).reduce(
+//       (sum, detail) =>
+//         sum +
+//         Number(
+//           detail.amount || 0
+//         ),
+//       0
+//     );
+//   };
+
+//   /* =========================================================
+//      SUMMARY
+//   ========================================================= */
+
+//   const totalStructures =
+//     feeStructures.length;
+
+//   const activeStructures =
+//     feeStructures.filter(
+//       (item) =>
+//         item.status ===
+//         "ACTIVE"
+//     ).length;
+
+//   const inactiveStructures =
+//     feeStructures.filter(
+//       (item) =>
+//         item.status ===
+//         "INACTIVE"
+//     ).length;
+
+//   /*
+//    * If API does not provide status,
+//    * all structures are considered active
+//    * for summary purpose.
+//    */
+
+//   const totalAmount =
+//     feeStructures.reduce(
+//       (sum, item) =>
+//         sum +
+//         getStructureTotal(
+//           item
+//         ),
+//       0
+//     );
+
+//   const displayActiveStructures =
+//     feeStructures.some(
+//       (item) =>
+//         item.status
+//     )
+//       ? activeStructures
+//       : totalStructures;
+
+//   /* =========================================================
+//      FORMAT AMOUNT
+//   ========================================================= */
+
+//   const formatAmount = (
+//     amount
+//   ) => {
+//     return `₹ ${Number(
+//       amount || 0
+//     ).toLocaleString(
+//       "en-IN"
+//     )}`;
+//   };
+
+//   /* =========================================================
+//      STATUS
+//   ========================================================= */
+
+//   const getStatusConfig = (
+//     status
+//   ) => {
+//     if (
+//       status ===
+//       "INACTIVE"
+//     ) {
+//       return {
+//         background:
+//           "#f1f3f5",
+//         color:
+//           "#6c757d",
+//         dot:
+//           "#6c757d",
+//       };
+//     }
+
+//     return {
+//       background:
+//         "#e8f7ee",
+//       color:
+//         "#198754",
+//       dot:
+//         "#198754",
+//     };
+//   };
+
+//   /* =========================================================
+//      GET STRUCTURE FEE DETAILS
+//   ========================================================= */
+
+//   const getFeeDetails = (
+//     item
+//   ) => {
+//     return Array.isArray(
+//       item.feeDetails
+//     )
+//       ? item.feeDetails
+//       : [];
+//   };
+
+//   /* =========================================================
+//      UI
+//   ========================================================= */
+
+//   return (
+//     <>
+//       {/* =====================================================
+//           PAGE HEADER
+//       ===================================================== */}
+
+//       <div className="mx-2 mt-2 mb-3">
+//         <div
+//           className="rounded-4 shadow overflow-hidden"
+//           style={{
+//             background:
+//               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+
+//             border:
+//               "1px solid #dbeafe",
+//           }}
+//         >
+//           <div className="p-3 p-md-4">
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+
+//               <div className="d-flex align-items-center gap-3">
+
+//                 <div
+//                   className="d-flex align-items-center justify-content-center rounded-4"
+//                   style={{
+//                     width:
+//                       "52px",
+//                     height:
+//                       "52px",
+
+//                     background:
+//                       "linear-gradient(135deg,#2563eb,#3b82f6)",
+
+//                     color:
+//                       "#fff",
+
+//                     boxShadow:
+//                       "0 8px 20px rgba(37,99,235,.22)",
+//                   }}
+//                 >
+//                   <FaMoneyBillWave
+//                     size={25}
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold text-dark">
+//                     Fee Structure
+//                   </h5>
+
+//                   <div className="text-muted small">
+//                     Fee Management
+//                     &nbsp;/&nbsp;
+//                     Fee Structure
+//                   </div>
+//                 </div>
+
+//               </div>
+
+//               <div className="d-flex gap-2 flex-wrap">
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 rounded-4 px-3"
+//                   onClick={() =>
+//                     navigate(
+//                       "fee-types"
+//                     )
+//                   }
+//                 >
+//                   <FaLayerGroup
+//                     size={13}
+//                   />
+
+//                   Fee Type Master
+//                 </button>
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-primary d-flex align-items-center justify-content-center gap-2 rounded-4 px-4"
+//                   onClick={
+//                     resetForm
+//                   }
+//                 >
+//                   <FaPlus
+//                     size={13}
+//                   />
+
+//                   New Structure
+//                 </button>
+
+//               </div>
+
+//             </div>
+//           </div>
+
+//           <div
+//             className="px-4 py-2"
+//             style={{
+//               backgroundColor:
+//                 "rgba(239,246,255,.75)",
+
+//               borderTop:
+//                 "1px solid #e0ecff",
+//             }}
+//           >
+//             <small className="text-muted">
+//               Home &nbsp;›&nbsp;
+//               Fee Management
+//               &nbsp;›&nbsp;
+//               <span className="text-primary fw-semibold">
+//                 Fee Structure
+//               </span>
+//             </small>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* =====================================================
+//           SUMMARY CARDS
+//       ===================================================== */}
+
+//       <div className="row g-3 mb-4 px-2">
+
+//         <div className="col-xl-3 col-md-6">
+//           <div className="premium-stat-card stat-blue shadow">
+
+//             <div className="stat-icon">
+//               <FaMoneyBillWave />
+//             </div>
+
+//             <div className="stat-content">
+//               <span>
+//                 Total Structures
+//               </span>
+
+//               <h3>
+//                 {totalStructures}
+//               </h3>
+
+//               <small>
+//                 Fee Structures
+//               </small>
+//             </div>
+
+//           </div>
+//         </div>
+
+//         <div className="col-xl-3 col-md-6">
+//           <div className="premium-stat-card stat-green shadow">
+
+//             <div className="stat-icon">
+//               <FaGraduationCap />
+//             </div>
+
+//             <div className="stat-content">
+//               <span>
+//                 Active
+//               </span>
+
+//               <h3>
+//                 {
+//                   displayActiveStructures
+//                 }
+//               </h3>
+
+//               <small>
+//                 Active Fee Structures
+//               </small>
+//             </div>
+
+//           </div>
+//         </div>
+
+//         <div className="col-xl-3 col-md-6">
+//           <div className="premium-stat-card stat-orange shadow">
+
+//             <div className="stat-icon">
+//               <FaFilter />
+//             </div>
+
+//             <div className="stat-content">
+//               <span>
+//                 Inactive
+//               </span>
+
+//               <h3>
+//                 {inactiveStructures}
+//               </h3>
+
+//               <small>
+//                 Inactive Structures
+//               </small>
+//             </div>
+
+//           </div>
+//         </div>
+
+//         <div className="col-xl-3 col-md-6">
+//           <div className="premium-stat-card stat-red shadow">
+
+//             <div className="stat-icon">
+//               <MdOutlinePayments />
+//             </div>
+
+//             <div className="stat-content">
+//               <span>
+//                 Total Amount
+//               </span>
+
+//               <h3
+//                 style={{
+//                   fontSize:
+//                     "21px",
+//                 }}
+//               >
+//                 {formatAmount(
+//                   totalAmount
+//                 )}
+//               </h3>
+
+//               <small>
+//                 Configured Fee Amount
+//               </small>
+//             </div>
+
+//           </div>
+//         </div>
+
+//       </div>
+
+//       {/* =====================================================
+//           CREATE / EDIT FORM
+//       ===================================================== */}
+
+//       <div className="mx-2 mb-4">
+
+//         <div className="card border-0 shadow rounded-4 overflow-hidden">
+
+//           <div
+//             className="card-header bg-white p-3"
+//             style={{
+//               borderBottom:
+//                 "1px solid #eef0f2",
+//             }}
+//           >
+
+//             <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+//               <div className="d-flex align-items-center">
+
+//                 <div
+//                   className="rounded-2 d-flex align-items-center justify-content-center me-2"
+//                   style={{
+//                     width:
+//                       "36px",
+//                     height:
+//                       "36px",
+//                     background:
+//                       "#e9f7ef",
+//                     color:
+//                       "#198754",
+//                   }}
+//                 >
+//                   {editingId ? (
+//                     <FaEdit
+//                       size={16}
+//                     />
+//                   ) : (
+//                     <FaPlus
+//                       size={16}
+//                     />
+//                   )}
+//                 </div>
+
+//                 <div>
+//                   <h6 className="mb-0 fw-bold">
+//                     {editingId
+//                       ? "Update Fee Structure"
+//                       : "Create Fee Structure"}
+//                   </h6>
+
+//                   <small className="text-muted">
+//                     Configure session,
+//                     class and fee
+//                     components
+//                   </small>
+//                 </div>
+
+//               </div>
+
+//               {editingId && (
+//                 <button
+//                   type="button"
+//                   className="btn btn-sm btn-light border"
+//                   onClick={
+//                     resetForm
+//                   }
+//                 >
+//                   <FaTimes
+//                     className="me-1"
+//                   />
+
+//                   Cancel Edit
+//                 </button>
+//               )}
+
+//             </div>
+
+//           </div>
+
+//           <div className="card-body p-3 p-md-4">
+
+//             {pageLoading ? (
+//               <div className="text-center py-5">
+
+//                 <div
+//                   className="spinner-border text-primary"
+//                   style={{
+//                     width:
+//                       "2.5rem",
+//                     height:
+//                       "2.5rem",
+//                   }}
+//                 />
+
+//                 <div className="mt-3 text-muted">
+//                   Loading master
+//                   data...
+//                 </div>
+
+//               </div>
+//             ) : (
+
+//               <form
+//                 onSubmit={
+//                   handleSave
+//                 }
+//               >
+
+//                 {/* =================================================
+//                     STRUCTURE DETAILS
+//                 ================================================= */}
+
+//                 <div className="row g-3">
+
+//                   {/* SESSION */}
+
+//                   <div className="col-12 col-md-6 col-xl-3">
+
+//                     <label className="form-label fw-semibold small">
+//                       Session{" "}
+//                       <span className="text-danger">
+//                         *
+//                       </span>
+//                     </label>
+
+//                     <select
+//                       className="form-select"
+//                       name="session"
+//                       value={
+//                         formData.session
+//                       }
+//                       onChange={
+//                         handleFormChange
+//                       }
+//                     >
+
+//                       <option value="">
+//                         Select Session
+//                       </option>
+
+//                       {sessions.map(
+//                         (
+//                           item,
+//                           index
+//                         ) => (
+//                           <option
+//                             key={
+//                               `${item}-${index}`
+//                             }
+//                             value={
+//                               item
+//                             }
+//                           >
+//                             {String(
+//                               item
+//                             ).replaceAll(
+//                               "_",
+//                               "-"
+//                             )}
+//                           </option>
+//                         )
+//                       )}
+
+//                     </select>
+
+//                   </div>
+
+//                   {/* STANDARD */}
+
+//                   <div className="col-12 col-md-6 col-xl-3">
+
+//                     <label className="form-label fw-semibold small">
+//                       Standard{" "}
+//                       <span className="text-danger">
+//                         *
+//                       </span>
+//                     </label>
+
+//                     <select
+//                       className="form-select"
+//                       name="standard"
+//                       value={
+//                         formData.standard
+//                       }
+//                       onChange={
+//                         handleFormChange
+//                       }
+//                     >
+
+//                       <option value="">
+//                         Select Standard
+//                       </option>
+
+//                       {standards.map(
+//                         (
+//                           item,
+//                           index
+//                         ) => (
+//                           <option
+//                             key={
+//                               `${item}-${index}`
+//                             }
+//                             value={
+//                               item
+//                             }
+//                           >
+//                             {item}
+//                           </option>
+//                         )
+//                       )}
+
+//                     </select>
+
+//                   </div>
+
+//                   {/* CATEGORY */}
+
+//                   <div className="col-12 col-md-6 col-xl-3">
+
+//                     <label className="form-label fw-semibold small">
+//                       Fee Category{" "}
+//                       <span className="text-danger">
+//                         *
+//                       </span>
+//                     </label>
+
+//                     <select
+//                       className="form-select"
+//                       name="category"
+//                       value={
+//                         formData.category
+//                       }
+//                       onChange={
+//                         handleFormChange
+//                       }
+//                     >
+
+//                       <option value="">
+//                         Select Category
+//                       </option>
+
+//                       {feeCategories.map(
+//                         (
+//                           item,
+//                           index
+//                         ) => (
+//                           <option
+//                             key={
+//                               `${item}-${index}`
+//                             }
+//                             value={
+//                               item
+//                             }
+//                           >
+//                             {item}
+//                           </option>
+//                         )
+//                       )}
+
+//                     </select>
+
+//                   </div>
+
+//                   {/* BATCH */}
+
+//                   <div className="col-12 col-md-6 col-xl-3">
+
+//                     <label className="form-label fw-semibold small">
+//                       Fee Batch{" "}
+//                       <span className="text-danger">
+//                         *
+//                       </span>
+//                     </label>
+
+//                     <select
+//                       className="form-select"
+//                       name="batch"
+//                       value={
+//                         formData.batch
+//                       }
+//                       onChange={
+//                         handleFormChange
+//                       }
+//                     >
+
+//                       <option value="">
+//                         Select Batch
+//                       </option>
+
+//                       {feeBatches.map(
+//                         (
+//                           item,
+//                           index
+//                         ) => {
+//                           const value =
+//                             getBatchValue(
+//                               item
+//                             );
+
+//                           return (
+//                             <option
+//                               key={
+//                                 `${value}-${index}`
+//                               }
+//                               value={
+//                                 value
+//                               }
+//                             >
+//                               {value}
+//                             </option>
+//                           );
+//                         }
+//                       )}
+
+//                     </select>
+
+//                   </div>
+
+//                 </div>
+
+//                 <hr className="my-4" />
+
+//                 {/* =================================================
+//                     FEE COMPONENT
+//                 ================================================= */}
+
+//                 <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+
+//                   <div>
+//                     <h6 className="fw-bold mb-1">
+//                       <FaMoneyBillWave
+//                         className="text-primary me-2"
+//                         size={14}
+//                       />
+
+//                       Fee Components
+//                     </h6>
+
+//                     <small className="text-muted">
+//                       Add individual
+//                       fee components
+//                       to this structure
+//                     </small>
+//                   </div>
+
+//                   <span
+//                     className="badge rounded-pill px-3 py-2"
+//                     style={{
+//                       background:
+//                         "#e9f7ef",
+//                       color:
+//                         "#198754",
+//                     }}
+//                   >
+//                     {fees.length} Component
+//                     {fees.length !==
+//                     1
+//                       ? "s"
+//                       : ""}
+//                   </span>
+
+//                 </div>
+
+//                 <div className="row g-3">
+
+//                   <div className="col-12 col-md-5">
+
+//                     <label className="form-label fw-semibold small">
+//                       Fee Type
+//                     </label>
+
+//                     <select
+//                       className="form-select"
+//                       name="type"
+//                       value={
+//                         feeInput.type
+//                       }
+//                       onChange={
+//                         handleFeeInputChange
+//                       }
+//                     >
+
+//                       <option value="">
+//                         Select Fee Type
+//                       </option>
+
+//                       {feeMaster.map(
+//                         (item) => (
+//                           <option
+//                             key={
+//                               item.id
+//                             }
+//                             value={
+//                               item.id
+//                             }
+//                           >
+//                             {item.feeCode
+//                               ? `${item.feeCode} - ${item.feeName}`
+//                               : item.feeName}
+//                           </option>
+//                         )
+//                       )}
+
+//                     </select>
+
+//                   </div>
+
+//                   <div className="col-12 col-md-5">
+
+//                     <label className="form-label fw-semibold small">
+//                       Amount
+//                     </label>
+
+//                     <div className="input-group">
+
+//                       <span className="input-group-text bg-white">
+//                         ₹
+//                       </span>
+
+//                       <input
+//                         type="number"
+//                         min="0"
+//                         className="form-control"
+//                         name="amount"
+//                         value={
+//                           feeInput.amount
+//                         }
+//                         onChange={
+//                           handleFeeInputChange
+//                         }
+//                         placeholder="Enter Amount"
+//                       />
+
+//                     </div>
+
+//                   </div>
+
+//                   <div className="col-12 col-md-2 d-flex align-items-end">
+
+//                     <div className="d-flex gap-2 w-100">
+
+//                       <button
+//                         type="button"
+//                         className="btn btn-primary flex-grow-1"
+//                         onClick={
+//                           handleAddFee
+//                         }
+//                       >
+//                         {editIndex !==
+//                         null ? (
+//                           <>
+//                             <FaEdit
+//                               className="me-1"
+//                             />
+
+//                             Update
+//                           </>
+//                         ) : (
+//                           <>
+//                             <FaPlus
+//                               className="me-1"
+//                             />
+
+//                             Add
+//                           </>
+//                         )}
+//                       </button>
+
+//                       {editIndex !==
+//                         null && (
+//                         <button
+//                           type="button"
+//                           className="btn btn-light border"
+//                           onClick={
+//                             handleCancelFeeEdit
+//                           }
+//                         >
+//                           <FaTimes />
+//                         </button>
+//                       )}
+
+//                     </div>
+
+//                   </div>
+
+//                 </div>
+
+//                 {/* =================================================
+//                     TEMP FEE TABLE
+//                 ================================================= */}
+
+//                 <div className="table-responsive mt-4">
+
+//                   <table className="table align-middle mb-0">
+
+//                     <thead
+//                       style={{
+//                         background:
+//                           "#f8f9fa",
+//                       }}
+//                     >
+//                       <tr>
+
+//                         <th
+//                           className="text-center"
+//                           style={
+//                             headerStyle
+//                           }
+//                         >
+//                           #
+//                         </th>
+
+//                         <th
+//                           style={
+//                             headerStyle
+//                           }
+//                         >
+//                           FEE CODE
+//                         </th>
+
+//                         <th
+//                           style={
+//                             headerStyle
+//                           }
+//                         >
+//                           FEE NAME
+//                         </th>
+
+//                         <th
+//                           className="text-end"
+//                           style={
+//                             headerStyle
+//                           }
+//                         >
+//                           AMOUNT
+//                         </th>
+
+//                         <th
+//                           className="text-center"
+//                           style={
+//                             headerStyle
+//                           }
+//                         >
+//                           ACTION
+//                         </th>
+
+//                       </tr>
+//                     </thead>
+
+//                     <tbody>
+
+//                       {fees.length ===
+//                       0 ? (
+//                         <tr>
+
+//                           <td
+//                             colSpan="5"
+//                             className="text-center py-5"
+//                           >
+
+//                             <div
+//                               className="d-flex align-items-center justify-content-center mx-auto mb-2 rounded-circle"
+//                               style={{
+//                                 width:
+//                                   "48px",
+//                                 height:
+//                                   "48px",
+//                                 background:
+//                                   "#f1f3f5",
+//                                 color:
+//                                   "#868e96",
+//                               }}
+//                             >
+//                               <FaMoneyBillWave
+//                                 size={19}
+//                               />
+//                             </div>
+
+//                             <div className="fw-semibold text-muted">
+//                               No fee components
+//                               added
+//                             </div>
+
+//                             <small className="text-muted">
+//                               Select a fee type
+//                               and enter an
+//                               amount
+//                             </small>
+
+//                           </td>
+
+//                         </tr>
+//                       ) : (
+
+//                         fees.map(
+//                           (
+//                             fee,
+//                             index
+//                           ) => (
+//                             <tr
+//                               key={`${fee.feeMasterId}-${index}`}
+//                             >
+
+//                               <td className="text-center">
+
+//                                 <span
+//                                   className="d-inline-flex align-items-center justify-content-center rounded-circle"
+//                                   style={{
+//                                     width:
+//                                       "28px",
+//                                     height:
+//                                       "28px",
+//                                     background:
+//                                       "#f4f6f8",
+//                                     color:
+//                                       "#6c757d",
+//                                     fontSize:
+//                                       "12px",
+//                                     fontWeight:
+//                                       "600",
+//                                   }}
+//                                 >
+//                                   {index +
+//                                     1}
+//                                 </span>
+
+//                               </td>
+
+//                               <td>
+//                                 <span className="badge bg-light text-dark border">
+//                                   {fee.feeCode ||
+//                                     "-"}
+//                                 </span>
+//                               </td>
+
+//                               <td>
+//                                 <div className="fw-semibold">
+//                                   {
+//                                     fee.feeName
+//                                   }
+//                                 </div>
+//                               </td>
+
+//                               <td className="text-end">
+
+//                                 <strong className="text-primary">
+//                                   {formatAmount(
+//                                     fee.amount
+//                                   )}
+//                                 </strong>
+
+//                               </td>
+
+//                               <td className="text-center">
+
+//                                 <button
+//                                   type="button"
+//                                   className="btn btn-sm me-2"
+//                                   style={{
+//                                     background:
+//                                       "#e9f7ef",
+//                                     border:
+//                                       "1px solid #cfe8d8",
+//                                     color:
+//                                       "#198754",
+//                                   }}
+//                                   onClick={() =>
+//                                     handleEditFee(
+//                                       index
+//                                     )
+//                                   }
+//                                   title="Edit"
+//                                 >
+//                                   <FaEdit
+//                                     size={
+//                                       12
+//                                     }
+//                                   />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className="btn btn-sm"
+//                                   style={{
+//                                     background:
+//                                       "#fff1f2",
+//                                     border:
+//                                       "1px solid #ffd6da",
+//                                     color:
+//                                       "#dc3545",
+//                                   }}
+//                                   onClick={() =>
+//                                     handleDeleteFee(
+//                                       index
+//                                     )
+//                                   }
+//                                   title="Delete"
+//                                 >
+//                                   <FaTrash
+//                                     size={
+//                                       12
+//                                     }
+//                                   />
+//                                 </button>
+
+//                               </td>
+
+//                             </tr>
+//                           )
+//                         )
+
+//                       )}
+
+//                     </tbody>
+
+//                     {fees.length >
+//                       0 && (
+//                       <tfoot>
+
+//                         <tr>
+
+//                           <th
+//                             colSpan="3"
+//                             className="text-end"
+//                           >
+//                             Total Fee
+//                           </th>
+
+//                           <th className="text-end">
+
+//                             <span className="text-primary fw-bold">
+//                               {formatAmount(
+//                                 totalCurrentFee
+//                               )}
+//                             </span>
+
+//                           </th>
+
+//                           <th />
+
+//                         </tr>
+
+//                       </tfoot>
+//                     )}
+
+//                   </table>
+
+//                 </div>
+
+//                 {/* =================================================
+//                     SAVE
+//                 ================================================= */}
+
+//                 <div className="d-flex justify-content-end gap-2 mt-4">
+
+//                   {editingId && (
+//                     <button
+//                       type="button"
+//                       className="btn btn-light border px-4"
+//                       onClick={
+//                         resetForm
+//                       }
+//                       disabled={
+//                         saveLoading
+//                       }
+//                     >
+//                       <FaTimes className="me-1" />
+
+//                       Cancel
+//                     </button>
+//                   )}
+
+//                   <button
+//                     type="submit"
+//                     className="btn btn-success px-4"
+//                     disabled={
+//                       saveLoading
+//                     }
+//                   >
+
+//                     {saveLoading ? (
+//                       <>
+//                         <span
+//                           className="spinner-border spinner-border-sm me-2"
+//                           role="status"
+//                         />
+
+//                         Saving...
+//                       </>
+//                     ) : (
+//                       <>
+//                         <FaSave className="me-1" />
+
+//                         {editingId
+//                           ? "Update Fee Structure"
+//                           : "Save Fee Structure"}
+//                       </>
+//                     )}
+
+//                   </button>
+
+//                 </div>
+
+//               </form>
+//             )}
+
+//           </div>
+
+//         </div>
+
+//       </div>
+
+//       {/* =====================================================
+//           FILTER
+//       ===================================================== */}
+
+//       <div className="mx-2 mb-4">
+
+//         <div className="card border-0 shadow rounded-4">
+
+//           <div
+//             className="card-header bg-white p-3"
+//             style={{
+//               borderBottom:
+//                 "1px solid #eef0f2",
+//             }}
+//           >
+
+//             <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+//               <div>
+
+//                 <h6 className="mb-1 fw-bold">
+
+//                   <FaFilter
+//                     className="text-primary me-2"
+//                     size={14}
+//                   />
+
+//                   Fee Structure Search
+
+//                 </h6>
+
+//                 <small className="text-muted">
+//                   Filter fee structures
+//                   using the options
+//                   below
+//                 </small>
+
+//               </div>
+
+//               <span
+//                 className="badge rounded-pill px-3 py-2"
+//                 style={{
+//                   background:
+//                     "#e9f7ef",
+//                   color:
+//                     "#198754",
+//                 }}
+//               >
+//                 {
+//                   filteredFeeStructures.length
+//                 }{" "}
+//                 Records
+//               </span>
+
+//             </div>
+
+//           </div>
+
+//           <div className="card-body p-3">
+
+//             <div className="row g-3">
+
+//               {/* SESSION */}
+
+//               <div className="col-12 col-sm-6 col-xl-2">
+
+//                 <label className="form-label fw-semibold small">
+//                   Session
+//                 </label>
+
+//                 <select
+//                   name="session"
+//                   value={
+//                     filters.session
+//                   }
+//                   onChange={
+//                     handleFilterChange
+//                   }
+//                   className="form-select"
+//                 >
+
+//                   <option value="">
+//                     All Sessions
+//                   </option>
+
+//                   {sessions.map(
+//                     (
+//                       item,
+//                       index
+//                     ) => (
+//                       <option
+//                         key={`${item}-${index}`}
+//                         value={item}
+//                       >
+//                         {String(
+//                           item
+//                         ).replaceAll(
+//                           "_",
+//                           "-"
+//                         )}
+//                       </option>
+//                     )
+//                   )}
+
+//                 </select>
+
+//               </div>
+
+//               {/* STANDARD */}
+
+//               <div className="col-12 col-sm-6 col-xl-2">
+
+//                 <label className="form-label fw-semibold small">
+//                   Standard
+//                 </label>
+
+//                 <select
+//                   name="standard"
+//                   value={
+//                     filters.standard
+//                   }
+//                   onChange={
+//                     handleFilterChange
+//                   }
+//                   className="form-select"
+//                 >
+
+//                   <option value="">
+//                     All Standards
+//                   </option>
+
+//                   {standards.map(
+//                     (
+//                       item,
+//                       index
+//                     ) => (
+//                       <option
+//                         key={`${item}-${index}`}
+//                         value={item}
+//                       >
+//                         {item}
+//                       </option>
+//                     )
+//                   )}
+
+//                 </select>
+
+//               </div>
+
+//               {/* CATEGORY */}
+
+//               <div className="col-12 col-sm-6 col-xl-2">
+
+//                 <label className="form-label fw-semibold small">
+//                   Fee Category
+//                 </label>
+
+//                 <select
+//                   name="category"
+//                   value={
+//                     filters.category
+//                   }
+//                   onChange={
+//                     handleFilterChange
+//                   }
+//                   className="form-select"
+//                 >
+
+//                   <option value="">
+//                     All Categories
+//                   </option>
+
+//                   {feeCategories.map(
+//                     (
+//                       item,
+//                       index
+//                     ) => (
+//                       <option
+//                         key={`${item}-${index}`}
+//                         value={item}
+//                       >
+//                         {item}
+//                       </option>
+//                     )
+//                   )}
+
+//                 </select>
+
+//               </div>
+
+//               {/* BATCH */}
+
+//               <div className="col-12 col-sm-6 col-xl-2">
+
+//                 <label className="form-label fw-semibold small">
+//                   Fee Batch
+//                 </label>
+
+//                 <select
+//                   name="batch"
+//                   value={
+//                     filters.batch
+//                   }
+//                   onChange={
+//                     handleFilterChange
+//                   }
+//                   className="form-select"
+//                 >
+
+//                   <option value="">
+//                     All Batches
+//                   </option>
+
+//                   {feeBatches.map(
+//                     (
+//                       item,
+//                       index
+//                     ) => {
+//                       const value =
+//                         getBatchValue(
+//                           item
+//                         );
+
+//                       return (
+//                         <option
+//                           key={`${value}-${index}`}
+//                           value={value}
+//                         >
+//                           {value}
+//                         </option>
+//                       );
+//                     }
+//                   )}
+
+//                 </select>
+
+//               </div>
+
+//               {/* SEARCH */}
+
+//               <div className="col-12 col-xl-4">
+
+//                 <label className="form-label fw-semibold small">
+//                   Search
+//                 </label>
+
+//                 <div className="input-group">
+
+//                   <span className="input-group-text bg-white">
+//                     <FaSearch
+//                       size={14}
+//                     />
+//                   </span>
+
+//                   <input
+//                     type="search"
+//                     className="form-control"
+//                     name="search"
+//                     value={
+//                       filters.search
+//                     }
+//                     onChange={
+//                       handleFilterChange
+//                     }
+//                     placeholder="Search session, standard, category, batch, fee..."
+//                   />
+
+//                 </div>
+
+//               </div>
+
+//             </div>
+
+//             <div className="d-flex justify-content-end gap-2 mt-4">
+
+//               <button
+//                 type="button"
+//                 className="btn btn-light border px-4"
+//                 onClick={
+//                   handleResetFilter
+//                 }
+//               >
+//                 <FaRedo
+//                   className="me-2"
+//                   size={12}
+//                 />
+
+//                 Reset
+//               </button>
+
+//               <button
+//                 type="button"
+//                 className="btn btn-primary px-4"
+//                 onClick={() =>
+//                   setFilters(
+//                     (prev) => ({
+//                       ...prev,
+//                       search:
+//                         prev.search,
+//                     })
+//                   )
+//                 }
+//               >
+//                 <FaSearch
+//                   className="me-2"
+//                   size={12}
+//                 />
+
+//                 Search
+//               </button>
+
+//             </div>
+
+//           </div>
+
+//         </div>
+
+//       </div>
+
+//       {/* =====================================================
+//           FEE STRUCTURE LIST
+//       ===================================================== */}
+
+//       <div className="mx-2 mb-4">
+
+//         <div className="card border-0 shadow rounded-4 overflow-hidden">
+
+//           {/* HEADER */}
+
+//           <div
+//             className="card-header bg-white p-3"
+//             style={{
+//               borderBottom:
+//                 "1px solid #eef0f2",
+//             }}
+//           >
+
+//             <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+//               <div className="d-flex align-items-center">
+
+//                 <div
+//                   className="rounded-2 d-flex align-items-center justify-content-center me-2"
+//                   style={{
+//                     width:
+//                       "36px",
+//                     height:
+//                       "36px",
+//                     background:
+//                       "#e9f7ef",
+//                     color:
+//                       "#198754",
+//                   }}
+//                 >
+//                   <FaList
+//                     size={16}
+//                   />
+//                 </div>
+
+//                 <div>
+
+//                   <h6 className="mb-0 fw-bold">
+//                     Fee Structure List
+//                   </h6>
+
+//                   <small className="text-muted">
+//                     Manage all fee
+//                     structures
+//                   </small>
+
+//                 </div>
+
+//               </div>
+
+//               <div className="d-flex align-items-center gap-2">
+
+//                 <span
+//                   className="badge rounded-pill px-3 py-2"
+//                   style={{
+//                     background:
+//                       "#f4f6f8",
+//                     color:
+//                       "#495057",
+//                   }}
+//                 >
+//                   Showing{" "}
+//                   <strong>
+//                     {
+//                       filteredFeeStructures.length
+//                     }
+//                   </strong>
+//                 </span>
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-sm btn-light border d-flex align-items-center gap-1"
+//                   onClick={
+//                     loadFeeStructures
+//                   }
+//                   disabled={
+//                     loading
+//                   }
+//                 >
+//                   <FaRedo
+//                     size={11}
+//                     className={
+//                       loading
+//                         ? "spin"
+//                         : ""
+//                     }
+//                   />
+
+//                   Refresh
+//                 </button>
+
+//               </div>
+
+//             </div>
+
+//           </div>
+
+//           {/* TABLE */}
+
+//           <div className="card-body p-0">
+
+//             <div
+//               className="table-responsive"
+//               style={{
+//                 maxHeight:
+//                   "650px",
+//                 overflowY:
+//                   "auto",
+//               }}
+//             >
+
+//               <table
+//                 className="table align-middle mb-0"
+//                 style={{
+//                   minWidth:
+//                     "1250px",
+//                 }}
+//               >
+
+//                 <thead
+//                   style={{
+//                     position:
+//                       "sticky",
+//                     top: 0,
+//                     zIndex: 2,
+//                     background:
+//                       "#f8f9fa",
+//                   }}
+//                 >
+
+//                   <tr>
+
+//                     <th
+//                       className="text-center"
+//                       style={
+//                         headerStyle
+//                       }
+//                     >
+//                       #
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "170px",
+//                       }}
+//                     >
+//                       SESSION
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "140px",
+//                       }}
+//                     >
+//                       STANDARD
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "150px",
+//                       }}
+//                     >
+//                       CATEGORY
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "130px",
+//                       }}
+//                     >
+//                       BATCH
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "180px",
+//                       }}
+//                     >
+//                       FEE COMPONENT
+//                     </th>
+
+//                     <th
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "130px",
+//                       }}
+//                     >
+//                       FEE CODE
+//                     </th>
+
+//                     <th
+//                       className="text-end"
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "130px",
+//                       }}
+//                     >
+//                       AMOUNT
+//                     </th>
+
+//                     <th
+//                       className="text-center"
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "120px",
+//                       }}
+//                     >
+//                       STATUS
+//                     </th>
+
+//                     <th
+//                       className="text-center"
+//                       style={{
+//                         ...headerStyle,
+//                         minWidth:
+//                           "150px",
+//                       }}
+//                     >
+//                       ACTION
+//                     </th>
+
+//                   </tr>
+
+//                 </thead>
+
+//                 <tbody>
+
+//                   {loading ? (
+
+//                     <tr>
+
+//                       <td
+//                         colSpan="10"
+//                         className="text-center py-5"
+//                       >
+
+//                         <div
+//                           className="spinner-border text-primary"
+//                           style={{
+//                             width:
+//                               "2.5rem",
+//                             height:
+//                               "2.5rem",
+//                           }}
+//                         />
+
+//                         <div className="mt-3 text-muted small">
+//                           Loading fee
+//                           structures...
+//                         </div>
+
+//                       </td>
+
+//                     </tr>
+
+//                   ) : filteredFeeStructures.length ===
+//                     0 ? (
+
+//                     <tr>
+
+//                       <td
+//                         colSpan="10"
+//                         className="text-center py-5"
+//                       >
+
+//                         <div
+//                           className="d-flex align-items-center justify-content-center mx-auto mb-3 rounded-circle"
+//                           style={{
+//                             width:
+//                               "55px",
+//                             height:
+//                               "55px",
+//                             background:
+//                               "#f1f3f5",
+//                             color:
+//                               "#868e96",
+//                           }}
+//                         >
+//                           <FaMoneyBillWave
+//                             size={23}
+//                           />
+//                         </div>
+
+//                         <h6 className="fw-semibold text-muted mb-1">
+//                           No Fee Structures
+//                         </h6>
+
+//                         <small className="text-muted">
+//                           No fee structure
+//                           matches the
+//                           selected filters.
+//                         </small>
+
+//                       </td>
+
+//                     </tr>
+
+//                   ) : (
+
+//                     filteredFeeStructures.map(
+//                       (
+//                         item,
+//                         index
+//                       ) => {
+
+//                         const details =
+//                           getFeeDetails(
+//                             item
+//                           );
+
+//                         const status =
+//                           item.status ||
+//                           "ACTIVE";
+
+//                         const statusConfig =
+//                           getStatusConfig(
+//                             status
+//                           );
+
+//                         /*
+//                          * If no fee details,
+//                          * still show structure.
+//                          */
+
+//                         if (
+//                           details.length ===
+//                           0
+//                         ) {
+//                           return (
+//                             <tr
+//                               key={
+//                                 item.id
+//                               }
+//                             >
+
+//                               <td className="text-center">
+//                                 <span
+//                                   className="d-inline-flex align-items-center justify-content-center rounded-circle"
+//                                   style={{
+//                                     width:
+//                                       "28px",
+//                                     height:
+//                                       "28px",
+//                                     background:
+//                                       "#f4f6f8",
+//                                     color:
+//                                       "#6c757d",
+//                                     fontSize:
+//                                       "12px",
+//                                     fontWeight:
+//                                       "600",
+//                                   }}
+//                                 >
+//                                   {index +
+//                                     1}
+//                                 </span>
+//                               </td>
+
+//                               <td>
+//                                 {item.session ||
+//                                   "-"}
+//                               </td>
+
+//                               <td>
+//                                 {item.standard ||
+//                                   "-"}
+//                               </td>
+
+//                               <td>
+//                                 {item.feeCategory ||
+//                                   "-"}
+//                               </td>
+
+//                               <td>
+//                                 {item.batch ||
+//                                   "-"}
+//                               </td>
+
+//                               <td
+//                                 colSpan="3"
+//                                 className="text-muted"
+//                               >
+//                                 No fee
+//                                 components
+//                               </td>
+
+//                               <td className="text-center">
+
+//                                 <span
+//                                   className="d-inline-flex align-items-center rounded-pill"
+//                                   style={{
+//                                     background:
+//                                       statusConfig.background,
+//                                     color:
+//                                       statusConfig.color,
+//                                     padding:
+//                                       "6px 12px",
+//                                     fontSize:
+//                                       "12px",
+//                                     fontWeight:
+//                                       "600",
+//                                   }}
+//                                 >
+
+//                                   <span
+//                                     className="rounded-circle me-2"
+//                                     style={{
+//                                       width:
+//                                         "7px",
+//                                       height:
+//                                         "7px",
+//                                       background:
+//                                         statusConfig.dot,
+//                                     }}
+//                                   />
+
+//                                   {status}
+
+//                                 </span>
+
+//                               </td>
+
+//                               <td className="text-center">
+
+//                                 <button
+//                                   type="button"
+//                                   className="btn btn-sm me-2"
+//                                   style={{
+//                                     background:
+//                                       "#e9f7ef",
+//                                     border:
+//                                       "1px solid #cfe8d8",
+//                                     color:
+//                                       "#198754",
+//                                   }}
+//                                   onClick={() =>
+//                                     handleEdit(
+//                                       item
+//                                     )
+//                                   }
+//                                 >
+//                                   <FaEdit
+//                                     size={
+//                                       12
+//                                     }
+//                                   />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className="btn btn-sm"
+//                                   style={{
+//                                     background:
+//                                       "#fff1f2",
+//                                     border:
+//                                       "1px solid #ffd6da",
+//                                     color:
+//                                       "#dc3545",
+//                                   }}
+//                                   onClick={() =>
+//                                     handleDelete(
+//                                       item.id
+//                                     )
+//                                   }
+//                                 >
+//                                   <FaTrash
+//                                     size={
+//                                       12
+//                                     }
+//                                   />
+//                                 </button>
+
+//                               </td>
+
+//                             </tr>
+//                           );
+//                         }
+
+//                         return details.map(
+//                           (
+//                             detail,
+//                             detailIndex
+//                           ) => (
+//                             <tr
+//                               key={`${item.id}-${detail.id || detailIndex}`}
+//                             >
+
+//                               {/* NUMBER */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                   className="text-center"
+//                                 >
+//                                   <span
+//                                     className="d-inline-flex align-items-center justify-content-center rounded-circle"
+//                                     style={{
+//                                       width:
+//                                         "28px",
+//                                       height:
+//                                         "28px",
+//                                       background:
+//                                         "#f4f6f8",
+//                                       color:
+//                                         "#6c757d",
+//                                       fontSize:
+//                                         "12px",
+//                                       fontWeight:
+//                                         "600",
+//                                     }}
+//                                   >
+//                                     {index +
+//                                       1}
+//                                   </span>
+//                                 </td>
+//                               )}
+
+//                               {/* SESSION */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                 >
+//                                   <span
+//                                     className="badge rounded-pill text-primary"
+//                                     style={{
+//                                       background:
+//                                         "#f1f8f4",
+//                                       border:
+//                                         "1px solid #d9eee1",
+//                                       fontWeight:
+//                                         "600",
+//                                       padding:
+//                                         "6px 10px",
+//                                     }}
+//                                   >
+//                                     {item.session ||
+//                                       "-"}
+//                                   </span>
+//                                 </td>
+//                               )}
+
+//                               {/* STANDARD */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                 >
+//                                   <span
+//                                     className="badge rounded-pill"
+//                                     style={{
+//                                       background:
+//                                         "#f4f6f8",
+//                                       color:
+//                                         "#495057",
+//                                       border:
+//                                         "1px solid #e1e5e8",
+//                                       fontWeight:
+//                                         "600",
+//                                       padding:
+//                                         "6px 10px",
+//                                     }}
+//                                   >
+//                                     {item.standard ||
+//                                       "-"}
+//                                   </span>
+//                                 </td>
+//                               )}
+
+//                               {/* CATEGORY */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                 >
+//                                   <span
+//                                     style={{
+//                                       fontSize:
+//                                         "12px",
+//                                       fontWeight:
+//                                         "600",
+//                                       color:
+//                                         "#495057",
+//                                     }}
+//                                   >
+//                                     {item.feeCategory ||
+//                                       "-"}
+//                                   </span>
+//                                 </td>
+//                               )}
+
+//                               {/* BATCH */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                 >
+//                                   <span
+//                                     className="badge rounded-pill"
+//                                     style={{
+//                                       background:
+//                                         "#fff8e8",
+//                                       color:
+//                                         "#996c00",
+//                                       border:
+//                                         "1px solid #f8e5af",
+//                                       fontWeight:
+//                                         "600",
+//                                       padding:
+//                                         "6px 10px",
+//                                     }}
+//                                   >
+//                                     {item.batch ||
+//                                       "-"}
+//                                   </span>
+//                                 </td>
+//                               )}
+
+//                               {/* FEE NAME */}
+
+//                               <td>
+
+//                                 <div className="d-flex align-items-center">
+
+//                                   <div
+//                                     className="d-flex align-items-center justify-content-center rounded-circle me-2"
+//                                     style={{
+//                                       width:
+//                                         "34px",
+//                                       height:
+//                                         "34px",
+//                                       minWidth:
+//                                         "34px",
+//                                       background:
+//                                         "#eef5ff",
+//                                       color:
+//                                         "#2563eb",
+//                                     }}
+//                                   >
+//                                     <FaMoneyBillWave
+//                                       size={
+//                                         13
+//                                       }
+//                                     />
+//                                   </div>
+
+//                                   <div>
+//                                     <div className="fw-semibold small">
+//                                       {detail
+//                                         .feeMaster
+//                                         ?.feeName ||
+//                                         "-"}
+//                                     </div>
+//                                   </div>
+
+//                                 </div>
+
+//                               </td>
+
+//                               {/* CODE */}
+
+//                               <td>
+
+//                                 <span className="badge bg-light text-dark border">
+//                                   {detail
+//                                     .feeMaster
+//                                     ?.feeCode ||
+//                                     "-"}
+//                                 </span>
+
+//                               </td>
+
+//                               {/* AMOUNT */}
+
+//                               <td className="text-end">
+
+//                                 <strong className="text-primary">
+//                                   {formatAmount(
+//                                     detail.amount
+//                                   )}
+//                                 </strong>
+
+//                               </td>
+
+//                               {/* STATUS */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                   className="text-center"
+//                                 >
+
+//                                   <span
+//                                     className="d-inline-flex align-items-center rounded-pill"
+//                                     style={{
+//                                       background:
+//                                         statusConfig.background,
+//                                       color:
+//                                         statusConfig.color,
+//                                       padding:
+//                                         "6px 12px",
+//                                       fontSize:
+//                                         "12px",
+//                                       fontWeight:
+//                                         "600",
+//                                     }}
+//                                   >
+
+//                                     <span
+//                                       className="rounded-circle me-2"
+//                                       style={{
+//                                         width:
+//                                           "7px",
+//                                         height:
+//                                           "7px",
+//                                         background:
+//                                           statusConfig.dot,
+//                                       }}
+//                                     />
+
+//                                     {status}
+
+//                                   </span>
+
+//                                 </td>
+//                               )}
+
+//                               {/* ACTION */}
+
+//                               {detailIndex ===
+//                                 0 && (
+//                                 <td
+//                                   rowSpan={
+//                                     details.length
+//                                   }
+//                                   className="text-center"
+//                                 >
+
+//                                   <div className="d-flex justify-content-center gap-2">
+
+//                                     <button
+//                                       type="button"
+//                                       className="btn btn-sm d-inline-flex align-items-center gap-1"
+//                                       style={{
+//                                         background:
+//                                           "#e9f7ef",
+//                                         border:
+//                                           "1px solid #cfe8d8",
+//                                         color:
+//                                           "#198754",
+//                                         fontWeight:
+//                                           "600",
+//                                         padding:
+//                                           "6px 11px",
+//                                       }}
+//                                       title="Edit Fee Structure"
+//                                       onClick={() =>
+//                                         handleEdit(
+//                                           item
+//                                         )
+//                                       }
+//                                     >
+//                                       <FaEdit
+//                                         size={
+//                                           12
+//                                         }
+//                                       />
+
+//                                       Edit
+//                                     </button>
+
+//                                     <button
+//                                       type="button"
+//                                       className="btn btn-sm d-inline-flex align-items-center justify-content-center"
+//                                       style={{
+//                                         background:
+//                                           "#fff1f2",
+//                                         border:
+//                                           "1px solid #ffd6da",
+//                                         color:
+//                                           "#dc3545",
+//                                         padding:
+//                                           "6px 10px",
+//                                       }}
+//                                       title="Delete Fee Structure"
+//                                       onClick={() =>
+//                                         handleDelete(
+//                                           item.id
+//                                         )
+//                                       }
+//                                     >
+//                                       <FaTrash
+//                                         size={
+//                                           12
+//                                         }
+//                                       />
+//                                     </button>
+
+//                                   </div>
+
+//                                 </td>
+//                               )}
+
+//                             </tr>
+//                           )
+//                         );
+//                       }
+//                     )
+
+//                   )}
+
+//                 </tbody>
+
+//               </table>
+
+//             </div>
+
+//           </div>
+
+//           {/* FOOTER */}
+
+//           <div
+//             className="card-footer bg-white p-3"
+//             style={{
+//               borderTop:
+//                 "1px solid #eef0f2",
+//             }}
+//           >
+
+//             <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+//               <small className="text-muted">
+//                 Showing{" "}
+//                 <strong className="text-primary">
+//                   {
+//                     filteredFeeStructures.length
+//                   }
+//                 </strong>{" "}
+//                 fee structure(s)
+//               </small>
+
+//               <small className="text-muted">
+//                 Total Structures:{" "}
+//                 <strong className="text-dark">
+//                   {
+//                     feeStructures.length
+//                   }
+//                 </strong>
+//               </small>
+
+//             </div>
+
+//           </div>
+
+//         </div>
+
+//       </div>
+
+//       {/* =====================================================
+//           CSS
+//       ===================================================== */}
+
+//       <style>
+//         {`
+//           .table tbody tr {
+//             transition: all 0.18s ease;
+//           }
+
+//           .table tbody tr:hover {
+//             background-color: #fbfdfc;
+//           }
+
+//           .form-select,
+//           .form-control {
+//             border-color: #dee2e6;
+//             border-radius: 8px;
+//             min-height: 40px;
+//             font-size: 13px;
+//           }
+
+//           .form-select:focus,
+//           .form-control:focus {
+//             border-color: #2563eb;
+//             box-shadow: 0 0 0 0.15rem rgba(37, 99, 235, 0.10);
+//           }
+
+//           .input-group-text {
+//             border-color: #dee2e6;
+//             border-radius: 8px 0 0 8px;
+//             color: #6c757d;
+//           }
+
+//           .input-group .form-control {
+//             border-radius: 0 8px 8px 0;
+//           }
+
+//           .btn {
+//             border-radius: 8px;
+//             font-size: 13px;
+//             font-weight: 500;
+//           }
+
+//           .spin {
+//             animation: spin 0.8s linear infinite;
+//           }
+
+//           @keyframes spin {
+//             from {
+//               transform: rotate(0deg);
+//             }
+
+//             to {
+//               transform: rotate(360deg);
+//             }
+//           }
+
+//           @media (max-width: 768px) {
+//             .card-header {
+//               padding: 12px !important;
+//             }
+
+//             .table {
+//               font-size: 12px;
+//             }
+//           }
+//         `}
+//       </style>
+//     </>
+//   );
+// };
+
+// /* =========================================================
+//    TABLE HEADER STYLE
+// ========================================================= */
+
+// const headerStyle = {
+//   padding: "14px 12px",
+//   fontSize: "12px",
+//   color: "#6c757d",
+//   fontWeight: "700",
+//   whiteSpace: "nowrap",
+// };
+
+// export default CreateFeeStructure;
+
+
+
+
 import { useEffect, useMemo, useState } from "react";
 import {
   FaEdit,
@@ -1266,7 +4605,6 @@ import {
   FaTrash,
   FaMoneyBillWave,
   FaFilter,
-  // FaCalendarDays,
   FaLayerGroup,
   FaList,
   FaSave,
@@ -1280,7 +4618,17 @@ import axiosInstance from "../../api/axiosInstance";
 const CreateFeeStructure = () => {
   const navigate = useNavigate();
 
+  /* =========================================================
+     AUTH
+  ========================================================= */
+
   const token = localStorage.getItem("token");
+
+  const user = JSON.parse(
+    localStorage.getItem("user") || "null"
+  );
+
+  const schoolId = user?.schoolId;
 
   /* =========================================================
      AUTH CONFIG
@@ -1320,15 +4668,19 @@ const CreateFeeStructure = () => {
      FORM STATES
   ========================================================= */
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] =
+    useState(initialFormData);
 
-  const [feeInput, setFeeInput] = useState(initialFeeInput);
+  const [feeInput, setFeeInput] =
+    useState(initialFeeInput);
 
   const [fees, setFees] = useState([]);
 
-  const [editingId, setEditingId] = useState(null);
+  const [editingId, setEditingId] =
+    useState(null);
 
-  const [editIndex, setEditIndex] = useState(null);
+  const [editIndex, setEditIndex] =
+    useState(null);
 
   /* =========================================================
      MASTER DATA
@@ -1336,50 +4688,68 @@ const CreateFeeStructure = () => {
 
   const [sessions, setSessions] = useState([]);
 
-  const [standards, setStandards] = useState([]);
+  const [standards, setStandards] =
+    useState([]);
 
-  const [feeCategories, setFeeCategories] = useState([]);
+  const [feeCategories, setFeeCategories] =
+    useState([]);
 
-  const [feeBatches, setFeeBatches] = useState([]);
+  const [feeBatches, setFeeBatches] =
+    useState([]);
 
-  const [feeMaster, setFeeMaster] = useState([]);
+  const [feeMaster, setFeeMaster] =
+    useState([]);
 
   /* =========================================================
      FEE STRUCTURES
   ========================================================= */
 
-  const [feeStructures, setFeeStructures] = useState([]);
+  const [feeStructures, setFeeStructures] =
+    useState([]);
 
   /* =========================================================
      FILTER
   ========================================================= */
 
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] =
+    useState(initialFilters);
 
   /* =========================================================
      LOADING
   ========================================================= */
 
-  const [pageLoading, setPageLoading] = useState(false);
+  const [pageLoading, setPageLoading] =
+    useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveLoading, setSaveLoading] =
+    useState(false);
 
   /* =========================================================
-     LOAD ALL DATA
+     LOAD DATA WHEN SCHOOL ID IS AVAILABLE
   ========================================================= */
 
   useEffect(() => {
+    if (!schoolId) {
+      alert(
+        "School ID not found. Please login again."
+      );
+      return;
+    }
+
     loadMasterData();
     loadFeeStructures();
-  }, []);
+  }, [schoolId]);
 
   /* =========================================================
      LOAD MASTER DATA
   ========================================================= */
 
   const loadMasterData = async () => {
+    if (!schoolId) return;
+
     try {
       setPageLoading(true);
 
@@ -1410,23 +4780,46 @@ const CreateFeeStructure = () => {
           authConfig
         ),
 
+        /* =====================================================
+           FEE MASTER — SCHOOL WISE
+        ===================================================== */
+
         axiosInstance.get(
           "/api/fee-master",
-          authConfig
+          {
+            ...authConfig,
+            params: {
+              schoolId: schoolId,
+            },
+          }
         ),
       ]);
 
-      setSessions(sessionRes.data || []);
+      setSessions(
+        sessionRes.data || []
+      );
 
-      setStandards(standardRes.data || []);
+      setStandards(
+        standardRes.data || []
+      );
 
-      setFeeCategories(categoryRes.data || []);
+      setFeeCategories(
+        categoryRes.data || []
+      );
 
-      setFeeBatches(batchRes.data || []);
+      setFeeBatches(
+        batchRes.data || []
+      );
 
-      setFeeMaster(feeMasterRes.data || []);
+      setFeeMaster(
+        feeMasterRes.data || []
+      );
+
     } catch (error) {
-      console.error("Master Data Error:", error);
+      console.error(
+        "Master Data Error:",
+        error
+      );
 
       alert(
         error?.response?.data?.message ||
@@ -1439,29 +4832,35 @@ const CreateFeeStructure = () => {
   };
 
   /* =========================================================
-     LOAD FEE STRUCTURES
+     LOAD FEE STRUCTURES — SCHOOL WISE
   ========================================================= */
 
   const loadFeeStructures = async () => {
+    if (!schoolId) return;
+
     try {
       setLoading(true);
 
-      /*
-       * IMPORTANT:
-       * Existing API kept exactly same.
-       */
-
-      const res = await axiosInstance.get(
-        "/api/fee-structure",
-        authConfig
-      );
+      const res =
+        await axiosInstance.get(
+          "/api/fee-structure",
+          {
+            ...authConfig,
+            params: {
+              schoolId: schoolId,
+            },
+          }
+        );
 
       console.log(
         "Fee Structure Response:",
         res.data
       );
 
-      setFeeStructures(res.data || []);
+      setFeeStructures(
+        res.data || []
+      );
+
     } catch (error) {
       console.error(
         "Fee Structure Error:",
@@ -1485,7 +4884,10 @@ const CreateFeeStructure = () => {
   ========================================================= */
 
   const handleFormChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value,
+    } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -1498,7 +4900,10 @@ const CreateFeeStructure = () => {
   ========================================================= */
 
   const handleFeeInputChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value,
+    } = e.target;
 
     setFeeInput((prev) => ({
       ...prev,
@@ -1539,7 +4944,9 @@ const CreateFeeStructure = () => {
       return;
     }
 
-    if (Number(feeInput.amount) <= 0) {
+    if (
+      Number(feeInput.amount) <= 0
+    ) {
       alert(
         "Amount must be greater than 0."
       );
@@ -1547,20 +4954,21 @@ const CreateFeeStructure = () => {
       return;
     }
 
-    const selectedFee = feeMaster.find(
-      (item) =>
-        String(item.id) ===
-        String(feeInput.type)
-    );
+    const selectedFee =
+      feeMaster.find(
+        (item) =>
+          String(item.id) ===
+          String(feeInput.type)
+      );
 
     if (!selectedFee) {
       alert("Invalid Fee Type.");
-
       return;
     }
 
     const feeObject = {
-      feeMasterId: selectedFee.id,
+      feeMasterId:
+        selectedFee.id,
 
       feeName:
         selectedFee.feeName || "-",
@@ -1578,12 +4986,17 @@ const CreateFeeStructure = () => {
     ===================================================== */
 
     if (editIndex !== null) {
-      const duplicate = fees.some(
-        (fee, index) =>
-          index !== editIndex &&
-          Number(fee.feeMasterId) ===
-            Number(selectedFee.id)
-      );
+      const duplicate =
+        fees.some(
+          (fee, index) =>
+            index !== editIndex &&
+            Number(
+              fee.feeMasterId
+            ) ===
+              Number(
+                selectedFee.id
+              )
+        );
 
       if (duplicate) {
         alert(
@@ -1593,10 +5006,12 @@ const CreateFeeStructure = () => {
         return;
       }
 
-      const updatedFees = [...fees];
+      const updatedFees =
+        [...fees];
 
-      updatedFees[editIndex] =
-        feeObject;
+      updatedFees[
+        editIndex
+      ] = feeObject;
 
       setFees(updatedFees);
 
@@ -1611,8 +5026,12 @@ const CreateFeeStructure = () => {
       const alreadyExists =
         fees.some(
           (fee) =>
-            Number(fee.feeMasterId) ===
-            Number(selectedFee.id)
+            Number(
+              fee.feeMasterId
+            ) ===
+              Number(
+                selectedFee.id
+              )
         );
 
       if (alreadyExists) {
@@ -1629,7 +5048,9 @@ const CreateFeeStructure = () => {
       ]);
     }
 
-    setFeeInput(initialFeeInput);
+    setFeeInput(
+      initialFeeInput
+    );
   };
 
   /* =========================================================
@@ -1707,12 +5128,9 @@ const CreateFeeStructure = () => {
 
     setEditingId(item.id);
 
-    /*
-     * Existing response fields.
-     */
-
     setFormData({
-      session: item.session || "",
+      session:
+        item.session || "",
 
       standard:
         item.standard || "",
@@ -1724,28 +5142,27 @@ const CreateFeeStructure = () => {
         item.batch || "",
     });
 
-    /*
-     * Existing feeDetails response.
-     */
-
     const existingFees =
-      (item.feeDetails || []).map(
-        (detail) => ({
-          feeMasterId:
-            detail.feeMaster?.id,
+      (item.feeDetails || [])
+        .map(
+          (detail) => ({
+            feeMasterId:
+              detail.feeMaster?.id,
 
-          feeName:
-            detail.feeMaster?.feeName ||
-            "-",
+            feeName:
+              detail.feeMaster
+                ?.feeName || "-",
 
-          feeCode:
-            detail.feeMaster?.feeCode ||
-            "-",
+            feeCode:
+              detail.feeMaster
+                ?.feeCode || "-",
 
-          amount:
-            Number(detail.amount || 0),
-        })
-      );
+            amount:
+              Number(
+                detail.amount || 0
+              ),
+          })
+        );
 
     setFees(existingFees);
 
@@ -1788,6 +5205,14 @@ const CreateFeeStructure = () => {
   const handleSave = async (e) => {
     e.preventDefault();
 
+    if (!schoolId) {
+      alert(
+        "School ID not found. Please login again."
+      );
+
+      return;
+    }
+
     if (
       !formData.session ||
       !formData.standard ||
@@ -1822,14 +5247,23 @@ const CreateFeeStructure = () => {
       batch:
         formData.batch,
 
-      fees: fees.map((item) => ({
-        feeMasterId:
-          item.feeMasterId,
+      fees: fees.map(
+        (item) => ({
+          feeMasterId:
+            item.feeMasterId,
 
-        amount:
-          Number(item.amount),
-      })),
+          amount:
+            Number(
+              item.amount
+            ),
+        })
+      ),
     };
+
+    console.log(
+      "School ID:",
+      schoolId
+    );
 
     console.log(
       "Fee Structure Payload:",
@@ -1851,13 +5285,17 @@ const CreateFeeStructure = () => {
             `/api/fee-structure/${editingId}`,
             payload,
             {
-              ...authConfig,
-
               headers: {
-                ...authConfig.headers,
+                Authorization:
+                  `Bearer ${token}`,
 
                 "Content-Type":
                   "application/json",
+              },
+
+              params: {
+                schoolId:
+                  schoolId,
               },
             }
           );
@@ -1873,13 +5311,17 @@ const CreateFeeStructure = () => {
             "/api/fee-structure",
             payload,
             {
-              ...authConfig,
-
               headers: {
-                ...authConfig.headers,
+                Authorization:
+                  `Bearer ${token}`,
 
                 "Content-Type":
                   "application/json",
+              },
+
+              params: {
+                schoolId:
+                  schoolId,
               },
             }
           );
@@ -1887,6 +5329,7 @@ const CreateFeeStructure = () => {
 
       alert(
         res?.data?.message ||
+          res?.data ||
           (editingId
             ? "Fee Structure Updated Successfully"
             : "Fee Structure Created Successfully")
@@ -1895,6 +5338,7 @@ const CreateFeeStructure = () => {
       resetForm();
 
       await loadFeeStructures();
+
     } catch (error) {
       console.error(
         "Save Fee Structure Error:",
@@ -1925,10 +5369,28 @@ const CreateFeeStructure = () => {
       return;
     }
 
+    if (!schoolId) {
+      alert(
+        "School ID not found. Please login again."
+      );
+
+      return;
+    }
+
     try {
       await axiosInstance.delete(
         `/api/fee-structure/${id}`,
-        authConfig
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`,
+          },
+
+          params: {
+            schoolId:
+              schoolId,
+          },
+        }
       );
 
       setFeeStructures(
@@ -1950,6 +5412,7 @@ const CreateFeeStructure = () => {
       alert(
         "Fee Structure deleted successfully"
       );
+
     } catch (error) {
       console.error(
         "Delete Fee Structure Error:",
@@ -1969,7 +5432,10 @@ const CreateFeeStructure = () => {
   ========================================================= */
 
   const handleFilterChange = (e) => {
-    const { name, value } = e.target;
+    const {
+      name,
+      value,
+    } = e.target;
 
     setFilters((prev) => ({
       ...prev,
@@ -2012,20 +5478,26 @@ const CreateFeeStructure = () => {
             )
               .toLowerCase()
               .includes(search) ||
-            (item.feeDetails || []).some(
+            (
+              item.feeDetails || []
+            ).some(
               (detail) =>
                 String(
                   detail.feeMaster
                     ?.feeName || ""
                 )
                   .toLowerCase()
-                  .includes(search) ||
+                  .includes(
+                    search
+                  ) ||
                 String(
                   detail.feeMaster
                     ?.feeCode || ""
                 )
                   .toLowerCase()
-                  .includes(search)
+                  .includes(
+                    search
+                  )
             );
 
           const matchesSession =
@@ -2112,7 +5584,8 @@ const CreateFeeStructure = () => {
     if (
       item.totalAmount !==
         undefined &&
-      item.totalAmount !== null
+      item.totalAmount !==
+        null
     ) {
       return Number(
         item.totalAmount
@@ -2122,7 +5595,8 @@ const CreateFeeStructure = () => {
     if (
       item.amount !==
         undefined &&
-      item.amount !== null
+      item.amount !==
+        null
     ) {
       return Number(
         item.amount
@@ -2161,12 +5635,6 @@ const CreateFeeStructure = () => {
         item.status ===
         "INACTIVE"
     ).length;
-
-  /*
-   * If API does not provide status,
-   * all structures are considered active
-   * for summary purpose.
-   */
 
   const totalAmount =
     feeStructures.reduce(
@@ -2214,8 +5682,10 @@ const CreateFeeStructure = () => {
       return {
         background:
           "#f1f3f5",
+
         color:
           "#6c757d",
+
         dot:
           "#6c757d",
       };
@@ -2224,8 +5694,10 @@ const CreateFeeStructure = () => {
     return {
       background:
         "#e8f7ee",
+
       color:
         "#198754",
+
       dot:
         "#198754",
     };
@@ -2276,6 +5748,7 @@ const CreateFeeStructure = () => {
                   style={{
                     width:
                       "52px",
+
                     height:
                       "52px",
 
@@ -2505,10 +5978,13 @@ const CreateFeeStructure = () => {
                   style={{
                     width:
                       "36px",
+
                     height:
                       "36px",
+
                     background:
                       "#e9f7ef",
+
                     color:
                       "#198754",
                   }}
@@ -2570,6 +6046,7 @@ const CreateFeeStructure = () => {
                   style={{
                     width:
                       "2.5rem",
+
                     height:
                       "2.5rem",
                   }}
@@ -2831,6 +6308,7 @@ const CreateFeeStructure = () => {
                     style={{
                       background:
                         "#e9f7ef",
+
                       color:
                         "#198754",
                     }}
@@ -3046,10 +6524,13 @@ const CreateFeeStructure = () => {
                               style={{
                                 width:
                                   "48px",
+
                                 height:
                                   "48px",
+
                                 background:
                                   "#f1f3f5",
+
                                 color:
                                   "#868e96",
                               }}
@@ -3091,14 +6572,19 @@ const CreateFeeStructure = () => {
                                   style={{
                                     width:
                                       "28px",
+
                                     height:
                                       "28px",
+
                                     background:
                                       "#f4f6f8",
+
                                     color:
                                       "#6c757d",
+
                                     fontSize:
                                       "12px",
+
                                     fontWeight:
                                       "600",
                                   }}
@@ -3142,8 +6628,10 @@ const CreateFeeStructure = () => {
                                   style={{
                                     background:
                                       "#e9f7ef",
+
                                     border:
                                       "1px solid #cfe8d8",
+
                                     color:
                                       "#198754",
                                   }}
@@ -3167,8 +6655,10 @@ const CreateFeeStructure = () => {
                                   style={{
                                     background:
                                       "#fff1f2",
+
                                     border:
                                       "1px solid #ffd6da",
+
                                     color:
                                       "#dc3545",
                                   }}
@@ -3257,7 +6747,8 @@ const CreateFeeStructure = () => {
                     type="submit"
                     className="btn btn-success px-4"
                     disabled={
-                      saveLoading
+                      saveLoading ||
+                      !schoolId
                     }
                   >
 
@@ -3337,6 +6828,7 @@ const CreateFeeStructure = () => {
                 style={{
                   background:
                     "#e9f7ef",
+
                   color:
                     "#198754",
                 }}
@@ -3639,10 +7131,13 @@ const CreateFeeStructure = () => {
                   style={{
                     width:
                       "36px",
+
                     height:
                       "36px",
+
                     background:
                       "#e9f7ef",
+
                     color:
                       "#198754",
                   }}
@@ -3674,6 +7169,7 @@ const CreateFeeStructure = () => {
                   style={{
                     background:
                       "#f4f6f8",
+
                     color:
                       "#495057",
                   }}
@@ -3723,6 +7219,7 @@ const CreateFeeStructure = () => {
               style={{
                 maxHeight:
                   "650px",
+
                 overflowY:
                   "auto",
               }}
@@ -3740,8 +7237,11 @@ const CreateFeeStructure = () => {
                   style={{
                     position:
                       "sticky",
+
                     top: 0,
+
                     zIndex: 2,
+
                     background:
                       "#f8f9fa",
                   }}
@@ -3871,6 +7371,7 @@ const CreateFeeStructure = () => {
                           style={{
                             width:
                               "2.5rem",
+
                             height:
                               "2.5rem",
                           }}
@@ -3900,10 +7401,13 @@ const CreateFeeStructure = () => {
                           style={{
                             width:
                               "55px",
+
                             height:
                               "55px",
+
                             background:
                               "#f1f3f5",
+
                             color:
                               "#868e96",
                           }}
@@ -3949,10 +7453,9 @@ const CreateFeeStructure = () => {
                             status
                           );
 
-                        /*
-                         * If no fee details,
-                         * still show structure.
-                         */
+                        /* =================================================
+                           NO FEE DETAILS
+                        ================================================= */
 
                         if (
                           details.length ===
@@ -3971,14 +7474,19 @@ const CreateFeeStructure = () => {
                                   style={{
                                     width:
                                       "28px",
+
                                     height:
                                       "28px",
+
                                     background:
                                       "#f4f6f8",
+
                                     color:
                                       "#6c757d",
+
                                     fontSize:
                                       "12px",
+
                                     fontWeight:
                                       "600",
                                   }}
@@ -4023,12 +7531,16 @@ const CreateFeeStructure = () => {
                                   style={{
                                     background:
                                       statusConfig.background,
+
                                     color:
                                       statusConfig.color,
+
                                     padding:
                                       "6px 12px",
+
                                     fontSize:
                                       "12px",
+
                                     fontWeight:
                                       "600",
                                   }}
@@ -4039,8 +7551,10 @@ const CreateFeeStructure = () => {
                                     style={{
                                       width:
                                         "7px",
+
                                       height:
                                         "7px",
+
                                       background:
                                         statusConfig.dot,
                                     }}
@@ -4060,8 +7574,10 @@ const CreateFeeStructure = () => {
                                   style={{
                                     background:
                                       "#e9f7ef",
+
                                     border:
                                       "1px solid #cfe8d8",
+
                                     color:
                                       "#198754",
                                   }}
@@ -4084,8 +7600,10 @@ const CreateFeeStructure = () => {
                                   style={{
                                     background:
                                       "#fff1f2",
+
                                     border:
                                       "1px solid #ffd6da",
+
                                     color:
                                       "#dc3545",
                                   }}
@@ -4107,6 +7625,10 @@ const CreateFeeStructure = () => {
                             </tr>
                           );
                         }
+
+                        /* =================================================
+                           FEE DETAILS
+                        ================================================= */
 
                         return details.map(
                           (
@@ -4132,14 +7654,19 @@ const CreateFeeStructure = () => {
                                     style={{
                                       width:
                                         "28px",
+
                                       height:
                                         "28px",
+
                                       background:
                                         "#f4f6f8",
+
                                       color:
                                         "#6c757d",
+
                                       fontSize:
                                         "12px",
+
                                       fontWeight:
                                         "600",
                                     }}
@@ -4164,10 +7691,13 @@ const CreateFeeStructure = () => {
                                     style={{
                                       background:
                                         "#f1f8f4",
+
                                       border:
                                         "1px solid #d9eee1",
+
                                       fontWeight:
                                         "600",
+
                                       padding:
                                         "6px 10px",
                                     }}
@@ -4192,12 +7722,16 @@ const CreateFeeStructure = () => {
                                     style={{
                                       background:
                                         "#f4f6f8",
+
                                       color:
                                         "#495057",
+
                                       border:
                                         "1px solid #e1e5e8",
+
                                       fontWeight:
                                         "600",
+
                                       padding:
                                         "6px 10px",
                                     }}
@@ -4221,8 +7755,10 @@ const CreateFeeStructure = () => {
                                     style={{
                                       fontSize:
                                         "12px",
+
                                       fontWeight:
                                         "600",
+
                                       color:
                                         "#495057",
                                     }}
@@ -4247,12 +7783,16 @@ const CreateFeeStructure = () => {
                                     style={{
                                       background:
                                         "#fff8e8",
+
                                       color:
                                         "#996c00",
+
                                       border:
                                         "1px solid #f8e5af",
+
                                       fontWeight:
                                         "600",
+
                                       padding:
                                         "6px 10px",
                                     }}
@@ -4274,12 +7814,16 @@ const CreateFeeStructure = () => {
                                     style={{
                                       width:
                                         "34px",
+
                                       height:
                                         "34px",
+
                                       minWidth:
                                         "34px",
+
                                       background:
                                         "#eef5ff",
+
                                       color:
                                         "#2563eb",
                                     }}
@@ -4345,12 +7889,16 @@ const CreateFeeStructure = () => {
                                     style={{
                                       background:
                                         statusConfig.background,
+
                                       color:
                                         statusConfig.color,
+
                                       padding:
                                         "6px 12px",
+
                                       fontSize:
                                         "12px",
+
                                       fontWeight:
                                         "600",
                                     }}
@@ -4361,8 +7909,10 @@ const CreateFeeStructure = () => {
                                       style={{
                                         width:
                                           "7px",
+
                                         height:
                                           "7px",
+
                                         background:
                                           statusConfig.dot,
                                       }}
@@ -4394,12 +7944,16 @@ const CreateFeeStructure = () => {
                                       style={{
                                         background:
                                           "#e9f7ef",
+
                                         border:
                                           "1px solid #cfe8d8",
+
                                         color:
                                           "#198754",
+
                                         fontWeight:
                                           "600",
+
                                         padding:
                                           "6px 11px",
                                       }}
@@ -4425,10 +7979,13 @@ const CreateFeeStructure = () => {
                                       style={{
                                         background:
                                           "#fff1f2",
+
                                         border:
                                           "1px solid #ffd6da",
+
                                         color:
                                           "#dc3545",
+
                                         padding:
                                           "6px 10px",
                                       }}
