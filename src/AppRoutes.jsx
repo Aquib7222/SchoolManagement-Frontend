@@ -608,7 +608,8 @@ import DailyAttendanceReportsPage from "./pages/Reports/AttendanceReport/DailyAt
 import MonthlyAttendanceReportPage from "./pages/Reports/AttendanceReport/MonthlyAttendanceReportPage";
 import UserManagement from "./pages/AdminDashboard/UserManagement";
 import SchoolUserManagement from "./pages/SchoolUserManagement";
-import Generate_Fee_Studentwise from "./pages/Fees/Generate_Fee_StudentWise";
+import Generate_Fee_StudentWise from "./pages/Fees/Generate_Fee_StudentWise";
+
 
 // =====================================================
 // LOADING COMPONENT
@@ -778,7 +779,7 @@ const AppRoutes = () => {
 
         <Route
           path="/fee/generate_fee/:admissionNumber"
-          element={<Generate_Fee_Studentwise />}
+          element={<Generate_Fee_StudentWise />}
         />
 
         <Route path="/fee/generate_fee" element={<Generate_Fee />} />
