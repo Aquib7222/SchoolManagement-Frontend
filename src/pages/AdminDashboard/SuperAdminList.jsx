@@ -3038,7 +3038,2986 @@
 // export default SuperAdminList;
 
 
-import axios from "axios";
+// import axios from "axios";
+// import React, { useEffect, useMemo, useState } from "react";
+
+// import {
+//   FaArrowLeft,
+//   FaEdit,
+//   FaEye,
+//   FaPlus,
+//   FaSearch,
+//   FaTrash,
+//   FaUserShield,
+//   FaCheckCircle,
+//   FaTimesCircle,
+//   FaKey,
+//   FaPowerOff,
+//   FaSyncAlt,
+//   FaFilter,
+//   FaPhone,
+//   FaEnvelope,
+//   FaSchool,
+// } from "react-icons/fa";
+
+// import { MdOutlineAdminPanelSettings } from "react-icons/md";
+// import { IoMdClose } from "react-icons/io";
+
+// const API_BASE = "http://localhost:8080/api/superadmin";
+
+// const SuperAdminList = () => {
+//   const token = localStorage.getItem("token");
+
+//   // =========================================================
+//   // DATA
+//   // =========================================================
+
+//   const [superAdmins, setSuperAdmins] = useState([]);
+//   const [schools, setSchools] = useState([]);
+//   const [userGroups, setUserGroups] = useState([]);
+
+//   // =========================================================
+//   // LOADING
+//   // =========================================================
+
+//   const [loading, setLoading] = useState(false);
+//   const [deleting, setDeleting] = useState(false);
+//   const [updatingStatus, setUpdatingStatus] = useState(false);
+
+//   // =========================================================
+//   // SEARCH / FILTER
+//   // =========================================================
+
+//   const [search, setSearch] = useState("");
+//   const [schoolFilter, setSchoolFilter] = useState("");
+//   const [statusFilter, setStatusFilter] = useState("");
+//   const [roleFilter, setRoleFilter] = useState("");
+
+//   // =========================================================
+//   // PAGINATION
+//   // =========================================================
+
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+//   // =========================================================
+//   // MODALS / DETAILS
+//   // =========================================================
+
+//   const [selectedAdmin, setSelectedAdmin] = useState(null);
+//   const [showDeleteModal, setShowDeleteModal] = useState(false);
+//   const [showStatusModal, setShowStatusModal] = useState(false);
+//   const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+//   // =========================================================
+//   // PASSWORD
+//   // =========================================================
+
+//   const [newPassword, setNewPassword] = useState("");
+//   const [confirmNewPassword, setConfirmNewPassword] =
+//     useState("");
+
+//   // =========================================================
+//   // API CONFIG
+//   // =========================================================
+
+//   const axiosConfig = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//       "Content-Type": "application/json",
+//     },
+//   };
+
+//   // =========================================================
+//   // LOAD
+//   // =========================================================
+
+//   useEffect(() => {
+//     loadSuperAdmins();
+//     loadSchools();
+//     loadUserGroups();
+//   }, []);
+
+//   // =========================================================
+//   // LOAD SUPER ADMINS
+//   // =========================================================
+
+//   const loadSuperAdmins = async () => {
+//     try {
+//       setLoading(true);
+
+//       const response = await axios.get(
+//         `${API_BASE}/all`,
+//         axiosConfig
+//       );
+
+//       console.log("Super Admin List:", response.data);
+
+//       const data = Array.isArray(response.data)
+//         ? response.data
+//         : response.data?.content ||
+//           response.data?.data ||
+//           [];
+
+//       setSuperAdmins(data);
+//     } catch (error) {
+//       console.error(
+//         "Failed to load Super Admins:",
+//         error
+//       );
+
+//       alert(
+//         error.response?.data?.message ||
+//           "Failed to load Super Admin list."
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // =========================================================
+//   // LOAD SCHOOLS
+//   // =========================================================
+
+//   const loadSchools = async () => {
+//     try {
+//       const response = await axios.get(
+//         "http://localhost:8080/api/school/all",
+//         axiosConfig
+//       );
+
+//       setSchools(response.data || []);
+//     } catch (error) {
+//       console.error(
+//         "Failed to load schools:",
+//         error
+//       );
+//     }
+//   };
+
+//   // =========================================================
+//   // LOAD USER GROUPS
+//   // =========================================================
+
+//   const loadUserGroups = async () => {
+//     try {
+//       const response = await axios.get(
+//         "http://localhost:8080/api/user-group/all",
+//         axiosConfig
+//       );
+
+//       setUserGroups(response.data || []);
+//     } catch (error) {
+//       console.error(
+//         "Failed to load user groups:",
+//         error
+//       );
+//     }
+//   };
+
+//   // =========================================================
+//   // SCHOOL NAME
+//   // =========================================================
+
+//   const getSchoolName = (schoolId) => {
+//     const school = schools.find(
+//       (item) =>
+//         Number(item.id) === Number(schoolId)
+//     );
+
+//     if (!school) {
+//       return schoolId
+//         ? `School #${schoolId}`
+//         : "All Schools";
+//     }
+
+//     return (
+//       school.schoolName ||
+//       school.name ||
+//       school.schoolCode ||
+//       `School #${schoolId}`
+//     );
+//   };
+
+//   // =========================================================
+//   // USER GROUP NAME
+//   // =========================================================
+
+//   const getUserGroupName = (userGroupId) => {
+//     const group = userGroups.find(
+//       (item) =>
+//         Number(item.id) ===
+//         Number(userGroupId)
+//     );
+
+//     return (
+//       group?.groupName ||
+//       group?.name ||
+//       "Super Admin"
+//     );
+//   };
+
+//   // =========================================================
+//   // STATUS
+//   // =========================================================
+
+//   const isActive = (admin) => {
+//     return (
+//       admin.status === "Active" ||
+//       admin.status === "ACTIVE" ||
+//       admin.accountStatus === true ||
+//       admin.active === true
+//     );
+//   };
+
+//   // =========================================================
+//   // FILTER
+//   // =========================================================
+
+//   const filteredAdmins = useMemo(() => {
+//     return superAdmins.filter((admin) => {
+//       const searchValue =
+//         search.trim().toLowerCase();
+
+//       const matchesSearch =
+//         !searchValue ||
+//         String(
+//           admin.name ||
+//             admin.fullName ||
+//             admin.username ||
+//             ""
+//         )
+//           .toLowerCase()
+//           .includes(searchValue) ||
+//         String(admin.email || "")
+//           .toLowerCase()
+//           .includes(searchValue) ||
+//         String(
+//           admin.phone ||
+//             admin.phoneNumber ||
+//             ""
+//         )
+//           .toLowerCase()
+//           .includes(searchValue);
+
+//       const matchesSchool =
+//         !schoolFilter ||
+//         String(
+//           admin?.school?.id ||
+//             admin?.schoolId ||
+//             ""
+//         ) === String(schoolFilter);
+
+//       const active = isActive(admin);
+
+//       const matchesStatus =
+//         !statusFilter ||
+//         (statusFilter === "Active" &&
+//           active) ||
+//         (statusFilter === "Inactive" &&
+//           !active);
+
+//       const matchesRole =
+//         !roleFilter ||
+//         String(
+//           admin.userGroupId || ""
+//         ) === String(roleFilter);
+
+//       return (
+//         matchesSearch &&
+//         matchesSchool &&
+//         matchesStatus &&
+//         matchesRole
+//       );
+//     });
+//   }, [
+//     superAdmins,
+//     search,
+//     schoolFilter,
+//     statusFilter,
+//     roleFilter,
+//   ]);
+
+//   // =========================================================
+//   // PAGINATION
+//   // =========================================================
+
+//   const totalPages = Math.ceil(
+//     filteredAdmins.length / itemsPerPage
+//   );
+
+//   const paginatedAdmins =
+//     filteredAdmins.slice(
+//       (currentPage - 1) * itemsPerPage,
+//       currentPage * itemsPerPage
+//     );
+
+//   useEffect(() => {
+//     setCurrentPage(1);
+//   }, [
+//     search,
+//     schoolFilter,
+//     statusFilter,
+//     roleFilter,
+//     itemsPerPage,
+//   ]);
+
+//   // =========================================================
+//   // COUNTS
+//   // =========================================================
+
+//   const totalCount = superAdmins.length;
+
+//   const activeCount = superAdmins.filter(
+//     (admin) => isActive(admin)
+//   ).length;
+
+//   const inactiveCount =
+//     totalCount - activeCount;
+
+//   const verifiedCount =
+//     superAdmins.filter(
+//       (admin) =>
+//         admin.phoneVerified === true &&
+//         admin.emailVerified === true
+//     ).length;
+
+//   // =========================================================
+//   // RESET FILTER
+//   // =========================================================
+
+//   const resetFilters = () => {
+//     setSearch("");
+//     setSchoolFilter("");
+//     setStatusFilter("");
+//     setRoleFilter("");
+//   };
+
+//   // =========================================================
+//   // DELETE
+//   // =========================================================
+
+//   const handleDelete = async () => {
+//     if (!selectedAdmin?.id) {
+//       return;
+//     }
+
+//     try {
+//       setDeleting(true);
+
+//       await axios.delete(
+//         `${API_BASE}/delete/${selectedAdmin.id}`,
+//         axiosConfig
+//       );
+
+//       alert(
+//         "Super Admin deleted successfully."
+//       );
+
+//       setShowDeleteModal(false);
+//       setSelectedAdmin(null);
+
+//       loadSuperAdmins();
+//     } catch (error) {
+//       console.error(
+//         "Delete Super Admin Error:",
+//         error
+//       );
+
+//       alert(
+//         error.response?.data?.message ||
+//           error.response?.data ||
+//           "Failed to delete Super Admin."
+//       );
+//     } finally {
+//       setDeleting(false);
+//     }
+//   };
+
+//   // =========================================================
+//   // STATUS
+//   // =========================================================
+
+//   const handleStatusChange = async () => {
+//     if (!selectedAdmin?.id) {
+//       return;
+//     }
+
+//     try {
+//       setUpdatingStatus(true);
+
+//       const newStatus = isActive(selectedAdmin)
+//         ? "Inactive"
+//         : "Active";
+
+//       await axios.patch(
+//         `${API_BASE}/${selectedAdmin.id}/status`,
+//         {
+//           status: newStatus,
+//         },
+//         axiosConfig
+//       );
+
+//       alert(
+//         `Super Admin ${newStatus.toLowerCase()} successfully.`
+//       );
+
+//       setShowStatusModal(false);
+//       setSelectedAdmin(null);
+
+//       loadSuperAdmins();
+//     } catch (error) {
+//       console.error(
+//         "Status update error:",
+//         error
+//       );
+
+//       alert(
+//         error.response?.data?.message ||
+//           error.response?.data ||
+//           "Failed to update status."
+//       );
+//     } finally {
+//       setUpdatingStatus(false);
+//     }
+//   };
+
+//   // =========================================================
+//   // RESET PASSWORD
+//   // =========================================================
+
+//   const handleResetPassword = async () => {
+//     if (!selectedAdmin?.id) {
+//       return;
+//     }
+
+//     if (!newPassword) {
+//       alert("Please enter new password.");
+//       return;
+//     }
+
+//     if (newPassword.length < 8) {
+//       alert(
+//         "Password must be at least 8 characters."
+//       );
+//       return;
+//     }
+
+//     if (
+//       newPassword !==
+//       confirmNewPassword
+//     ) {
+//       alert(
+//         "Password and confirm password do not match."
+//       );
+//       return;
+//     }
+
+//     try {
+//       await axios.patch(
+//         `${API_BASE}/${selectedAdmin.id}/reset-password`,
+//         {
+//           password: newPassword,
+//           confirmPassword:
+//             confirmNewPassword,
+//         },
+//         axiosConfig
+//       );
+
+//       alert(
+//         "Password reset successfully."
+//       );
+
+//       setNewPassword("");
+//       setConfirmNewPassword("");
+
+//       setShowPasswordModal(false);
+//       setSelectedAdmin(null);
+//     } catch (error) {
+//       console.error(
+//         "Password reset error:",
+//         error
+//       );
+
+//       alert(
+//         error.response?.data?.message ||
+//           error.response?.data ||
+//           "Failed to reset password."
+//       );
+//     }
+//   };
+
+//   // =========================================================
+//   // EDIT
+//   // =========================================================
+
+//   const handleEdit = (admin) => {
+//     window.location.href =
+//       `/super-admin/edit/${admin.id}`;
+//   };
+
+//   // =========================================================
+//   // VIEW
+//   // =========================================================
+
+//   const handleView = (admin) => {
+//     setSelectedAdmin(admin);
+//   };
+
+//   // =========================================================
+//   // STATUS BADGE
+//   // =========================================================
+
+//   const StatusBadge = ({ active }) => {
+//     return active ? (
+//       <span className="sa-status-badge sa-active">
+//         <FaCheckCircle size={11} />
+//         Active
+//       </span>
+//     ) : (
+//       <span className="sa-status-badge sa-inactive">
+//         <FaTimesCircle size={11} />
+//         Inactive
+//       </span>
+//     );
+//   };
+
+//   // =========================================================
+//   // PAGINATION
+//   // =========================================================
+
+//   const renderPagination = () => {
+//     if (totalPages <= 1) return null;
+
+//     const pages = [];
+
+//     for (
+//       let i = 1;
+//       i <= totalPages;
+//       i++
+//     ) {
+//       pages.push(i);
+//     }
+
+//     return (
+//       <div className="sa-pagination">
+//         <button
+//           className="sa-page-btn"
+//           disabled={currentPage === 1}
+//           onClick={() =>
+//             setCurrentPage(
+//               currentPage - 1
+//             )
+//           }
+//         >
+//           Previous
+//         </button>
+
+//         {pages.map((page) => (
+//           <button
+//             key={page}
+//             className={`sa-page-btn ${
+//               currentPage === page
+//                 ? "active"
+//                 : ""
+//             }`}
+//             onClick={() =>
+//               setCurrentPage(page)
+//             }
+//           >
+//             {page}
+//           </button>
+//         ))}
+
+//         <button
+//           className="sa-page-btn"
+//           disabled={
+//             currentPage === totalPages
+//           }
+//           onClick={() =>
+//             setCurrentPage(
+//               currentPage + 1
+//             )
+//           }
+//         >
+//           Next
+//         </button>
+//       </div>
+//     );
+//   };
+
+//   // =========================================================
+//   // RENDER
+//   // =========================================================
+
+//   return (
+//     <>
+//       {/* =====================================================
+//           PAGE HEADER
+//       ===================================================== */}
+
+//       <div className="mx-2 mt-2 mb-3">
+//         <div
+//           className="rounded-4 shadow overflow-hidden"
+//           style={{
+//             background:
+//               "linear-gradient(135deg,#ffffff 0%,#f5f9ff 60%,#eaf3ff 100%)",
+//             border:
+//               "1px solid #dbeafe",
+//           }}
+//         >
+//           <div className="p-3 p-md-4">
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
+              
+//               <div className="d-flex align-items-center gap-3">
+//                 <div className="sa-header-icon">
+//                   <MdOutlineAdminPanelSettings
+//                     size={28}
+//                   />
+//                 </div>
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold text-dark">
+//                     Super Admin Management
+//                   </h5>
+
+//                   <div className="text-muted small">
+//                     Manage administrators, roles,
+//                     access and account status.
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <span className="sa-header-badge">
+//                 <FaUserShield size={12} />
+//                 Administration
+//               </span>
+
+//             </div>
+//           </div>
+
+//           <div className="px-4 py-2 sa-breadcrumb-strip">
+//             <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
+              
+//               <small className="text-muted">
+//                 Home › Administration ›{" "}
+//                 <span className="text-primary fw-semibold">
+//                   Super Admins
+//                 </span>
+//               </small>
+
+//               <div className="d-flex gap-2 flex-wrap">
+//                 <button
+//                   className="btn btn-outline-primary btn-sm rounded-3 px-3"
+//                   onClick={() =>
+//                     window.history.back()
+//                   }
+//                 >
+//                   <FaArrowLeft className="me-1" />
+//                   Back
+//                 </button>
+
+//                 <button
+//                   className="btn btn-primary btn-sm rounded-3 px-3"
+//                   onClick={() =>
+//                     (window.location.href =
+//                       "/add/superadmins")
+//                   }
+//                 >
+//                   <FaPlus className="me-1" />
+//                   Create Super Admin
+//                 </button>
+//               </div>
+
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* =====================================================
+//           STAT CARDS
+//       ===================================================== */}
+
+//       <div className="container-fluid px-2 mb-3">
+//         <div className="row g-3">
+
+//           <div className="col-xl-3 col-md-6">
+//             <div className="sa-stat-card">
+//               <div className="sa-stat-icon blue">
+//                 <FaUserShield />
+//               </div>
+
+//               <div>
+//                 <div className="sa-stat-label">
+//                   Total Super Admins
+//                 </div>
+
+//                 <div className="sa-stat-value">
+//                   {totalCount}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div className="col-xl-3 col-md-6">
+//             <div className="sa-stat-card">
+//               <div className="sa-stat-icon green">
+//                 <FaCheckCircle />
+//               </div>
+
+//               <div>
+//                 <div className="sa-stat-label">
+//                   Active
+//                 </div>
+
+//                 <div className="sa-stat-value">
+//                   {activeCount}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div className="col-xl-3 col-md-6">
+//             <div className="sa-stat-card">
+//               <div className="sa-stat-icon red">
+//                 <FaTimesCircle />
+//               </div>
+
+//               <div>
+//                 <div className="sa-stat-label">
+//                   Inactive
+//                 </div>
+
+//                 <div className="sa-stat-value">
+//                   {inactiveCount}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           <div className="col-xl-3 col-md-6">
+//             <div className="sa-stat-card">
+//               <div className="sa-stat-icon purple">
+//                 <FaCheckCircle />
+//               </div>
+
+//               <div>
+//                 <div className="sa-stat-label">
+//                   Fully Verified
+//                 </div>
+
+//                 <div className="sa-stat-value">
+//                   {verifiedCount}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//         </div>
+//       </div>
+
+//       {/* =====================================================
+//           LIST
+//       ===================================================== */}
+
+//       {!selectedAdmin ? (
+//         <div className="container-fluid px-2 mb-4">
+
+//           <div className="sa-main-card">
+
+//             {/* FILTER HEADER */}
+
+//             <div className="sa-section-header">
+//               <div className="d-flex align-items-center gap-3">
+
+//                 <div className="sa-section-icon">
+//                   <FaFilter size={17} />
+//                 </div>
+
+//                 <div>
+//                   <h6 className="mb-1 fw-bold">
+//                     Search & Filter
+//                   </h6>
+
+//                   <small className="text-muted">
+//                     Find and filter super admin
+//                     accounts
+//                   </small>
+//                 </div>
+
+//               </div>
+
+//               <button
+//                 className="btn btn-outline-secondary btn-sm rounded-3 px-3"
+//                 onClick={resetFilters}
+//               >
+//                 <FaSyncAlt className="me-1" />
+//                 Reset
+//               </button>
+//             </div>
+
+//             {/* FILTERS */}
+
+//             <div className="p-3 p-md-4">
+//               <div className="row g-3">
+
+//                 <div className="col-xl-4 col-md-6">
+//                   <label className="form-label fw-semibold small">
+//                     Search
+//                   </label>
+
+//                   <div className="sa-search-box">
+//                     <FaSearch />
+
+//                     <input
+//                       type="text"
+//                       className="form-control rounded-3"
+//                       placeholder="Search name, email, phone..."
+//                       value={search}
+//                       onChange={(e) =>
+//                         setSearch(
+//                           e.target.value
+//                         )
+//                       }
+//                     />
+//                   </div>
+//                 </div>
+
+//                 <div className="col-xl-3 col-md-6">
+//                   <label className="form-label fw-semibold small">
+//                     School
+//                   </label>
+
+//                   <select
+//                     className="form-select rounded-3"
+//                     value={schoolFilter}
+//                     onChange={(e) =>
+//                       setSchoolFilter(
+//                         e.target.value
+//                       )
+//                     }
+//                   >
+//                     <option value="">
+//                       All Schools
+//                     </option>
+
+//                     {schools.map((school) => (
+//                       <option
+//                         key={school.id}
+//                         value={school.id}
+//                       >
+//                         {school.schoolName ||
+//                           school.name ||
+//                           school.schoolCode}
+//                       </option>
+//                     ))}
+//                   </select>
+//                 </div>
+
+//                 <div className="col-xl-2 col-md-6">
+//                   <label className="form-label fw-semibold small">
+//                     Status
+//                   </label>
+
+//                   <select
+//                     className="form-select rounded-3"
+//                     value={statusFilter}
+//                     onChange={(e) =>
+//                       setStatusFilter(
+//                         e.target.value
+//                       )
+//                     }
+//                   >
+//                     <option value="">
+//                       All Status
+//                     </option>
+
+//                     <option value="Active">
+//                       Active
+//                     </option>
+
+//                     <option value="Inactive">
+//                       Inactive
+//                     </option>
+//                   </select>
+//                 </div>
+
+//                 <div className="col-xl-3 col-md-6">
+//                   <label className="form-label fw-semibold small">
+//                     Role / User Group
+//                   </label>
+
+//                   <select
+//                     className="form-select rounded-3"
+//                     value={roleFilter}
+//                     onChange={(e) =>
+//                       setRoleFilter(
+//                         e.target.value
+//                       )
+//                     }
+//                   >
+//                     <option value="">
+//                       All Roles
+//                     </option>
+
+//                     {userGroups.map(
+//                       (group) => (
+//                         <option
+//                           key={group.id}
+//                           value={group.id}
+//                         >
+//                           {group.groupName ||
+//                             group.name}
+//                         </option>
+//                       )
+//                     )}
+//                   </select>
+//                 </div>
+
+//               </div>
+//             </div>
+
+//             {/* TABLE TOP */}
+
+//             <div className="sa-table-top">
+//               <div>
+//                 <div className="fw-bold">
+//                   Super Admin List
+//                 </div>
+
+//                 <span className="sa-result-badge">
+//                   {filteredAdmins.length} Records
+//                 </span>
+//               </div>
+
+//               <div className="d-flex align-items-center gap-2">
+//                 <span className="small text-muted">
+//                   Show
+//                 </span>
+
+//                 <select
+//                   className="form-select form-select-sm rounded-3"
+//                   style={{
+//                     width: "75px",
+//                   }}
+//                   value={itemsPerPage}
+//                   onChange={(e) =>
+//                     setItemsPerPage(
+//                       Number(
+//                         e.target.value
+//                       )
+//                     )
+//                   }
+//                 >
+//                   <option value={5}>
+//                     5
+//                   </option>
+
+//                   <option value={10}>
+//                     10
+//                   </option>
+
+//                   <option value={20}>
+//                     20
+//                   </option>
+
+//                   <option value={50}>
+//                     50
+//                   </option>
+//                 </select>
+//               </div>
+//             </div>
+
+//             {/* TABLE */}
+
+//             <div className="table-responsive">
+//               <table className="table sa-table align-middle mb-0">
+
+//                 <thead>
+//                   <tr>
+//                     <th>#</th>
+//                     <th>Super Admin</th>
+//                     <th>Contact</th>
+//                     <th>School</th>
+//                     <th>Role</th>
+//                     <th>Verification</th>
+//                     <th>Status</th>
+//                     <th className="text-center">
+//                       Actions
+//                     </th>
+//                   </tr>
+//                 </thead>
+
+//                 <tbody>
+
+//                   {loading ? (
+//                     <tr>
+//                       <td
+//                         colSpan="8"
+//                         className="text-center py-5"
+//                       >
+//                         <span className="spinner-border text-primary" />
+
+//                         <div className="mt-2 text-muted">
+//                           Loading Super Admins...
+//                         </div>
+//                       </td>
+//                     </tr>
+//                   ) : paginatedAdmins.length ===
+//                     0 ? (
+//                     <tr>
+//                       <td
+//                         colSpan="8"
+//                         className="text-center py-5"
+//                       >
+//                         <div className="sa-empty-icon">
+//                           <FaUserShield />
+//                         </div>
+
+//                         <h6 className="mt-3 fw-bold">
+//                           No Super Admin Found
+//                         </h6>
+
+//                         <p className="text-muted mb-0">
+//                           Try changing your
+//                           search or filters.
+//                         </p>
+//                       </td>
+//                     </tr>
+//                   ) : (
+//                     paginatedAdmins.map(
+//                       (admin, index) => {
+//                         const active =
+//                           isActive(admin);
+
+//                         return (
+//                           <tr
+//                             key={
+//                               admin.id ||
+//                               admin.userId ||
+//                               index
+//                             }
+//                           >
+//                             <td className="fw-semibold text-muted">
+//                               {(currentPage - 1) *
+//                                 itemsPerPage +
+//                                 index +
+//                                 1}
+//                             </td>
+
+//                             {/* ADMIN */}
+
+//                             <td>
+//                               <div className="sa-admin-info">
+
+//                                 <div className="sa-avatar">
+//                                   {(
+//                                     admin.name ||
+//                                     admin.fullName ||
+//                                     "S"
+//                                   )
+//                                     .charAt(0)
+//                                     .toUpperCase()}
+//                                 </div>
+
+//                                 <div>
+//                                   <div className="sa-admin-name">
+//                                     {admin.name ||
+//                                       admin.fullName ||
+//                                       "N/A"}
+//                                   </div>
+
+//                                   <small className="text-muted">
+//                                     {admin.username
+//                                       ? `@${admin.username}`
+//                                       : `ID: ${
+//                                           admin.id ||
+//                                           "-"
+//                                         }`}
+//                                   </small>
+//                                 </div>
+
+//                               </div>
+//                             </td>
+
+//                             {/* CONTACT */}
+
+//                             <td>
+//                               <div className="sa-contact-item">
+//                                 <FaEnvelope />
+//                                 <span>
+//                                   {admin.email ||
+//                                     "-"}
+//                                 </span>
+//                               </div>
+
+//                               <div className="sa-contact-item">
+//                                 <FaPhone />
+//                                 <span>
+//                                   {admin.phone ||
+//                                     admin.phoneNumber ||
+//                                     "-"}
+//                                 </span>
+//                               </div>
+//                             </td>
+
+//                             {/* SCHOOL */}
+
+//                             <td>
+//                               <div className="sa-school-cell">
+//                                 <FaSchool />
+
+//                                 <span>
+//                                   {getSchoolName(
+//                                     admin?.school
+//                                       ?.id ||
+//                                       admin?.schoolId
+//                                   )}
+//                                 </span>
+//                               </div>
+//                             </td>
+
+//                             {/* ROLE */}
+
+//                             <td>
+//                               <span className="sa-role-badge">
+//                                 <FaUserShield size={10} />
+
+//                                 {admin.role ||
+//                                   getUserGroupName(
+//                                     admin.userGroupId
+//                                   )}
+//                               </span>
+//                             </td>
+
+//                             {/* VERIFICATION */}
+
+//                             <td>
+//                               <div className="sa-verification-list">
+
+//                                 <span
+//                                   className={
+//                                     admin.emailVerified
+//                                       ? "sa-verified"
+//                                       : "sa-not-verified"
+//                                   }
+//                                 >
+//                                   {admin.emailVerified ? (
+//                                     <FaCheckCircle />
+//                                   ) : (
+//                                     <FaTimesCircle />
+//                                   )}
+//                                   Email
+//                                 </span>
+
+//                                 <span
+//                                   className={
+//                                     admin.phoneVerified
+//                                       ? "sa-verified"
+//                                       : "sa-not-verified"
+//                                   }
+//                                 >
+//                                   {admin.phoneVerified ? (
+//                                     <FaCheckCircle />
+//                                   ) : (
+//                                     <FaTimesCircle />
+//                                   )}
+//                                   Phone
+//                                 </span>
+
+//                               </div>
+//                             </td>
+
+//                             {/* STATUS */}
+
+//                             <td>
+//                               <StatusBadge
+//                                 active={active}
+//                               />
+//                             </td>
+
+//                             {/* ACTIONS */}
+
+//                             <td>
+//                               <div className="sa-action-buttons">
+
+//                                 <button
+//                                   type="button"
+//                                   className="sa-action-btn view"
+//                                   title="View"
+//                                   onClick={() =>
+//                                     handleView(
+//                                       admin
+//                                     )
+//                                   }
+//                                 >
+//                                   <FaEye />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className="sa-action-btn edit"
+//                                   title="Edit"
+//                                   onClick={() =>
+//                                     handleEdit(
+//                                       admin
+//                                     )
+//                                   }
+//                                 >
+//                                   <FaEdit />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className={`sa-action-btn ${
+//                                     active
+//                                       ? "warning"
+//                                       : "success"
+//                                   }`}
+//                                   title={
+//                                     active
+//                                       ? "Deactivate"
+//                                       : "Activate"
+//                                   }
+//                                   onClick={() => {
+//                                     setSelectedAdmin(
+//                                       admin
+//                                     );
+//                                     setShowStatusModal(
+//                                       true
+//                                     );
+//                                   }}
+//                                 >
+//                                   <FaPowerOff />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className="sa-action-btn password"
+//                                   title="Reset Password"
+//                                   onClick={() => {
+//                                     setSelectedAdmin(
+//                                       admin
+//                                     );
+//                                     setShowPasswordModal(
+//                                       true
+//                                     );
+//                                   }}
+//                                 >
+//                                   <FaKey />
+//                                 </button>
+
+//                                 <button
+//                                   type="button"
+//                                   className="sa-action-btn delete"
+//                                   title="Delete"
+//                                   onClick={() => {
+//                                     setSelectedAdmin(
+//                                       admin
+//                                     );
+//                                     setShowDeleteModal(
+//                                       true
+//                                     );
+//                                   }}
+//                                 >
+//                                   <FaTrash />
+//                                 </button>
+
+//                               </div>
+//                             </td>
+//                           </tr>
+//                         );
+//                       }
+//                     )
+//                   )}
+
+//                 </tbody>
+//               </table>
+//             </div>
+
+//             {/* PAGINATION */}
+
+//             <div className="sa-pagination-container">
+
+//               <div className="small text-muted">
+//                 Showing{" "}
+//                 {filteredAdmins.length === 0
+//                   ? 0
+//                   : (currentPage - 1) *
+//                       itemsPerPage +
+//                     1}{" "}
+//                 to{" "}
+//                 {Math.min(
+//                   currentPage *
+//                     itemsPerPage,
+//                   filteredAdmins.length
+//                 )}{" "}
+//                 of{" "}
+//                 {filteredAdmins.length}{" "}
+//                 records
+//               </div>
+
+//               {renderPagination()}
+
+//             </div>
+
+//           </div>
+//         </div>
+//       ) : (
+//         /* =====================================================
+//            DETAILS
+//         ===================================================== */
+
+//         <div className="container-fluid px-2 mb-4">
+
+//           <div className="sa-main-card">
+
+//             <div className="sa-section-header">
+
+//               <div className="d-flex align-items-center gap-3">
+
+//                 <div className="sa-section-icon">
+//                   <FaUserShield size={17} />
+//                 </div>
+
+//                 <div>
+//                   <h6 className="mb-1 fw-bold">
+//                     Super Admin Details
+//                   </h6>
+
+//                   <small className="text-muted">
+//                     Complete account information
+//                   </small>
+//                 </div>
+
+//               </div>
+
+//               <button
+//                 type="button"
+//                 className="btn btn-outline-primary rounded-3 px-3"
+//                 onClick={() =>
+//                   setSelectedAdmin(null)
+//                 }
+//               >
+//                 <FaArrowLeft className="me-2" />
+//                 Back to List
+//               </button>
+
+//             </div>
+
+//             <div className="p-3 p-md-4">
+
+//               {/* PROFILE */}
+
+//               <div className="sa-profile-header">
+
+//                 <div className="sa-large-avatar">
+//                   {(
+//                     selectedAdmin.name ||
+//                     selectedAdmin.fullName ||
+//                     "S"
+//                   )
+//                     .charAt(0)
+//                     .toUpperCase()}
+//                 </div>
+
+//                 <div>
+
+//                   <h4 className="mb-1 fw-bold">
+//                     {selectedAdmin.name ||
+//                       selectedAdmin.fullName ||
+//                       "N/A"}
+//                   </h4>
+
+//                   <div className="mb-2">
+//                     <StatusBadge
+//                       active={isActive(
+//                         selectedAdmin
+//                       )}
+//                     />
+//                   </div>
+
+//                   <span className="sa-role-badge">
+//                     <FaUserShield size={10} />
+
+//                     {selectedAdmin.role ||
+//                       getUserGroupName(
+//                         selectedAdmin.userGroupId
+//                       )}
+//                   </span>
+
+//                 </div>
+
+//               </div>
+
+//               {/* DETAILS */}
+
+//               <div className="row g-3">
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Email"
+//                     value={
+//                       selectedAdmin.email
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Phone"
+//                     value={
+//                       selectedAdmin.phone ||
+//                       selectedAdmin.phoneNumber
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="School"
+//                     value={getSchoolName(
+//                       selectedAdmin?.school
+//                         ?.id ||
+//                         selectedAdmin?.schoolId
+//                     )}
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Username"
+//                     value={
+//                       selectedAdmin.username
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Date of Birth"
+//                     value={
+//                       selectedAdmin.dateOfBirth
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Gender"
+//                     value={
+//                       selectedAdmin.gender
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Alternate Phone"
+//                     value={
+//                       selectedAdmin.alternatePhone
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Language"
+//                     value={
+//                       selectedAdmin.languagePreference
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Time Zone"
+//                     value={
+//                       selectedAdmin.timeZone
+//                     }
+//                   />
+//                 </div>
+
+//                 <div className="col-md-6">
+//                   <DetailItem
+//                     label="Address"
+//                     value={
+//                       selectedAdmin.address
+//                     }
+//                   />
+//                 </div>
+
+//               </div>
+
+//               {/* VERIFICATION */}
+
+//               <div className="sa-verification-box mt-4">
+
+//                 <div className="fw-bold mb-3">
+//                   Verification Status
+//                 </div>
+
+//                 <div className="d-flex flex-wrap gap-3">
+
+//                   <span
+//                     className={
+//                       selectedAdmin.emailVerified
+//                         ? "sa-verified"
+//                         : "sa-not-verified"
+//                     }
+//                   >
+//                     {selectedAdmin.emailVerified ? (
+//                       <FaCheckCircle />
+//                     ) : (
+//                       <FaTimesCircle />
+//                     )}
+
+//                     Email
+//                   </span>
+
+//                   <span
+//                     className={
+//                       selectedAdmin.phoneVerified
+//                         ? "sa-verified"
+//                         : "sa-not-verified"
+//                     }
+//                   >
+//                     {selectedAdmin.phoneVerified ? (
+//                       <FaCheckCircle />
+//                     ) : (
+//                       <FaTimesCircle />
+//                     )}
+
+//                     Phone
+//                   </span>
+
+//                 </div>
+//               </div>
+
+//               {/* ACTIONS */}
+
+//               <div className="d-flex justify-content-end gap-2 mt-4 flex-wrap">
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-outline-primary rounded-3 px-3"
+//                   onClick={() =>
+//                     handleEdit(
+//                       selectedAdmin
+//                     )
+//                   }
+//                 >
+//                   <FaEdit className="me-2" />
+//                   Edit
+//                 </button>
+
+//                 <button
+//                   type="button"
+//                   className="btn btn-outline-secondary rounded-3 px-3"
+//                   onClick={() =>
+//                     setSelectedAdmin(null)
+//                   }
+//                 >
+//                   <FaArrowLeft className="me-2" />
+//                   Back
+//                 </button>
+
+//               </div>
+
+//             </div>
+
+//           </div>
+//         </div>
+//       )}
+
+//       {/* =====================================================
+//           DELETE MODAL
+//       ===================================================== */}
+
+//       {showDeleteModal &&
+//         selectedAdmin && (
+//           <div className="sa-modal-overlay">
+
+//             <div className="sa-modal small">
+
+//               <div className="sa-modal-header">
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold">
+//                     Delete Super Admin
+//                   </h5>
+
+//                   <small className="text-muted">
+//                     This action cannot be undone
+//                   </small>
+//                 </div>
+
+//                 <button
+//                   className="sa-close-btn"
+//                   onClick={() =>
+//                     setShowDeleteModal(false)
+//                   }
+//                 >
+//                   <IoMdClose />
+//                 </button>
+
+//               </div>
+
+//               <div className="sa-modal-body text-center">
+
+//                 <div className="sa-danger-icon">
+//                   <FaTrash />
+//                 </div>
+
+//                 <h5 className="mt-3 fw-bold">
+//                   Are you sure?
+//                 </h5>
+
+//                 <p className="text-muted mb-0">
+//                   You are about to delete{" "}
+//                   <strong>
+//                     {selectedAdmin.name ||
+//                       selectedAdmin.fullName}
+//                   </strong>
+//                   . This action cannot be undone.
+//                 </p>
+
+//               </div>
+
+//               <div className="sa-modal-footer">
+
+//                 <button
+//                   className="btn btn-outline-secondary rounded-3 px-3"
+//                   onClick={() =>
+//                     setShowDeleteModal(false)
+//                   }
+//                 >
+//                   Cancel
+//                 </button>
+
+//                 <button
+//                   className="btn btn-danger rounded-3 px-3"
+//                   disabled={deleting}
+//                   onClick={handleDelete}
+//                 >
+//                   {deleting ? (
+//                     <>
+//                       <span className="spinner-border spinner-border-sm me-2" />
+//                       Deleting...
+//                     </>
+//                   ) : (
+//                     <>
+//                       <FaTrash className="me-2" />
+//                       Delete
+//                     </>
+//                   )}
+//                 </button>
+
+//               </div>
+
+//             </div>
+//           </div>
+//         )}
+
+//       {/* =====================================================
+//           STATUS MODAL
+//       ===================================================== */}
+
+//       {showStatusModal &&
+//         selectedAdmin && (
+//           <div className="sa-modal-overlay">
+
+//             <div className="sa-modal small">
+
+//               <div className="sa-modal-header">
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold">
+//                     {isActive(selectedAdmin)
+//                       ? "Deactivate Super Admin"
+//                       : "Activate Super Admin"}
+//                   </h5>
+
+//                   <small className="text-muted">
+//                     Account status confirmation
+//                   </small>
+//                 </div>
+
+//                 <button
+//                   className="sa-close-btn"
+//                   onClick={() =>
+//                     setShowStatusModal(false)
+//                   }
+//                 >
+//                   <IoMdClose />
+//                 </button>
+
+//               </div>
+
+//               <div className="sa-modal-body text-center">
+
+//                 <div
+//                   className={`sa-status-modal-icon ${
+//                     isActive(selectedAdmin)
+//                       ? "warning"
+//                       : "success"
+//                   }`}
+//                 >
+//                   <FaPowerOff />
+//                 </div>
+
+//                 <h5 className="mt-3 fw-bold">
+//                   {isActive(selectedAdmin)
+//                     ? "Deactivate this account?"
+//                     : "Activate this account?"}
+//                 </h5>
+
+//                 <p className="text-muted mb-0">
+//                   {isActive(selectedAdmin)
+//                     ? "This Super Admin will no longer be able to login."
+//                     : "This Super Admin will be able to login again."}
+//                 </p>
+
+//               </div>
+
+//               <div className="sa-modal-footer">
+
+//                 <button
+//                   className="btn btn-outline-secondary rounded-3 px-3"
+//                   onClick={() =>
+//                     setShowStatusModal(false)
+//                   }
+//                 >
+//                   Cancel
+//                 </button>
+
+//                 <button
+//                   className={`btn rounded-3 px-3 ${
+//                     isActive(selectedAdmin)
+//                       ? "btn-warning"
+//                       : "btn-success"
+//                   }`}
+//                   disabled={updatingStatus}
+//                   onClick={
+//                     handleStatusChange
+//                   }
+//                 >
+//                   {updatingStatus ? (
+//                     <>
+//                       <span className="spinner-border spinner-border-sm me-2" />
+//                       Updating...
+//                     </>
+//                   ) : isActive(
+//                       selectedAdmin
+//                     ) ? (
+//                     "Deactivate"
+//                   ) : (
+//                     "Activate"
+//                   )}
+//                 </button>
+
+//               </div>
+
+//             </div>
+//           </div>
+//         )}
+
+//       {/* =====================================================
+//           PASSWORD MODAL
+//       ===================================================== */}
+
+//       {showPasswordModal &&
+//         selectedAdmin && (
+//           <div className="sa-modal-overlay">
+
+//             <div className="sa-modal small">
+
+//               <div className="sa-modal-header">
+
+//                 <div>
+//                   <h5 className="mb-1 fw-bold">
+//                     Reset Password
+//                   </h5>
+
+//                   <small className="text-muted">
+//                     {selectedAdmin.name ||
+//                       selectedAdmin.fullName}
+//                   </small>
+//                 </div>
+
+//                 <button
+//                   className="sa-close-btn"
+//                   onClick={() =>
+//                     setShowPasswordModal(
+//                       false
+//                     )
+//                   }
+//                 >
+//                   <IoMdClose />
+//                 </button>
+
+//               </div>
+
+//               <div className="sa-modal-body">
+
+//                 <div className="mb-3">
+
+//                   <label className="form-label fw-semibold small">
+//                     New Password
+//                   </label>
+
+//                   <input
+//                     type="password"
+//                     className="form-control rounded-3"
+//                     placeholder="Enter new password"
+//                     value={newPassword}
+//                     onChange={(e) =>
+//                       setNewPassword(
+//                         e.target.value
+//                       )
+//                     }
+//                   />
+
+//                 </div>
+
+//                 <div>
+
+//                   <label className="form-label fw-semibold small">
+//                     Confirm Password
+//                   </label>
+
+//                   <input
+//                     type="password"
+//                     className="form-control rounded-3"
+//                     placeholder="Confirm password"
+//                     value={
+//                       confirmNewPassword
+//                     }
+//                     onChange={(e) =>
+//                       setConfirmNewPassword(
+//                         e.target.value
+//                       )
+//                     }
+//                   />
+
+//                 </div>
+
+//               </div>
+
+//               <div className="sa-modal-footer">
+
+//                 <button
+//                   className="btn btn-outline-secondary rounded-3 px-3"
+//                   onClick={() =>
+//                     setShowPasswordModal(
+//                       false
+//                     )
+//                   }
+//                 >
+//                   Cancel
+//                 </button>
+
+//                 <button
+//                   className="btn btn-primary rounded-3 px-3"
+//                   onClick={
+//                     handleResetPassword
+//                   }
+//                 >
+//                   <FaKey className="me-2" />
+//                   Reset Password
+//                 </button>
+
+//               </div>
+
+//             </div>
+//           </div>
+//         )}
+
+//       {/* =====================================================
+//           THEME CSS
+//       ===================================================== */}
+
+//       <style>{`
+
+//         /* =====================================================
+//            HEADER
+//         ===================================================== */
+
+//         .sa-header-icon {
+//           width: 52px;
+//           height: 52px;
+//           border-radius: 12px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #2563eb,
+//               #3b82f6
+//             );
+
+//           color: #fff;
+
+//           flex-shrink: 0;
+
+//           box-shadow:
+//             0 8px 20px
+//             rgba(37,99,235,.22);
+//         }
+
+//         .sa-header-badge {
+//           display: inline-flex;
+//           align-items: center;
+//           gap: 7px;
+
+//           padding: 8px 14px;
+
+//           border-radius: 999px;
+
+//           background: #eff6ff;
+//           color: #2563eb;
+
+//           border: 1px solid #bfdbfe;
+
+//           font-size: 12px;
+//           font-weight: 600;
+//         }
+
+//         .sa-breadcrumb-strip {
+//           background:
+//             rgba(239,246,255,.75);
+
+//           border-top:
+//             1px solid #e0ecff;
+//         }
+
+//         /* =====================================================
+//            STAT CARDS
+//         ===================================================== */
+
+//         .sa-stat-card {
+//           background: #fff;
+
+//           border:
+//             1px solid #e5edf8;
+
+//           border-radius: 16px;
+
+//           padding: 17px;
+
+//           display: flex;
+//           align-items: center;
+
+//           gap: 13px;
+
+//           box-shadow:
+//             0 5px 18px
+//             rgba(15,23,42,.06);
+
+//           transition: .2s ease;
+//         }
+
+//         .sa-stat-card:hover {
+//           transform: translateY(-2px);
+
+//           box-shadow:
+//             0 8px 24px
+//             rgba(15,23,42,.09);
+//         }
+
+//         .sa-stat-icon {
+//           width: 46px;
+//           height: 46px;
+
+//           border-radius: 12px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           font-size: 19px;
+
+//           flex-shrink: 0;
+//         }
+
+//         .sa-stat-icon.blue {
+//           background: #eff6ff;
+//           color: #2563eb;
+//         }
+
+//         .sa-stat-icon.green {
+//           background: #ecfdf5;
+//           color: #059669;
+//         }
+
+//         .sa-stat-icon.red {
+//           background: #fef2f2;
+//           color: #dc2626;
+//         }
+
+//         .sa-stat-icon.purple {
+//           background: #f5f3ff;
+//           color: #7c3aed;
+//         }
+
+//         .sa-stat-label {
+//           color: #64748b;
+//           font-size: 12px;
+//           font-weight: 600;
+
+//           margin-bottom: 2px;
+//         }
+
+//         .sa-stat-value {
+//           color: #0f172a;
+
+//           font-size: 21px;
+//           font-weight: 700;
+//         }
+
+//         /* =====================================================
+//            MAIN CARD
+//         ===================================================== */
+
+//         .sa-main-card {
+//           background: #fff;
+
+//           border:
+//             1px solid #dbeafe;
+
+//           border-radius: 16px;
+
+//           overflow: hidden;
+
+//           box-shadow:
+//             0 6px 22px
+//             rgba(15,23,42,.06);
+//         }
+
+//         /* =====================================================
+//            SECTION HEADER
+//         ===================================================== */
+
+//         .sa-section-header {
+//           padding: 14px 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+
+//           gap: 15px;
+
+//           border-bottom:
+//             1px solid #e0ecff;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #ffffff,
+//               #f8fbff
+//             );
+//         }
+
+//         .sa-section-icon {
+//           width: 42px;
+//           height: 42px;
+
+//           border-radius: 11px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #2563eb,
+//               #3b82f6
+//             );
+
+//           color: #fff;
+
+//           box-shadow:
+//             0 6px 15px
+//             rgba(37,99,235,.18);
+//         }
+
+//         /* =====================================================
+//            SEARCH
+//         ===================================================== */
+
+//         .sa-search-box {
+//           position: relative;
+//         }
+
+//         .sa-search-box svg {
+//           position: absolute;
+
+//           left: 14px;
+//           top: 50%;
+
+//           transform:
+//             translateY(-50%);
+
+//           color: #94a3b8;
+
+//           z-index: 2;
+
+//           font-size: 13px;
+//         }
+
+//         .sa-search-box input {
+//           padding-left: 39px;
+
+//           min-height: 42px;
+
+//           border-color: #dbe3ef;
+//         }
+
+//         .sa-search-box input:focus,
+//         .form-select:focus,
+//         .form-control:focus {
+//           border-color: #93c5fd;
+
+//           box-shadow:
+//             0 0 0 .2rem
+//             rgba(37,99,235,.10);
+//         }
+
+//         .form-select,
+//         .form-control {
+//           border-color: #dbe3ef;
+//         }
+
+//         /* =====================================================
+//            TABLE TOP
+//         ===================================================== */
+
+//         .sa-table-top {
+//           padding: 13px 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+
+//           gap: 15px;
+
+//           border-top:
+//             1px solid #e0ecff;
+
+//           border-bottom:
+//             1px solid #e0ecff;
+
+//           background: #fff;
+//         }
+
+//         .sa-result-badge {
+//           display: inline-block;
+
+//           margin-left: 9px;
+
+//           padding: 5px 10px;
+
+//           border-radius: 999px;
+
+//           background: #eff6ff;
+//           color: #2563eb;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           font-size: 11px;
+//           font-weight: 700;
+//         }
+
+//         /* =====================================================
+//            TABLE
+//         ===================================================== */
+
+//         .sa-table {
+//           min-width: 1120px;
+//         }
+
+//         .sa-table thead th {
+//           background: #eff6ff;
+
+//           color: #1e3a8a;
+
+//           font-size: 12px;
+//           font-weight: 700;
+
+//           padding: 13px 12px;
+
+//           white-space: nowrap;
+
+//           border-bottom:
+//             1px solid #dbeafe;
+//         }
+
+//         .sa-table tbody td {
+//           padding: 13px 12px;
+
+//           font-size: 13px;
+
+//           border-bottom:
+//             1px solid #eef3f8;
+//         }
+
+//         .sa-table tbody tr {
+//           transition: .15s ease;
+//         }
+
+//         .sa-table tbody tr:hover {
+//           background: #f8fbff;
+//         }
+
+//         /* =====================================================
+//            ADMIN
+//         ===================================================== */
+
+//         .sa-admin-info {
+//           display: flex;
+//           align-items: center;
+
+//           gap: 10px;
+
+//           min-width: 190px;
+//         }
+
+//         .sa-avatar {
+//           width: 40px;
+//           height: 40px;
+
+//           border-radius: 12px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #dbeafe,
+//               #eff6ff
+//             );
+
+//           color: #2563eb;
+
+//           font-weight: 700;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           flex-shrink: 0;
+//         }
+
+//         .sa-admin-name {
+//           color: #172033;
+//           font-weight: 700;
+//         }
+
+//         /* =====================================================
+//            CONTACT
+//         ===================================================== */
+
+//         .sa-contact-item {
+//           display: flex;
+//           align-items: center;
+
+//           gap: 7px;
+
+//           margin-bottom: 5px;
+
+//           white-space: nowrap;
+//         }
+
+//         .sa-contact-item:last-child {
+//           margin-bottom: 0;
+//         }
+
+//         .sa-contact-item svg {
+//           color: #64748b;
+//           font-size: 11px;
+//         }
+
+//         /* =====================================================
+//            SCHOOL
+//         ===================================================== */
+
+//         .sa-school-cell {
+//           display: flex;
+//           align-items: center;
+
+//           gap: 7px;
+
+//           max-width: 190px;
+//         }
+
+//         .sa-school-cell svg {
+//           color: #2563eb;
+
+//           flex-shrink: 0;
+//         }
+
+//         /* =====================================================
+//            ROLE
+//         ===================================================== */
+
+//         .sa-role-badge {
+//           display: inline-flex;
+//           align-items: center;
+
+//           gap: 6px;
+
+//           padding: 6px 10px;
+
+//           border-radius: 999px;
+
+//           background: #eff6ff;
+//           color: #2563eb;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           font-size: 11px;
+//           font-weight: 700;
+
+//           white-space: nowrap;
+//         }
+
+//         /* =====================================================
+//            STATUS
+//         ===================================================== */
+
+//         .sa-status-badge {
+//           display: inline-flex;
+//           align-items: center;
+
+//           gap: 5px;
+
+//           padding: 6px 10px;
+
+//           border-radius: 999px;
+
+//           font-size: 11px;
+//           font-weight: 700;
+//         }
+
+//         .sa-active {
+//           background: #ecfdf5;
+//           color: #059669;
+
+//           border:
+//             1px solid #a7f3d0;
+//         }
+
+//         .sa-inactive {
+//           background: #fef2f2;
+//           color: #dc2626;
+
+//           border:
+//             1px solid #fecaca;
+//         }
+
+//         /* =====================================================
+//            VERIFICATION
+//         ===================================================== */
+
+//         .sa-verification-list {
+//           display: flex;
+//           flex-direction: column;
+
+//           gap: 5px;
+//         }
+
+//         .sa-verified,
+//         .sa-not-verified {
+//           display: inline-flex;
+
+//           align-items: center;
+
+//           gap: 5px;
+
+//           font-size: 11px;
+//           font-weight: 700;
+//         }
+
+//         .sa-verified {
+//           color: #059669;
+//         }
+
+//         .sa-not-verified {
+//           color: #dc2626;
+//         }
+
+//         /* =====================================================
+//            ACTION BUTTONS
+//         ===================================================== */
+
+//         .sa-action-buttons {
+//           display: flex;
+
+//           justify-content: center;
+
+//           gap: 6px;
+//         }
+
+//         .sa-action-btn {
+//           width: 32px;
+//           height: 32px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           border-radius: 9px;
+
+//           border:
+//             1px solid #dbe3ef;
+
+//           background: #fff;
+
+//           cursor: pointer;
+
+//           transition: .2s ease;
+//         }
+
+//         .sa-action-btn:hover {
+//           transform: translateY(-2px);
+
+//           box-shadow:
+//             0 4px 10px
+//             rgba(15,23,42,.08);
+//         }
+
+//         .sa-action-btn.view {
+//           color: #2563eb;
+//           background: #eff6ff;
+//           border-color: #bfdbfe;
+//         }
+
+//         .sa-action-btn.edit {
+//           color: #7c3aed;
+//           background: #f5f3ff;
+//           border-color: #ddd6fe;
+//         }
+
+//         .sa-action-btn.warning {
+//           color: #d97706;
+//           background: #fffbeb;
+//           border-color: #fde68a;
+//         }
+
+//         .sa-action-btn.success {
+//           color: #059669;
+//           background: #ecfdf5;
+//           border-color: #a7f3d0;
+//         }
+
+//         .sa-action-btn.password {
+//           color: #0284c7;
+//           background: #f0f9ff;
+//           border-color: #bae6fd;
+//         }
+
+//         .sa-action-btn.delete {
+//           color: #dc2626;
+//           background: #fef2f2;
+//           border-color: #fecaca;
+//         }
+
+//         /* =====================================================
+//            EMPTY
+//         ===================================================== */
+
+//         .sa-empty-icon {
+//           width: 64px;
+//           height: 64px;
+
+//           margin: auto;
+
+//           border-radius: 16px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background: #eff6ff;
+
+//           color: #2563eb;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           font-size: 25px;
+//         }
+
+//         /* =====================================================
+//            PAGINATION
+//         ===================================================== */
+
+//         .sa-pagination-container {
+//           padding: 14px 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+
+//           gap: 15px;
+
+//           border-top:
+//             1px solid #e0ecff;
+//         }
+
+//         .sa-pagination {
+//           display: flex;
+//           gap: 5px;
+
+//           flex-wrap: wrap;
+//         }
+
+//         .sa-page-btn {
+//           min-width: 34px;
+//           height: 34px;
+
+//           padding: 0 9px;
+
+//           border:
+//             1px solid #dbe3ef;
+
+//           background: #fff;
+
+//           border-radius: 9px;
+
+//           font-size: 12px;
+
+//           transition: .2s ease;
+//         }
+
+//         .sa-page-btn:hover:not(:disabled) {
+//           background: #eff6ff;
+
+//           border-color: #93c5fd;
+
+//           color: #2563eb;
+//         }
+
+//         .sa-page-btn.active {
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #2563eb,
+//               #3b82f6
+//             );
+
+//           color: #fff;
+
+//           border-color: #2563eb;
+
+//           box-shadow:
+//             0 4px 10px
+//             rgba(37,99,235,.20);
+//         }
+
+//         .sa-page-btn:disabled {
+//           opacity: .45;
+
+//           cursor: not-allowed;
+//         }
+
+//         /* =====================================================
+//            PROFILE
+//         ===================================================== */
+
+//         .sa-profile-header {
+//           display: flex;
+//           align-items: center;
+
+//           gap: 16px;
+
+//           padding: 18px;
+
+//           margin-bottom: 20px;
+
+//           border:
+//             1px solid #dbeafe;
+
+//           border-radius: 14px;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #ffffff,
+//               #f5f9ff
+//             );
+//         }
+
+//         .sa-large-avatar {
+//           width: 72px;
+//           height: 72px;
+
+//           border-radius: 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #dbeafe,
+//               #eff6ff
+//             );
+
+//           color: #2563eb;
+
+//           font-size: 28px;
+//           font-weight: 700;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           flex-shrink: 0;
+//         }
+
+//         .detail-item {
+//           height: 100%;
+
+//           padding: 14px;
+
+//           border:
+//             1px solid #e2e8f0;
+
+//           border-radius: 12px;
+
+//           background: #f8fbff;
+//         }
+
+//         .detail-label {
+//           display: block;
+
+//           color: #64748b;
+
+//           font-size: 11px;
+
+//           font-weight: 600;
+
+//           margin-bottom: 5px;
+//         }
+
+//         .detail-value {
+//           display: block;
+
+//           color: #172033;
+
+//           font-size: 14px;
+
+//           font-weight: 700;
+
+//           word-break: break-word;
+//         }
+
+//         .sa-verification-box {
+//           padding: 16px;
+
+//           background: #eff6ff;
+
+//           border:
+//             1px solid #bfdbfe;
+
+//           border-radius: 12px;
+//         }
+
+//         /* =====================================================
+//            MODAL
+//         ===================================================== */
+
+//         .sa-modal-overlay {
+//           position: fixed;
+
+//           inset: 0;
+
+//           z-index: 1050;
+
+//           display: flex;
+
+//           align-items: center;
+
+//           justify-content: center;
+
+//           padding: 20px;
+
+//           background:
+//             rgba(15,23,42,.45);
+
+//           backdrop-filter:
+//             blur(3px);
+//         }
+
+//         .sa-modal {
+//           width: 100%;
+
+//           max-width: 520px;
+
+//           background: #fff;
+
+//           border-radius: 18px;
+
+//           overflow: hidden;
+
+//           box-shadow:
+//             0 20px 50px
+//             rgba(15,23,42,.20);
+
+//           border:
+//             1px solid #dbeafe;
+//         }
+
+//         .sa-modal.small {
+//           max-width: 450px;
+//         }
+
+//         .sa-modal-header {
+//           padding: 17px 20px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: space-between;
+
+//           gap: 15px;
+
+//           background:
+//             linear-gradient(
+//               135deg,
+//               #ffffff,
+//               #f5f9ff
+//             );
+
+//           border-bottom:
+//             1px solid #dbeafe;
+//         }
+
+//         .sa-close-btn {
+//           width: 34px;
+//           height: 34px;
+
+//           border-radius: 9px;
+
+//           border:
+//             1px solid #dbe3ef;
+
+//           background: #fff;
+
+//           color: #64748b;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           cursor: pointer;
+//         }
+
+//         .sa-close-btn:hover {
+//           color: #dc2626;
+
+//           background: #fef2f2;
+
+//           border-color: #fecaca;
+//         }
+
+//         .sa-modal-body {
+//           padding: 22px;
+//         }
+
+//         .sa-modal-footer {
+//           padding: 14px 20px;
+
+//           display: flex;
+
+//           justify-content: flex-end;
+
+//           gap: 10px;
+
+//           border-top:
+//             1px solid #edf2f7;
+
+//           background: #fafcff;
+//         }
+
+//         .sa-danger-icon {
+//           width: 66px;
+//           height: 66px;
+
+//           margin: auto;
+
+//           border-radius: 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           background: #fef2f2;
+
+//           color: #dc2626;
+
+//           border:
+//             1px solid #fecaca;
+
+//           font-size: 24px;
+//         }
+
+//         .sa-status-modal-icon {
+//           width: 66px;
+//           height: 66px;
+
+//           margin: auto;
+
+//           border-radius: 18px;
+
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+
+//           font-size: 24px;
+//         }
+
+//         .sa-status-modal-icon.warning {
+//           background: #fffbeb;
+
+//           color: #d97706;
+
+//           border:
+//             1px solid #fde68a;
+//         }
+
+//         .sa-status-modal-icon.success {
+//           background: #ecfdf5;
+
+//           color: #059669;
+
+//           border:
+//             1px solid #a7f3d0;
+//         }
+
+//         /* =====================================================
+//            MOBILE
+//         ===================================================== */
+
+//         @media (max-width: 768px) {
+
+//           .sa-section-header {
+//             align-items: flex-start;
+
+//             flex-direction: column;
+//           }
+
+//           .sa-section-header > button {
+//             width: 100%;
+//           }
+
+//           .sa-table-top {
+//             align-items: flex-start;
+
+//             flex-direction: column;
+//           }
+
+//           .sa-pagination-container {
+//             align-items: flex-start;
+
+//             flex-direction: column;
+//           }
+
+//           .sa-pagination {
+//             width: 100%;
+
+//             overflow-x: auto;
+
+//             flex-wrap: nowrap;
+
+//             padding-bottom: 3px;
+//           }
+
+//           .sa-profile-header {
+//             align-items: flex-start;
+//           }
+
+//           .sa-modal-overlay {
+//             padding: 10px;
+//           }
+//         }
+
+//         @media (max-width: 576px) {
+
+//           .sa-header-icon {
+//             width: 44px;
+//             height: 44px;
+//           }
+
+//           .sa-header-badge {
+//             width: 100%;
+
+//             justify-content: center;
+//           }
+
+//           .sa-profile-header {
+//             flex-direction: column;
+//           }
+
+//           .sa-large-avatar {
+//             width: 60px;
+//             height: 60px;
+
+//             border-radius: 15px;
+//           }
+
+//           .sa-modal-footer {
+//             flex-direction: column;
+//           }
+
+//           .sa-modal-footer button {
+//             width: 100%;
+//           }
+
+//           .sa-action-buttons {
+//             justify-content: flex-start;
+//           }
+//         }
+
+//       `}</style>
+//     </>
+//   );
+// };
+
+// // =========================================================
+// // DETAIL ITEM
+// // =========================================================
+
+// const DetailItem = ({
+//   label,
+//   value,
+// }) => {
+//   return (
+//     <div className="detail-item">
+
+//       <span className="detail-label">
+//         {label}
+//       </span>
+
+//       <span className="detail-value">
+//         {value || "-"}
+//       </span>
+
+//     </div>
+//   );
+// };
+
+// export default SuperAdminList;
+
+
+
 import React, { useEffect, useMemo, useState } from "react";
 
 import {
@@ -3063,10 +6042,9 @@ import {
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 
-const API_BASE = "http://localhost:8080/api/superadmin";
+import axiosInstance from "../../api/axiosInstance";
 
 const SuperAdminList = () => {
-  const token = localStorage.getItem("token");
 
   // =========================================================
   // DATA
@@ -3083,6 +6061,7 @@ const SuperAdminList = () => {
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [resettingPassword, setResettingPassword] = useState(false);
 
   // =========================================================
   // SEARCH / FILTER
@@ -3105,9 +6084,15 @@ const SuperAdminList = () => {
   // =========================================================
 
   const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showStatusModal, setShowStatusModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  const [showDeleteModal, setShowDeleteModal] =
+    useState(false);
+
+  const [showStatusModal, setShowStatusModal] =
+    useState(false);
+
+  const [showPasswordModal, setShowPasswordModal] =
+    useState(false);
 
   // =========================================================
   // PASSWORD
@@ -3118,18 +6103,7 @@ const SuperAdminList = () => {
     useState("");
 
   // =========================================================
-  // API CONFIG
-  // =========================================================
-
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  };
-
-  // =========================================================
-  // LOAD
+  // LOAD DATA
   // =========================================================
 
   useEffect(() => {
@@ -3146,12 +6120,15 @@ const SuperAdminList = () => {
     try {
       setLoading(true);
 
-      const response = await axios.get(
-        `${API_BASE}/all`,
-        axiosConfig
-      );
+      const response =
+        await axiosInstance.get(
+          "/api/superadmin/all"
+        );
 
-      console.log("Super Admin List:", response.data);
+      console.log(
+        "Super Admin List:",
+        response.data
+      );
 
       const data = Array.isArray(response.data)
         ? response.data
@@ -3160,7 +6137,9 @@ const SuperAdminList = () => {
           [];
 
       setSuperAdmins(data);
+
     } catch (error) {
+
       console.error(
         "Failed to load Super Admins:",
         error
@@ -3168,8 +6147,10 @@ const SuperAdminList = () => {
 
       alert(
         error.response?.data?.message ||
+          error.response?.data ||
           "Failed to load Super Admin list."
       );
+
     } finally {
       setLoading(false);
     }
@@ -3181,13 +6162,22 @@ const SuperAdminList = () => {
 
   const loadSchools = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/school/all",
-        axiosConfig
-      );
 
-      setSchools(response.data || []);
+      const response =
+        await axiosInstance.get(
+          "/api/school/all"
+        );
+
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.content ||
+          response.data?.data ||
+          [];
+
+      setSchools(data);
+
     } catch (error) {
+
       console.error(
         "Failed to load schools:",
         error
@@ -3201,13 +6191,22 @@ const SuperAdminList = () => {
 
   const loadUserGroups = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/user-group/all",
-        axiosConfig
-      );
 
-      setUserGroups(response.data || []);
+      const response =
+        await axiosInstance.get(
+          "/api/user-group/all"
+        );
+
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data?.content ||
+          response.data?.data ||
+          [];
+
+      setUserGroups(data);
+
     } catch (error) {
+
       console.error(
         "Failed to load user groups:",
         error
@@ -3220,12 +6219,14 @@ const SuperAdminList = () => {
   // =========================================================
 
   const getSchoolName = (schoolId) => {
+
     const school = schools.find(
       (item) =>
         Number(item.id) === Number(schoolId)
     );
 
     if (!school) {
+
       return schoolId
         ? `School #${schoolId}`
         : "All Schools";
@@ -3244,6 +6245,7 @@ const SuperAdminList = () => {
   // =========================================================
 
   const getUserGroupName = (userGroupId) => {
+
     const group = userGroups.find(
       (item) =>
         Number(item.id) ===
@@ -3262,6 +6264,7 @@ const SuperAdminList = () => {
   // =========================================================
 
   const isActive = (admin) => {
+
     return (
       admin.status === "Active" ||
       admin.status === "ACTIVE" ||
@@ -3275,40 +6278,55 @@ const SuperAdminList = () => {
   // =========================================================
 
   const filteredAdmins = useMemo(() => {
+
     return superAdmins.filter((admin) => {
+
       const searchValue =
         search.trim().toLowerCase();
 
+      const adminName =
+        admin.name ||
+        admin.fullName ||
+        "";
+
+      const username =
+        admin.username || "";
+
+      const email =
+        admin.email || "";
+
+      const phone =
+        admin.phone ||
+        admin.phoneNumber ||
+        "";
+
       const matchesSearch =
         !searchValue ||
-        String(
-          admin.name ||
-            admin.fullName ||
-            admin.username ||
-            ""
-        )
+        String(adminName)
           .toLowerCase()
           .includes(searchValue) ||
-        String(admin.email || "")
+        String(username)
           .toLowerCase()
           .includes(searchValue) ||
-        String(
-          admin.phone ||
-            admin.phoneNumber ||
-            ""
-        )
+        String(email)
+          .toLowerCase()
+          .includes(searchValue) ||
+        String(phone)
           .toLowerCase()
           .includes(searchValue);
 
+      const adminSchoolId =
+        admin?.school?.id ||
+        admin?.schoolId ||
+        "";
+
       const matchesSchool =
         !schoolFilter ||
-        String(
-          admin?.school?.id ||
-            admin?.schoolId ||
-            ""
-        ) === String(schoolFilter);
+        String(adminSchoolId) ===
+          String(schoolFilter);
 
-      const active = isActive(admin);
+      const active =
+        isActive(admin);
 
       const matchesStatus =
         !statusFilter ||
@@ -3317,11 +6335,15 @@ const SuperAdminList = () => {
         (statusFilter === "Inactive" &&
           !active);
 
+      const adminUserGroupId =
+        admin.userGroupId ||
+        admin?.userGroup?.id ||
+        "";
+
       const matchesRole =
         !roleFilter ||
-        String(
-          admin.userGroupId || ""
-        ) === String(roleFilter);
+        String(adminUserGroupId) ===
+          String(roleFilter);
 
       return (
         matchesSearch &&
@@ -3330,6 +6352,7 @@ const SuperAdminList = () => {
         matchesRole
       );
     });
+
   }, [
     superAdmins,
     search,
@@ -3342,18 +6365,24 @@ const SuperAdminList = () => {
   // PAGINATION
   // =========================================================
 
-  const totalPages = Math.ceil(
-    filteredAdmins.length / itemsPerPage
-  );
+  const totalPages =
+    Math.ceil(
+      filteredAdmins.length /
+        itemsPerPage
+    );
 
   const paginatedAdmins =
     filteredAdmins.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
+      (currentPage - 1) *
+        itemsPerPage,
+      currentPage *
+        itemsPerPage
     );
 
   useEffect(() => {
+
     setCurrentPage(1);
+
   }, [
     search,
     schoolFilter,
@@ -3366,14 +6395,18 @@ const SuperAdminList = () => {
   // COUNTS
   // =========================================================
 
-  const totalCount = superAdmins.length;
+  const totalCount =
+    superAdmins.length;
 
-  const activeCount = superAdmins.filter(
-    (admin) => isActive(admin)
-  ).length;
+  const activeCount =
+    superAdmins.filter(
+      (admin) =>
+        isActive(admin)
+    ).length;
 
   const inactiveCount =
-    totalCount - activeCount;
+    totalCount -
+    activeCount;
 
   const verifiedCount =
     superAdmins.filter(
@@ -3383,14 +6416,16 @@ const SuperAdminList = () => {
     ).length;
 
   // =========================================================
-  // RESET FILTER
+  // RESET FILTERS
   // =========================================================
 
   const resetFilters = () => {
+
     setSearch("");
     setSchoolFilter("");
     setStatusFilter("");
     setRoleFilter("");
+    setCurrentPage(1);
   };
 
   // =========================================================
@@ -3398,16 +6433,17 @@ const SuperAdminList = () => {
   // =========================================================
 
   const handleDelete = async () => {
+
     if (!selectedAdmin?.id) {
       return;
     }
 
     try {
+
       setDeleting(true);
 
-      await axios.delete(
-        `${API_BASE}/delete/${selectedAdmin.id}`,
-        axiosConfig
+      await axiosInstance.delete(
+        `/api/superadmin/delete/${selectedAdmin.id}`
       );
 
       alert(
@@ -3417,8 +6453,10 @@ const SuperAdminList = () => {
       setShowDeleteModal(false);
       setSelectedAdmin(null);
 
-      loadSuperAdmins();
+      await loadSuperAdmins();
+
     } catch (error) {
+
       console.error(
         "Delete Super Admin Error:",
         error
@@ -3429,7 +6467,9 @@ const SuperAdminList = () => {
           error.response?.data ||
           "Failed to delete Super Admin."
       );
+
     } finally {
+
       setDeleting(false);
     }
   };
@@ -3439,23 +6479,25 @@ const SuperAdminList = () => {
   // =========================================================
 
   const handleStatusChange = async () => {
+
     if (!selectedAdmin?.id) {
       return;
     }
 
     try {
+
       setUpdatingStatus(true);
 
-      const newStatus = isActive(selectedAdmin)
-        ? "Inactive"
-        : "Active";
+      const newStatus =
+        isActive(selectedAdmin)
+          ? "Inactive"
+          : "Active";
 
-      await axios.patch(
-        `${API_BASE}/${selectedAdmin.id}/status`,
+      await axiosInstance.patch(
+        `/api/superadmin/${selectedAdmin.id}/status`,
         {
           status: newStatus,
-        },
-        axiosConfig
+        }
       );
 
       alert(
@@ -3465,8 +6507,10 @@ const SuperAdminList = () => {
       setShowStatusModal(false);
       setSelectedAdmin(null);
 
-      loadSuperAdmins();
+      await loadSuperAdmins();
+
     } catch (error) {
+
       console.error(
         "Status update error:",
         error
@@ -3477,7 +6521,9 @@ const SuperAdminList = () => {
           error.response?.data ||
           "Failed to update status."
       );
+
     } finally {
+
       setUpdatingStatus(false);
     }
   };
@@ -3487,19 +6533,26 @@ const SuperAdminList = () => {
   // =========================================================
 
   const handleResetPassword = async () => {
+
     if (!selectedAdmin?.id) {
       return;
     }
 
     if (!newPassword) {
-      alert("Please enter new password.");
+
+      alert(
+        "Please enter new password."
+      );
+
       return;
     }
 
     if (newPassword.length < 8) {
+
       alert(
         "Password must be at least 8 characters."
       );
+
       return;
     }
 
@@ -3507,21 +6560,25 @@ const SuperAdminList = () => {
       newPassword !==
       confirmNewPassword
     ) {
+
       alert(
         "Password and confirm password do not match."
       );
+
       return;
     }
 
     try {
-      await axios.patch(
-        `${API_BASE}/${selectedAdmin.id}/reset-password`,
+
+      setResettingPassword(true);
+
+      await axiosInstance.patch(
+        `/api/superadmin/${selectedAdmin.id}/reset-password`,
         {
           password: newPassword,
           confirmPassword:
             confirmNewPassword,
-        },
-        axiosConfig
+        }
       );
 
       alert(
@@ -3533,7 +6590,9 @@ const SuperAdminList = () => {
 
       setShowPasswordModal(false);
       setSelectedAdmin(null);
+
     } catch (error) {
+
       console.error(
         "Password reset error:",
         error
@@ -3544,6 +6603,10 @@ const SuperAdminList = () => {
           error.response?.data ||
           "Failed to reset password."
       );
+
+    } finally {
+
+      setResettingPassword(false);
     }
   };
 
@@ -3552,6 +6615,7 @@ const SuperAdminList = () => {
   // =========================================================
 
   const handleEdit = (admin) => {
+
     window.location.href =
       `/super-admin/edit/${admin.id}`;
   };
@@ -3561,6 +6625,7 @@ const SuperAdminList = () => {
   // =========================================================
 
   const handleView = (admin) => {
+
     setSelectedAdmin(admin);
   };
 
@@ -3569,15 +6634,25 @@ const SuperAdminList = () => {
   // =========================================================
 
   const StatusBadge = ({ active }) => {
+
     return active ? (
+
       <span className="sa-status-badge sa-active">
+
         <FaCheckCircle size={11} />
+
         Active
+
       </span>
+
     ) : (
+
       <span className="sa-status-badge sa-inactive">
+
         <FaTimesCircle size={11} />
+
         Inactive
+
       </span>
     );
   };
@@ -3587,7 +6662,10 @@ const SuperAdminList = () => {
   // =========================================================
 
   const renderPagination = () => {
-    if (totalPages <= 1) return null;
+
+    if (totalPages <= 1) {
+      return null;
+    }
 
     const pages = [];
 
@@ -3596,14 +6674,19 @@ const SuperAdminList = () => {
       i <= totalPages;
       i++
     ) {
+
       pages.push(i);
     }
 
     return (
+
       <div className="sa-pagination">
+
         <button
           className="sa-page-btn"
-          disabled={currentPage === 1}
+          disabled={
+            currentPage === 1
+          }
           onClick={() =>
             setCurrentPage(
               currentPage - 1
@@ -3614,6 +6697,7 @@ const SuperAdminList = () => {
         </button>
 
         {pages.map((page) => (
+
           <button
             key={page}
             className={`sa-page-btn ${
@@ -3627,6 +6711,7 @@ const SuperAdminList = () => {
           >
             {page}
           </button>
+
         ))}
 
         <button
@@ -3642,6 +6727,7 @@ const SuperAdminList = () => {
         >
           Next
         </button>
+
       </div>
     );
   };
@@ -3652,11 +6738,13 @@ const SuperAdminList = () => {
 
   return (
     <>
+
       {/* =====================================================
           PAGE HEADER
       ===================================================== */}
 
       <div className="mx-2 mt-2 mb-3">
+
         <div
           className="rounded-4 shadow overflow-hidden"
           style={{
@@ -3666,17 +6754,23 @@ const SuperAdminList = () => {
               "1px solid #dbeafe",
           }}
         >
+
           <div className="p-3 p-md-4">
+
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-              
+
               <div className="d-flex align-items-center gap-3">
+
                 <div className="sa-header-icon">
+
                   <MdOutlineAdminPanelSettings
                     size={28}
                   />
+
                 </div>
 
                 <div>
+
                   <h5 className="mb-1 fw-bold text-dark">
                     Super Admin Management
                   </h5>
@@ -3685,36 +6779,50 @@ const SuperAdminList = () => {
                     Manage administrators, roles,
                     access and account status.
                   </div>
+
                 </div>
+
               </div>
 
               <span className="sa-header-badge">
+
                 <FaUserShield size={12} />
+
                 Administration
+
               </span>
 
             </div>
+
           </div>
 
           <div className="px-4 py-2 sa-breadcrumb-strip">
+
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
-              
+
               <small className="text-muted">
+
                 Home › Administration ›{" "}
+
                 <span className="text-primary fw-semibold">
                   Super Admins
                 </span>
+
               </small>
 
               <div className="d-flex gap-2 flex-wrap">
+
                 <button
                   className="btn btn-outline-primary btn-sm rounded-3 px-3"
                   onClick={() =>
                     window.history.back()
                   }
                 >
+
                   <FaArrowLeft className="me-1" />
+
                   Back
+
                 </button>
 
                 <button
@@ -3724,14 +6832,21 @@ const SuperAdminList = () => {
                       "/add/superadmins")
                   }
                 >
+
                   <FaPlus className="me-1" />
+
                   Create Super Admin
+
                 </button>
+
               </div>
 
             </div>
+
           </div>
+
         </div>
+
       </div>
 
       {/* =====================================================
@@ -3739,15 +6854,19 @@ const SuperAdminList = () => {
       ===================================================== */}
 
       <div className="container-fluid px-2 mb-3">
+
         <div className="row g-3">
 
           <div className="col-xl-3 col-md-6">
+
             <div className="sa-stat-card">
+
               <div className="sa-stat-icon blue">
                 <FaUserShield />
               </div>
 
               <div>
+
                 <div className="sa-stat-label">
                   Total Super Admins
                 </div>
@@ -3755,17 +6874,23 @@ const SuperAdminList = () => {
                 <div className="sa-stat-value">
                   {totalCount}
                 </div>
+
               </div>
+
             </div>
+
           </div>
 
           <div className="col-xl-3 col-md-6">
+
             <div className="sa-stat-card">
+
               <div className="sa-stat-icon green">
                 <FaCheckCircle />
               </div>
 
               <div>
+
                 <div className="sa-stat-label">
                   Active
                 </div>
@@ -3773,17 +6898,23 @@ const SuperAdminList = () => {
                 <div className="sa-stat-value">
                   {activeCount}
                 </div>
+
               </div>
+
             </div>
+
           </div>
 
           <div className="col-xl-3 col-md-6">
+
             <div className="sa-stat-card">
+
               <div className="sa-stat-icon red">
                 <FaTimesCircle />
               </div>
 
               <div>
+
                 <div className="sa-stat-label">
                   Inactive
                 </div>
@@ -3791,17 +6922,23 @@ const SuperAdminList = () => {
                 <div className="sa-stat-value">
                   {inactiveCount}
                 </div>
+
               </div>
+
             </div>
+
           </div>
 
           <div className="col-xl-3 col-md-6">
+
             <div className="sa-stat-card">
+
               <div className="sa-stat-icon purple">
                 <FaCheckCircle />
               </div>
 
               <div>
+
                 <div className="sa-stat-label">
                   Fully Verified
                 </div>
@@ -3809,11 +6946,15 @@ const SuperAdminList = () => {
                 <div className="sa-stat-value">
                   {verifiedCount}
                 </div>
+
               </div>
+
             </div>
+
           </div>
 
         </div>
+
       </div>
 
       {/* =====================================================
@@ -3821,6 +6962,7 @@ const SuperAdminList = () => {
       ===================================================== */}
 
       {!selectedAdmin ? (
+
         <div className="container-fluid px-2 mb-4">
 
           <div className="sa-main-card">
@@ -3828,13 +6970,17 @@ const SuperAdminList = () => {
             {/* FILTER HEADER */}
 
             <div className="sa-section-header">
+
               <div className="d-flex align-items-center gap-3">
 
                 <div className="sa-section-icon">
+
                   <FaFilter size={17} />
+
                 </div>
 
                 <div>
+
                   <h6 className="mb-1 fw-bold">
                     Search & Filter
                   </h6>
@@ -3843,6 +6989,7 @@ const SuperAdminList = () => {
                     Find and filter super admin
                     accounts
                   </small>
+
                 </div>
 
               </div>
@@ -3851,28 +6998,35 @@ const SuperAdminList = () => {
                 className="btn btn-outline-secondary btn-sm rounded-3 px-3"
                 onClick={resetFilters}
               >
+
                 <FaSyncAlt className="me-1" />
+
                 Reset
+
               </button>
+
             </div>
 
             {/* FILTERS */}
 
             <div className="p-3 p-md-4">
+
               <div className="row g-3">
 
                 <div className="col-xl-4 col-md-6">
+
                   <label className="form-label fw-semibold small">
                     Search
                   </label>
 
                   <div className="sa-search-box">
+
                     <FaSearch />
 
                     <input
                       type="text"
                       className="form-control rounded-3"
-                      placeholder="Search name, email, phone..."
+                      placeholder="Search name, username, email, phone..."
                       value={search}
                       onChange={(e) =>
                         setSearch(
@@ -3880,10 +7034,13 @@ const SuperAdminList = () => {
                         )
                       }
                     />
+
                   </div>
+
                 </div>
 
                 <div className="col-xl-3 col-md-6">
+
                   <label className="form-label fw-semibold small">
                     School
                   </label>
@@ -3897,24 +7054,33 @@ const SuperAdminList = () => {
                       )
                     }
                   >
+
                     <option value="">
                       All Schools
                     </option>
 
-                    {schools.map((school) => (
-                      <option
-                        key={school.id}
-                        value={school.id}
-                      >
-                        {school.schoolName ||
-                          school.name ||
-                          school.schoolCode}
-                      </option>
-                    ))}
+                    {schools.map(
+                      (school) => (
+
+                        <option
+                          key={school.id}
+                          value={school.id}
+                        >
+                          {school.schoolName ||
+                            school.name ||
+                            school.schoolCode ||
+                            `School #${school.id}`}
+                        </option>
+
+                      )
+                    )}
+
                   </select>
+
                 </div>
 
                 <div className="col-xl-2 col-md-6">
+
                   <label className="form-label fw-semibold small">
                     Status
                   </label>
@@ -3928,6 +7094,7 @@ const SuperAdminList = () => {
                       )
                     }
                   >
+
                     <option value="">
                       All Status
                     </option>
@@ -3939,10 +7106,13 @@ const SuperAdminList = () => {
                     <option value="Inactive">
                       Inactive
                     </option>
+
                   </select>
+
                 </div>
 
                 <div className="col-xl-3 col-md-6">
+
                   <label className="form-label fw-semibold small">
                     Role / User Group
                   </label>
@@ -3956,31 +7126,40 @@ const SuperAdminList = () => {
                       )
                     }
                   >
+
                     <option value="">
                       All Roles
                     </option>
 
                     {userGroups.map(
                       (group) => (
+
                         <option
                           key={group.id}
                           value={group.id}
                         >
                           {group.groupName ||
-                            group.name}
+                            group.name ||
+                            `Group #${group.id}`}
                         </option>
+
                       )
                     )}
+
                   </select>
+
                 </div>
 
               </div>
+
             </div>
 
             {/* TABLE TOP */}
 
             <div className="sa-table-top">
+
               <div>
+
                 <div className="fw-bold">
                   Super Admin List
                 </div>
@@ -3988,9 +7167,11 @@ const SuperAdminList = () => {
                 <span className="sa-result-badge">
                   {filteredAdmins.length} Records
                 </span>
+
               </div>
 
               <div className="d-flex align-items-center gap-2">
+
                 <span className="small text-muted">
                   Show
                 </span>
@@ -4009,6 +7190,7 @@ const SuperAdminList = () => {
                     )
                   }
                 >
+
                   <option value={5}>
                     5
                   </option>
@@ -4024,52 +7206,87 @@ const SuperAdminList = () => {
                   <option value={50}>
                     50
                   </option>
+
                 </select>
+
               </div>
+
             </div>
 
             {/* TABLE */}
 
             <div className="table-responsive">
+
               <table className="table sa-table align-middle mb-0">
 
                 <thead>
+
                   <tr>
+
                     <th>#</th>
-                    <th>Super Admin</th>
-                    <th>Contact</th>
-                    <th>School</th>
-                    <th>Role</th>
-                    <th>Verification</th>
-                    <th>Status</th>
+
+                    <th>
+                      Super Admin
+                    </th>
+
+                    <th>
+                      Contact
+                    </th>
+
+                    <th>
+                      School
+                    </th>
+
+                    <th>
+                      Role
+                    </th>
+
+                    <th>
+                      Verification
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
                     <th className="text-center">
                       Actions
                     </th>
+
                   </tr>
+
                 </thead>
 
                 <tbody>
 
                   {loading ? (
+
                     <tr>
+
                       <td
                         colSpan="8"
                         className="text-center py-5"
                       >
+
                         <span className="spinner-border text-primary" />
 
                         <div className="mt-2 text-muted">
                           Loading Super Admins...
                         </div>
+
                       </td>
+
                     </tr>
-                  ) : paginatedAdmins.length ===
-                    0 ? (
+
+                  ) : paginatedAdmins.length === 0 ? (
+
                     <tr>
+
                       <td
                         colSpan="8"
                         className="text-center py-5"
                       >
+
                         <div className="sa-empty-icon">
                           <FaUserShield />
                         </div>
@@ -4082,15 +7299,46 @@ const SuperAdminList = () => {
                           Try changing your
                           search or filters.
                         </p>
+
                       </td>
+
                     </tr>
+
                   ) : (
+
                     paginatedAdmins.map(
                       (admin, index) => {
+
                         const active =
                           isActive(admin);
 
+                        const adminName =
+                          admin.name ||
+                          admin.fullName ||
+                          "N/A";
+
+                        const adminUsername =
+                          admin.username;
+
+                        const adminEmail =
+                          admin.email ||
+                          "-";
+
+                        const adminPhone =
+                          admin.phone ||
+                          admin.phoneNumber ||
+                          "-";
+
+                        const schoolId =
+                          admin?.school?.id ||
+                          admin?.schoolId;
+
+                        const userGroupId =
+                          admin.userGroupId ||
+                          admin?.userGroup?.id;
+
                         return (
+
                           <tr
                             key={
                               admin.id ||
@@ -4098,101 +7346,120 @@ const SuperAdminList = () => {
                               index
                             }
                           >
+
+                            {/* NUMBER */}
+
                             <td className="fw-semibold text-muted">
+
                               {(currentPage - 1) *
                                 itemsPerPage +
                                 index +
                                 1}
+
                             </td>
 
                             {/* ADMIN */}
 
                             <td>
+
                               <div className="sa-admin-info">
 
                                 <div className="sa-avatar">
-                                  {(
-                                    admin.name ||
-                                    admin.fullName ||
-                                    "S"
-                                  )
+
+                                  {adminName
                                     .charAt(0)
                                     .toUpperCase()}
+
                                 </div>
 
                                 <div>
+
                                   <div className="sa-admin-name">
-                                    {admin.name ||
-                                      admin.fullName ||
-                                      "N/A"}
+                                    {adminName}
                                   </div>
 
                                   <small className="text-muted">
-                                    {admin.username
-                                      ? `@${admin.username}`
+
+                                    {adminUsername
+                                      ? `@${adminUsername}`
                                       : `ID: ${
                                           admin.id ||
                                           "-"
                                         }`}
+
                                   </small>
+
                                 </div>
 
                               </div>
+
                             </td>
 
                             {/* CONTACT */}
 
                             <td>
+
                               <div className="sa-contact-item">
+
                                 <FaEnvelope />
+
                                 <span>
-                                  {admin.email ||
-                                    "-"}
+                                  {adminEmail}
                                 </span>
+
                               </div>
 
                               <div className="sa-contact-item">
+
                                 <FaPhone />
+
                                 <span>
-                                  {admin.phone ||
-                                    admin.phoneNumber ||
-                                    "-"}
+                                  {adminPhone}
                                 </span>
+
                               </div>
+
                             </td>
 
                             {/* SCHOOL */}
 
                             <td>
+
                               <div className="sa-school-cell">
+
                                 <FaSchool />
 
                                 <span>
                                   {getSchoolName(
-                                    admin?.school
-                                      ?.id ||
-                                      admin?.schoolId
+                                    schoolId
                                   )}
                                 </span>
+
                               </div>
+
                             </td>
 
                             {/* ROLE */}
 
                             <td>
+
                               <span className="sa-role-badge">
+
                                 <FaUserShield size={10} />
 
                                 {admin.role ||
                                   getUserGroupName(
-                                    admin.userGroupId
+                                    userGroupId
                                   )}
+
                               </span>
+
                             </td>
 
                             {/* VERIFICATION */}
 
                             <td>
+
                               <div className="sa-verification-list">
 
                                 <span
@@ -4202,12 +7469,15 @@ const SuperAdminList = () => {
                                       : "sa-not-verified"
                                   }
                                 >
+
                                   {admin.emailVerified ? (
                                     <FaCheckCircle />
                                   ) : (
                                     <FaTimesCircle />
                                   )}
+
                                   Email
+
                                 </span>
 
                                 <span
@@ -4217,29 +7487,38 @@ const SuperAdminList = () => {
                                       : "sa-not-verified"
                                   }
                                 >
+
                                   {admin.phoneVerified ? (
                                     <FaCheckCircle />
                                   ) : (
                                     <FaTimesCircle />
                                   )}
+
                                   Phone
+
                                 </span>
 
                               </div>
+
                             </td>
 
                             {/* STATUS */}
 
                             <td>
+
                               <StatusBadge
                                 active={active}
                               />
+
                             </td>
 
                             {/* ACTIONS */}
 
                             <td>
+
                               <div className="sa-action-buttons">
+
+                                {/* VIEW */}
 
                                 <button
                                   type="button"
@@ -4251,8 +7530,12 @@ const SuperAdminList = () => {
                                     )
                                   }
                                 >
+
                                   <FaEye />
+
                                 </button>
+
+                                {/* EDIT */}
 
                                 <button
                                   type="button"
@@ -4264,8 +7547,12 @@ const SuperAdminList = () => {
                                     )
                                   }
                                 >
+
                                   <FaEdit />
+
                                 </button>
+
+                                {/* STATUS */}
 
                                 <button
                                   type="button"
@@ -4280,59 +7567,92 @@ const SuperAdminList = () => {
                                       : "Activate"
                                   }
                                   onClick={() => {
+
                                     setSelectedAdmin(
                                       admin
                                     );
+
                                     setShowStatusModal(
                                       true
                                     );
+
                                   }}
                                 >
+
                                   <FaPowerOff />
+
                                 </button>
+
+                                {/* PASSWORD */}
 
                                 <button
                                   type="button"
                                   className="sa-action-btn password"
                                   title="Reset Password"
                                   onClick={() => {
+
                                     setSelectedAdmin(
                                       admin
                                     );
+
+                                    setNewPassword(
+                                      ""
+                                    );
+
+                                    setConfirmNewPassword(
+                                      ""
+                                    );
+
                                     setShowPasswordModal(
                                       true
                                     );
+
                                   }}
                                 >
+
                                   <FaKey />
+
                                 </button>
+
+                                {/* DELETE */}
 
                                 <button
                                   type="button"
                                   className="sa-action-btn delete"
                                   title="Delete"
                                   onClick={() => {
+
                                     setSelectedAdmin(
                                       admin
                                     );
+
                                     setShowDeleteModal(
                                       true
                                     );
+
                                   }}
                                 >
+
                                   <FaTrash />
+
                                 </button>
 
                               </div>
+
                             </td>
+
                           </tr>
+
                         );
                       }
                     )
+
                   )}
 
                 </tbody>
+
               </table>
+
             </div>
 
             {/* PAGINATION */}
@@ -4340,21 +7660,29 @@ const SuperAdminList = () => {
             <div className="sa-pagination-container">
 
               <div className="small text-muted">
+
                 Showing{" "}
+
                 {filteredAdmins.length === 0
                   ? 0
                   : (currentPage - 1) *
                       itemsPerPage +
                     1}{" "}
+
                 to{" "}
+
                 {Math.min(
                   currentPage *
                     itemsPerPage,
                   filteredAdmins.length
                 )}{" "}
+
                 of{" "}
+
                 {filteredAdmins.length}{" "}
+
                 records
+
               </div>
 
               {renderPagination()}
@@ -4362,8 +7690,11 @@ const SuperAdminList = () => {
             </div>
 
           </div>
+
         </div>
+
       ) : (
+
         /* =====================================================
            DETAILS
         ===================================================== */
@@ -4377,10 +7708,13 @@ const SuperAdminList = () => {
               <div className="d-flex align-items-center gap-3">
 
                 <div className="sa-section-icon">
+
                   <FaUserShield size={17} />
+
                 </div>
 
                 <div>
+
                   <h6 className="mb-1 fw-bold">
                     Super Admin Details
                   </h6>
@@ -4388,6 +7722,7 @@ const SuperAdminList = () => {
                   <small className="text-muted">
                     Complete account information
                   </small>
+
                 </div>
 
               </div>
@@ -4399,8 +7734,11 @@ const SuperAdminList = () => {
                   setSelectedAdmin(null)
                 }
               >
+
                 <FaArrowLeft className="me-2" />
+
                 Back to List
+
               </button>
 
             </div>
@@ -4412,6 +7750,7 @@ const SuperAdminList = () => {
               <div className="sa-profile-header">
 
                 <div className="sa-large-avatar">
+
                   {(
                     selectedAdmin.name ||
                     selectedAdmin.fullName ||
@@ -4419,31 +7758,39 @@ const SuperAdminList = () => {
                   )
                     .charAt(0)
                     .toUpperCase()}
+
                 </div>
 
                 <div>
 
                   <h4 className="mb-1 fw-bold">
+
                     {selectedAdmin.name ||
                       selectedAdmin.fullName ||
                       "N/A"}
+
                   </h4>
 
                   <div className="mb-2">
+
                     <StatusBadge
                       active={isActive(
                         selectedAdmin
                       )}
                     />
+
                   </div>
 
                   <span className="sa-role-badge">
+
                     <FaUserShield size={10} />
 
                     {selectedAdmin.role ||
                       getUserGroupName(
-                        selectedAdmin.userGroupId
+                        selectedAdmin.userGroupId ||
+                        selectedAdmin?.userGroup?.id
                       )}
+
                   </span>
 
                 </div>
@@ -4455,15 +7802,18 @@ const SuperAdminList = () => {
               <div className="row g-3">
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Email"
                     value={
                       selectedAdmin.email
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Phone"
                     value={
@@ -4471,9 +7821,11 @@ const SuperAdminList = () => {
                       selectedAdmin.phoneNumber
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="School"
                     value={getSchoolName(
@@ -4482,69 +7834,84 @@ const SuperAdminList = () => {
                         selectedAdmin?.schoolId
                     )}
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Username"
                     value={
                       selectedAdmin.username
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Date of Birth"
                     value={
                       selectedAdmin.dateOfBirth
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Gender"
                     value={
                       selectedAdmin.gender
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Alternate Phone"
                     value={
                       selectedAdmin.alternatePhone
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Language"
                     value={
                       selectedAdmin.languagePreference
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Time Zone"
                     value={
                       selectedAdmin.timeZone
                     }
                   />
+
                 </div>
 
                 <div className="col-md-6">
+
                   <DetailItem
                     label="Address"
                     value={
                       selectedAdmin.address
                     }
                   />
+
                 </div>
 
               </div>
@@ -4566,6 +7933,7 @@ const SuperAdminList = () => {
                         : "sa-not-verified"
                     }
                   >
+
                     {selectedAdmin.emailVerified ? (
                       <FaCheckCircle />
                     ) : (
@@ -4573,6 +7941,7 @@ const SuperAdminList = () => {
                     )}
 
                     Email
+
                   </span>
 
                   <span
@@ -4582,6 +7951,7 @@ const SuperAdminList = () => {
                         : "sa-not-verified"
                     }
                   >
+
                     {selectedAdmin.phoneVerified ? (
                       <FaCheckCircle />
                     ) : (
@@ -4589,9 +7959,11 @@ const SuperAdminList = () => {
                     )}
 
                     Phone
+
                   </span>
 
                 </div>
+
               </div>
 
               {/* ACTIONS */}
@@ -4607,8 +7979,11 @@ const SuperAdminList = () => {
                     )
                   }
                 >
+
                   <FaEdit className="me-2" />
+
                   Edit
+
                 </button>
 
                 <button
@@ -4618,8 +7993,11 @@ const SuperAdminList = () => {
                     setSelectedAdmin(null)
                   }
                 >
+
                   <FaArrowLeft className="me-2" />
+
                   Back
+
                 </button>
 
               </div>
@@ -4627,7 +8005,9 @@ const SuperAdminList = () => {
             </div>
 
           </div>
+
         </div>
+
       )}
 
       {/* =====================================================
@@ -4636,6 +8016,7 @@ const SuperAdminList = () => {
 
       {showDeleteModal &&
         selectedAdmin && (
+
           <div className="sa-modal-overlay">
 
             <div className="sa-modal small">
@@ -4643,6 +8024,7 @@ const SuperAdminList = () => {
               <div className="sa-modal-header">
 
                 <div>
+
                   <h5 className="mb-1 fw-bold">
                     Delete Super Admin
                   </h5>
@@ -4650,15 +8032,19 @@ const SuperAdminList = () => {
                   <small className="text-muted">
                     This action cannot be undone
                   </small>
+
                 </div>
 
                 <button
+                  type="button"
                   className="sa-close-btn"
                   onClick={() =>
                     setShowDeleteModal(false)
                   }
                 >
+
                   <IoMdClose />
+
                 </button>
 
               </div>
@@ -4666,7 +8052,9 @@ const SuperAdminList = () => {
               <div className="sa-modal-body text-center">
 
                 <div className="sa-danger-icon">
+
                   <FaTrash />
+
                 </div>
 
                 <h5 className="mt-3 fw-bold">
@@ -4674,12 +8062,16 @@ const SuperAdminList = () => {
                 </h5>
 
                 <p className="text-muted mb-0">
+
                   You are about to delete{" "}
+
                   <strong>
                     {selectedAdmin.name ||
                       selectedAdmin.fullName}
                   </strong>
+
                   . This action cannot be undone.
+
                 </p>
 
               </div>
@@ -4687,6 +8079,7 @@ const SuperAdminList = () => {
               <div className="sa-modal-footer">
 
                 <button
+                  type="button"
                   className="btn btn-outline-secondary rounded-3 px-3"
                   onClick={() =>
                     setShowDeleteModal(false)
@@ -4696,27 +8089,42 @@ const SuperAdminList = () => {
                 </button>
 
                 <button
+                  type="button"
                   className="btn btn-danger rounded-3 px-3"
                   disabled={deleting}
                   onClick={handleDelete}
                 >
+
                   {deleting ? (
+
                     <>
+
                       <span className="spinner-border spinner-border-sm me-2" />
+
                       Deleting...
+
                     </>
+
                   ) : (
+
                     <>
+
                       <FaTrash className="me-2" />
+
                       Delete
+
                     </>
+
                   )}
+
                 </button>
 
               </div>
 
             </div>
+
           </div>
+
         )}
 
       {/* =====================================================
@@ -4725,6 +8133,7 @@ const SuperAdminList = () => {
 
       {showStatusModal &&
         selectedAdmin && (
+
           <div className="sa-modal-overlay">
 
             <div className="sa-modal small">
@@ -4732,24 +8141,31 @@ const SuperAdminList = () => {
               <div className="sa-modal-header">
 
                 <div>
+
                   <h5 className="mb-1 fw-bold">
+
                     {isActive(selectedAdmin)
                       ? "Deactivate Super Admin"
                       : "Activate Super Admin"}
+
                   </h5>
 
                   <small className="text-muted">
                     Account status confirmation
                   </small>
+
                 </div>
 
                 <button
+                  type="button"
                   className="sa-close-btn"
                   onClick={() =>
                     setShowStatusModal(false)
                   }
                 >
+
                   <IoMdClose />
+
                 </button>
 
               </div>
@@ -4763,19 +8179,25 @@ const SuperAdminList = () => {
                       : "success"
                   }`}
                 >
+
                   <FaPowerOff />
+
                 </div>
 
                 <h5 className="mt-3 fw-bold">
+
                   {isActive(selectedAdmin)
                     ? "Deactivate this account?"
                     : "Activate this account?"}
+
                 </h5>
 
                 <p className="text-muted mb-0">
+
                   {isActive(selectedAdmin)
                     ? "This Super Admin will no longer be able to login."
                     : "This Super Admin will be able to login again."}
+
                 </p>
 
               </div>
@@ -4783,6 +8205,7 @@ const SuperAdminList = () => {
               <div className="sa-modal-footer">
 
                 <button
+                  type="button"
                   className="btn btn-outline-secondary rounded-3 px-3"
                   onClick={() =>
                     setShowStatusModal(false)
@@ -4792,34 +8215,50 @@ const SuperAdminList = () => {
                 </button>
 
                 <button
+                  type="button"
                   className={`btn rounded-3 px-3 ${
                     isActive(selectedAdmin)
                       ? "btn-warning"
                       : "btn-success"
                   }`}
-                  disabled={updatingStatus}
+                  disabled={
+                    updatingStatus
+                  }
                   onClick={
                     handleStatusChange
                   }
                 >
+
                   {updatingStatus ? (
+
                     <>
+
                       <span className="spinner-border spinner-border-sm me-2" />
+
                       Updating...
+
                     </>
+
                   ) : isActive(
                       selectedAdmin
                     ) ? (
+
                     "Deactivate"
+
                   ) : (
+
                     "Activate"
+
                   )}
+
                 </button>
 
               </div>
 
             </div>
+
           </div>
+
         )}
 
       {/* =====================================================
@@ -4828,6 +8267,7 @@ const SuperAdminList = () => {
 
       {showPasswordModal &&
         selectedAdmin && (
+
           <div className="sa-modal-overlay">
 
             <div className="sa-modal small">
@@ -4835,17 +8275,22 @@ const SuperAdminList = () => {
               <div className="sa-modal-header">
 
                 <div>
+
                   <h5 className="mb-1 fw-bold">
                     Reset Password
                   </h5>
 
                   <small className="text-muted">
+
                     {selectedAdmin.name ||
                       selectedAdmin.fullName}
+
                   </small>
+
                 </div>
 
                 <button
+                  type="button"
                   className="sa-close-btn"
                   onClick={() =>
                     setShowPasswordModal(
@@ -4853,7 +8298,9 @@ const SuperAdminList = () => {
                     )
                   }
                 >
+
                   <IoMdClose />
+
                 </button>
 
               </div>
@@ -4907,30 +8354,63 @@ const SuperAdminList = () => {
               <div className="sa-modal-footer">
 
                 <button
+                  type="button"
                   className="btn btn-outline-secondary rounded-3 px-3"
-                  onClick={() =>
+                  onClick={() => {
+
                     setShowPasswordModal(
                       false
-                    )
-                  }
+                    );
+
+                    setNewPassword("");
+                    setConfirmNewPassword("");
+
+                  }}
                 >
                   Cancel
                 </button>
 
                 <button
+                  type="button"
                   className="btn btn-primary rounded-3 px-3"
+                  disabled={
+                    resettingPassword
+                  }
                   onClick={
                     handleResetPassword
                   }
                 >
-                  <FaKey className="me-2" />
-                  Reset Password
+
+                  {resettingPassword ? (
+
+                    <>
+
+                      <span className="spinner-border spinner-border-sm me-2" />
+
+                      Resetting...
+
+                    </>
+
+                  ) : (
+
+                    <>
+
+                      <FaKey className="me-2" />
+
+                      Reset Password
+
+                    </>
+
+                  )}
+
                 </button>
 
               </div>
 
             </div>
+
           </div>
+
         )}
 
       {/* =====================================================
@@ -4939,30 +8419,20 @@ const SuperAdminList = () => {
 
       <style>{`
 
-        /* =====================================================
-           HEADER
-        ===================================================== */
-
         .sa-header-icon {
           width: 52px;
           height: 52px;
           border-radius: 12px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
-          background:
-            linear-gradient(
-              135deg,
-              #2563eb,
-              #3b82f6
-            );
-
+          background: linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+          );
           color: #fff;
-
           flex-shrink: 0;
-
           box-shadow:
             0 8px 20px
             rgba(37,99,235,.22);
@@ -4972,16 +8442,11 @@ const SuperAdminList = () => {
           display: inline-flex;
           align-items: center;
           gap: 7px;
-
           padding: 8px 14px;
-
           border-radius: 999px;
-
           background: #eff6ff;
           color: #2563eb;
-
           border: 1px solid #bfdbfe;
-
           font-size: 12px;
           font-weight: 600;
         }
@@ -4989,40 +8454,27 @@ const SuperAdminList = () => {
         .sa-breadcrumb-strip {
           background:
             rgba(239,246,255,.75);
-
           border-top:
             1px solid #e0ecff;
         }
 
-        /* =====================================================
-           STAT CARDS
-        ===================================================== */
-
         .sa-stat-card {
           background: #fff;
-
           border:
             1px solid #e5edf8;
-
           border-radius: 16px;
-
           padding: 17px;
-
           display: flex;
           align-items: center;
-
           gap: 13px;
-
           box-shadow:
             0 5px 18px
             rgba(15,23,42,.06);
-
           transition: .2s ease;
         }
 
         .sa-stat-card:hover {
           transform: translateY(-2px);
-
           box-shadow:
             0 8px 24px
             rgba(15,23,42,.09);
@@ -5031,15 +8483,11 @@ const SuperAdminList = () => {
         .sa-stat-icon {
           width: 46px;
           height: 46px;
-
           border-radius: 12px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           font-size: 19px;
-
           flex-shrink: 0;
         }
 
@@ -5067,52 +8515,34 @@ const SuperAdminList = () => {
           color: #64748b;
           font-size: 12px;
           font-weight: 600;
-
           margin-bottom: 2px;
         }
 
         .sa-stat-value {
           color: #0f172a;
-
           font-size: 21px;
           font-weight: 700;
         }
 
-        /* =====================================================
-           MAIN CARD
-        ===================================================== */
-
         .sa-main-card {
           background: #fff;
-
           border:
             1px solid #dbeafe;
-
           border-radius: 16px;
-
           overflow: hidden;
-
           box-shadow:
             0 6px 22px
             rgba(15,23,42,.06);
         }
 
-        /* =====================================================
-           SECTION HEADER
-        ===================================================== */
-
         .sa-section-header {
           padding: 14px 18px;
-
           display: flex;
           align-items: center;
           justify-content: space-between;
-
           gap: 15px;
-
           border-bottom:
             1px solid #e0ecff;
-
           background:
             linear-gradient(
               135deg,
@@ -5124,30 +8554,21 @@ const SuperAdminList = () => {
         .sa-section-icon {
           width: 42px;
           height: 42px;
-
           border-radius: 11px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background:
             linear-gradient(
               135deg,
               #2563eb,
               #3b82f6
             );
-
           color: #fff;
-
           box-shadow:
             0 6px 15px
             rgba(37,99,235,.18);
         }
-
-        /* =====================================================
-           SEARCH
-        ===================================================== */
 
         .sa-search-box {
           position: relative;
@@ -5155,25 +8576,18 @@ const SuperAdminList = () => {
 
         .sa-search-box svg {
           position: absolute;
-
           left: 14px;
           top: 50%;
-
           transform:
             translateY(-50%);
-
           color: #94a3b8;
-
           z-index: 2;
-
           font-size: 13px;
         }
 
         .sa-search-box input {
           padding-left: 39px;
-
           min-height: 42px;
-
           border-color: #dbe3ef;
         }
 
@@ -5181,7 +8595,6 @@ const SuperAdminList = () => {
         .form-select:focus,
         .form-control:focus {
           border-color: #93c5fd;
-
           box-shadow:
             0 0 0 .2rem
             rgba(37,99,235,.10);
@@ -5192,50 +8605,31 @@ const SuperAdminList = () => {
           border-color: #dbe3ef;
         }
 
-        /* =====================================================
-           TABLE TOP
-        ===================================================== */
-
         .sa-table-top {
           padding: 13px 18px;
-
           display: flex;
           align-items: center;
           justify-content: space-between;
-
           gap: 15px;
-
           border-top:
             1px solid #e0ecff;
-
           border-bottom:
             1px solid #e0ecff;
-
           background: #fff;
         }
 
         .sa-result-badge {
           display: inline-block;
-
           margin-left: 9px;
-
           padding: 5px 10px;
-
           border-radius: 999px;
-
           background: #eff6ff;
           color: #2563eb;
-
           border:
             1px solid #bfdbfe;
-
           font-size: 11px;
           font-weight: 700;
         }
-
-        /* =====================================================
-           TABLE
-        ===================================================== */
 
         .sa-table {
           min-width: 1120px;
@@ -5243,25 +8637,18 @@ const SuperAdminList = () => {
 
         .sa-table thead th {
           background: #eff6ff;
-
           color: #1e3a8a;
-
           font-size: 12px;
           font-weight: 700;
-
           padding: 13px 12px;
-
           white-space: nowrap;
-
           border-bottom:
             1px solid #dbeafe;
         }
 
         .sa-table tbody td {
           padding: 13px 12px;
-
           font-size: 13px;
-
           border-bottom:
             1px solid #eef3f8;
         }
@@ -5274,43 +8661,30 @@ const SuperAdminList = () => {
           background: #f8fbff;
         }
 
-        /* =====================================================
-           ADMIN
-        ===================================================== */
-
         .sa-admin-info {
           display: flex;
           align-items: center;
-
           gap: 10px;
-
           min-width: 190px;
         }
 
         .sa-avatar {
           width: 40px;
           height: 40px;
-
           border-radius: 12px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background:
             linear-gradient(
               135deg,
               #dbeafe,
               #eff6ff
             );
-
           color: #2563eb;
-
           font-weight: 700;
-
           border:
             1px solid #bfdbfe;
-
           flex-shrink: 0;
         }
 
@@ -5319,18 +8693,11 @@ const SuperAdminList = () => {
           font-weight: 700;
         }
 
-        /* =====================================================
-           CONTACT
-        ===================================================== */
-
         .sa-contact-item {
           display: flex;
           align-items: center;
-
           gap: 7px;
-
           margin-bottom: 5px;
-
           white-space: nowrap;
         }
 
@@ -5343,65 +8710,45 @@ const SuperAdminList = () => {
           font-size: 11px;
         }
 
-        /* =====================================================
-           SCHOOL
-        ===================================================== */
-
         .sa-school-cell {
           display: flex;
           align-items: center;
-
           gap: 7px;
-
           max-width: 190px;
+        }
+
+        .sa-school-cell span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .sa-school-cell svg {
           color: #2563eb;
-
           flex-shrink: 0;
         }
-
-        /* =====================================================
-           ROLE
-        ===================================================== */
 
         .sa-role-badge {
           display: inline-flex;
           align-items: center;
-
           gap: 6px;
-
           padding: 6px 10px;
-
           border-radius: 999px;
-
           background: #eff6ff;
           color: #2563eb;
-
           border:
             1px solid #bfdbfe;
-
           font-size: 11px;
           font-weight: 700;
-
           white-space: nowrap;
         }
-
-        /* =====================================================
-           STATUS
-        ===================================================== */
 
         .sa-status-badge {
           display: inline-flex;
           align-items: center;
-
           gap: 5px;
-
           padding: 6px 10px;
-
           border-radius: 999px;
-
           font-size: 11px;
           font-weight: 700;
         }
@@ -5409,7 +8756,6 @@ const SuperAdminList = () => {
         .sa-active {
           background: #ecfdf5;
           color: #059669;
-
           border:
             1px solid #a7f3d0;
         }
@@ -5417,30 +8763,21 @@ const SuperAdminList = () => {
         .sa-inactive {
           background: #fef2f2;
           color: #dc2626;
-
           border:
             1px solid #fecaca;
         }
 
-        /* =====================================================
-           VERIFICATION
-        ===================================================== */
-
         .sa-verification-list {
           display: flex;
           flex-direction: column;
-
           gap: 5px;
         }
 
         .sa-verified,
         .sa-not-verified {
           display: inline-flex;
-
           align-items: center;
-
           gap: 5px;
-
           font-size: 11px;
           font-weight: 700;
         }
@@ -5453,41 +8790,28 @@ const SuperAdminList = () => {
           color: #dc2626;
         }
 
-        /* =====================================================
-           ACTION BUTTONS
-        ===================================================== */
-
         .sa-action-buttons {
           display: flex;
-
           justify-content: center;
-
           gap: 6px;
         }
 
         .sa-action-btn {
           width: 32px;
           height: 32px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           border-radius: 9px;
-
           border:
             1px solid #dbe3ef;
-
           background: #fff;
-
           cursor: pointer;
-
           transition: .2s ease;
         }
 
         .sa-action-btn:hover {
           transform: translateY(-2px);
-
           box-shadow:
             0 4px 10px
             rgba(15,23,42,.08);
@@ -5529,45 +8853,27 @@ const SuperAdminList = () => {
           border-color: #fecaca;
         }
 
-        /* =====================================================
-           EMPTY
-        ===================================================== */
-
         .sa-empty-icon {
           width: 64px;
           height: 64px;
-
           margin: auto;
-
           border-radius: 16px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background: #eff6ff;
-
           color: #2563eb;
-
           border:
             1px solid #bfdbfe;
-
           font-size: 25px;
         }
 
-        /* =====================================================
-           PAGINATION
-        ===================================================== */
-
         .sa-pagination-container {
           padding: 14px 18px;
-
           display: flex;
           align-items: center;
           justify-content: space-between;
-
           gap: 15px;
-
           border-top:
             1px solid #e0ecff;
         }
@@ -5575,33 +8881,24 @@ const SuperAdminList = () => {
         .sa-pagination {
           display: flex;
           gap: 5px;
-
           flex-wrap: wrap;
         }
 
         .sa-page-btn {
           min-width: 34px;
           height: 34px;
-
           padding: 0 9px;
-
           border:
             1px solid #dbe3ef;
-
           background: #fff;
-
           border-radius: 9px;
-
           font-size: 12px;
-
           transition: .2s ease;
         }
 
         .sa-page-btn:hover:not(:disabled) {
           background: #eff6ff;
-
           border-color: #93c5fd;
-
           color: #2563eb;
         }
 
@@ -5612,11 +8909,8 @@ const SuperAdminList = () => {
               #2563eb,
               #3b82f6
             );
-
           color: #fff;
-
           border-color: #2563eb;
-
           box-shadow:
             0 4px 10px
             rgba(37,99,235,.20);
@@ -5624,29 +8918,18 @@ const SuperAdminList = () => {
 
         .sa-page-btn:disabled {
           opacity: .45;
-
           cursor: not-allowed;
         }
-
-        /* =====================================================
-           PROFILE
-        ===================================================== */
 
         .sa-profile-header {
           display: flex;
           align-items: center;
-
           gap: 16px;
-
           padding: 18px;
-
           margin-bottom: 20px;
-
           border:
             1px solid #dbeafe;
-
           border-radius: 14px;
-
           background:
             linear-gradient(
               135deg,
@@ -5658,120 +8941,80 @@ const SuperAdminList = () => {
         .sa-large-avatar {
           width: 72px;
           height: 72px;
-
           border-radius: 18px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background:
             linear-gradient(
               135deg,
               #dbeafe,
               #eff6ff
             );
-
           color: #2563eb;
-
           font-size: 28px;
           font-weight: 700;
-
           border:
             1px solid #bfdbfe;
-
           flex-shrink: 0;
         }
 
         .detail-item {
           height: 100%;
-
           padding: 14px;
-
           border:
             1px solid #e2e8f0;
-
           border-radius: 12px;
-
           background: #f8fbff;
         }
 
         .detail-label {
           display: block;
-
           color: #64748b;
-
           font-size: 11px;
-
           font-weight: 600;
-
           margin-bottom: 5px;
         }
 
         .detail-value {
           display: block;
-
           color: #172033;
-
           font-size: 14px;
-
           font-weight: 700;
-
           word-break: break-word;
         }
 
         .sa-verification-box {
           padding: 16px;
-
           background: #eff6ff;
-
           border:
             1px solid #bfdbfe;
-
           border-radius: 12px;
         }
 
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
         .sa-modal-overlay {
           position: fixed;
-
           inset: 0;
-
           z-index: 1050;
-
           display: flex;
-
           align-items: center;
-
           justify-content: center;
-
           padding: 20px;
-
           background:
             rgba(15,23,42,.45);
-
           backdrop-filter:
             blur(3px);
         }
 
         .sa-modal {
           width: 100%;
-
           max-width: 520px;
-
           background: #fff;
-
           border-radius: 18px;
-
           overflow: hidden;
-
           box-shadow:
             0 20px 50px
             rgba(15,23,42,.20);
-
           border:
             1px solid #dbeafe;
         }
@@ -5782,20 +9025,16 @@ const SuperAdminList = () => {
 
         .sa-modal-header {
           padding: 17px 20px;
-
           display: flex;
           align-items: center;
           justify-content: space-between;
-
           gap: 15px;
-
           background:
             linear-gradient(
               135deg,
               #ffffff,
               #f5f9ff
             );
-
           border-bottom:
             1px solid #dbeafe;
         }
@@ -5803,28 +9042,20 @@ const SuperAdminList = () => {
         .sa-close-btn {
           width: 34px;
           height: 34px;
-
           border-radius: 9px;
-
           border:
             1px solid #dbe3ef;
-
           background: #fff;
-
           color: #64748b;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           cursor: pointer;
         }
 
         .sa-close-btn:hover {
           color: #dc2626;
-
           background: #fef2f2;
-
           border-color: #fecaca;
         }
 
@@ -5834,83 +9065,58 @@ const SuperAdminList = () => {
 
         .sa-modal-footer {
           padding: 14px 20px;
-
           display: flex;
-
           justify-content: flex-end;
-
           gap: 10px;
-
           border-top:
             1px solid #edf2f7;
-
           background: #fafcff;
         }
 
         .sa-danger-icon {
           width: 66px;
           height: 66px;
-
           margin: auto;
-
           border-radius: 18px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           background: #fef2f2;
-
           color: #dc2626;
-
           border:
             1px solid #fecaca;
-
           font-size: 24px;
         }
 
         .sa-status-modal-icon {
           width: 66px;
           height: 66px;
-
           margin: auto;
-
           border-radius: 18px;
-
           display: flex;
           align-items: center;
           justify-content: center;
-
           font-size: 24px;
         }
 
         .sa-status-modal-icon.warning {
           background: #fffbeb;
-
           color: #d97706;
-
           border:
             1px solid #fde68a;
         }
 
         .sa-status-modal-icon.success {
           background: #ecfdf5;
-
           color: #059669;
-
           border:
             1px solid #a7f3d0;
         }
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
 
         @media (max-width: 768px) {
 
           .sa-section-header {
             align-items: flex-start;
-
             flex-direction: column;
           }
 
@@ -5920,23 +9126,18 @@ const SuperAdminList = () => {
 
           .sa-table-top {
             align-items: flex-start;
-
             flex-direction: column;
           }
 
           .sa-pagination-container {
             align-items: flex-start;
-
             flex-direction: column;
           }
 
           .sa-pagination {
             width: 100%;
-
             overflow-x: auto;
-
             flex-wrap: nowrap;
-
             padding-bottom: 3px;
           }
 
@@ -5947,6 +9148,7 @@ const SuperAdminList = () => {
           .sa-modal-overlay {
             padding: 10px;
           }
+
         }
 
         @media (max-width: 576px) {
@@ -5958,7 +9160,6 @@ const SuperAdminList = () => {
 
           .sa-header-badge {
             width: 100%;
-
             justify-content: center;
           }
 
@@ -5969,7 +9170,6 @@ const SuperAdminList = () => {
           .sa-large-avatar {
             width: 60px;
             height: 60px;
-
             border-radius: 15px;
           }
 
@@ -5984,9 +9184,11 @@ const SuperAdminList = () => {
           .sa-action-buttons {
             justify-content: flex-start;
           }
+
         }
 
       `}</style>
+
     </>
   );
 };
@@ -5999,7 +9201,9 @@ const DetailItem = ({
   label,
   value,
 }) => {
+
   return (
+
     <div className="detail-item">
 
       <span className="detail-label">
