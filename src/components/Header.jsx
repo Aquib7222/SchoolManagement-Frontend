@@ -640,7 +640,7 @@ const Header = ({ toggleSidebar }) => {
               {/* PROFILE */}
 
               <button
-                className="dropdown-item"
+                className="dropdown-item  "
                 onClick={() => {
                   setShowDropdown(false);
                   alert("Profile");

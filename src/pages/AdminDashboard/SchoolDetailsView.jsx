@@ -34,6 +34,7 @@ import {
   LuGraduationCap,
   LuShieldCheck,
 } from "react-icons/lu";
+import axiosInstance from "../../api/axiosInstance";
 
 const SchoolDetailsView = () => {
   const { id } = useParams();
@@ -75,8 +76,8 @@ const SchoolDetailsView = () => {
     try {
       setLoadingSchool(true);
 
-      const response = await axios.get(
-        `http://localhost:8080/api/school/${id}`,
+      const response = await axiosInstance.get(
+        `/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -104,8 +105,8 @@ const SchoolDetailsView = () => {
     try {
       setLoadingStudents(true);
 
-      const response = await axios.get(
-        "http://localhost:8080/api/students",
+      const response = await axiosInstance.get(
+        "/api/students",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -134,8 +135,8 @@ const SchoolDetailsView = () => {
     try {
       setLoadingAdmins(true);
 
-      const response = await axios.get(
-        "http://localhost:8080/api/superadmin/all",
+      const response = await axiosInstance.get(
+        "/api/superadmin/all",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -287,8 +288,8 @@ const SchoolDetailsView = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(
-        `http://localhost:8080/api/school/${id}`,
+      await axiosInstance.delete(
+        `/api/school/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
