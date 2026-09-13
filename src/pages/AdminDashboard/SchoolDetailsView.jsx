@@ -259,7 +259,7 @@ const SchoolDetailsView = () => {
       return logoUrl;
     }
 
-    return `http://localhost:8080${logoUrl}`;
+    return `${logoUrl}`;
   };
 
   const getStudentName = (student) => {

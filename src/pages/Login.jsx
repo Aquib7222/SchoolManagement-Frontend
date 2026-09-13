@@ -627,7 +627,7 @@ const Login = () => {
 
             <div className="copyright">
 
-              © 2026 SkoolMint ERP
+              © 2026 ZYNTaks Education ERP
 
             </div>
 
