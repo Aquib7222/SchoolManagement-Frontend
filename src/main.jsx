@@ -10,19 +10,22 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { StudentProvider } from "./context/StudentContext.jsx";
 import { StudentProfileProvider } from "./context/StudentProfileContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <StudentProfileProvider>
-          <StudentProvider>
-            <Routes>
-              <Route path="/*" element={<App />}></Route>
-            </Routes>
-          </StudentProvider>
-        </StudentProfileProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <StudentProfileProvider>
+            <StudentProvider>
+              <Routes>
+                <Route path="/*" element={<App />}></Route>
+              </Routes>
+            </StudentProvider>
+          </StudentProfileProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   </StrictMode>,
 );

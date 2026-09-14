@@ -1869,7 +1869,7 @@ const Sidebar_menu = () => {
 
             <div className="system-status-content">
               <div className="system-status-title">
-                School Portal
+                ZYNTaks Education
               </div>
 
               <div className="system-status-online">
@@ -2034,6 +2034,7 @@ const SidebarStyles = () => (
     .dashboard-wrapper {
 
       margin-bottom: 14px;
+      margin-top:10px;
 
     }
 

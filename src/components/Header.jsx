@@ -112,7 +112,6 @@
 //       >
 //         {/* Left: Logo & Sidebar Toggle */}
 //         <div className="header-left">
-          
 
 //           <img
 //             src={logo}
@@ -121,7 +120,6 @@
 //             onClick={() => navigate("/")}
 //           />
 
-          
 //         </div>
 
 //         {/* Right: School Name & Profile Dropdown */}
@@ -242,53 +240,402 @@
 //       ></div>
 //     </div>
 
-
 //   );
 // };
 
 // export default Header;
 
-import { useState, useEffect, useRef } from "react";
-import { RiAccountBoxLine } from "react-icons/ri";
-import { TbLogout2 } from "react-icons/tb";
-import { VscThreeBars } from "react-icons/vsc";
+// import { useState, useEffect, useRef } from "react";
+// import { RiAccountBoxLine } from "react-icons/ri";
+// import { TbLogout2 } from "react-icons/tb";
+// import { VscThreeBars } from "react-icons/vsc";
+// import { useNavigate } from "react-router-dom";
+
+// import logo from "../assets/icon/zyntaks.png";
+// import "./Header.css";
+
+// import {
+//   FaBell,
+//   FaSearch,
+//   FaMoon,
+//   FaCog,
+//   FaUserCircle,
+//   FaEnvelope,
+//   FaChevronDown,
+//   FaUser,
+//   FaRegBell,
+// } from "react-icons/fa";
+// import ThemeToggle from "./ThemeToggle";
+// import { MdLogout, MdOutlineSettings } from "react-icons/md";
+
+// const Header = ({ toggleSidebar }) => {
+//   const [showDropdown, setShowDropdown] = useState(false);
+//   const [time, setTime] = useState("");
+//   const [greeting, setGreeting] = useState("");
+
+//   const navigate = useNavigate();
+//   const dropdownRef = useRef(null);
+
+//   const user = JSON.parse(localStorage.getItem("user") || "null") || {};
+
+//   const profilePic =
+//     localStorage.getItem("profilePic") || "https://i.pravatar.cc/150?img=12";
+
+//   /* =========================================
+//      LIVE CLOCK + GREETING
+//   ========================================= */
+
+//   useEffect(() => {
+//     const updateClock = () => {
+//       const now = new Date();
+
+//       setTime(
+//         now.toLocaleTimeString("en-IN", {
+//           hour: "2-digit",
+//           minute: "2-digit",
+//           hour12: true,
+//         }),
+//       );
+
+//       const hour = now.getHours();
+
+//       if (hour < 12) {
+//         setGreeting("Good Morning");
+//       } else if (hour < 17) {
+//         setGreeting("Good Afternoon");
+//       } else if (hour < 21) {
+//         setGreeting("Good Evening");
+//       } else {
+//         setGreeting("Good Night");
+//       }
+//     };
+
+//     updateClock();
+
+//     const interval = setInterval(updateClock, 1000);
+
+//     return () => clearInterval(interval);
+//   }, []);
+
+//   /* =========================================
+//      OUTSIDE CLICK
+//   ========================================= */
+
+//   useEffect(() => {
+//     const handleClickOutside = (event) => {
+//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+//         setShowDropdown(false);
+//       }
+//     };
+
+//     document.addEventListener("mousedown", handleClickOutside);
+
+//     return () => {
+//       document.removeEventListener("mousedown", handleClickOutside);
+//     };
+//   }, []);
+
+//   /* =========================================
+//      DATE
+//   ========================================= */
+
+//   const today = new Date();
+
+//   const formattedDate = today.toLocaleDateString("en-IN", {
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//   });
+
+//   /* =========================================
+//      LOGOUT
+//   ========================================= */
+
+//   const handleLogout = () => {
+//     localStorage.removeItem("token");
+//     localStorage.removeItem("AdminToken");
+//     localStorage.removeItem("role");
+
+//     navigate("/login");
+//   };
+
+//   /* =========================================
+//      USER NAME
+//   ========================================= */
+
+//   const userName =
+//     user?.name || user?.username || user?.firstName || "Administrator";
+
+//   const userRole = user?.role || localStorage.getItem("role") || "ADMIN";
+
+//   const schoolName =
+//     user?.school?.schoolName || user?.schoolName || "ZYNTaks Administration";
+
+//   return (
+//     <header className="premium-header">
+//       {/* =========================================
+//           LEFT SECTION
+//       ========================================= */}
+
+//       <div className="header-left-section">
+//         {/* LOGO */}
+
+//         <div
+//           className="header-logo-box"
+//           onClick={() => navigate("/")}
+//           title="Dashboard"
+//         >
+//           <img src={logo} alt="ZYNTaks" className="header-logo" />
+//         </div>
+
+//         {/* DIVIDER */}
+
+//         <div className="header-divider"></div>
+
+//         {/* SIDEBAR TOGGLE */}
+
+//         <button
+//           className="sidebar-toggle-btn"
+//           onClick={toggleSidebar}
+//           title="Toggle Sidebar"
+//         >
+//           <VscThreeBars size={22} />
+//         </button>
+
+//         {/* GREETING */}
+
+//         <div className="header-greeting">
+//           <div className="greeting-text">
+//             {greeting}, <strong>{userName}</strong>
+//           </div>
+
+//           <div className="greeting-date">{formattedDate}</div>
+//         </div>
+//       </div>
+
+//       {/* =========================================
+//           CENTER SCHOOL AREA
+//       ========================================= */}
+
+//       <div className="header-center">
+//         <div className="school-info">
+//           <div className="school-icon">
+//             <FaUserCircle size={19} />
+//           </div>
+
+//           <div className="school-details">
+//             <span className="school-label">ORGANIZATION</span>
+
+//             <span className="school-name">{schoolName}</span>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* =========================================
+//           RIGHT SECTION
+//       ========================================= */}
+
+//       <div className="header-right-section">
+//         {/* SEARCH */}
+
+//         <div className="header-search">
+//           <FaSearch size={14} />
+
+//           <input type="text" placeholder="Search..." />
+
+//           <span className="search-shortcut">Ctrl K</span>
+//         </div>
+
+//         {/* TIME */}
+
+//         <div className="header-time">
+//           <div className="time-value">{time}</div>
+
+//           <div className="time-label">Local Time</div>
+//         </div>
+
+//         {/* NOTIFICATION */}
+
+//         <ThemeToggle />
+
+//         <button
+//           className="header-action-btn notification-btn"
+//           title="Notifications"
+//           onClick={() => alert("Notifications")}
+//         >
+//           <FaBell size={17} />
+
+//           <span className="notification-dot"></span>
+//         </button>
+
+//         {/* SETTINGS */}
+
+//         <button
+//           className="header-action-btn"
+//           title="Settings"
+//           onClick={() => navigate("/admin/modules")}
+//         >
+//           <FaCog size={17} />
+//         </button>
+
+//         {/* PROFILE */}
+
+//         <div className="profile-wrapper" ref={dropdownRef}>
+//           <button
+//             className="profile-trigger"
+//             onClick={() => setShowDropdown((prev) => !prev)}
+//           >
+//             <img src={profilePic} alt="Profile" className="profile-image" />
+
+//             <div className="profile-info">
+//               <span className="profile-name">{userName}</span>
+
+//               <span className="profile-role">{userRole}</span>
+//             </div>
+
+//             <FaChevronDown
+//               size={11}
+//               className={`profile-chevron ${showDropdown ? "rotate" : ""}`}
+//             />
+//           </button>
+
+//           {/* =========================================
+//               PROFILE DROPDOWN
+//           ========================================= */}
+
+//           {showDropdown && (
+//             <div className="profile-dropdown">
+//               {/* PROFILE HEADER */}
+
+//               <div className="dropdown-profile">
+//                 <img src={profilePic} alt="Profile" />
+
+//                 <div>
+//                   <div className="dropdown-name">{userName}</div>
+
+//                   <div className="dropdown-info">
+//                     <strong>{userRole}</strong>
+//                   </div>
+
+//                   <div className="dropdown-email">
+//                     {user?.email || "admin@zyntaks.com"}
+//                   </div>
+//                 </div>
+//               </div>
+
+//               <hr className="mt-0 mb-1" />
+//               {/* <div className="dropdown-divider"></div> */}
+
+//               {/* ACCOUNT */}
+
+//               <button
+//                 className="dropdown-item"
+//                 onClick={() => {
+//                   setShowDropdown(false);
+//                   alert("Account Settings");
+//                 }}
+//               >
+//                 <span className="dropdown-item-icon">
+//                   <MdOutlineSettings />
+//                 </span>
+
+//                 <span>Account Settings</span>
+//               </button>
+
+//               {/* PROFILE */}
+
+//               <button
+//                 className="dropdown-item  "
+//                 onClick={() => {
+//                   setShowDropdown(false);
+//                   alert("Profile");
+//                 }}
+//               >
+//                 <span className="dropdown-item-icon">
+//                   <FaUser />
+//                 </span>
+
+//                 <span>My Profile</span>
+//               </button>
+
+//               {/* NOTIFICATION */}
+//               <div className="d-flex ">
+//                 <span className="dropdown-item-icon"><FaRegBell /></span>
+//                 <button
+//                   className="btn"
+//                   onClick={() => {
+//                     setShowDropdown(false);
+//                     alert("Notification Settings");
+//                   }}
+//                 >
+//                   <span>Notifications</span>
+//                 </button>
+//               </div>
+
+//               <div className="dropdown-divider"></div>
+
+//               {/* LOGOUT */}
+
+//               <button
+//                 className="dropdown-item logout-item"
+//                 onClick={handleLogout}
+//               >
+//                 <span className="dropdown-item-icon logout-icon">
+//                   <MdLogout />
+//                 </span>
+
+//                 <span>Logout</span>
+//               </button>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </header>
+//   );
+// };
+
+// export default Header;
+
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import logo from "../assets/icon/zyntaks.png";
-import "./Header.css";
-
 import {
   FaBell,
   FaSearch,
-  FaMoon,
   FaCog,
   FaUserCircle,
-  FaEnvelope,
   FaChevronDown,
+  FaUser,
+  FaRegBell,
+  FaUserShield,
+  FaSlidersH,
 } from "react-icons/fa";
-
+import {
+  MdLogout,
+  MdOutlineSettings,
+  MdKeyboardArrowRight,
+} from "react-icons/md";
+import { VscThreeBars } from "react-icons/vsc";
+import logo from "../assets/icon/zyntaks.png";
+import ThemeToggle from "./ThemeToggle";
+import "./Header.css";
 const Header = ({ toggleSidebar }) => {
+  const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const [time, setTime] = useState("");
   const [greeting, setGreeting] = useState("");
-
-  const navigate = useNavigate();
   const dropdownRef = useRef(null);
-
   const user = JSON.parse(localStorage.getItem("user") || "null") || {};
-
   const profilePic =
-    localStorage.getItem("profilePic") ||
-    "https://i.pravatar.cc/150?img=12";
-
-  /* =========================================
-     LIVE CLOCK + GREETING
-  ========================================= */
-
-  useEffect(() => {
+    localStorage.getItem("profilePic") || "https://i.pravatar.cc/150?img=12";
+  /* ===================================================== USER DATA ===================================================== */ const userName =
+    user?.name || user?.username || user?.firstName || "Administrator";
+  const userRole = user?.role || localStorage.getItem("role") || "ADMIN";
+  const schoolName =
+    user?.school?.schoolName || user?.schoolName || "ZYNTaks Administration";
+  const userEmail = user?.email || "admin@zyntaks.com";
+  /* ===================================================== LIVE CLOCK + GREETING ===================================================== */ useEffect(() => {
     const updateClock = () => {
       const now = new Date();
-
       setTime(
         now.toLocaleTimeString("en-IN", {
           hour: "2-digit",
@@ -296,9 +643,7 @@ const Header = ({ toggleSidebar }) => {
           hour12: true,
         }),
       );
-
       const hour = now.getHours();
-
       if (hour < 12) {
         setGreeting("Good Morning");
       } else if (hour < 17) {
@@ -309,402 +654,307 @@ const Header = ({ toggleSidebar }) => {
         setGreeting("Good Night");
       }
     };
-
     updateClock();
-
     const interval = setInterval(updateClock, 1000);
-
     return () => clearInterval(interval);
   }, []);
-
-  /* =========================================
-     OUTSIDE CLICK
-  ========================================= */
-
-  useEffect(() => {
+  /* ===================================================== OUTSIDE CLICK ===================================================== */ useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  /* =========================================
-     DATE
-  ========================================= */
-
-  const today = new Date();
-
-  const formattedDate = today.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-
-  /* =========================================
-     LOGOUT
-  ========================================= */
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("AdminToken");
-    localStorage.removeItem("role");
-
-    navigate("/login");
-  };
-
-  /* =========================================
-     USER NAME
-  ========================================= */
-
-  const userName =
-    user?.name ||
-    user?.username ||
-    user?.firstName ||
-    "Administrator";
-
-  const userRole =
-    user?.role ||
-    localStorage.getItem("role") ||
-    "ADMIN";
-
-  const schoolName =
-    user?.school?.schoolName ||
-    user?.schoolName ||
-    "ZYNTaks Administration";
-
+  /* ===================================================== ESC CLOSE ===================================================== */ useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+  /* ===================================================== DATE ===================================================== */ const formattedDate =
+    new Date().toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  /* ===================================================== NAVIGATION HELPER ===================================================== */ const handleNavigate =
+    (path) => {
+      setShowDropdown(false);
+      navigate(path);
+    };
+  /* ===================================================== LOGOUT ===================================================== */ const handleLogout =
+    () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("AdminToken");
+      localStorage.removeItem("role");
+      localStorage.removeItem("user");
+      navigate("/login");
+    };
   return (
     <header className="premium-header">
-
-      {/* =========================================
-          LEFT SECTION
-      ========================================= */}
-
+      {" "}
+      {/* ================================================= LEFT SECTION ================================================= */}{" "}
       <div className="header-left-section">
-
-        {/* LOGO */}
-
+        {" "}
+        {/* LOGO */}{" "}
         <div
           className="header-logo-box"
           onClick={() => navigate("/")}
           title="Dashboard"
         >
-          <img
-            src={logo}
-            alt="ZYNTaks"
-            className="header-logo"
-          />
-        </div>
-
-        {/* DIVIDER */}
-
-        <div className="header-divider"></div>
-
-        {/* SIDEBAR TOGGLE */}
-
+          {" "}
+          <img src={logo} alt="ZYNTaks" className="header-logo" />{" "}
+        </div>{" "}
+        <div className="header-divider"></div> {/* SIDEBAR */}{" "}
         <button
+          type="button"
           className="sidebar-toggle-btn"
           onClick={toggleSidebar}
           title="Toggle Sidebar"
         >
-          <VscThreeBars size={22} />
-        </button>
-
-        {/* GREETING */}
-
+          {" "}
+          <VscThreeBars size={22} />{" "}
+        </button>{" "}
+        {/* GREETING */}{" "}
         <div className="header-greeting">
-
+          {" "}
           <div className="greeting-text">
-            {greeting}, <strong>{userName}</strong>
-          </div>
-
-          <div className="greeting-date">
-            {formattedDate}
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* =========================================
-          CENTER SCHOOL AREA
-      ========================================= */}
-
+            {" "}
+            {greeting}, <strong>{userName}</strong>{" "}
+          </div>{" "}
+          <div className="greeting-date"> {formattedDate} </div>{" "}
+        </div>{" "}
+      </div>{" "}
+      {/* ================================================= CENTER ORGANIZATION ================================================= */}{" "}
       <div className="header-center">
-
+        {" "}
         <div className="school-info">
-
+          {" "}
           <div className="school-icon">
-            <FaUserCircle size={19} />
-          </div>
-
+            {" "}
+            <FaUserCircle size={18} />{" "}
+          </div>{" "}
           <div className="school-details">
-
-            <span className="school-label">
-              ORGANIZATION
-            </span>
-
-            <span className="school-name">
-              {schoolName}
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      {/* =========================================
-          RIGHT SECTION
-      ========================================= */}
-
+            {" "}
+            <span className="school-label"> ORGANIZATION </span>{" "}
+            <span className="school-name" title={schoolName}>
+              {" "}
+              {schoolName}{" "}
+            </span>{" "}
+          </div>{" "}
+        </div>{" "}
+      </div>{" "}
+      {/* ================================================= RIGHT SECTION ================================================= */}{" "}
       <div className="header-right-section">
-
-        {/* SEARCH */}
-
-        <div className="header-search">
-
-          <FaSearch size={14} />
-
-          <input
-            type="text"
-            placeholder="Search..."
-          />
-
-          <span className="search-shortcut">
-            Ctrl K
-          </span>
-
-        </div>
-
-
-        {/* TIME */}
-
-        <div className="header-time">
-
-          <div className="time-value">
-            {time}
-          </div>
-
-          <div className="time-label">
-            Local Time
-          </div>
-
-        </div>
-
-
-        {/* NOTIFICATION */}
-
+        {" "}
+        {/* SEARCH */}{" "}
+        {/* <div className="header-search">
+          {" "}
+          <FaSearch size={13} /> <input type="text" placeholder="Search..." />{" "}
+          <span className="search-shortcut"> Ctrl K </span>{" "}
+        </div>{" "} */}
+        {/* TIME */}{" "}
+        <div className="header-time me-3">
+          {" "}
+          <div className="time-value"> {time} </div>{" "}
+          <div className="time-label"> Local Time </div>{" "}
+        </div>{" "}
+        {/* THEME */} <ThemeToggle /> {/* NOTIFICATION */}{" "}
         <button
+          type="button"
           className="header-action-btn notification-btn"
           title="Notifications"
-          onClick={() => alert("Notifications")}
+          onClick={() => handleNavigate("/admin/notifications")}
         >
-          <FaBell size={17} />
-
-          <span className="notification-dot"></span>
-        </button>
-
-
-        {/* SETTINGS */}
-
+          {" "}
+          <FaBell size={16} /> <span className="notification-dot">3</span>{" "}
+        </button>{" "}
+        {/* SETTINGS */}{" "}
         <button
+          type="button"
           className="header-action-btn"
           title="Settings"
-          onClick={() => navigate("/admin/modules")}
+          onClick={() => handleNavigate("/user-management")}
         >
-          <FaCog size={17} />
-        </button>
-
-
-        {/* PROFILE */}
-
-        <div
-          className="profile-wrapper"
-          ref={dropdownRef}
-        >
-
+          {" "}
+          <FaCog size={16} />{" "}
+        </button>{" "}
+        {/* ================================================= PROFILE ================================================= */}{" "}
+        <div className="profile-wrapper" ref={dropdownRef}>
+          {" "}
           <button
-            className="profile-trigger"
-            onClick={() =>
-              setShowDropdown((prev) => !prev)
-            }
+            type="button"
+            className={`profile-trigger ${showDropdown ? "active" : ""}`}
+            onClick={() => setShowDropdown((prev) => !prev)}
           >
-
+            {" "}
             <img
               src={profilePic}
               alt="Profile"
               className="profile-image"
-            />
-
+            />{" "}
             <div className="profile-info">
-
-              <span className="profile-name">
-                {userName}
-              </span>
-
-              <span className="profile-role">
-                {userRole}
-              </span>
-
-            </div>
-
+              {" "}
+              <span className="profile-name"> {userName} </span>{" "}
+              <span className="profile-role"> {userRole} </span>{" "}
+            </div>{" "}
             <FaChevronDown
-              size={11}
-              className={`profile-chevron ${
-                showDropdown ? "rotate" : ""
-              }`}
-            />
-
-          </button>
-
-
-          {/* =========================================
-              PROFILE DROPDOWN
-          ========================================= */}
-
+              size={10}
+              className={`profile-chevron ${showDropdown ? "rotate" : ""}`}
+            />{" "}
+          </button>{" "}
+          {/* ================================================= PROFILE DROPDOWN ================================================= */}{" "}
           {showDropdown && (
-
             <div className="profile-dropdown">
-
-              {/* PROFILE HEADER */}
-
+              {" "}
+              {/* PROFILE HEADER */}{" "}
               <div className="dropdown-profile">
-
-                <img
-                  src={profilePic}
-                  alt="Profile"
-                />
-
-                <div>
-
-                  <div className="dropdown-name">
-                    {userName}
-                  </div>
-
-                  <div className="dropdown-email">
-                    {user?.email || "admin@zyntaks.com"}
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              <div className="dropdown-divider"></div>
-
-
-              {/* ROLE */}
-
-              <div className="dropdown-info">
-
-                <span>Role</span>
-
-                <strong>
-                  {userRole}
-                </strong>
-
-              </div>
-
-
-              {/* ACCOUNT */}
-
+                {" "}
+                <div className="dropdown-avatar-wrapper">
+                  {" "}
+                  <img
+                    src={profilePic}
+                    alt="Profile"
+                    className="dropdown-avatar"
+                  />{" "}
+                  <span className="online-status"></span>{" "}
+                </div>{" "}
+                <div className="dropdown-profile-details">
+                  {" "}
+                  <div className="dropdown-name"> {userName} </div>{" "}
+                  <div className="dropdown-role-row">
+                    {" "}
+                    <span className="role-badge">
+                      {" "}
+                      <FaUserShield size={9} /> {userRole}{" "}
+                    </span>{" "}
+                  </div>{" "}
+                  <div className="dropdown-email" title={userEmail}>
+                    {" "}
+                    {userEmail}{" "}
+                  </div>{" "}
+                </div>{" "}
+              </div>{" "}
+              <div className="dropdown-divider"></div> {/* ACCOUNT SETTINGS */}{" "}
               <button
-                className="dropdown-item"
-                onClick={() => {
-                  setShowDropdown(false);
-                  alert("Account Settings");
-                }}
+                type="button"
+                className="dropdown-menu-item"
+                onClick={() => handleNavigate("/admin/account-settings")}
               >
-                <span className="dropdown-item-icon">
-                  <RiAccountBoxLine />
-                </span>
-
-                <span>
-                  Account Settings
-                </span>
-              </button>
-
-
-              {/* PROFILE */}
-
+                {" "}
+                <span className="dropdown-menu-left">
+                  {" "}
+                  <span className="dropdown-menu-icon">
+                    {" "}
+                    <MdOutlineSettings size={17} />{" "}
+                  </span>{" "}
+                  <span className="dropdown-menu-text">
+                    {" "}
+                    Account Settings{" "}
+                  </span>{" "}
+                </span>{" "}
+                <MdKeyboardArrowRight
+                  className="dropdown-arrow"
+                  size={18}
+                />{" "}
+              </button>{" "}
+              {/* MY PROFILE */}{" "}
               <button
-                className="dropdown-item  "
-                onClick={() => {
-                  setShowDropdown(false);
-                  alert("Profile");
-                }}
+                type="button"
+                className="dropdown-menu-item"
+                onClick={() => handleNavigate("/admin/profile")}
               >
-                <span className="dropdown-item-icon">
-                  <FaUserCircle />
-                </span>
-
-                <span>
-                  My Profile
-                </span>
-              </button>
-
-
-              {/* NOTIFICATION */}
-
+                {" "}
+                <span className="dropdown-menu-left">
+                  {" "}
+                  <span className="dropdown-menu-icon">
+                    {" "}
+                    <FaUser size={14} />{" "}
+                  </span>{" "}
+                  <span className="dropdown-menu-text"> My Profile </span>{" "}
+                </span>{" "}
+                <MdKeyboardArrowRight
+                  className="dropdown-arrow"
+                  size={18}
+                />{" "}
+              </button>{" "}
+              {/* NOTIFICATIONS */}{" "}
               <button
-                className="dropdown-item"
-                onClick={() => {
-                  setShowDropdown(false);
-                  alert("Notification Settings");
-                }}
+                type="button"
+                className="dropdown-menu-item"
+                onClick={() => handleNavigate("/admin/notifications")}
               >
-                <span className="dropdown-item-icon">
-                  <FaBell />
-                </span>
-
-                <span>
-                  Notifications
-                </span>
-              </button>
-
-
-              <div className="dropdown-divider"></div>
-
-
-              {/* LOGOUT */}
-
+                {" "}
+                <span className="dropdown-menu-left">
+                  {" "}
+                  <span className="dropdown-menu-icon">
+                    {" "}
+                    <FaRegBell size={14} />{" "}
+                  </span>{" "}
+                  <span className="dropdown-menu-text">
+                    {" "}
+                    Notifications{" "}
+                  </span>{" "}
+                </span>{" "}
+                <MdKeyboardArrowRight
+                  className="dropdown-arrow"
+                  size={18}
+                />{" "}
+              </button>{" "}
+              {/* PREFERENCES */}{" "}
               <button
-                className="dropdown-item logout-item"
+                type="button"
+                className="dropdown-menu-item"
+                onClick={() => handleNavigate("/admin/settings")}
+              >
+                {" "}
+                <span className="dropdown-menu-left">
+                  {" "}
+                  <span className="dropdown-menu-icon">
+                    {" "}
+                    <FaSlidersH size={14} />{" "}
+                  </span>{" "}
+                  <span className="dropdown-menu-text"> Preferences </span>{" "}
+                </span>{" "}
+                <MdKeyboardArrowRight
+                  className="dropdown-arrow"
+                  size={18}
+                />{" "}
+              </button>{" "}
+              <div className="dropdown-divider"></div> {/* LOGOUT */}{" "}
+              <button
+                type="button"
+                className="dropdown-menu-item logout-menu-item"
                 onClick={handleLogout}
               >
-
-                <span className="dropdown-item-icon logout-icon">
-                  <TbLogout2 />
-                </span>
-
-                <span>
-                  Logout
-                </span>
-
-              </button>
-
+                {" "}
+                <span className="dropdown-menu-left">
+                  {" "}
+                  <span className="dropdown-menu-icon logout-icon">
+                    {" "}
+                    <MdLogout size={17} />{" "}
+                  </span>{" "}
+                  <span className="dropdown-menu-text"> Logout </span>{" "}
+                </span>{" "}
+                <MdKeyboardArrowRight
+                  className="dropdown-arrow"
+                  size={18}
+                />{" "}
+              </button>{" "}
             </div>
-
-          )}
-
-        </div>
-
-      </div>
-
+          )}{" "}
+        </div>{" "}
+      </div>{" "}
     </header>
   );
 };
-
 export default Header;

@@ -477,11 +477,7 @@ const API_BASE_URL = "http://localhost:8080";
               >
 
               <img 
-  src={
-    student.photo 
-      ? `${API_BASE_URL}/uploads/student/${student.photo}` 
-      : "/default-student.png"
-  } 
+   src={`${axiosInstance.defaults.baseURL}/api/students/photo/${student.photo}`}
   alt={fullName} 
   className="rounded-circle w-100 h-100" 
   style={{ 

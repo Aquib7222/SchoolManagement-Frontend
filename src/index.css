@@ -428,3 +428,448 @@ thead{
     transform:translateY(-2px);
     transition:.3s;
 } */
+
+/* =========================================================
+   ZYNTAKS EDUCATION - GLOBAL THEME
+   LIGHT + DARK MODE
+   ========================================================= */
+
+
+/* =========================================================
+   LIGHT THEME
+   ========================================================= */
+
+:root {
+  --bg-color: #f5f8ff;
+  --card-color: #ffffff;
+  --card-secondary: #f8fafc;
+
+  --text-color: #172033;
+  --heading-color: #111827;
+  --muted-text: #6b7280;
+
+  --border-color: #e3eaf5;
+
+  --input-bg: #ffffff;
+  --input-text: #172033;
+
+  --sidebar-bg: #ffffff;
+  --header-bg: #ffffff;
+
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+
+  --table-header-bg: #f8fafc;
+  --table-row-hover: #f1f5ff;
+
+  --shadow-color: rgba(37, 99, 235, 0.08);
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+[data-theme="dark"] {
+  --bg-color: #0f172a;
+  --card-color: #1e293b;
+  --card-secondary: #172033;
+
+  --text-color: #f8fafc;
+  --heading-color: #ffffff;
+  --muted-text: #a7b0c0;
+
+  --border-color: #334155;
+
+  --input-bg: #172033;
+  --input-text: #f8fafc;
+
+  --sidebar-bg: #111c31;
+  --header-bg: #111c31;
+
+  --primary-color: #60a5fa;
+  --primary-hover: #93c5fd;
+
+  --table-header-bg: #172033;
+  --table-row-hover: #26344a;
+
+  --shadow-color: rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  background: var(--bg-color);
+}
+
+body {
+  margin: 0;
+
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+
+/* =========================================================
+   UNIVERSAL TRANSITION
+   ========================================================= */
+
+[data-theme="dark"] *,
+[data-theme="light"] * {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+
+/* =========================================================
+   COMMON WHITE BACKGROUND CLASSES
+   ========================================================= */
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--card-color) !important;
+}
+
+[data-theme="dark"] .bg-light {
+  background-color: var(--card-secondary) !important;
+}
+
+[data-theme="dark"] .white {
+  background-color: var(--card-color) !important;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+[data-theme="dark"] .card {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+[data-theme="dark"] .card-body {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .card-header {
+  background-color: var(--card-secondary) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .card-footer {
+  background-color: var(--card-secondary) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
+[data-theme="dark"] .table {
+  --bs-table-bg: var(--card-color);
+  --bs-table-color: var(--text-color);
+  --bs-table-border-color: var(--border-color);
+
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .table > :not(caption) > * > * {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .table thead th {
+  background-color: var(--table-header-bg) !important;
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .table tbody tr:hover td {
+  background-color: var(--table-row-hover) !important;
+}
+
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--primary-color) !important;
+
+  box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.15) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--muted-text) !important;
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+[data-theme="dark"] label {
+  color: var(--text-color);
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+[data-theme="dark"] .text-dark,
+[data-theme="dark"] .text-black {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--muted-text) !important;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: var(--heading-color);
+}
+
+
+/* =========================================================
+   BORDER
+   ========================================================= */
+
+[data-theme="dark"] .border {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .border-light {
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+[data-theme="dark"] .modal-content {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .modal-footer {
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   DROPDOWN
+   ========================================================= */
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--card-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background-color: var(--card-secondary) !important;
+  color: var(--text-color) !important;
+}
+
+
+/* =========================================================
+   LIST GROUP
+   ========================================================= */
+
+[data-theme="dark"] .list-group-item {
+  background-color: var(--card-color) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+[data-theme="dark"] .btn-light,
+[data-theme="dark"] .btn-white {
+  background-color: var(--card-secondary) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+[data-theme="dark"] a {
+  color: var(--primary-color);
+}
+
+
+/* =========================================================
+   HR
+   ========================================================= */
+
+[data-theme="dark"] hr {
+  border-color: var(--border-color) !important;
+  opacity: 1;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .admin-sidebar,
+[data-theme="dark"] .super-sidebar {
+  background-color: var(--sidebar-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+[data-theme="dark"] header,
+[data-theme="dark"] .header,
+[data-theme="dark"] .top-header,
+[data-theme="dark"] .admin-header {
+  background-color: var(--header-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+/* =========================================================
+   BOOTSTRAP BODY VARIABLES
+   ========================================================= */
+
+[data-theme="dark"] {
+  --bs-body-bg: var(--bg-color);
+  --bs-body-color: var(--text-color);
+
+  --bs-light: var(--card-secondary);
+  --bs-dark: var(--text-color);
+
+  --bs-border-color: var(--border-color);
+
+  --bs-card-bg: var(--card-color);
+  --bs-card-color: var(--text-color);
+
+  --bs-dropdown-bg: var(--card-color);
+  --bs-dropdown-color: var(--text-color);
+
+  --bs-modal-bg: var(--card-color);
+  --bs-modal-color: var(--text-color);
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+
+/* =========================================================
+   THEME TOGGLE BUTTON
+   ========================================================= */
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--card-color);
+  color: var(--text-color);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.theme-toggle:hover {
+  background: var(--primary-color);
+  color: #ffffff;
+
+  transform: rotate(12deg);
+}
