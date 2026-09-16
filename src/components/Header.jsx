@@ -768,7 +768,7 @@ const Header = ({ toggleSidebar }) => {
           <div className="time-value"> {time} </div>{" "}
           <div className="time-label"> Local Time </div>{" "}
         </div>{" "}
-        {/* THEME */} <ThemeToggle /> {/* NOTIFICATION */}{" "}
+         {/* <ThemeToggle />  */}
         <button
           type="button"
           className="header-action-btn notification-btn"
@@ -776,7 +776,7 @@ const Header = ({ toggleSidebar }) => {
           onClick={() => handleNavigate("/admin/notifications")}
         >
           {" "}
-          <FaBell size={16} /> <span className="notification-dot">3</span>{" "}
+          <FaBell size={16} /> <span className="notification-dot"></span>{" "}
         </button>{" "}
         {/* SETTINGS */}{" "}
         <button

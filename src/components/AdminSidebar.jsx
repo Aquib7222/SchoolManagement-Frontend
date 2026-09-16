@@ -446,6 +446,7 @@ import {
   FaRegListAlt,
   FaUserFriends,
   FaUserPlus,
+  FaCreditCard,
 } from "react-icons/fa";
 
 import {
@@ -549,6 +550,24 @@ const AdminSidebar = () => {
                 <FaRegListAlt size={19} />,
                 "School Details",
               )}
+            </div>
+          </li>
+
+           {/* ================= SCHOOL MAPPING ================= */}
+          <li className="sidebar-section">
+            <div className="section-title">
+              <span>Subscription Management</span>
+            </div>
+
+            <div className="section-menu">
+
+              {menuItem(
+                "/admin/school-subscription",
+                <FaCreditCard  size={20} />,
+                "School Subscription ",
+              )}
+
+              
             </div>
           </li>
 

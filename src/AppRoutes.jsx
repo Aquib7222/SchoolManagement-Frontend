@@ -610,6 +610,7 @@ import UserManagement from "./pages/AdminDashboard/UserManagement";
 import SchoolUserManagement from "./pages/SchoolUserManagement";
 
 import Generate_Fee_Student from "./pages/Fees/Generate_Fee_Student";
+import SubscriptionManagement from "./pages/AdminDashboard/SubscriptionManagement";
 
 
 
@@ -1042,6 +1043,7 @@ const AppRoutes = () => {
           element={<SchoolDetails />}
         />
 
+<Route path="/admin/school-subscription" element={<SubscriptionManagement />} />
         <Route path="/admin/student-list" element={<StudentSchoolList />} />
 
         <Route path="/school/view/:id" element={<SchoolView />} />
