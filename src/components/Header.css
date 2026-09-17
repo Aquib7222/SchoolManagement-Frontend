@@ -681,3 +681,411 @@
 [data-theme="dark"] .premium-header {
   box-shadow: 0 3px 18px rgba(0, 0, 0, 0.25);
 }
+
+/* =========================================================
+   MODULE HEADER BUTTON
+========================================================= */
+.module-header-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.module-header-btn {
+  position: relative;
+}
+.module-header-btn.module-btn-active {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.14);
+}
+.module-count-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2563eb;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50px;
+  font-size: 8px;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.25);
+} 
+.module-dropdown {
+  position: absolute;
+  top: calc(100% + 13px);
+  right: -8px;
+  width: 350px;
+  max-width: calc(100vw - 20px); /* Almost transparent glass */
+  background: rgba(255, 255, 255, 0.1); /* Strong glass blur */
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  box-shadow:
+    0 25px 60px rgba(15, 23, 42, 0.17),
+    0 8px 25px rgba(37, 99, 235, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  overflow: visible;
+  z-index: 9999;
+  animation: moduleGlassIn 0.22s ease;
+}
+@keyframes moduleGlassIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+} 
+.module-dropdown::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.04)
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+} 
+.module-dropdown-header {
+  position: relative;
+  padding: 14px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px 20px 0 0;
+  z-index: 2;
+}
+.module-dropdown-title-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.module-dropdown-main-icon {
+  width: 33px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  background: rgba(239, 246, 255, 0.45);
+  border: 1px solid rgba(191, 219, 254, 0.55);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+.module-dropdown-title {
+  color: #1d2939;
+  font-size: 13px;
+  font-weight: 800;
+}
+.module-dropdown-subtitle {
+  margin-top: 2px;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 600;
+}
+.module-total-badge {
+  min-width: 27px;
+  height: 27px;
+  padding: 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  background: rgba(239, 246, 255, 0.45);
+  border: 1px solid rgba(191, 219, 254, 0.55);
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 800;
+} /* ========================================================= DIVIDER ========================================================= */
+.module-dropdown-divider {
+  position: relative;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+  z-index: 2;
+} /* ========================================================= MODULE ICON GRID ========================================================= */
+.module-icon-grid {
+  position: relative;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 13px;
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 2;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.35) transparent;
+}
+.module-icon-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.module-icon-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.module-icon-grid::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 20px;
+} /* ========================================================= ICON ITEM ========================================================= */
+.module-icon-item {
+  position: relative;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(48, 45, 45, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.module-icon-item:hover {
+  transform: translateY(-4px) scale(1.08);
+  background: rgba(212, 211, 211, 0.521);
+  border-color: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 12px 24px color-mix(in srgb, var(--module-color) 22%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+} 
+.module-only-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: inherit;
+}
+.module-only-icon::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 65%;
+  height: 35%;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 4;
+} 
+.module-only-icon img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  display: block;
+  filter: none;
+}
+.module-only-icon > svg {
+  position: relative;
+  z-index: 5;
+}
+.module-icon-shine {
+  position: absolute;
+  top: -25px;
+  left: -45px;
+  width: 22px;
+  height: 115px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.75),
+    transparent
+  );
+  transform: rotate(25deg);
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  transition:
+    left 0.55s ease,
+    opacity 0.2s ease;
+}
+.module-icon-item:hover .module-icon-shine {
+  left: 70px;
+  opacity: 1;
+} 
+.module-icon-glow {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 60px;
+  height: 60px;
+  background: var(--module-color);
+  opacity: 0.1;
+  filter: blur(18px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+} 
+.module-icon-item::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: -34px;
+  transform: translateX(-50%) translateY(5px);
+  padding: 5px 8px;
+  color: #ffffff;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 7px 18px rgba(15, 23, 42, 0.18);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.module-icon-item:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+} /* ========================================================= FOOTER ========================================================= */
+.module-dropdown-footer {
+  position: relative;
+  min-height: 31px;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #667085;
+  background: rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0 0 20px 20px;
+  font-size: 7px;
+  font-weight: 600;
+  z-index: 2;
+} /* ========================================================= LOADING ========================================================= */
+.module-loading {
+  grid-column: 1 / -1;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #667085;
+  font-size: 9px;
+  font-weight: 600;
+}
+.module-spinner {
+  width: 23px;
+  height: 23px;
+  border: 3px solid rgba(37, 99, 235, 0.15);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: moduleSpin 0.7s linear infinite;
+}
+@keyframes moduleSpin {
+  to {
+    transform: rotate(360deg);
+  }
+} /* ========================================================= EMPTY ========================================================= */
+.module-empty {
+  grid-column: 1 / -1;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.module-empty-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 12px;
+}
+.module-empty-title {
+  color: #667085;
+  font-size: 9px;
+  font-weight: 700;
+} /* ========================================================= MOBILE MODULE DROPDOWN ========================================================= */
+@media (max-width: 650px) {
+  .module-dropdown {
+    position: fixed;
+    top: 68px;
+    right: 8px;
+    width: min(300px, calc(100vw - 16px));
+    max-width: none;
+    border-radius: 17px;
+  }
+  .module-icon-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 11px;
+    padding: 13px;
+  }
+  .module-icon-item {
+    width: 43px;
+    height: 43px;
+  }
+  .module-only-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .module-dropdown-header {
+    padding: 12px;
+  }
+} /* ========================================================= SMALL MOBILE ========================================================= */
+@media (max-width: 420px) {
+  .module-dropdown {
+    top: 66px;
+    right: 6px;
+    width: calc(100vw - 12px);
+  }
+  .module-icon-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .module-icon-item {
+    width: 44px;
+    height: 44px;
+  }
+} /* ========================================================= VERY SMALL MOBILE ========================================================= */
+@media (max-width: 350px) {
+  .module-dropdown {
+    right: 5px;
+    width: calc(100vw - 10px);
+  }
+  .module-icon-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+    padding: 11px;
+  }
+  .module-icon-item {
+    width: 41px;
+    height: 41px;
+  }
+  .module-only-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .module-only-icon img {
+    width: 18px;
+    height: 18px;
+  }
+}

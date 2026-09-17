@@ -1,6 +1,182 @@
 
+// import React from "react";
+// import SynchronizedChart from "./SynchronizedChart";
+// import ModuleMenuOverview from "./ModuleMenuOverview";
+
+// const SchoolGrowthAndModuleOverview = () => {
+//   return (
+//     <>
+//       <div className="container-fluid px-2 mt-3">
+//         <div className="row g-3">
+
+//           {/* ================================================
+//               SCHOOL GROWTH
+//           ================================================= */}
+
+//           <div className="col-12 col-lg-6">
+//             <div className="dashboard-chart-card shadow h-100">
+
+//               <div className="dashboard-chart-header">
+//                 <div>
+//                   <h6 className="dashboard-chart-title">
+//                     School Growth
+//                   </h6>
+
+//                   <span className="dashboard-chart-subtitle">
+//                     School growth overview
+//                   </span>
+//                 </div>
+//               </div>
+
+//               <div className="dashboard-chart-body">
+//                 <SynchronizedChart />
+//               </div>
+
+//             </div>
+//           </div>
+
+//           {/* ================================================
+//               MODULE & MENU OVERVIEW
+//           ================================================= */}
+
+//           <div className="col-12 col-lg-6">
+//             <div className="dashboard-chart-card shadow h-100">
+
+//               <div className="dashboard-chart-header">
+//                 <div>
+//                   <h6 className="dashboard-chart-title">
+//                     Module & Menu Overview
+//                   </h6>
+
+//                   <span className="dashboard-chart-subtitle">
+//                     Modules, menus and submenu mapping
+//                   </span>
+//                 </div>
+//               </div>
+
+//               <div className="dashboard-chart-body">
+//                 <ModuleMenuOverview />
+//               </div>
+
+//             </div>
+//           </div>
+
+//         </div>
+//       </div>
+
+//       {/* =====================================================
+//           PREMIUM DASHBOARD CHART CSS
+//       ===================================================== */}
+
+//       <style>
+//         {`
+//           .dashboard-chart-card {
+//             position: relative;
+//             overflow: hidden;
+
+//             background: #ffffff;
+
+//             border: 1px solid #edf0f5;
+//             border-radius: 15px;
+
+//             transition: all .25s ease;
+//           }
+
+//           .dashboard-chart-card:hover {
+//             transform: translateY(-2px);
+//             box-shadow: 0 10px 25px rgba(0,0,0,.07) !important;
+//           }
+
+//           /* ================================================
+//              HEADER
+//           ================================================= */
+
+//           .dashboard-chart-header {
+//             display: flex;
+//             align-items: center;
+//             justify-content: space-between;
+
+//             padding: 17px 20px;
+
+//             border-bottom: 1px solid #f0f2f5;
+//           }
+
+//           .dashboard-chart-title {
+//             margin: 0;
+
+//             color: #212529;
+
+//             font-size: 15px;
+//             font-weight: 700;
+//           }
+
+//           .dashboard-chart-subtitle {
+//             display: block;
+
+//             margin-top: 3px;
+
+//             color: #9aa1aa;
+
+//             font-size: 11px;
+//             font-weight: 500;
+//           }
+
+//           /* ================================================
+//              BODY
+//           ================================================= */
+
+//           .dashboard-chart-body {
+//             width: 100%;
+//             min-height: 320px;
+
+//             padding: 15px;
+
+//             position: relative;
+//           }
+
+//           /* ================================================
+//              RESPONSIVE
+//           ================================================= */
+
+//           @media (max-width: 992px) {
+
+//             .dashboard-chart-body {
+//               min-height: 300px;
+//             }
+
+//           }
+
+//           @media (max-width: 576px) {
+
+//             .dashboard-chart-header {
+//               padding: 15px;
+//             }
+
+//             .dashboard-chart-title {
+//               font-size: 14px;
+//             }
+
+//             .dashboard-chart-subtitle {
+//               font-size: 10px;
+//             }
+
+//             .dashboard-chart-body {
+//               padding: 10px;
+//               min-height: 280px;
+//             }
+
+//           }
+//         `}
+//       </style>
+//     </>
+//   );
+// };
+
+// export default SchoolGrowthAndModuleOverview;
+
+
 import React from "react";
-import SynchronizedChart from "./SynchronizedChart";
+import SchoolGrowthChart from "./SchoolGrowthChart";
 import ModuleMenuOverview from "./ModuleMenuOverview";
 
 const SchoolGrowthAndModuleOverview = () => {
@@ -18,22 +194,27 @@ const SchoolGrowthAndModuleOverview = () => {
 
               <div className="dashboard-chart-header">
                 <div>
+                  <span className="dashboard-chart-label">
+                    GROWTH ANALYTICS
+                  </span>
+
                   <h6 className="dashboard-chart-title">
                     School Growth
                   </h6>
 
                   <span className="dashboard-chart-subtitle">
-                    School growth overview
+                    School registration and student growth
                   </span>
                 </div>
               </div>
 
               <div className="dashboard-chart-body">
-                <SynchronizedChart />
+                <SchoolGrowthChart />
               </div>
 
             </div>
           </div>
+
 
           {/* ================================================
               MODULE & MENU OVERVIEW
@@ -42,8 +223,12 @@ const SchoolGrowthAndModuleOverview = () => {
           <div className="col-12 col-lg-6">
             <div className="dashboard-chart-card shadow h-100">
 
-              <div className="dashboard-chart-header">
+              {/* <div className="dashboard-chart-header">
                 <div>
+                  <span className="dashboard-chart-label module-label">
+                    SYSTEM OVERVIEW
+                  </span>
+
                   <h6 className="dashboard-chart-title">
                     Module & Menu Overview
                   </h6>
@@ -52,7 +237,7 @@ const SchoolGrowthAndModuleOverview = () => {
                     Modules, menus and submenu mapping
                   </span>
                 </div>
-              </div>
+              </div> */}
 
               <div className="dashboard-chart-body">
                 <ModuleMenuOverview />
@@ -64,12 +249,18 @@ const SchoolGrowthAndModuleOverview = () => {
         </div>
       </div>
 
+
       {/* =====================================================
-          PREMIUM DASHBOARD CHART CSS
+          CSS
       ===================================================== */}
 
       <style>
         {`
+
+          /* ================================================
+             MAIN CARD
+          ================================================= */
+
           .dashboard-chart-card {
             position: relative;
             overflow: hidden;
@@ -79,47 +270,81 @@ const SchoolGrowthAndModuleOverview = () => {
             border: 1px solid #edf0f5;
             border-radius: 15px;
 
-            transition: all .25s ease;
+            transition:
+              transform .25s ease,
+              box-shadow .25s ease;
           }
+
 
           .dashboard-chart-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,.07) !important;
+
+            box-shadow:
+              0 10px 25px rgba(0, 0, 0, .07) !important;
           }
+
 
           /* ================================================
              HEADER
           ================================================= */
 
           .dashboard-chart-header {
+            min-height: 78px;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
 
-            padding: 17px 20px;
+            padding: 15px 20px;
 
             border-bottom: 1px solid #f0f2f5;
+
+            background: #ffffff;
           }
+
+
+          .dashboard-chart-label {
+            display: block;
+
+            margin-bottom: 3px;
+
+            color: #2563eb;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: .8px;
+          }
+
+
+          .dashboard-chart-label.module-label {
+            color: #7c3aed;
+          }
+
 
           .dashboard-chart-title {
             margin: 0;
 
-            color: #212529;
+            color: #1f2937;
 
             font-size: 15px;
             font-weight: 700;
+
+            line-height: 1.3;
           }
+
 
           .dashboard-chart-subtitle {
             display: block;
 
-            margin-top: 3px;
+            margin-top: 4px;
 
             color: #9aa1aa;
 
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
           }
+
 
           /* ================================================
              BODY
@@ -127,12 +352,14 @@ const SchoolGrowthAndModuleOverview = () => {
 
           .dashboard-chart-body {
             width: 100%;
-            min-height: 320px;
 
-            padding: 15px;
+            min-height: 350px;
+
+            padding: 14px;
 
             position: relative;
           }
+
 
           /* ================================================
              RESPONSIVE
@@ -141,31 +368,39 @@ const SchoolGrowthAndModuleOverview = () => {
           @media (max-width: 992px) {
 
             .dashboard-chart-body {
-              min-height: 300px;
+              min-height: 330px;
             }
 
           }
 
+
           @media (max-width: 576px) {
 
             .dashboard-chart-header {
-              padding: 15px;
+              min-height: 70px;
+
+              padding: 14px 15px;
             }
+
 
             .dashboard-chart-title {
               font-size: 14px;
             }
 
+
             .dashboard-chart-subtitle {
-              font-size: 10px;
+              font-size: 9px;
             }
+
 
             .dashboard-chart-body {
               padding: 10px;
-              min-height: 280px;
+
+              min-height: 310px;
             }
 
           }
+
         `}
       </style>
     </>

@@ -30,6 +30,7 @@ import { MdOutlineSchool, MdFamilyRestroom } from "react-icons/md";
 import { useEffect, useState } from "react";
 import EditStudentModal from "./EditStudentModal";
 import axios from "../../api/axiosInstance";
+import axiosInstance from "../../api/axiosInstance";
 
 const StudentDetails = () => {
   const { admissionNumber } = useParams();
