@@ -337,12 +337,320 @@
 
 // export default Login;
 
+
+// import React, { useState } from "react";
+// import "./Login.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
+
+
+// import { useNavigate } from "react-router-dom";
+
+// import {
+//   FaEnvelope,
+//   FaLock,
+//   FaEye,
+//   FaEyeSlash,
+//   FaUserGraduate,
+//   FaCheckCircle,
+// } from "react-icons/fa";
+
+// import banner from "../assets/icon/Login_banner.png";
+// import logo from "../assets/icon/zyntaks.png";
+// import { useAuth } from "../context/AuthContext";
+// import axios from "../api/axiosInstance";
+
+// const Login = () => {
+
+//   const navigate = useNavigate();
+//   const { login } = useAuth();
+
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [loading, setLoading] = useState(false);
+
+//  const handleLogin = async (e) => {
+//   e.preventDefault();
+
+//   setLoading(true);
+
+//   try {
+//     const { data } = await axios.post(
+//       "/auth/login",
+//       {
+//         email,
+//         password,
+//       }
+//     );
+
+//     console.log("Login Response:", data);
+
+//     // AuthContext ko update karega aur navigate bhi karega
+//     login({
+//       token: data.token,
+//       user: data.user,
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+
+//     alert(
+//       err.response?.data?.message ||
+//       "Invalid Email or Password"
+//     );
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//   return (
+//     <>
+//   <div className="login-page">
+
+//     {/* Background Circles */}
+
+//     <div className="circle circle1"></div>
+//     <div className="circle circle2"></div>
+//     <div className="circle circle3"></div>
+
+//     <div className="container-fluid h-100">
+
+//       <div className="row h-100">
+
+//         {/* ================= LEFT SIDE ================= */}
+
+//         <div className="col-lg-7 left-side d-none d-lg-flex">
+
+//           <div className="left-content">
+
+//             <img
+//               src={logo}
+//               alt="logo"
+//               className="main-logo"
+//             />
+
+//             <h1>
+//               Welcome to
+//               <span> ZYNTaks Education</span>
+//             </h1>
+
+//             <p>
+//               Complete School Management Solution
+//               for Admissions, Attendance, Fees,
+//               Examination, Library, Transport,
+//               Payroll and much more.
+//             </p>
+
+//             <div className="feature-box">
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Student Management
+
+//               </div>
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Attendance
+
+//               </div>
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Fees Collection
+
+//               </div>
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Examination
+
+//               </div>
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Transport
+
+//               </div>
+
+//               <div className="feature">
+
+//                 <FaCheckCircle />
+
+//                 Library
+
+//               </div>
+
+//             </div>
+
+//             {/* <img
+//               src={banner}
+//               alt="banner"
+//               className="banner"
+//             /> */}
+
+//           </div>
+
+//         </div>
+
+//         {/* ================= RIGHT SIDE ================= */}
+
+//         <div className="col-lg-5 col-md-12 right-side">
+
+//           <div className="login-card">
+
+//             <div className="text-center">
+
+//               <div className="logo-circle">
+
+//                 <FaUserGraduate />
+
+//               </div>
+
+//               <h2>
+//                 Welcome Back
+//               </h2>
+
+//               <p>
+//                 Login to continue
+//               </p>
+
+//             </div>
+
+//             <form onSubmit={handleLogin}>
+
+//               {/* Email */}
+
+//               <div className="input-box">
+
+//                 <FaEnvelope className="icon" />
+
+//                 <input
+//                   type="email"
+//                   placeholder="Enter Email"
+
+//                   value={email}
+
+//                   onChange={(e) =>
+//                     setEmail(e.target.value)
+//                   }
+
+//                   required
+//                 />
+
+//               </div>
+
+//               {/* Password */}
+
+//               <div className="input-box">
+
+//                 <FaLock className="icon" />
+
+//                 <input
+//                   type={
+//                     showPassword
+//                       ? "text"
+//                       : "password"
+//                   }
+
+//                   placeholder="Enter Password"
+
+//                   value={password}
+
+//                   onChange={(e) =>
+//                     setPassword(e.target.value)
+//                   }
+
+//                   required
+//                 />
+
+//                 <span
+//                   className="eye"
+
+//                   onClick={() =>
+//                     setShowPassword(
+//                       !showPassword
+//                     )
+//                   }
+//                 >
+
+//                   {showPassword ? (
+//                     <FaEyeSlash />
+//                   ) : (
+//                     <FaEye />
+//                   )}
+
+//                 </span>
+
+//               </div>
+
+//               <div className="remember-row">
+
+//                 <label>
+
+//                   <input type="checkbox" />
+
+//                   Remember Me
+
+//                 </label>
+
+//                 <a href="#">
+//                   Forgot Password?
+//                 </a>
+
+//               </div>
+
+//               <button
+//                 className="login-btn"
+
+//                 type="submit"
+
+//                 disabled={loading}
+//               >
+
+//                 {loading
+//                   ? "Signing In..."
+//                   : "LOGIN"}
+
+//               </button>
+
+//             </form>
+
+//             <div className="copyright">
+
+//               © 2026 ZYNTaks Education ERP
+
+//             </div>
+
+//           </div>
+
+//         </div>
+
+//       </div>
+
+//     </div>
+
+//   </div>
+//   </>
+// );
+// };
+
+// export default Login;
+
+
 import React, { useState } from "react";
 import "./Login.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-
-import { useNavigate } from "react-router-dom";
 
 import {
   FaEnvelope,
@@ -351,16 +659,16 @@ import {
   FaEyeSlash,
   FaUserGraduate,
   FaCheckCircle,
+  FaPhoneAlt,
+  FaHeadset,
 } from "react-icons/fa";
 
-import banner from "../assets/icon/Login_banner.png";
-import logo from "../assets/icon/zyntaks.png";
 import { useAuth } from "../context/AuthContext";
 import axios from "../api/axiosInstance";
 
-const Login = () => {
+import logo from "../assets/icon/zyntaks.png";
 
-  const navigate = useNavigate();
+const Login = () => {
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -368,280 +676,287 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const { data } = await axios.post(
-      "/auth/login",
-      {
+    try {
+      const { data } = await axios.post("/auth/login", {
         email,
         password,
-      }
-    );
+      });
 
-    console.log("Login Response:", data);
+      console.log("Login Response:", data);
 
-    // AuthContext ko update karega aur navigate bhi karega
-    login({
-      token: data.token,
-      user: data.user,
-    });
+      login({
+        token: data.token,
+        user: data.user,
+      });
+    } catch (err) {
+      console.error(err);
 
-  } catch (err) {
-    console.error(err);
-
-    alert(
-      err.response?.data?.message ||
-      "Invalid Email or Password"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      alert(
+        err.response?.data?.message ||
+          "Invalid Email or Password"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-  <div className="login-page">
+    <div className="login-page">
 
-    {/* Background Circles */}
+      {/* ================= BACKGROUND CIRCLES ================= */}
 
-    <div className="circle circle1"></div>
-    <div className="circle circle2"></div>
-    <div className="circle circle3"></div>
+      <div className="circle circle1"></div>
+      <div className="circle circle2"></div>
+      <div className="circle circle3"></div>
 
-    <div className="container-fluid h-100">
+      <div className="container-fluid h-100">
+        <div className="row h-100">
 
-      <div className="row h-100">
+          {/* ================= LEFT SIDE ================= */}
 
-        {/* ================= LEFT SIDE ================= */}
+          <div className="col-lg-7 left-side d-none d-lg-flex">
 
-        <div className="col-lg-7 left-side d-none d-lg-flex">
+            <div className="left-content">
 
-          <div className="left-content">
+              <img
+                src={logo}
+                alt="ZYNTaks Education"
+                className="main-logo"
+              />
 
-            <img
-              src={logo}
-              alt="logo"
-              className="main-logo"
-            />
-
-            <h1>
-              Welcome to
-              <span> ZYNTaks Education</span>
-            </h1>
-
-            <p>
-              Complete School Management Solution
-              for Admissions, Attendance, Fees,
-              Examination, Library, Transport,
-              Payroll and much more.
-            </p>
-
-            <div className="feature-box">
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Student Management
-
-              </div>
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Attendance
-
-              </div>
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Fees Collection
-
-              </div>
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Examination
-
-              </div>
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Transport
-
-              </div>
-
-              <div className="feature">
-
-                <FaCheckCircle />
-
-                Library
-
-              </div>
-
-            </div>
-
-            {/* <img
-              src={banner}
-              alt="banner"
-              className="banner"
-            /> */}
-
-          </div>
-
-        </div>
-
-        {/* ================= RIGHT SIDE ================= */}
-
-        <div className="col-lg-5 col-md-12 right-side">
-
-          <div className="login-card">
-
-            <div className="text-center">
-
-              <div className="logo-circle">
-
-                <FaUserGraduate />
-
-              </div>
-
-              <h2>
-                Welcome Back
-              </h2>
+              <h1>
+                Welcome to
+                <span> ZYNTaks Education</span>
+              </h1>
 
               <p>
-                Login to continue
+                Complete School Management Solution
+                for Admissions, Attendance, Fees,
+                Examination, Library, Transport,
+                Payroll and much more.
               </p>
+
+              {/* ================= FEATURES ================= */}
+
+              <div className="feature-box">
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Student Management
+                </div>
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Attendance
+                </div>
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Fees Collection
+                </div>
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Examination
+                </div>
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Transport
+                </div>
+
+                <div className="feature">
+                  <FaCheckCircle />
+                  Library
+                </div>
+
+              </div>
 
             </div>
 
-            <form onSubmit={handleLogin}>
+          </div>
 
-              {/* Email */}
+          {/* ================= RIGHT SIDE ================= */}
 
-              <div className="input-box">
+          <div className="col-lg-5 col-md-12 right-side">
 
-                <FaEnvelope className="icon" />
+            <div className="login-card">
 
-                <input
-                  type="email"
-                  placeholder="Enter Email"
+              {/* ================= LOGIN HEADER ================= */}
 
-                  value={email}
+              <div className="text-center">
 
-                  onChange={(e) =>
-                    setEmail(e.target.value)
-                  }
+                <div className="logo-circle">
+                  <FaUserGraduate />
+                </div>
 
-                  required
-                />
+                <h2>
+                  Welcome Back
+                </h2>
+
+                <p>
+                  Login to continue
+                </p>
 
               </div>
 
-              {/* Password */}
+              {/* ================= LOGIN FORM ================= */}
 
-              <div className="input-box">
+              <form onSubmit={handleLogin}>
 
-                <FaLock className="icon" />
+                {/* EMAIL */}
 
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
+                <div className="input-box">
 
-                  placeholder="Enter Password"
+                  <FaEnvelope className="icon" />
 
-                  value={password}
+                  <input
+                    type="email"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(e.target.value)
+                    }
+                    required
+                  />
 
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
+                </div>
 
-                  required
-                />
+                {/* PASSWORD */}
 
-                <span
-                  className="eye"
+                <div className="input-box">
 
-                  onClick={() =>
-                    setShowPassword(
-                      !showPassword
-                    )
-                  }
+                  <FaLock className="icon" />
+
+                  <input
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    placeholder="Enter Password"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(e.target.value)
+                    }
+                    required
+                  />
+
+                  <span
+                    className="eye"
+                    onClick={() =>
+                      setShowPassword(!showPassword)
+                    }
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash />
+                    ) : (
+                      <FaEye />
+                    )}
+                  </span>
+
+                </div>
+
+                {/* REMEMBER */}
+
+                <div className="remember-row">
+
+                  <label>
+                    <input type="checkbox" />
+                    Remember Me
+                  </label>
+
+                  <a href="#">
+                    Forgot Password?
+                  </a>
+
+                </div>
+
+                {/* LOGIN BUTTON */}
+
+                <button
+                  className="login-btn"
+                  type="submit"
+                  disabled={loading}
                 >
+                  {loading
+                    ? "Signing In..."
+                    : "LOGIN"}
+                </button>
 
-                  {showPassword ? (
-                    <FaEyeSlash />
-                  ) : (
-                    <FaEye />
-                  )}
+              </form>
 
-                </span>
+              {/* ================= SUPPORT ================= */}
+
+              <div className="support-section">
+
+                <div className="support-title">
+                  <FaHeadset />
+                  <span>Need Help?</span>
+                </div>
+
+                <p className="support-text">
+                  Our support team is here to help you.
+                </p>
+
+                <div className="support-links">
+
+                  <a
+                    href="tel:8804593908"
+                    className="support-item"
+                  >
+                    <div className="support-icon">
+                      <FaPhoneAlt />
+                    </div>
+
+                    <div>
+                      <small>Call Support</small>
+                      <strong>
+                        +91 88045 93908
+                      </strong>
+                    </div>
+                  </a>
+
+                  <a
+                    href="mailto:zyntakseducation@gmail.com"
+                    className="support-item"
+                  >
+                    <div className="support-icon">
+                      <FaEnvelope />
+                    </div>
+
+                    <div>
+                      <small>Email Support</small>
+                      <strong>
+                        zyntakseducation@gmail.com
+                      </strong>
+                    </div>
+                  </a>
+
+                </div>
 
               </div>
 
-              <div className="remember-row">
+              {/* ================= COPYRIGHT ================= */}
 
-                <label>
-
-                  <input type="checkbox" />
-
-                  Remember Me
-
-                </label>
-
-                <a href="#">
-                  Forgot Password?
-                </a>
-
+              <div className="copyright">
+                © 2026 ZYNTaks Education ERP
               </div>
-
-              <button
-                className="login-btn"
-
-                type="submit"
-
-                disabled={loading}
-              >
-
-                {loading
-                  ? "Signing In..."
-                  : "LOGIN"}
-
-              </button>
-
-            </form>
-
-            <div className="copyright">
-
-              © 2026 ZYNTaks Education ERP
 
             </div>
 
           </div>
 
         </div>
-
       </div>
 
     </div>
-
-  </div>
-  </>
-);
+  );
 };
 
 export default Login;

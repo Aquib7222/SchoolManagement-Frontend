@@ -16,22 +16,16 @@ const BirthdayActivitiesCollection = () => {
 
   const [feeRecords, setFeeRecords] = useState([]);
   const [loadingFees, setLoadingFees] = useState(false);
+  const [auditLogs, setAuditLogs] = useState([]);
+const [loadingActivities, setLoadingActivities] = useState(false);
 
-  const storedUser =
-    JSON.parse(localStorage.getItem("user")) || {};
 
-  const storedSchoolId = JSON.parse(
-    localStorage.getItem("schoolId") || "null"
-  );
+  
 
-  const schoolId =
-    storedUser?.schoolId ||
-    storedUser?.school?.id ||
-    storedSchoolId;
+  
+const schoolId = JSON.parse(localStorage.getItem("schoolId"));
 
-  /* =========================================================
-     GET ALL STUDENTS
-  ========================================================= */
+  
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -70,9 +64,6 @@ const BirthdayActivitiesCollection = () => {
     fetchStudents();
   }, [schoolId]);
 
-  /* =========================================================
-     GET FEE COLLECTION
-  ========================================================= */
 
   useEffect(() => {
     const fetchFees = async () => {
@@ -125,9 +116,779 @@ const BirthdayActivitiesCollection = () => {
     fetchFees();
   }, [schoolId]);
 
-  /* =========================================================
-     NUMBER HELPER
-  ========================================================= */
+useEffect(() => {
+  const fetchAuditLogs = async () => {
+    if (!schoolId) {
+      console.warn("School ID not found");
+      setAuditLogs([]);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.warn("Token not found");
+      setAuditLogs([]);
+      return;
+    }
+
+    try {
+      setLoadingActivities(true);
+
+      const response = await axiosInstance.get(
+        "/api/audit-logs?page=0&size=50&sort=createdAt,desc",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = response.data;
+
+      let logs = [];
+
+      if (Array.isArray(data)) {
+        logs = data;
+      } else if (Array.isArray(data?.content)) {
+        logs = data.content;
+      } else if (Array.isArray(data?.data)) {
+        logs = data.data;
+      }
+
+      const currentSchoolId = String(schoolId);
+
+      const schoolLogs = logs.filter((log) => {
+        // Primary check
+        if (log?.schoolId != null) {
+          return String(log.schoolId) === currentSchoolId;
+        }
+
+        // Fallback for old audit records
+        if (log?.details) {
+          try {
+            const details =
+              typeof log.details === "string"
+                ? JSON.parse(log.details)
+                : log.details;
+
+            return String(details?.schoolId) === currentSchoolId;
+          } catch (error) {
+            console.warn(
+              "Invalid audit details JSON:",
+              error
+            );
+
+            return false;
+          }
+        }
+
+        return false;
+      });
+
+      // Latest first + only 3 activities
+      const latestThree = schoolLogs
+        .sort(
+          (a, b) =>
+            new Date(b?.createdAt || 0).getTime() -
+            new Date(a?.createdAt || 0).getTime()
+        )
+        .slice(0, 3);
+
+      console.log(
+        "Current School ID:",
+        currentSchoolId
+      );
+
+      console.log(
+        "Latest 3 School Audit Logs:",
+        latestThree
+      );
+
+      setAuditLogs(latestThree);
+    } catch (error) {
+      console.error(
+        "Failed to load audit logs:",
+        error
+      );
+
+      setAuditLogs([]);
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
+  fetchAuditLogs();
+}, [schoolId]);
+console.log("audit logs details",auditLogs);
+
+
+const getActivityDetails = (log) => {
+  if (!log?.details) {
+    return {};
+  }
+
+  try {
+    return typeof log.details === "string"
+      ? JSON.parse(log.details)
+      : log.details;
+  } catch (error) {
+    return {};
+  }
+};
+
+
+const getActivityIcon = (action) => {
+  switch (String(action || "").toUpperCase()) {
+    case "CREATE":
+      return "➕";
+
+    case "UPDATE":
+      return "✏️";
+
+    case "DELETE":
+      return "🗑️";
+
+    case "LOGIN":
+      return "🔐";
+
+    case "LOGOUT":
+      return "🚪";
+
+    case "EXPORT":
+      return "📤";
+
+    case "PRINT":
+      return "🖨️";
+
+    case "REJECT":
+      return "❌";
+
+    case "DEACTIVATE":
+      return "⛔";
+
+    default:
+      return "🔔";
+  }
+};
+
+
+const getActivityStyle = (action) => {
+  switch (String(action || "").toUpperCase()) {
+    case "CREATE":
+      return {
+        bg: "#ecfdf5",
+        color: "#059669",
+      };
+
+    case "UPDATE":
+      return {
+        bg: "#eff6ff",
+        color: "#2563eb",
+      };
+
+    case "DELETE":
+      return {
+        bg: "#fff1f2",
+        color: "#e11d48",
+      };
+
+    case "LOGIN":
+      return {
+        bg: "#f5f3ff",
+        color: "#7c3aed",
+      };
+
+    case "LOGOUT":
+      return {
+        bg: "#fff7ed",
+        color: "#ea580c",
+      };
+
+    case "REJECT":
+      return {
+        bg: "#fff1f2",
+        color: "#dc2626",
+      };
+
+    case "DEACTIVATE":
+      return {
+        bg: "#fff7ed",
+        color: "#c2410c",
+      };
+
+    default:
+      return {
+        bg: "#f8fafc",
+        color: "#64748b",
+      };
+  }
+};
+
+
+const formatActivityTime = (createdAt) => {
+  if (!createdAt) {
+    return "";
+  }
+
+  const date = new Date(createdAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const now = new Date();
+
+  const diffMs =
+    now.getTime() - date.getTime();
+
+  const diffMinutes = Math.floor(
+    diffMs / (1000 * 60)
+  );
+
+  if (diffMinutes < 1) {
+    return "Just now";
+  }
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} ${
+      diffMinutes === 1
+        ? "Minute"
+        : "Minutes"
+    } Ago`;
+  }
+
+  const diffHours = Math.floor(
+    diffMinutes / 60
+  );
+
+  if (diffHours < 24) {
+    return `${diffHours} ${
+      diffHours === 1
+        ? "Hour"
+        : "Hours"
+    } Ago`;
+  }
+
+  const diffDays = Math.floor(
+    diffHours / 24
+  );
+
+  if (diffDays < 7) {
+    return `${diffDays} ${
+      diffDays === 1
+        ? "Day"
+        : "Days"
+    } Ago`;
+  }
+
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }
+  );
+};
+
+const getActivityTitle = (log) => {
+  const details = getActivityDetails(log);
+
+  const action = String(
+    log?.action || details?.action || ""
+  ).toUpperCase();
+
+  const module = String(
+    log?.module || details?.module || ""
+  ).toUpperCase();
+
+  const targetType = String(
+    log?.targetType ||
+      details?.targetType ||
+      ""
+  ).toLowerCase();
+
+  const targetName =
+    log?.targetName ||
+    details?.targetName ||
+    "";
+
+  const performedByName =
+    log?.username ||
+    details?.performedBy?.name ||
+    details?.performedBy?.username ||
+    "User";
+
+  // =========================
+  // LOGIN
+  // =========================
+  if (action === "LOGIN") {
+    return `${performedByName} logged in`;
+  }
+
+  // =========================
+  // LOGOUT
+  // =========================
+  if (action === "LOGOUT") {
+    return `${performedByName} logged out`;
+  }
+
+  // =========================
+  // ATTENDANCE
+  // =========================
+  if (
+    module === "ATTENDANCE" ||
+    targetType.includes("attendance")
+  ) {
+    const studentClass =
+      details?.studentClass ||
+      details?.class ||
+      details?.student?.studentClass;
+
+    const section =
+      details?.section ||
+      details?.student?.section;
+
+    const total =
+      details?.totalStudents ??
+      details?.studentCount ??
+      details?.attendanceCount;
+
+    const present =
+      details?.presentCount;
+
+    const absent =
+      details?.absentCount;
+
+    const leave =
+      details?.leaveCount;
+
+    if (studentClass || section) {
+      let title = `Attendance updated`;
+
+      if (studentClass || section) {
+        title += ` • Class ${studentClass || ""}${
+          section ? `-${section}` : ""
+        }`;
+      }
+
+      if (total != null) {
+        title += ` • ${total} Students`;
+      }
+
+      return title;
+    }
+
+    return "Attendance updated";
+  }
+
+  // =========================
+  // FEE
+  // =========================
+  if (
+    module === "FEE" ||
+    module === "STUDENT FEE" ||
+    targetType.includes("fee")
+  ) {
+    const paidAmount =
+      details?.paidAmount ??
+      details?.payingAmount ??
+      details?.response?.paidAmount ??
+      details?.amount;
+
+    if (paidAmount != null) {
+      return `Fee ₹${toNumber(
+        paidAmount
+      ).toLocaleString("en-IN")} collected`;
+    }
+
+    return "Fee payment updated";
+  }
+
+  // =========================
+  // ADMISSION
+  // =========================
+  if (
+    module === "ADMISSION" ||
+    targetType.includes("admission")
+  ) {
+    if (targetName) {
+      return `Admission updated for ${targetName}`;
+    }
+
+    return "Admission updated";
+  }
+
+  // =========================
+  // STUDENT
+  // =========================
+  if (
+    module === "STUDENT" ||
+    targetType.includes("student")
+  ) {
+    if (action === "CREATE") {
+      return targetName
+        ? `New student ${targetName} added`
+        : "New student added";
+    }
+
+    if (action === "UPDATE") {
+      return targetName
+        ? `${targetName} profile updated`
+        : "Student profile updated";
+    }
+
+    if (action === "DELETE") {
+      return targetName
+        ? `${targetName} deleted`
+        : "Student deleted";
+    }
+
+    return targetName
+      ? `Student ${targetName} updated`
+      : "Student record updated";
+  }
+
+  // =========================
+  // TEACHER
+  // =========================
+  if (
+    module === "TEACHER" ||
+    targetType.includes("teacher")
+  ) {
+    if (action === "CREATE") {
+      return targetName
+        ? `New teacher ${targetName} added`
+        : "New teacher added";
+    }
+
+    if (action === "UPDATE") {
+      return targetName
+        ? `${targetName} profile updated`
+        : "Teacher profile updated";
+    }
+
+    if (action === "DELETE") {
+      return targetName
+        ? `${targetName} deleted`
+        : "Teacher deleted";
+    }
+
+    return "Teacher record updated";
+  }
+
+  // =========================
+  // RESULT / ASSESSMENT
+  // =========================
+  if (
+    module === "RESULT" ||
+    module === "ASSESSMENT" ||
+    targetType.includes("result")
+  ) {
+    return action === "CREATE"
+      ? "Result created"
+      : "Result updated";
+  }
+
+  // =========================
+  // TRANSPORT
+  // =========================
+  if (
+    module === "TRANSPORT" ||
+    targetType.includes("vehicle")
+  ) {
+    if (action === "CREATE") {
+      return "Vehicle added";
+    }
+
+    if (action === "UPDATE") {
+      return "Vehicle updated";
+    }
+
+    if (action === "DELETE") {
+      return "Vehicle deleted";
+    }
+
+    return "Transport updated";
+  }
+
+  // =========================
+  // GENERIC
+  // =========================
+  if (log?.description) {
+    let description = log.description;
+
+    description = description
+      .replace(
+        /\s+in school\s+"[^"]+"/gi,
+        ""
+      )
+      .replace(
+        /\s+by\s+anonymousUser/gi,
+        ""
+      )
+      .trim();
+
+    return description;
+  }
+
+  return `${action || "Activity"} ${
+    targetName || ""
+  }`.trim();
+};
+
+const getActivitySubtitle = (log) => {
+  const details = getActivityDetails(log);
+
+  const action = String(
+    log?.action || details?.action || ""
+  ).toUpperCase();
+
+  const module = String(
+    log?.module || details?.module || ""
+  ).toUpperCase();
+
+  const status = String(
+    log?.status ||
+      details?.status ||
+      "SUCCESS"
+  ).toUpperCase();
+
+  // =========================
+  // PERFORMED BY
+  // =========================
+  const performedBy =
+    log?.username ||
+    details?.performedBy?.name ||
+    details?.performedBy?.username ||
+    "User";
+
+  const role =
+    log?.role ||
+    details?.performedBy?.role ||
+    "";
+
+  // =========================
+  // LOGIN / LOGOUT
+  // =========================
+  if (
+    action === "LOGIN" ||
+    action === "LOGOUT"
+  ) {
+    return `${role || "USER"} • ${status} • ${formatActivityTime(
+      log?.createdAt
+    )}`;
+  }
+
+  // =========================
+  // ATTENDANCE
+  // =========================
+  if (module === "ATTENDANCE") {
+    const parts = [];
+
+    const studentClass =
+      details?.studentClass ||
+      details?.class ||
+      details?.student?.studentClass;
+
+    const section =
+      details?.section ||
+      details?.student?.section;
+
+    const total =
+      details?.totalStudents ??
+      details?.studentCount;
+
+    const present =
+      details?.presentCount;
+
+    const absent =
+      details?.absentCount;
+
+    const leave =
+      details?.leaveCount;
+
+    const attendanceDate =
+      details?.attendanceDate ||
+      details?.date;
+
+    if (studentClass || section) {
+      parts.push(
+        `Class ${studentClass || ""}${
+          section ? `-${section}` : ""
+        }`
+      );
+    }
+
+    if (total != null) {
+      parts.push(`${total} Students`);
+    }
+
+    if (present != null) {
+      parts.push(`${present} Present`);
+    }
+
+    if (absent != null) {
+      parts.push(`${absent} Absent`);
+    }
+
+    if (leave != null) {
+      parts.push(`${leave} Leave`);
+    }
+
+    if (attendanceDate) {
+      parts.push(
+        new Date(attendanceDate).toLocaleDateString(
+          "en-IN",
+          {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }
+        )
+      );
+    }
+
+    parts.push(status);
+
+    return parts.join(" • ");
+  }
+
+  // =========================
+  // FEE
+  // =========================
+  if (
+    module === "FEE" ||
+    module === "STUDENT FEE"
+  ) {
+    const parts = [];
+
+    const studentName =
+      details?.studentName ||
+      details?.student?.name;
+
+    const studentClass =
+      details?.studentClass ||
+      details?.student?.studentClass;
+
+    const section =
+      details?.section ||
+      details?.student?.section;
+
+    const receiptNo =
+      details?.receiptNo ||
+      details?.response?.receiptNo;
+
+    const paymentMode =
+      details?.paymentMode ||
+      details?.response?.paymentMode;
+
+    const paidAmount =
+      details?.paidAmount ??
+      details?.payingAmount ??
+      details?.response?.paidAmount;
+
+    if (studentName) {
+      parts.push(studentName);
+    }
+
+    if (studentClass || section) {
+      parts.push(
+        `Class ${studentClass || ""}${
+          section ? `-${section}` : ""
+        }`
+      );
+    }
+
+    if (receiptNo) {
+      parts.push(`Receipt ${receiptNo}`);
+    }
+
+    if (paidAmount != null) {
+      parts.push(
+        `₹${toNumber(
+          paidAmount
+        ).toLocaleString("en-IN")}`
+      );
+    }
+
+    if (paymentMode) {
+      parts.push(paymentMode);
+    }
+
+    parts.push(status);
+
+    return parts.join(" • ");
+  }
+
+  // =========================
+  // STUDENT / ADMISSION
+  // =========================
+  if (
+    module === "STUDENT" ||
+    module === "ADMISSION"
+  ) {
+    const parts = [];
+
+    const studentName =
+      details?.studentName ||
+      details?.student?.name;
+
+    const admissionNumber =
+      details?.admissionNumber ||
+      details?.student?.admissionNumber;
+
+    const studentClass =
+      details?.studentClass ||
+      details?.student?.studentClass;
+
+    const section =
+      details?.section ||
+      details?.student?.section;
+
+    if (studentName) {
+      parts.push(studentName);
+    }
+
+    if (admissionNumber) {
+      parts.push(admissionNumber);
+    }
+
+    if (studentClass || section) {
+      parts.push(
+        `Class ${studentClass || ""}${
+          section ? `-${section}` : ""
+        }`
+      );
+    }
+
+    parts.push(status);
+
+    return parts.join(" • ");
+  }
+
+  // =========================
+  // GENERIC
+  // =========================
+  const parts = [];
+
+  if (performedBy) {
+    parts.push(`By ${performedBy}`);
+  }
+
+  if (role) {
+    parts.push(role);
+  }
+
+  if (log?.targetType) {
+    parts.push(log.targetType);
+  }
+
+  parts.push(status);
+
+  return parts.join(" • ");
+};
 
   const toNumber = (value) => {
     if (
@@ -149,43 +910,24 @@ const BirthdayActivitiesCollection = () => {
     return Number.isFinite(number) ? number : 0;
   };
 
-  /* =========================================================
-     FEE HELPERS
-  ========================================================= */
-
   const getPaidAmount = (fee) => {
     const value =
-      fee?.paidAmount ??
-      fee?.amountPaid ??
-      fee?.paidFee ??
-      fee?.totalPaid ??
-      fee?.paid ??
-      fee?.paymentAmount ??
-      fee?.receivedAmount;
+      fee?.paidAmount ;
 
     return toNumber(value);
   };
 
   const getTotalAmount = (fee) => {
     const value =
-      fee?.totalFee ??
-      fee?.totalAmount ??
-      fee?.feeAmount ??
-      fee?.amount ??
-      fee?.netAmount ??
-      fee?.payableAmount;
+      
+      fee?.totalAmount;
 
     return toNumber(value);
   };
 
   const getDueAmount = (fee) => {
     const explicitDue =
-      fee?.dueAmount ??
-      fee?.pendingAmount ??
-      fee?.remainingAmount ??
-      fee?.balanceDue ??
-      fee?.due ??
-      fee?.pending;
+      fee?.dueAmount;
 
     if (
       explicitDue !== undefined &&
@@ -201,9 +943,6 @@ const BirthdayActivitiesCollection = () => {
     return Math.max(0, total - paid);
   };
 
-  /* =========================================================
-     FEE SUMMARY
-  ========================================================= */
 
   const feeSummary = useMemo(() => {
     let paid = 0;
@@ -221,26 +960,15 @@ const BirthdayActivitiesCollection = () => {
     };
   }, [feeRecords]);
 
-  /* =========================================================
-     CLASS NAME
-  ========================================================= */
+  
 
   const getFeeClass = (fee) => {
     return (
-      fee?.studentClass ||
-      fee?.className ||
-      fee?.standard ||
-      fee?.class ||
-      fee?.student?.studentClass ||
-      fee?.student?.className ||
-      fee?.student?.standard ||
-      "Other"
+      fee?.studentClass
     );
   };
 
-  /* =========================================================
-     CLASS WISE FEE
-  ========================================================= */
+
 
   const classWiseFee = useMemo(() => {
     const classMap = {};
@@ -265,16 +993,12 @@ const BirthdayActivitiesCollection = () => {
       .slice(0, 8);
   }, [feeRecords]);
 
-  /* =========================================================
-     DATE HELPERS
-  ========================================================= */
+
 
   const getValidDob = (student) => {
     const dob =
-      student?.dateOfBirth ||
-      student?.dob ||
-      student?.dateOfbirth ||
-      student?.birthDate;
+      
+      student?.dob ;
 
     if (!dob) return null;
 
@@ -301,9 +1025,6 @@ const BirthdayActivitiesCollection = () => {
     );
   };
 
-  /* =========================================================
-     TODAY'S BIRTHDAYS
-  ========================================================= */
 
   const todaysBirthdays = useMemo(() => {
     const today = new Date();
@@ -320,10 +1041,7 @@ const BirthdayActivitiesCollection = () => {
     });
   }, [students]);
 
-  /* =========================================================
-     UPCOMING BIRTHDAYS
-  ========================================================= */
-
+ 
   const upcomingBirthdays = useMemo(() => {
     const today = new Date();
 
@@ -360,9 +1078,7 @@ const BirthdayActivitiesCollection = () => {
       );
   }, [students]);
 
-  /* =========================================================
-     COMBINED BIRTHDAYS
-  ========================================================= */
+ 
 
   const birthdayList = useMemo(() => {
     const todayList = todaysBirthdays.map(
@@ -386,14 +1102,10 @@ const BirthdayActivitiesCollection = () => {
     upcomingBirthdays,
   ]);
 
-  /* =========================================================
-     STUDENT HELPERS
-  ========================================================= */
 
   const getStudentName = (student) => {
     return (
-      student?.studentName ||
-      student?.name ||
+     
       [
         student?.firstName,
         student?.middleName,
@@ -407,10 +1119,7 @@ const BirthdayActivitiesCollection = () => {
 
   const getStudentClass = (student) => {
     return (
-      student?.studentClass ||
-      student?.className ||
-      student?.standard ||
-      student?.class ||
+      student?.studentClass||
       "-"
     );
   };
@@ -428,10 +1137,6 @@ const BirthdayActivitiesCollection = () => {
     );
   };
 
-  /* =========================================================
-     FORMAT BIRTHDAY
-  ========================================================= */
-
   const formatBirthday = (date) => {
     if (!date) return "";
 
@@ -441,9 +1146,7 @@ const BirthdayActivitiesCollection = () => {
     });
   };
 
-  /* =========================================================
-     SLIDER
-  ========================================================= */
+ 
 
   const tableSlider = {
     dots: false,
@@ -451,7 +1154,7 @@ const BirthdayActivitiesCollection = () => {
     infinite: true,
     vertical: true,
     verticalSwiping: true,
-    slidesToShow: 2,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     speed: 650,
@@ -459,37 +1162,7 @@ const BirthdayActivitiesCollection = () => {
     pauseOnHover: true,
   };
 
-  /* =========================================================
-     ACTIVITIES
-  ========================================================= */
-
-  const activities = [
-    {
-      title: "Admission Completed",
-      time: "2 Minutes Ago",
-      icon: "🎓",
-      type: "success",
-      bg: "#ecfdf5",
-      color: "#059669",
-    },
-    {
-      title: "Fee Received",
-      time: "15 Minutes Ago",
-      icon: "💰",
-      type: "primary",
-      bg: "#eff6ff",
-      color: "#2563eb",
-    },
-    {
-      title: "Attendance Updated",
-      time: "1 Hour Ago",
-      icon: "📋",
-      type: "danger",
-      bg: "#fff1f2",
-      color: "#e11d48",
-    },
-  ];
-
+ 
   return (
     <>
       <style>
@@ -854,89 +1527,207 @@ const BirthdayActivitiesCollection = () => {
 
                 </div>
               </div>
+<div className="card-body px-3 pt-3">
+  {loadingActivities ? (
+    <div
+      className="d-flex flex-column align-items-center justify-content-center"
+      style={{
+        minHeight: "170px",
+      }}
+    >
+      <div
+        className="spinner-border spinner-border-sm"
+        style={{
+          color: "#2563eb",
+        }}
+      />
 
-              <div className="card-body px-3 pt-3">
-                {activities.map((activity, index) => (
-                  <div
-                    key={activity.title}
-                    className="d-flex activity-item position-relative"
-                    style={{
-                      marginBottom:
-                        index === activities.length - 1
-                          ? "0"
-                          : "10px",
-                    }}
-                  >
-                    <div className="d-flex flex-column align-items-center">
-                      <div
-                        className="rounded-circle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "34px",
-                          height: "34px",
-                          background: activity.bg,
-                          color: activity.color,
-                          border: `1px solid ${activity.color}20`,
-                          fontSize: "14px",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {activity.icon}
-                      </div>
+      <small
+        className="text-muted mt-2"
+        style={{
+          fontSize: "10px",
+        }}
+      >
+        Loading activities...
+      </small>
+    </div>
+  ) : auditLogs.length > 0 ? (
+    <>
+      {auditLogs.map((log, index) => {
+        const style = getActivityStyle(
+          log?.action
+        );
 
-                      {index !== activities.length - 1 && (
-                        <div className="activity-line" />
-                      )}
-                    </div>
+        const isLast =
+          index === auditLogs.length - 1;
 
-                    <div className="ms-3 pt-1">
-                      <h6
-                        className="mb-1 fw-semibold"
-                        style={{ fontSize: "12px" }}
-                      >
-                        {activity.title}
-                      </h6>
-
-                      <small
-                        className="text-muted"
-                        style={{ fontSize: "10px" }}
-                      >
-                        {activity.time}
-                      </small>
-                    </div>
-
-                    <div className="ms-auto pt-2">
-                      <span
-                        style={{
-                          width: "6px",
-                          height: "6px",
-                          display: "block",
-                          borderRadius: "50%",
-                          background: activity.color,
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-
-                <div
-                  className="mt-3 p-2 rounded-3 text-center"
-                  style={{
-                    background:
-                      "linear-gradient(135deg,#eff6ff,#f5f3ff)",
-                    border: "1px solid #e0e7ff",
-                  }}
-                >
-                  <small
-                    className="fw-semibold"
-                    style={{
-                      fontSize: "9px",
-                      color: "#4f46e5",
-                    }}
-                  >
-                    ✨ School activity is running smoothly
-                  </small>
-                </div>
+        return (
+          <div
+            key={
+              log?.id ||
+              `${log?.createdAt}-${index}`
+            }
+            className="d-flex activity-item position-relative"
+            style={{
+              marginBottom: isLast
+                ? "0"
+                : "12px",
+              cursor: "default",
+            }}
+          >
+            {/* ICON + LINE */}
+            <div className="d-flex flex-column align-items-center">
+              <div
+                className="rounded-circle d-flex align-items-center justify-content-center"
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  background: style.bg,
+                  color: style.color,
+                  border: `1px solid ${style.color}20`,
+                  fontSize: "14px",
+                  flexShrink: 0,
+                }}
+              >
+                {getActivityIcon(
+                  log?.action
+                )}
               </div>
+
+              {!isLast && (
+                <div
+                  className="activity-line"
+                  style={{
+                    height: "22px",
+                  }}
+                />
+              )}
+            </div>
+
+
+            {/* ACTIVITY CONTENT */}
+            <div
+              className="ms-3 pt-1 pe-1"
+              style={{
+                minWidth: 0,
+                flex: 1,
+              }}
+            >
+              <div
+                className="fw-semibold"
+                style={{
+                  fontSize: "11px",
+                  lineHeight: "1.35",
+                  color: "#1e293b",
+                  wordBreak: "break-word",
+                }}
+              >
+                {getActivityTitle(log)}
+              </div>
+
+              <div
+                className="mt-1"
+                style={{
+                  fontSize: "9px",
+                  color: "#64748b",
+                  lineHeight: "1.4",
+                }}
+              >
+                {getActivitySubtitle(log)}
+              </div>
+
+              <div
+                className="mt-1"
+                style={{
+                  fontSize: "8px",
+                  color: "#94a3b8",
+                }}
+              >
+                {formatActivityTime(
+                  log?.createdAt
+                )}
+              </div>
+            </div>
+
+
+            {/* STATUS DOT */}
+            <div
+              className="pt-2"
+              style={{
+                flexShrink: 0,
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  display: "block",
+                  borderRadius: "50%",
+                  background: style.color,
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+
+
+      {/* FOOTER */}
+      <div
+        className="mt-3 p-2 rounded-3 text-center"
+        style={{
+          background:
+            "linear-gradient(135deg,#eff6ff,#f5f3ff)",
+          border: "1px solid #e0e7ff",
+        }}
+      >
+        <small
+          className="fw-semibold"
+          style={{
+            fontSize: "9px",
+            color: "#4f46e5",
+          }}
+        >
+          ✨ Latest 3 school activities
+        </small>
+      </div>
+    </>
+  ) : (
+    <div
+      className="d-flex flex-column align-items-center justify-content-center text-center"
+      style={{
+        minHeight: "170px",
+      }}
+    >
+      <div
+        className="dashboard-icon-box"
+        style={{
+          width: "52px",
+          height: "52px",
+          borderRadius: "50%",
+          background:
+            "linear-gradient(135deg,#eaf2ff,#f3e8ff)",
+          fontSize: "22px",
+        }}
+      >
+        🔔
+      </div>
+
+      <div className="fw-semibold mt-2">
+        No Recent Activities
+      </div>
+
+      <small
+        className="text-muted"
+        style={{
+          fontSize: "10px",
+        }}
+      >
+        No activity found for this school.
+      </small>
+    </div>
+  )}
+</div>
             </div>
           </div>
 
