@@ -188,9 +188,6 @@ const SchoolList = () => {
         }}
       >
 
-        {/* =====================================================
-            PAGE HEADER
-        ====================================================== */}
 
         <div className="mx-0 mt-1 mb-3">
           <div
@@ -311,9 +308,7 @@ const SchoolList = () => {
           </div>
         </div>
 
-        {/* =====================================================
-            STAT CARDS
-        ====================================================== */}
+       
 
         <div className="row g-3 mb-4">
 
@@ -648,7 +643,7 @@ const SchoolList = () => {
 
                                 <img
                                   src={getLogoUrl(
-                                    school.logoUrl
+                                    school.schoolImageUrl
                                   )}
                                   alt={
                                     school.schoolName

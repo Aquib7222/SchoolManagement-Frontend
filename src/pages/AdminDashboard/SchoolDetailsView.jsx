@@ -250,16 +250,16 @@ const SchoolDetailsView = () => {
     });
   };
 
-  const getLogoUrl = (logoUrl) => {
-    if (!logoUrl) {
+  const getLogoUrl = (schoolImageUrl) => {
+    if (!schoolImageUrl) {
       return "/images/default-school.png";
     }
 
-    if (logoUrl.startsWith("http")) {
-      return logoUrl;
+    if (schoolImageUrl.startsWith("http")) {
+      return schoolImageUrl;
     }
 
-    return `${logoUrl}`;
+    return `${schoolImageUrl}`;
   };
 
   const getStudentName = (student) => {
@@ -433,7 +433,7 @@ const SchoolDetailsView = () => {
 
           <div className="school-logo-wrapper">
             <img
-              src={getLogoUrl(school.logoUrl)}
+              src={getLogoUrl(school.schoolImageUrl)}
               alt="School Logo"
               className="school-logo"
               onError={(e) => {

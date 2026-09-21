@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useMemo, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import FeeCollectionBarChart from "../../pages/Dashboard/Charts/FeeCollectionBarChart";
@@ -868,9 +865,6 @@ const getActivitySubtitle = (log) => {
     return parts.join(" • ");
   }
 
-  // =========================
-  // GENERIC
-  // =========================
   const parts = [];
 
   if (performedBy) {

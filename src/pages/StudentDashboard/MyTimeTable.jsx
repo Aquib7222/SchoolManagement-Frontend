@@ -192,10 +192,6 @@ const MyTimetable = () => {
       academicYear
     );
 
-    // =====================================================
-    // REQUIRED DATA CHECK
-    // =====================================================
-
     if (
       !schoolId ||
       !studentClass ||
@@ -225,9 +221,6 @@ const MyTimetable = () => {
 
       const allAssignments = [];
 
-      // ===================================================
-      // GET EACH DAY DATA
-      // ===================================================
 
       for (const day of DAYS) {
         console.log(
@@ -306,9 +299,6 @@ const MyTimetable = () => {
         }
       );
 
-      // ===================================================
-      // FILTER CLASS + SECTION + ACTIVE
-      // ===================================================
 
       const studentTimetable =
         allAssignments.filter(

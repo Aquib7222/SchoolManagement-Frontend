@@ -1,4 +1,3 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 
 import schoolImage from "../../assets/icon/schoolImage.webp";
@@ -35,18 +34,42 @@ import axiosInstance from "../../api/axiosInstance";
 const StudentDetails = () => {
   const { admissionNumber } = useParams();
   const navigate = useNavigate();
+  const schoolId = JSON.parse(localStorage.getItem("schoolId"));
 
   const [student, setStudent] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editStudent, setEditStudent] = useState({});
   const [photo, setPhoto] = useState(null);
   const [showStudent, setShowStudent] = useState(true);
-
+  const [schoolImage, setSchoolImage] = useState([]);
   const token = localStorage.getItem("token");
 
-  // =========================================================
-  // LOAD STUDENT
-  // =========================================================
+  const fetchSchoolImage = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/school/${schoolId}/images`,
+      );
+
+      setSchoolImage(response.data);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  useEffect(()=>{
+    if(!schoolId)return;
+    fetchSchoolImage();
+  },fetchSchoolImage);
+  console.log("image",schoolImage);
+
+  const getImageUrl = (url) => {
+  if (!url) return null;
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  return `${axiosInstance.defaults.baseURL}${url}`;
+};
 
   useEffect(() => {
     if (!admissionNumber || !token) return;
@@ -66,97 +89,51 @@ const StudentDetails = () => {
       });
   }, [admissionNumber, token]);
 
-  console.log("students",student);
-
-  // =========================================================
-  // UPDATE STUDENT
-  // =========================================================
-
-  // const handleUpdate = async () => {
-  //   try {
-  //     const formData = new FormData();
-
-  //     formData.append(
-  //       "student",
-  //       new Blob([JSON.stringify(editStudent)], {
-  //         type: "application/json",
-  //       })
-  //     );
-
-  //     if (photo) {
-  //       formData.append("photo", photo);
-  //     }
-
-  //     const response = await axios.put(
-  //       `/api/students/${editStudent.admissionNumber}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     setStudent(response.data);
-  //     setEditStudent(response.data);
-  //     setShowEditModal(false);
-
-  //     alert("Student Updated Successfully");
-  //   } catch (error) {
-  //     console.error("Update Student Error:", error);
-  //     alert("Update Failed");
-  //   }
-  // };
+  console.log("students", student);
 
   const handleUpdate = async () => {
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append(
-      "student",
-      new Blob([JSON.stringify(editStudent)], {
-        type: "application/json",
-      })
-    );
+      formData.append(
+        "student",
+        new Blob([JSON.stringify(editStudent)], {
+          type: "application/json",
+        }),
+      );
 
-    if (photo) {
-      formData.append("photo", photo);
-    }
-
-    const response = await axios.put(
-      `/api/students/${editStudent.admissionNumber}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      if (photo) {
+        formData.append("photo", photo);
       }
-    );
 
-    setStudent(response.data);
-    setEditStudent(response.data);
-    setPhoto(null);
-    setShowEditModal(false);
+      const response = await axios.put(
+        `/api/students/${editStudent.admissionNumber}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
 
-    alert("Student Updated Successfully");
-  } catch (error) {
-    console.error("Update student error:", error);
+      setStudent(response.data);
+      setEditStudent(response.data);
+      setPhoto(null);
+      setShowEditModal(false);
 
-    const message =
-      error?.response?.data?.message ||
-      error?.response?.data ||
-      "Update Failed";
+      alert("Student Updated Successfully");
+    } catch (error) {
+      console.error("Update student error:", error);
 
-    alert(message);
-  }
-};
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        "Update Failed";
 
-
-const API_BASE_URL = "http://localhost:8080";
-  // =========================================================
-  // LOADING
-  // =========================================================
+      alert(message);
+    }
+  };
 
   if (!student) {
     return (
@@ -174,14 +151,9 @@ const API_BASE_URL = "http://localhost:8080";
             <FaUserGraduate size={28} />
           </div>
 
-          <div
-            className="spinner-border text-primary mb-3"
-            role="status"
-          />
+          <div className="spinner-border text-primary mb-3" role="status" />
 
-          <h6 className="fw-bold mb-1">
-            Loading Student Profile
-          </h6>
+          <h6 className="fw-bold mb-1">Loading Student Profile</h6>
 
           <small className="text-muted">
             Please wait while student information is loading...
@@ -196,7 +168,7 @@ const API_BASE_URL = "http://localhost:8080";
   }`.trim();
 
   const avatar = `https://ui-avatars.com/api/?background=2563eb&color=fff&size=200&bold=true&name=${encodeURIComponent(
-    fullName
+    fullName,
   )}`;
 
   // =========================================================
@@ -222,16 +194,12 @@ const API_BASE_URL = "http://localhost:8080";
             </span>
           )}
 
-          <span className="fw-semibold text-muted small">
-            {label}
-          </span>
+          <span className="fw-semibold text-muted small">{label}</span>
         </div>
       </div>
 
       <div className="col-sm-7 mt-1 mt-sm-0">
-        <span className="fw-medium text-dark">
-          {value || "-"}
-        </span>
+        <span className="fw-medium text-dark">{value || "-"}</span>
       </div>
     </div>
   );
@@ -242,7 +210,6 @@ const API_BASE_URL = "http://localhost:8080";
 
   const SectionCard = ({ title, subtitle, icon, children, action }) => (
     <div className="card border-0 shadow rounded-4 mb-3 overflow-hidden">
-
       <div
         className="card-header bg-white py-3 px-3"
         style={{
@@ -250,19 +217,15 @@ const API_BASE_URL = "http://localhost:8080";
         }}
       >
         <div className="d-flex justify-content-between align-items-center gap-2">
-
           <div className="d-flex align-items-center">
-
             <div
               className="d-flex align-items-center justify-content-center rounded-3"
               style={{
                 width: "42px",
                 height: "42px",
-                background:
-                  "linear-gradient(135deg,#2563eb,#3b82f6)",
+                background: "linear-gradient(135deg,#2563eb,#3b82f6)",
                 color: "#fff",
-                boxShadow:
-                  "0 8px 20px rgba(37,99,235,.18)",
+                boxShadow: "0 8px 20px rgba(37,99,235,.18)",
                 flexShrink: 0,
               }}
             >
@@ -270,28 +233,17 @@ const API_BASE_URL = "http://localhost:8080";
             </div>
 
             <div className="ms-2">
-              <h6 className="mb-0 fw-bold">
-                {title}
-              </h6>
+              <h6 className="mb-0 fw-bold">{title}</h6>
 
-              {subtitle && (
-                <small className="text-muted">
-                  {subtitle}
-                </small>
-              )}
+              {subtitle && <small className="text-muted">{subtitle}</small>}
             </div>
-
           </div>
 
           {action}
-
         </div>
       </div>
 
-      <div className="card-body p-3">
-        {children}
-      </div>
-
+      <div className="card-body p-3">{children}</div>
     </div>
   );
 
@@ -302,7 +254,6 @@ const API_BASE_URL = "http://localhost:8080";
       ========================================================= */}
 
       <div className="mx-2 mt-2 mb-3">
-
         <div
           className="rounded-4 shadow overflow-hidden"
           style={{
@@ -311,42 +262,32 @@ const API_BASE_URL = "http://localhost:8080";
             border: "1px solid #dbeafe",
           }}
         >
-
           <div className="p-3 p-md-4">
-
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-
               <div className="d-flex align-items-center gap-3">
-
                 <div
                   className="d-flex align-items-center justify-content-center rounded-3"
                   style={{
                     width: "52px",
                     height: "52px",
-                    background:
-                      "linear-gradient(135deg,#2563eb,#3b82f6)",
+                    background: "linear-gradient(135deg,#2563eb,#3b82f6)",
                     color: "#fff",
-                    boxShadow:
-                      "0 8px 20px rgba(37,99,235,.22)",
+                    boxShadow: "0 8px 20px rgba(37,99,235,.22)",
                   }}
                 >
                   <FaUserGraduate size={26} />
                 </div>
 
                 <div>
-                  <h5 className="mb-1 fw-bold text-dark">
-                    Student Profile
-                  </h5>
+                  <h5 className="mb-1 fw-bold text-dark">Student Profile</h5>
 
                   <div className="text-muted small">
                     Students &nbsp;/&nbsp; Profile Details
                   </div>
                 </div>
-
               </div>
 
               <div className="d-flex align-items-center gap-2 flex-wrap">
-
                 <span
                   className="badge rounded-pill px-3 py-2"
                   style={{
@@ -366,11 +307,8 @@ const API_BASE_URL = "http://localhost:8080";
                   <FaArrowLeft className="me-2" />
                   Back
                 </button>
-
               </div>
-
             </div>
-
           </div>
 
           <div
@@ -382,14 +320,10 @@ const API_BASE_URL = "http://localhost:8080";
           >
             <small className="text-muted">
               Home &nbsp;›&nbsp; Students &nbsp;›&nbsp;
-              <span className="text-primary fw-semibold">
-                Student Profile
-              </span>
+              <span className="text-primary fw-semibold">Student Profile</span>
             </small>
           </div>
-
         </div>
-
       </div>
 
       {/* =========================================================
@@ -397,22 +331,18 @@ const API_BASE_URL = "http://localhost:8080";
       ========================================================= */}
 
       <div className="px-2">
-
         <div className="card border-0 shadow rounded-4 overflow-hidden mb-4">
-
           {/* COVER */}
 
           <div
             style={{
-              height: "180px",
+              height: "300px",
               position: "relative",
               overflow: "hidden",
-              background:
-                "linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb)",
+              background: "linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb)",
             }}
           >
-
-            <img
+            {/* <img
               src={schoolImage}
               alt="School"
               className="w-100 h-100"
@@ -420,7 +350,15 @@ const API_BASE_URL = "http://localhost:8080";
                 objectFit: "cover",
                 opacity: 0.18,
               }}
-            />
+            /> */}
+             {schoolImage?.schoolImageUrl && (
+              <img
+                src={getImageUrl(schoolImage.schoolImageUrl)}
+                alt="School Image"
+                className="w-100 h-100"
+                style={{objectFit:"fill"}}
+              />
+            )}
 
             <div
               style={{
@@ -438,32 +376,22 @@ const API_BASE_URL = "http://localhost:8080";
                 top: "30px",
               }}
             >
-
-              <small
-                className="opacity-75"
-                style={{ letterSpacing: "1px" }}
-              >
+              <small className="opacity-75" style={{ letterSpacing: "1px" }}>
                 STUDENT PROFILE
               </small>
 
-              <h4 className="fw-bold mb-2 mt-1">
-                {fullName}
-              </h4>
+              <h4 className="fw-bold mb-2 mt-1">{fullName}</h4>
 
               <span className="badge bg-light text-primary px-3 py-2">
                 {student.admissionNumber}
               </span>
-
             </div>
-
           </div>
 
           {/* PROFILE DETAILS */}
 
           <div className="px-3 px-md-4 pb-3">
-
             <div className="d-flex align-items-end flex-wrap gap-3">
-
               {/* IMAGE */}
 
               <div
@@ -476,54 +404,40 @@ const API_BASE_URL = "http://localhost:8080";
                   zIndex: 2,
                 }}
               >
-
-              <img 
-   src={`${axiosInstance.defaults.baseURL}/api/students/photo/${student.photo}`}
-  alt={fullName} 
-  className="rounded-circle w-100 h-100" 
-  style={{ 
-    objectFit: "cover", 
-  }} 
-/>
-
+                <img
+                  src={`${axiosInstance.defaults.baseURL}/api/students/photo/${student.photo}`}
+                  alt={fullName}
+                  className="rounded-circle w-100 h-100"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                />
               </div>
 
               {/* NAME */}
 
               <div className="mb-2 flex-grow-1">
-
-                <h5 className="fw-bold mb-1">
-                  {fullName}
-                </h5>
+                <h5 className="fw-bold mb-1">{fullName}</h5>
 
                 <div className="text-muted small">
                   {student.studentUsername || "Student"}
                 </div>
-
               </div>
 
               {/* STATUS */}
 
               <div className="mb-2">
-
                 <span
                   className={`badge rounded-pill px-3 py-2 ${
-                    student.status === "ACTIVE"
-                      ? "bg-success"
-                      : "bg-danger"
+                    student.status === "ACTIVE" ? "bg-success" : "bg-danger"
                   }`}
                 >
                   <span className="me-1">●</span>
 
-                  {student.status === "ACTIVE"
-                    ? "Studying"
-                    : "Dropout"}
+                  {student.status === "ACTIVE" ? "Studying" : "Dropout"}
                 </span>
-
               </div>
-
             </div>
-
           </div>
 
           {/* QUICK INFO */}
@@ -534,13 +448,9 @@ const API_BASE_URL = "http://localhost:8080";
               background: "#f8fafc",
             }}
           >
-
             <div className="row g-3">
-
               <div className="col-xl-3 col-md-6">
-
                 <div className="d-flex align-items-center">
-
                   <div
                     className="rounded-3 d-flex align-items-center justify-content-center me-2"
                     style={{
@@ -554,26 +464,18 @@ const API_BASE_URL = "http://localhost:8080";
                   </div>
 
                   <div>
-                    <small className="text-muted d-block">
-                      Class
-                    </small>
+                    <small className="text-muted d-block">Class</small>
 
                     <strong>
                       {student.studentClass || "-"}
-                      {student.section
-                        ? ` / ${student.section}`
-                        : ""}
+                      {student.section ? ` / ${student.section}` : ""}
                     </strong>
                   </div>
-
                 </div>
-
               </div>
 
               <div className="col-xl-3 col-md-6">
-
                 <div className="d-flex align-items-center">
-
                   <div
                     className="rounded-3 d-flex align-items-center justify-content-center me-2"
                     style={{
@@ -587,23 +489,15 @@ const API_BASE_URL = "http://localhost:8080";
                   </div>
 
                   <div>
-                    <small className="text-muted d-block">
-                      Academic Year
-                    </small>
+                    <small className="text-muted d-block">Academic Year</small>
 
-                    <strong>
-                      {student.academicYear || "-"}
-                    </strong>
+                    <strong>{student.academicYear || "-"}</strong>
                   </div>
-
                 </div>
-
               </div>
 
               <div className="col-xl-3 col-md-6">
-
                 <div className="d-flex align-items-center">
-
                   <div
                     className="rounded-3 d-flex align-items-center justify-content-center me-2"
                     style={{
@@ -617,23 +511,15 @@ const API_BASE_URL = "http://localhost:8080";
                   </div>
 
                   <div>
-                    <small className="text-muted d-block">
-                      Admission No
-                    </small>
+                    <small className="text-muted d-block">Admission No</small>
 
-                    <strong>
-                      {student.admissionNumber || "-"}
-                    </strong>
+                    <strong>{student.admissionNumber || "-"}</strong>
                   </div>
-
                 </div>
-
               </div>
 
               <div className="col-xl-3 col-md-6">
-
                 <div className="d-flex align-items-center">
-
                   <div
                     className="rounded-3 d-flex align-items-center justify-content-center me-2"
                     style={{
@@ -647,34 +533,22 @@ const API_BASE_URL = "http://localhost:8080";
                   </div>
 
                   <div>
-                    <small className="text-muted d-block">
-                      Gender
-                    </small>
+                    <small className="text-muted d-block">Gender</small>
 
-                    <strong>
-                      {student.gender || "-"}
-                    </strong>
+                    <strong>{student.gender || "-"}</strong>
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
           {/* TABS */}
 
           <div className="border-top px-3 py-2">
-
             <div className="d-flex flex-wrap gap-2">
-
               <button
                 className={`btn rounded-3 px-3 ${
-                  showStudent
-                    ? "btn-primary"
-                    : "btn-light text-primary"
+                  showStudent ? "btn-primary" : "btn-light text-primary"
                 }`}
                 onClick={() => setShowStudent(true)}
               >
@@ -684,22 +558,16 @@ const API_BASE_URL = "http://localhost:8080";
 
               <button
                 className={`btn rounded-3 px-3 ${
-                  !showStudent
-                    ? "btn-primary"
-                    : "btn-light text-primary"
+                  !showStudent ? "btn-primary" : "btn-light text-primary"
                 }`}
                 onClick={() => setShowStudent(false)}
               >
                 <FaUserGroup className="me-2" />
                 Parent Information
               </button>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       {/* =========================================================
@@ -707,15 +575,12 @@ const API_BASE_URL = "http://localhost:8080";
       ========================================================= */}
 
       {showStudent ? (
-
         <div className="row g-3 px-2">
-
           {/* =====================================================
               LEFT
           ===================================================== */}
 
           <div className="col-lg-6">
-
             <SectionCard
               title="Basic Information"
               subtitle="Personal and identification details"
@@ -733,7 +598,6 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <InfoRow
                 label="Full Name"
                 value={fullName}
@@ -798,9 +662,7 @@ const API_BASE_URL = "http://localhost:8080";
 
               <InfoRow
                 label="Caste / Religion"
-                value={`${student.caste || "-"} / ${
-                  student.religion || "-"
-                }`}
+                value={`${student.caste || "-"} / ${student.religion || "-"}`}
                 icon={<FaUserGroup size={12} />}
               />
 
@@ -861,9 +723,7 @@ const API_BASE_URL = "http://localhost:8080";
                 }${student.zip ? ` - ${student.zip}` : ""}`}
                 icon={<FaMapMarkerAlt size={12} />}
               />
-
             </SectionCard>
-
           </div>
 
           {/* =====================================================
@@ -871,7 +731,6 @@ const API_BASE_URL = "http://localhost:8080";
           ===================================================== */}
 
           <div className="col-lg-6">
-
             {/* CLASS & SESSION */}
 
             <SectionCard
@@ -879,11 +738,8 @@ const API_BASE_URL = "http://localhost:8080";
               subtitle="Current academic information"
               icon={<FaSchool />}
             >
-
               <div className="row g-3">
-
                 <div className="col-md-6">
-
                   <div
                     className="rounded-4 p-3 h-100"
                     style={{
@@ -891,27 +747,19 @@ const API_BASE_URL = "http://localhost:8080";
                       border: "1px solid #dbeafe",
                     }}
                   >
-
                     <div className="d-flex align-items-center mb-2">
-
                       <FaCalendarAlt className="text-primary me-2" />
 
-                      <small className="text-muted">
-                        Academic Year
-                      </small>
-
+                      <small className="text-muted">Academic Year</small>
                     </div>
 
                     <h6 className="fw-bold text-primary mb-0">
                       {student.academicYear || "-"}
                     </h6>
-
                   </div>
-
                 </div>
 
                 <div className="col-md-6">
-
                   <div
                     className="rounded-4 p-3 h-100"
                     style={{
@@ -919,28 +767,18 @@ const API_BASE_URL = "http://localhost:8080";
                       border: "1px solid #dbeafe",
                     }}
                   >
-
                     <div className="d-flex align-items-center mb-2">
-
                       <FaSchool className="text-primary me-2" />
 
-                      <small className="text-muted">
-                        Class / Section
-                      </small>
-
+                      <small className="text-muted">Class / Section</small>
                     </div>
 
                     <h6 className="fw-bold text-primary mb-0">
-                      {student.studentClass || "-"} /{" "}
-                      {student.section || "-"}
+                      {student.studentClass || "-"} / {student.section || "-"}
                     </h6>
-
                   </div>
-
                 </div>
-
               </div>
-
             </SectionCard>
 
             {/* HOUSE */}
@@ -955,13 +793,9 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="d-flex justify-content-between align-items-center">
-
                 <div>
-                  <small className="text-muted">
-                    House
-                  </small>
+                  <small className="text-muted">House</small>
 
                   <h6 className="fw-bold mb-0 mt-1">
                     {student.house || "Not Assigned"}
@@ -979,9 +813,7 @@ const API_BASE_URL = "http://localhost:8080";
                 >
                   <FaHome size={20} />
                 </div>
-
               </div>
-
             </SectionCard>
 
             {/* HEALTH CONDITION */}
@@ -996,11 +828,8 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="table-responsive">
-
                 <table className="table table-hover align-middle mb-0">
-
                   <thead
                     style={{
                       background: "#eff6ff",
@@ -1016,19 +845,13 @@ const API_BASE_URL = "http://localhost:8080";
 
                   <tbody>
                     <tr>
-                      <td
-                        colSpan="3"
-                        className="text-center text-muted py-4"
-                      >
+                      <td colSpan="3" className="text-center text-muted py-4">
                         No health condition added
                       </td>
                     </tr>
                   </tbody>
-
                 </table>
-
               </div>
-
             </SectionCard>
 
             {/* EMERGENCY */}
@@ -1043,11 +866,8 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="table-responsive">
-
                 <table className="table table-hover align-middle mb-0">
-
                   <thead
                     style={{
                       background: "#eff6ff",
@@ -1063,19 +883,13 @@ const API_BASE_URL = "http://localhost:8080";
 
                   <tbody>
                     <tr>
-                      <td
-                        colSpan="3"
-                        className="text-center text-muted py-4"
-                      >
+                      <td colSpan="3" className="text-center text-muted py-4">
                         No emergency contact added
                       </td>
                     </tr>
                   </tbody>
-
                 </table>
-
               </div>
-
             </SectionCard>
 
             {/* TRANSPORTATION */}
@@ -1090,11 +904,8 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="table-responsive">
-
                 <table className="table table-hover align-middle mb-0">
-
                   <thead
                     style={{
                       background: "#eff6ff",
@@ -1109,19 +920,13 @@ const API_BASE_URL = "http://localhost:8080";
 
                   <tbody>
                     <tr>
-                      <td
-                        colSpan="2"
-                        className="text-center text-muted py-4"
-                      >
+                      <td colSpan="2" className="text-center text-muted py-4">
                         No transportation assigned
                       </td>
                     </tr>
                   </tbody>
-
                 </table>
-
               </div>
-
             </SectionCard>
 
             {/* HEALTH PARAMETERS */}
@@ -1136,52 +941,26 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
+              <InfoRow label="Height" value={student.height} />
 
-              <InfoRow
-                label="Height"
-                value={student.height}
-              />
+              <InfoRow label="Weight" value={student.weight} />
 
-              <InfoRow
-                label="Weight"
-                value={student.weight}
-              />
+              <InfoRow label="Blood Group" value={student.bloodGroup} />
 
-              <InfoRow
-                label="Blood Group"
-                value={student.bloodGroup}
-              />
+              <InfoRow label="Left Power" value={student.leftPower} />
 
-              <InfoRow
-                label="Left Power"
-                value={student.leftPower}
-              />
+              <InfoRow label="Right Power" value={student.rightPower} />
 
-              <InfoRow
-                label="Right Power"
-                value={student.rightPower}
-              />
+              <InfoRow label="Oral Hygiene" value={student.oralHygiene} />
 
-              <InfoRow
-                label="Oral Hygiene"
-                value={student.oralHygiene}
-              />
-
-              <InfoRow
-                label="Dental Hygiene"
-                value={student.dentalHygiene}
-              />
+              <InfoRow label="Dental Hygiene" value={student.dentalHygiene} />
 
               <InfoRow
                 label="Special Ailments"
                 value={student.specialAilments}
               />
 
-              <InfoRow
-                label="Capture Date"
-                value={student.captureDates}
-              />
-
+              <InfoRow label="Capture Date" value={student.captureDates} />
             </SectionCard>
 
             {/* UNDERTAKING */}
@@ -1196,22 +975,11 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
+              <InfoRow label="Undertaking" value="-" />
 
-              <InfoRow
-                label="Undertaking"
-                value="-"
-              />
+              <InfoRow label="Special Needs" value="-" />
 
-              <InfoRow
-                label="Special Needs"
-                value="-"
-              />
-
-              <InfoRow
-                label="Special Need Documents"
-                value="-"
-              />
-
+              <InfoRow label="Special Need Documents" value="-" />
             </SectionCard>
 
             {/* DOCUMENTS */}
@@ -1221,11 +989,8 @@ const API_BASE_URL = "http://localhost:8080";
               subtitle="Student document management"
               icon={<FaFileAlt />}
             >
-
               <div className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-
                 <div className="d-flex align-items-center">
-
                   <div
                     className="rounded-3 d-flex align-items-center justify-content-center me-3"
                     style={{
@@ -1239,44 +1004,31 @@ const API_BASE_URL = "http://localhost:8080";
                   </div>
 
                   <div>
-
-                    <h6 className="fw-bold mb-1">
-                      Student Documents
-                    </h6>
+                    <h6 className="fw-bold mb-1">Student Documents</h6>
 
                     <small className="text-muted">
                       Upload or manage student documents
                     </small>
-
                   </div>
-
                 </div>
 
                 <button className="btn btn-primary rounded-3 px-3">
                   <FaFileAlt className="me-2" />
                   Upload
                 </button>
-
               </div>
-
             </SectionCard>
-
           </div>
-
         </div>
-
       ) : (
-
         /* =========================================================
            PARENT INFORMATION
         ========================================================= */
 
         <div className="row g-3 px-2">
-
           {/* FATHER */}
 
           <div className="col-lg-6">
-
             <SectionCard
               title="Father Information"
               subtitle="Father / guardian details"
@@ -1287,9 +1039,7 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="text-center mb-4">
-
                 <div
                   className="rounded-circle bg-white p-1 shadow mx-auto"
                   style={{
@@ -1297,7 +1047,6 @@ const API_BASE_URL = "http://localhost:8080";
                     height: "100px",
                   }}
                 >
-
                   <img
                     src={father}
                     alt="Father"
@@ -1306,45 +1055,22 @@ const API_BASE_URL = "http://localhost:8080";
                       objectFit: "cover",
                     }}
                   />
-
                 </div>
-
               </div>
 
-              <InfoRow
-                label="Username"
-                value={student.fatherUsername}
-              />
+              <InfoRow label="Username" value={student.fatherUsername} />
 
-              <InfoRow
-                label="Father Name"
-                value={student.fatherName}
-              />
+              <InfoRow label="Father Name" value={student.fatherName} />
 
-              <InfoRow
-                label="Mobile"
-                value={student.mobile}
-              />
+              <InfoRow label="Mobile" value={student.mobile} />
 
-              <InfoRow
-                label="Email"
-                value={student.fatherEmail}
-              />
+              <InfoRow label="Email" value={student.fatherEmail} />
 
-              <InfoRow
-                label="Aadhar"
-                value={student.fatherAadhar}
-              />
+              <InfoRow label="Aadhar" value={student.fatherAadhar} />
 
-              <InfoRow
-                label="Education"
-                value={student.fatherEducation}
-              />
+              <InfoRow label="Education" value={student.fatherEducation} />
 
-              <InfoRow
-                label="Occupation"
-                value={student.fatherOccupation}
-              />
+              <InfoRow label="Occupation" value={student.fatherOccupation} />
 
               <InfoRow
                 label="Organization"
@@ -1356,24 +1082,15 @@ const API_BASE_URL = "http://localhost:8080";
                 value={student.fatherOrganizationAddress}
               />
 
-              <InfoRow
-                label="State"
-                value={student.state}
-              />
+              <InfoRow label="State" value={student.state} />
 
-              <InfoRow
-                label="Pincode"
-                value={student.zip}
-              />
-
+              <InfoRow label="Pincode" value={student.zip} />
             </SectionCard>
-
           </div>
 
           {/* MOTHER */}
 
           <div className="col-lg-6">
-
             <SectionCard
               title="Mother Information"
               subtitle="Mother / guardian details"
@@ -1384,9 +1101,7 @@ const API_BASE_URL = "http://localhost:8080";
                 </button>
               }
             >
-
               <div className="text-center mb-4">
-
                 <div
                   className="rounded-circle bg-white p-1 shadow mx-auto"
                   style={{
@@ -1394,7 +1109,6 @@ const API_BASE_URL = "http://localhost:8080";
                     height: "100px",
                   }}
                 >
-
                   <img
                     src={mother}
                     alt="Mother"
@@ -1403,45 +1117,22 @@ const API_BASE_URL = "http://localhost:8080";
                       objectFit: "cover",
                     }}
                   />
-
                 </div>
-
               </div>
 
-              <InfoRow
-                label="Username"
-                value={student.motherUsername}
-              />
+              <InfoRow label="Username" value={student.motherUsername} />
 
-              <InfoRow
-                label="Mother Name"
-                value={student.motherName}
-              />
+              <InfoRow label="Mother Name" value={student.motherName} />
 
-              <InfoRow
-                label="Mobile"
-                value={student.motherMobile}
-              />
+              <InfoRow label="Mobile" value={student.motherMobile} />
 
-              <InfoRow
-                label="Email"
-                value={student.motherEmail}
-              />
+              <InfoRow label="Email" value={student.motherEmail} />
 
-              <InfoRow
-                label="Aadhar"
-                value={student.motherAadhar}
-              />
+              <InfoRow label="Aadhar" value={student.motherAadhar} />
 
-              <InfoRow
-                label="Education"
-                value={student.motherEducation}
-              />
+              <InfoRow label="Education" value={student.motherEducation} />
 
-              <InfoRow
-                label="Occupation"
-                value={student.motherOccupation}
-              />
+              <InfoRow label="Occupation" value={student.motherOccupation} />
 
               <InfoRow
                 label="Organization"
@@ -1453,22 +1144,12 @@ const API_BASE_URL = "http://localhost:8080";
                 value={student.motherOrganizationAddress}
               />
 
-              <InfoRow
-                label="State"
-                value={student.state}
-              />
+              <InfoRow label="State" value={student.state} />
 
-              <InfoRow
-                label="Pincode"
-                value={student.zip}
-              />
-
+              <InfoRow label="Pincode" value={student.zip} />
             </SectionCard>
-
           </div>
-
         </div>
-
       )}
 
       {/* =========================================================
@@ -1476,16 +1157,16 @@ const API_BASE_URL = "http://localhost:8080";
       ========================================================= */}
 
       <EditStudentModal
-  show={showEditModal}
-  student={editStudent}
-  setStudent={setEditStudent}
-  setPhoto={setPhoto}
-  onClose={() => {
-    setShowEditModal(false);
-    setPhoto(null);
-  }}
-  onSave={handleUpdate}
-/>
+        show={showEditModal}
+        student={editStudent}
+        setStudent={setEditStudent}
+        setPhoto={setPhoto}
+        onClose={() => {
+          setShowEditModal(false);
+          setPhoto(null);
+        }}
+        onSave={handleUpdate}
+      />
 
       {/* =========================================================
           SMALL RESPONSIVE CSS
@@ -1523,4 +1204,3 @@ const API_BASE_URL = "http://localhost:8080";
 };
 
 export default StudentDetails;
-

@@ -581,7 +581,7 @@ const SchoolDetails = () => {
 
             {school?.logo ? (
               <img
-                src={school.logo}
+                src={school.schoolImage}
                 alt="School Logo"
               />
             ) : (

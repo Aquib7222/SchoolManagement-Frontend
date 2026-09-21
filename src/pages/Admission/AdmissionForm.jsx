@@ -26,7 +26,7 @@ import { LuBook } from "react-icons/lu";
 const getInitialFormData = () => ({
   academicYear: "",
   academicType: "",
-  invoice: "",
+  
   today: new Date().toISOString().split("T")[0],
 
   firstName: "",
@@ -1148,13 +1148,7 @@ const AdmissionForm = () => {
                   handleChange={handleChange}
                 />
 
-                <Field
-                  label="Invoice No"
-                  name="invoice"
-                  placeholder="Enter invoice number"
-                  formData={formData}
-                  handleChange={handleChange}
-                />
+                
 
                 <Field
                   label="Admission Type"

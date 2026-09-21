@@ -611,6 +611,8 @@ import SchoolUserManagement from "./pages/SchoolUserManagement";
 
 import Generate_Fee_Student from "./pages/Fees/Generate_Fee_Student";
 import SubscriptionManagement from "./pages/AdminDashboard/SubscriptionManagement";
+import AdmitCard from "./pages/Assessment/AdmitCard";
+import StudentAdmitCard from "./pages/StudentDashboard/StudentAdmitCard";
 
 
 
@@ -957,11 +959,13 @@ const AppRoutes = () => {
         />
 
         <Route path="/assessment/result-publish" element={<ResultPublish />} />
+        <Route path="/assessment/admit-card" element={<AdmitCard />} />
 
         <Route
           path="/assessment/grade-management"
           element={<GradeManagement />}
         />
+        
         {/* =================================================
             TRANSPORT
         ================================================= */}
@@ -1010,6 +1014,7 @@ const AppRoutes = () => {
         <Route path="/attendance" element={<StudentAttendance />} />
         <Route path="/myhomework" element={<MyHomework />} />
         <Route path="/time-table" element={<MyTimeTable />} />
+        <Route path="/admit-card" element={<StudentAdmitCard />} />
 
 
          {/* ====================================================

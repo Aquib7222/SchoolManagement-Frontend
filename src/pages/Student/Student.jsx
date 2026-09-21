@@ -250,7 +250,7 @@ const Students = () => {
 
                 <h3>
                   {students.filter(
-                    (s) => s.gender === "MALE"
+                    (s) => s.gender === "Male"
                   ).length.toLocaleString("en-IN")}
                 </h3>
 
@@ -281,7 +281,7 @@ const Students = () => {
 
                 <h3>
                   {students.filter(
-                    (s) => s.gender === "FEMALE"
+                    (s) => s.gender === "Female"
                   ).length.toLocaleString("en-IN")}
                 </h3>
 
@@ -834,9 +834,9 @@ const Students = () => {
 
                             <span
                               className={`badge rounded-pill px-3 py-2 ${
-                                s.gender === "MALE"
+                                s.gender === "Male"
                                   ? "bg-primary"
-                                  : s.gender === "FEMALE"
+                                  : s.gender === "Female"
                                   ? "bg-danger"
                                   : "bg-secondary"
                               }`}
@@ -853,7 +853,7 @@ const Students = () => {
                           <td>
 
                             <button
-                              className="btn btn-outline-primary btn-sm rounded-3 px-3"
+                              className="btn btn-outline-primary btn-sm rounded-4 px-3"
                               onClick={() =>
                                 handleView(
                                   s.admissionNumber
@@ -983,7 +983,7 @@ const Students = () => {
                 <div className="col-md-6 text-md-end mt-3 mt-md-0">
 
                   <button
-                    className="btn btn-outline-primary rounded-3"
+                    className="btn btn-outline-primary rounded-4"
                     onClick={handleFilter}
                     disabled={searchLoading}
                   >
@@ -1028,7 +1028,7 @@ const Students = () => {
                     {
                       students.filter(
                         (s) =>
-                          s.gender === "MALE"
+                          s.gender === "Male"
                       ).length
                     }
 
@@ -1048,7 +1048,7 @@ const Students = () => {
                     {
                       students.filter(
                         (s) =>
-                          s.gender === "FEMALE"
+                          s.gender === "Female"
                       ).length
                     }
 
