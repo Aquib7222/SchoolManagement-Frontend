@@ -605,8 +605,14 @@ const useDashboardData = () => {
   // =====================================================
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  console.log("🔥 useDashboardData MOUNTED");
+
+  fetchDashboardData();
+
+  return () => {
+    console.log("❌ useDashboardData UNMOUNTED");
+  };
+}, []);
 
   // =====================================================
   // RETURN
